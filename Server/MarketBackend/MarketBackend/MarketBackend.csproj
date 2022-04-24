@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -19,10 +19,6 @@
     <Folder Include="BusinessLayer\Market\StoreManagement\" />
     <Folder Include="BusinessLayer\System\ExternalServices\" />
     <Folder Include="ServiceLayer\ServiceDTO\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.15" />
   </ItemGroup>
 
 </Project>

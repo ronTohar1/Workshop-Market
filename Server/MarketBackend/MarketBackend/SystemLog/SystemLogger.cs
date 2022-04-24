@@ -36,6 +36,5 @@ namespace SystemLog
             }
             return _logger;
         }
-
     }
 }

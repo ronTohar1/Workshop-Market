@@ -1,21 +1,23 @@
 ﻿using System;
+using System.Collections.Concurrent;
 
 internal class StoreController
 {
-	private Dictionary<int, Store> openStores;
-	private Dictionary<int, Store> closedStores; 
+	private IDictionary<int, Store> openStores;
+	private IDictionary<int, Store> closedStores; 
 
 	private MembersController membersController;
 
 	private static int storeIdCounter = 0; // the next store id
+	private static Mutex storeIdControllerMutex = new Mutex(); 
 
 	// creates a new StoreController without stores yet
 	internal StoreController(MembersController membersController)
 	{
 		this.membersController = membersController;
 
-		this.openStores = new Dictionary<int, Store>(); 
-		this.closedStores = new Dictionary<int, Store>();
+		this.openStores = new ConcurrentDictionary<int, Store>(); 
+		this.closedStores = new ConcurrentDictionary<int, Store>();
 	}
 
 	internal Store GetStore(int storeId)

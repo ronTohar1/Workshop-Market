@@ -15,7 +15,6 @@
 	  
 	  
     <Folder Include="BusinessLayer\Market\Admins\" />
-    <Folder Include="BusinessLayer\Buyers\Members\" />
     <Folder Include="BusinessLayer\Market\StoreManagement\" />
     <Folder Include="BusinessLayer\System\ExternalServices\" />
     <Folder Include="ServiceLayer\ServiceDTO\" />

@@ -1,8 +1,8 @@
 ﻿using System;
 
-public class Product
+internal class Product
 {
-	public Product()
+	internal Product()
 	{
 
 	}

@@ -1,8 +1,8 @@
 ﻿using System;
 
-public class PurchasesManager
+internal class PurchasesManager
 {
-	public PurchasesManager()
+	internal PurchasesManager()
 	{
 	}
 }

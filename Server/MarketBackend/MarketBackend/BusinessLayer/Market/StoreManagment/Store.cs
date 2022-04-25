@@ -1,8 +1,8 @@
 ﻿using System;
 
-public class Store
+internal class Store
 {
-	public Store()
+	internal Store()
 	{
 	}
 }

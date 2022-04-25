@@ -23,16 +23,25 @@ internal class StoreController
 		return null;
     }
 
+	// r 2.1
 	internal int GetStoreIdByName(string storeName)
     {
 		// The stores in the system have a unique name for simplicity todo: check when adding a store
 		return -1; 
 	}
 
+	// cc 5
+	// r 3.2
 	// opens a new store and returns its id
 	internal int OpenNewStore(int memberId, string storeName)
     {
 		return -1; 
+    }
+
+	// r 4.9
+	internal void CloseStore(int storeId)
+    {
+		
     }
 
 

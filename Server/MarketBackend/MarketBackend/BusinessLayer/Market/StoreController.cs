@@ -143,11 +143,19 @@ public class StoreController
 
 	public virtual bool StoreExists(int storeId)
     {
-		return false; 
+		return openStores.ContainsKey(storeId) || closedStores.ContainsKey(storeId); 
     }
 
 	public virtual bool StoreExists(string storeName)
 	{
-		return false;
+		try
+		{
+			int storeId = GetStoreIdByName(storeName);
+			return StoreExists(storeId);
+		}
+        catch
+        {
+			return false; 
+        }
 	}
 }

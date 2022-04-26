@@ -37,6 +37,7 @@ internal class StoreController
 	// opens a new store and returns its id
 	internal int OpenNewStore(int memberId, string storeName)
     {
+		// notice that id needs to be new and not with an id of a closed store that is still here
 		return -1; 
     }
 
@@ -46,5 +47,18 @@ internal class StoreController
 		
     }
 
+	private bool CanAddOpenStore()
+    {
+		return false;
+    }
 
+	internal bool StoreExists(int storeId)
+    {
+		return false; 
+    }
+
+	internal bool StoreExists(string storeName)
+	{
+		return false;
+	}
 }

@@ -114,8 +114,8 @@ public class StoreController
 
 		if (!openStores.ContainsKey(storeId))
         {
-			throw new ArgumentException("An open store with an id: " + storeId + " does not exist in the system");  ;
 			openStoresMutex.ReleaseMutex();
+			throw new ArgumentException("An open store with an id: " + storeId + " does not exist in the system");
 		}
 
 		Store store = openStores[storeId];

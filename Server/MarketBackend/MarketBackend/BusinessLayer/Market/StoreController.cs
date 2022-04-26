@@ -31,10 +31,19 @@ public class StoreController
     }
 
 	// r 2.1
+	// In our system a store's name is unique so it returns the storeId or throws an exception
 	public int GetStoreIdByName(string storeName)
     {
-		// The stores in the system have a unique name for simplicity todo: check when adding a store
-		return -1; 
+		int id = openStores.FirstOrDefault(idStorePair => idStorePair.Value.GetName().Equals(storeName), new KeyValuePair<int, Store>(-1, null)).Key; 
+		if (id == -1) // ids are >= 0 
+			id = closedStores.FirstOrDefault(idStorePair => idStorePair.Value.GetName().Equals(storeName), new KeyValuePair<int, Store>(-1, null)).Key;
+
+		if (id == -1)
+        {
+			throw new ArgumentException("A store with the name: " + storeName + " does not exists in the system");
+		}
+
+		return id;
 	}
 
 	// cc 5

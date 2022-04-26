@@ -25,6 +25,8 @@ namespace TestMarketBackend.BusinessLayer.Market
         private const int memberId1 = 1;
         private const int memberId2 = 123;
 
+        // ------- Setup helping functions -------------------------------------
+
         private void membersConrtollerMemberExistsSetup(int[] exsitingMembersIds)
         {
             membersControllerMock = new Mock<MembersController>();
@@ -82,6 +84,51 @@ namespace TestMarketBackend.BusinessLayer.Market
                 membersController.StoreExists(It.IsAny<string>())).
                     Returns((string name) => existingStoreName.Equals(name));
         }
+
+        // returns the id of the new store
+        private int addOpenStore(int existingMemberId, string storeName)
+        {
+            return storeController.OpenNewStore(existingMemberId, storeName);
+        }
+
+        // ------- GetStoreIdByName() ----------------------------------------
+
+        [Test]
+        [TestCase(storeName1, new string[] { })]
+        [TestCase(storeName2, new string[] { storeName1 })]
+        public void TestGetStoreIdByNameStoreDoesNotExist(string storeName, string[] storeExtraExistingNames)
+        {
+            membersConrtollerMemberExistsSetup(memberId1);
+            storeController = new StoreController(membersController);
+
+            for (int i = 0; i < storeExtraExistingNames.Length; i++)
+            {
+                addOpenStore(memberId1, storeExtraExistingNames[i]);
+            }
+
+            Assert.Throws<ArgumentException>(() => storeController.GetStoreIdByName(storeName));
+        }
+
+        [Test]
+        [TestCase(storeName1, new string[] { })]
+        [TestCase(storeName2, new string[] { storeName1 })]
+        public void TestGetStoreIdByNameStoreExists(string storeName, string[] storeExtraExistingNames)
+        {
+
+            membersConrtollerMemberExistsSetup(memberId1);
+            storeController = new StoreController(membersController);
+            
+            int storeId = addOpenStore(memberId1, storeName);
+
+            for (int i = 0; i < storeExtraExistingNames.Length; i++)
+            {
+                addOpenStore(memberId1, storeExtraExistingNames[i]);
+            }
+
+            Assert.AreEqual(storeId, storeController.GetStoreIdByName(storeName));
+        }
+
+        // ------- OpenNewStore() ----------------------------------------
 
         [Test]
         [TestCase(memberId1, storeName1)]

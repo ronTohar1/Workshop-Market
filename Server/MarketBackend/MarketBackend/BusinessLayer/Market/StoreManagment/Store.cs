@@ -1,8 +1,10 @@
-﻿using System;
+﻿using MarketBackend.BusinessLayer.Buyers.Members;
+using System;
 
-internal class Store
+public class Store
 {
-	internal Store()
+	public Store(string storeName, Member founder)
 	{
+
 	}
 }

@@ -1,10 +1,10 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
 
-internal class MembersController
+public class MembersController
 {
 
 
-    internal Member GetMember(int id)
+    public virtual Member GetMember(int id)
     {
         return null; 
     }

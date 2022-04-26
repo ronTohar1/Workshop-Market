@@ -1,8 +1,8 @@
 ﻿using System;
 
-internal class Hierarchy<T>
+public class Hierarchy<T>
 {
-	internal Hierarchy()
+	public Hierarchy()
 	{
 	}
 }

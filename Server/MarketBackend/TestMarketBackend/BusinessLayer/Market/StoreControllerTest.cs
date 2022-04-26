@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TestMarketBackend.BusinessLayer.Market
 {
-    internal class StoreControllerTest
+    public class StoreControllerTest
     {
 
         private StoreController storeController;
@@ -24,14 +24,6 @@ namespace TestMarketBackend.BusinessLayer.Market
         private const string storeName2 = "sports things";
         private const int memberId1 = 1;
         private const int memberId2 = 123;
-
-        [OneTimeSetUp]
-        //internal void setupnonmemberscontroller()
-        //{
-        //    // creating mocked objects to send to the constructor
-        //    memberscontrollermock = new mock<memberscontroller>();
-        //    nonememberscontroller = memberscontrollermock.object;
-        //}
 
         private void membersConrtollerMemberExistsSetup(int[] exsitingMembersIds)
         {
@@ -91,31 +83,21 @@ namespace TestMarketBackend.BusinessLayer.Market
                     Returns((string name) => existingStoreName.Equals(name));
         }
 
-        //private void addNewStoreToStoreController()
-        //{
-        //    storeControllerMock = new Mock<StoreController>(); 
-
-        //    storeControllerMock.Setup(storeController =>
-        //    {
-        //        openStores.
-        //    }
-        //}
-
         [Test]
         [TestCase(memberId1, storeName1)]
         [TestCase(memberId2, storeName2)]
-        internal void TestOpenNewStoreMemberExistsStoreExists(int memberId, string storeName)
+        public void TestOpenNewStoreMemberExistsStoreExists(int memberId, string storeName)
         {
             int storeId = 1;
 
             membersConrtollerMemberExistsSetup(memberId);
 
-            storeControllerMock = new Mock<StoreController>();
+            storeControllerMock = new Mock<StoreController>(membersController);
             mockStoreExists(storeId, storeName);
 
             storeController = storeControllerMock.Object;
 
-            Assert.Throws<Exception>(() => storeController.OpenNewStore(memberId, storeName));
+            Assert.Throws<ArgumentException>(() => storeController.OpenNewStore(memberId, storeName));
 
             // todo: add a test for opening a store with an existing closed store name
         }
@@ -123,26 +105,26 @@ namespace TestMarketBackend.BusinessLayer.Market
         [Test]
         [TestCase(memberId1, storeName1)]
         [TestCase(memberId2, storeName2)]
-        internal void TestOpenNewStoreMemberDoesNotExistExistsStoreDoesNotExist(int memberId, string storeName)
+        public void TestOpenNewStoreMemberDoesNotExistExistsStoreDoesNotExist(int memberId, string storeName)
         {
             membersControllerMemberDoesNotExistsSetup();
 
-            storeControllerMock = new Mock<StoreController>();
+            storeControllerMock = new Mock<StoreController>(membersController);
             mockNoStores();
 
             storeController = storeControllerMock.Object;
 
-            Assert.Throws<Exception>(() => storeController.OpenNewStore(memberId, storeName));
+            Assert.Throws<ArgumentException>(() => storeController.OpenNewStore(memberId, storeName));
         }
 
         [Test]
-        [TestCase(memberId1, storeName1)]
+        [TestCase(new int[] { memberId1 }, new string[] { storeName1 })]
         [TestCase(new int[] {memberId1, memberId2 }, new string[] {storeName1, storeName2 })]
-        internal void TestOpenNewStoreShouldPass(int[] memberIds, string[] storeNames)
+        public void TestOpenNewStoreShouldPass(int[] memberIds, string[] storeNames)
         {
             membersConrtollerMemberExistsSetup(memberIds);
 
-            storeControllerMock = new Mock<StoreController>();
+            storeControllerMock = new Mock<StoreController>(membersController);
             mockNoStores();
 
             storeController = storeControllerMock.Object;
@@ -158,6 +140,8 @@ namespace TestMarketBackend.BusinessLayer.Market
 
                 storeIds.Add(currentId);
             }
+
+            // todo: maybe add synchronization tests
         }
     }
 }

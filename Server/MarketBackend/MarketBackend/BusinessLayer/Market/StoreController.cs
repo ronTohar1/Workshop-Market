@@ -1,7 +1,8 @@
-﻿using System;
+﻿using MarketBackend.BusinessLayer.Buyers.Members;
+using System;
 using System.Collections.Concurrent;
 
-internal class StoreController
+public class StoreController
 {
 	private IDictionary<int, Store> openStores;
 	private IDictionary<int, Store> closedStores; 
@@ -9,24 +10,28 @@ internal class StoreController
 	private MembersController membersController;
 
 	private static int storeIdCounter = 0; // the next store id
-	private static Mutex storeIdControllerMutex = new Mutex(); 
+	private static Mutex storeIdCounterMutex = new Mutex();
+
+	private Mutex openStoresMutex; 
 
 	// creates a new StoreController without stores yet
-	internal StoreController(MembersController membersController)
+	public StoreController(MembersController membersController)
 	{
 		this.membersController = membersController;
 
 		this.openStores = new ConcurrentDictionary<int, Store>(); 
 		this.closedStores = new ConcurrentDictionary<int, Store>();
+
+		this.openStoresMutex = new Mutex(); 
 	}
 
-	internal Store GetStore(int storeId)
+	public Store GetStore(int storeId)
     {
 		return null;
     }
 
 	// r 2.1
-	internal int GetStoreIdByName(string storeName)
+	public int GetStoreIdByName(string storeName)
     {
 		// The stores in the system have a unique name for simplicity todo: check when adding a store
 		return -1; 
@@ -35,29 +40,65 @@ internal class StoreController
 	// cc 5
 	// r 3.2
 	// opens a new store and returns its id
-	internal int OpenNewStore(int memberId, string storeName)
+	public int OpenNewStore(int memberId, string storeName)
     {
-		// notice that id needs to be new and not with an id of a closed store that is still here
-		return -1; 
+		Member storeFounder = membersController.GetMember(memberId);
+		if (storeFounder == null)
+		{
+			throw new ArgumentException("The member id: " + memberId + " does not exists in the system");
+		}
+
+		openStoresMutex.WaitOne();
+
+		string errorDescription = CanAddOpenStore(storeName);
+		if (errorDescription != null){
+			openStoresMutex.ReleaseMutex();
+			throw new ArgumentException(errorDescription); 
+        }
+
+		int newStoreId = GenerateStoreId(); 
+		openStores.Add(newStoreId, new Store(storeName, storeFounder));
+
+		openStoresMutex.ReleaseMutex(); 
+
+		return newStoreId; 
+
+		// todo: try again the synchronization here, maybe need to synchronize that the member exists, when 
+    }
+
+	// returns null if can or an error message if not
+	private string CanAddOpenStore(string storeName)
+	{
+		if (StoreExists(storeName)){
+			return "A store with the name: " + storeName + " already exists"; 
+        }
+		return null; 
+	}
+
+	private static int GenerateStoreId()
+    {
+		storeIdCounterMutex.WaitOne();
+
+		int result = storeIdCounter;
+		storeIdCounter++;
+
+		storeIdCounterMutex.ReleaseMutex(); 
+
+		return result; 
     }
 
 	// r 4.9
-	internal void CloseStore(int storeId)
+	public void CloseStore(int storeId)
     {
 		
     }
 
-	private bool CanAddOpenStore()
-    {
-		return false;
-    }
-
-	internal bool StoreExists(int storeId)
+	public virtual bool StoreExists(int storeId)
     {
 		return false; 
     }
 
-	internal bool StoreExists(string storeName)
+	public virtual bool StoreExists(string storeName)
 	{
 		return false;
 	}

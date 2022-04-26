@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Buyers.Members
 {
-    internal class Member
+    public class Member
     {
         
     }

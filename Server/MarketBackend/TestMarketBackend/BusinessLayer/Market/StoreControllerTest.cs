@@ -24,6 +24,8 @@ namespace TestMarketBackend.BusinessLayer.Market
         private const string storeName2 = "sports things";
         private const int memberId1 = 1;
         private const int memberId2 = 123;
+        private const int storeId1 = 2;
+        private const int storeId2 = 29; 
 
         // ------- Setup helping functions -------------------------------------
 
@@ -64,12 +66,12 @@ namespace TestMarketBackend.BusinessLayer.Market
         private void mockNoStores()
         {
             // returns false for every given id
-            storeControllerMock.Setup(membersController =>
-                membersController.StoreExists(It.IsAny<int>())).
+            storeControllerMock.Setup(storeController =>
+                storeController.StoreExists(It.IsAny<int>())).
                     Returns(false);
             // returns false for every given name
-            storeControllerMock.Setup(membersController =>
-                membersController.StoreExists(It.IsAny<string>())).
+            storeControllerMock.Setup(storeController =>
+                storeController.StoreExists(It.IsAny<string>())).
                     Returns(false);
         }
 
@@ -91,6 +93,17 @@ namespace TestMarketBackend.BusinessLayer.Market
             return storeController.OpenNewStore(existingMemberId, storeName);
         }
 
+        private void StoreControllerWithStoresSetup(string [] storesNames)
+        {
+            membersConrtollerMemberExistsSetup(memberId1);
+            storeController = new StoreController(membersController);
+
+            for (int i = 0; i < storesNames.Length; i++)
+            {
+                addOpenStore(memberId1, storesNames[i]);
+            }
+        }
+
         // ------- GetStoreIdByName() ----------------------------------------
 
         [Test]
@@ -98,13 +111,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         [TestCase(storeName2, new string[] { storeName1 })]
         public void TestGetStoreIdByNameStoreDoesNotExist(string storeName, string[] storeExtraExistingNames)
         {
-            membersConrtollerMemberExistsSetup(memberId1);
-            storeController = new StoreController(membersController);
-
-            for (int i = 0; i < storeExtraExistingNames.Length; i++)
-            {
-                addOpenStore(memberId1, storeExtraExistingNames[i]);
-            }
+            StoreControllerWithStoresSetup(storeExtraExistingNames); 
 
             Assert.Throws<ArgumentException>(() => storeController.GetStoreIdByName(storeName));
         }
@@ -114,16 +121,9 @@ namespace TestMarketBackend.BusinessLayer.Market
         [TestCase(storeName2, new string[] { storeName1 })]
         public void TestGetStoreIdByNameStoreExists(string storeName, string[] storeExtraExistingNames)
         {
+            StoreControllerWithStoresSetup(storeExtraExistingNames); 
 
-            membersConrtollerMemberExistsSetup(memberId1);
-            storeController = new StoreController(membersController);
-            
             int storeId = addOpenStore(memberId1, storeName);
-
-            for (int i = 0; i < storeExtraExistingNames.Length; i++)
-            {
-                addOpenStore(memberId1, storeExtraExistingNames[i]);
-            }
 
             Assert.AreEqual(storeId, storeController.GetStoreIdByName(storeName));
         }
@@ -188,7 +188,59 @@ namespace TestMarketBackend.BusinessLayer.Market
                 storeIds.Add(currentId);
             }
 
+            foreach (int storeId in storeIds)
+            {
+                Assert.NotNull(storeController.GetOpenStore(storeId));
+            }
+
             // todo: maybe add synchronization tests
+        }
+
+        // ------- CloseStore() ----------------------------------------
+
+        [Test]
+        [TestCase(storeId1)]
+        [TestCase(storeId2)]
+        public void TestCloseStoreNoStores(int storeId)
+        {
+
+            membersConrtollerMemberExistsSetup(memberId1); 
+            storeControllerMock = new Mock<StoreController>(membersController);
+            mockNoStores(); // to make sure
+            storeController = storeControllerMock.Object;
+
+            Assert.Throws<ArgumentException>(() => storeController.CloseStore(memberId1, storeId)); 
+        }
+
+        [Test]
+        [TestCase(storeName1, new string[] { })]
+        [TestCase(storeName2, new string[] { storeName1 })]
+        public void TestCloseStoreWhichIsClosed(string storeName, string[] storeExtraExistingNames)
+        {
+            StoreControllerWithStoresSetup(storeExtraExistingNames); // also sets up so that member1 exists in the system
+
+            int storeId = addOpenStore(memberId1, storeName);
+
+            storeController.CloseStore(memberId1, storeId); // should work
+
+            Assert.Throws<ArgumentException>(() => storeController.CloseStore(memberId1, storeId));
+        }
+
+        // todo: should add tests for CloseStore in the Store testing
+
+        [Test]
+        [TestCase(storeName1, new string[] { })]
+        [TestCase(storeName2, new string[] { storeName1 })]
+        public void TestCloseStoreShouldPass(string storeName, string[] storeExtraExistingNames)
+        {
+            StoreControllerWithStoresSetup(storeExtraExistingNames); // also sets up so that member1 exists in the system
+
+            int storeId = addOpenStore(memberId1, storeName);
+
+            storeController.CloseStore(memberId1, storeId); // should work
+
+            Assert.IsNull(storeController.GetOpenStore(storeId));
+            Assert.NotNull(storeController.GetClosedStore(storeId));
         }
     }
 }

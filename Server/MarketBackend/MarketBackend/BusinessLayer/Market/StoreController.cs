@@ -13,6 +13,7 @@ public class StoreController
 	private static Mutex storeIdCounterMutex = new Mutex();
 
 	private Mutex openStoresMutex; 
+	private Mutex closedStoresMutex;
 
 	// creates a new StoreController without stores yet
 	public StoreController(MembersController membersController)
@@ -23,12 +24,22 @@ public class StoreController
 		this.closedStores = new ConcurrentDictionary<int, Store>();
 
 		this.openStoresMutex = new Mutex(); 
+		this.closedStoresMutex = new Mutex();
 	}
 
-	public Store GetStore(int storeId)
+	public Store GetOpenStore(int storeId)
     {
-		return null;
+		if (!openStores.ContainsKey(storeId))
+			return null;
+		return openStores[storeId];
     }
+
+	public Store GetClosedStore(int storeId)
+	{
+		if (!closedStores.ContainsKey(storeId))
+			return null;
+		return closedStores[storeId];
+	}
 
 	// r 2.1
 	// In our system a store's name is unique so it returns the storeId or throws an exception
@@ -97,9 +108,37 @@ public class StoreController
     }
 
 	// r 4.9
-	public void CloseStore(int storeId)
+	public void CloseStore(int memberId, int storeId)
     {
-		
+		openStoresMutex.WaitOne(); 
+
+		if (!openStores.ContainsKey(storeId))
+        {
+			throw new ArgumentException("An open store with an id: " + storeId + " does not exist in the system");  ;
+			openStoresMutex.ReleaseMutex();
+		}
+
+		Store store = openStores[storeId];
+
+		closedStoresMutex.WaitOne();
+
+		try // catching and throwing to release the mutexes
+		{
+			store.CloseStore(memberId); // the store checks permission so it needs to be at least a member
+		}
+		catch (Exception exception)
+        {
+			closedStoresMutex.ReleaseMutex();
+			openStoresMutex.ReleaseMutex();
+			
+			throw exception; 
+		}
+
+		openStores.Remove(storeId);
+		closedStores.Add(storeId, store);
+
+		closedStoresMutex.ReleaseMutex(); 
+		openStoresMutex.ReleaseMutex();
     }
 
 	public virtual bool StoreExists(int storeId)

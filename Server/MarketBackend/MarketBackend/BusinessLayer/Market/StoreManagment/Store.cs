@@ -14,4 +14,9 @@ public class Store
     {
         return name; 
     }
+
+    public void CloseStore(int memberId)
+    {
+        // todo: implement
+    }
 }

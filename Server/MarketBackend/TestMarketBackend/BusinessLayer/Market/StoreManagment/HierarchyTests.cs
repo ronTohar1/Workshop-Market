@@ -27,7 +27,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             int sizeBefore = hierarchy.children.Count;
             hierarchy.AddToHierarchy(node1, node);
             int sizeAfter = hierarchy.children.Count;
-            List<String> childrenValueSet = hierarchy.children.ConvertAll(h => h.value);
+            List<String> childrenValueSet = hierarchy.children.Select(h => h.value).ToList();
          
             Assert.IsTrue(childrenValueSet.Contains(node) && sizeAfter==sizeBefore+1);
         }
@@ -59,7 +59,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             int sizeBefore = adderH.children.Count;
             hierarchy.AddToHierarchy(adder, nodeToAdd);
             int sizeAfter = adderH.children.Count;
-            List<String> childrenValueSet = adderH.children.ConvertAll(h => h.value);
+            List<String> childrenValueSet = adderH.children.Select(h => h.value).ToList();
 
             Assert.IsTrue(childrenValueSet.Contains(nodeToAdd) && sizeAfter == sizeBefore + 1);
         }

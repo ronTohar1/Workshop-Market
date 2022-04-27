@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
 using System;
+using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
 
 public class StoreController

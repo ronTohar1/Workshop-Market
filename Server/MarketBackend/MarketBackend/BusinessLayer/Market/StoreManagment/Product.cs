@@ -32,7 +32,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			amountInInventoryMutex.WaitOne();
 			if (amountInInventory < amountToRemove) { 
 				amountInInventoryMutex.ReleaseMutex();
-				throw new StoreManagmentException($"Not enough products of {name} in storage");
+				throw new MarketException($"Not enough products of {name} in storage");
 			}
 			amountInInventory = amountInInventory - amountToRemove;
 			amountInInventoryMutex.ReleaseMutex();
@@ -48,7 +48,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public void RemovePurchaseOption(PurchaseOption purchaseOption)
 		{
 			if (!purchaseOptions.Contains(purchaseOption)) 
-				throw new StoreManagmentException($"Not enough products of {name} in storage");
+				throw new MarketException($"Not enough products of {name} in storage");
 			purchaseOptions.Remove(purchaseOption);
 		}
 

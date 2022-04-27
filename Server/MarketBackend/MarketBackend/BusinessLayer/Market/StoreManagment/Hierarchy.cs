@@ -7,17 +7,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public List<Hierarchy<T>> children { get; }
 		public Hierarchy<T> parent { get; }
 
+		private Mutex childrenMutex; //we will use this Mutex every time we would like to change the children List
+
 		public Hierarchy(T value)
 		{
 			this.value = value;
 			this.children = new List<Hierarchy<T>>();
 			this.parent = null;
+			childrenMutex = new Mutex();
 		}
 		public Hierarchy(T value, Hierarchy<T> parent)
 		{
 			this.value = value;
 			this.children = new List<Hierarchy<T>>();
 			this.parent = parent;
+			childrenMutex = new Mutex();
 		}
 
 		// r.4.4
@@ -27,16 +31,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			// adder is a node somewhere in the current Hierarchy
 			// which attemps to add a *new* child (valueToAdd) to it's own Hierarchy
 
+			childrenMutex.WaitOne();
 			Hierarchy<T> adderHierarchy = FindHierarchy(adder);
-			if (adderHierarchy == null)
+			if (adderHierarchy == null) { 
+				childrenMutex.ReleaseMutex();
 				throw new StoreManagmentException("the adder isn't in the hierarchy");
+			}
 			
 			Hierarchy<T> valueHierarchy = FindHierarchy(valueToAdd);
-			if (valueHierarchy != null) // will prevent cyclic assignments
+			if (valueHierarchy != null) {  // will prevent cyclic assignments
+				childrenMutex.ReleaseMutex();
 				throw new StoreManagmentException("allready in the hirearchy");
-			
-			adderHierarchy.children.Add(new Hierarchy<T>(valueToAdd, adderHierarchy));
+			}
 
+			adderHierarchy.children.Add(new Hierarchy<T>(valueToAdd, adderHierarchy));
+			childrenMutex.ReleaseMutex();
 		}
 
 		// r.4.5
@@ -46,18 +55,24 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			// remover is a node somewhere in the current Hierarchy
 			// which attemps to remove existing child (valueToRemove) from it's own Hierarchy
 
+			childrenMutex.WaitOne();
+			
 			Hierarchy<T> removerHierarchy = FindHierarchy(remover);
-			if (removerHierarchy == null)
+			if (removerHierarchy == null) { 
+				childrenMutex.ReleaseMutex();
 				throw new StoreManagmentException("the remover isn't in the hierarchy");
-
+			}
 			Hierarchy<T> valueHierarchy = removerHierarchy.FindHierarchy(valueToRemove);
-			if (valueHierarchy == null) 
+			if (valueHierarchy == null) { 
+				childrenMutex.ReleaseMutex();
 				throw new StoreManagmentException("the remover doesn't have the appropriate hierarchy classification");
-
+			}
 			Hierarchy<T> valueHierarchyParent = valueHierarchy.parent;
 			if (valueHierarchyParent != null) {
 				valueHierarchyParent.children.Remove(valueHierarchy);
 			}
+
+			childrenMutex.ReleaseMutex();
 
 		}
 
@@ -81,7 +96,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 					return findFromChild;
 			}
 
-			// last case, means that value isn;t in this Hierarchy
+			// last case, means that value isn't in this Hierarchy
 			return null;
 		}
 	}

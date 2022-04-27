@@ -27,7 +27,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
             }
             catch (Exception ex)
             {
-                logger.Error($"Guest with id: {123} doesn't have the right permission");
+                logger.Error(ex, $"Guest with id: {123} doesn't have the right permission");
             }
 
         }

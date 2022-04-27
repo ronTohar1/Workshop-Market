@@ -9,7 +9,7 @@ namespace SystemLog
 {
     class SystemLogger
     {
-        private static Logger _logger ;
+        private static Logger? _logger=null;
         public static Logger getLogger()
         {
             if (_logger == null)

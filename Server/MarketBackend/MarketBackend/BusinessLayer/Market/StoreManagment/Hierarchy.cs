@@ -36,13 +36,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			Hierarchy<T> adderHierarchy = FindHierarchy(adder);
 			if (adderHierarchy == null) { 
 				hierarchyMutex.ReleaseMutex();
-				throw new StoreManagmentException("the adder isn't in the hierarchy");
+				throw new MarketException("the adder isn't in the hierarchy");
 			}
 			
 			Hierarchy<T> valueHierarchy = FindHierarchy(valueToAdd);
 			if (valueHierarchy != null) {  // will prevent cyclic assignments
 				hierarchyMutex.ReleaseMutex();
-				throw new StoreManagmentException("allready in the hirearchy");
+				throw new MarketException("allready in the hirearchy");
 			}
 
 			adderHierarchy.children.Add(new Hierarchy<T>(valueToAdd, adderHierarchy));
@@ -61,12 +61,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			Hierarchy<T> removerHierarchy = FindHierarchy(remover);
 			if (removerHierarchy == null) { 
 				hierarchyMutex.ReleaseMutex();
-				throw new StoreManagmentException("the remover isn't in the hierarchy");
+				throw new MarketException("the remover isn't in the hierarchy");
 			}
 			Hierarchy<T> valueHierarchy = removerHierarchy.FindHierarchy(valueToRemove);
 			if (valueHierarchy == null) { 
 				hierarchyMutex.ReleaseMutex();
-				throw new StoreManagmentException("the remover doesn't have the appropriate hierarchy classification");
+				throw new MarketException("the remover doesn't have the appropriate hierarchy classification");
 			}
 			Hierarchy<T> valueHierarchyParent = valueHierarchy.parent;
 			if (valueHierarchyParent != null) {

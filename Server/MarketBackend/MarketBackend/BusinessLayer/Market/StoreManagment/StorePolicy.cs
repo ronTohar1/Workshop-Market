@@ -8,8 +8,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
     public class StorePolicy
     {
-        private List<PurchaseOption> purchaseOptions { get;  }
-        private Dictionary<Product, int> minAmountPerProduct { get;  }
+        private IList<PurchaseOption> purchaseOptions { get;  }
+        private IDictionary<Product, int> minAmountPerProduct { get;  }
+
+
 
     }
 }

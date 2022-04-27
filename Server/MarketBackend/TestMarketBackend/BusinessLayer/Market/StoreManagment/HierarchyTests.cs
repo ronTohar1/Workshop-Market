@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Moq;
+
+using MarketBackend.BusinessLayer;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
@@ -44,7 +46,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             BuildFirstLevel();
             int sizeBefore = hierarchy.children.Count;
-            Assert.Throws<StoreManagmentException>(()=>hierarchy.AddToHierarchy(node1, node));
+            Assert.Throws<MarketException>(()=>hierarchy.AddToHierarchy(node1, node));
             int sizeAfter = hierarchy.children.Count;
             Assert.IsTrue(sizeAfter == sizeBefore);
         }

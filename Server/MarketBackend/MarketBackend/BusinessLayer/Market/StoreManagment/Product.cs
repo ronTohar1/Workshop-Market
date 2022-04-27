@@ -3,20 +3,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 { 
 	public class Product
 	{
-		private string name;
-		private int amountInInventory;
-		private Dictionary<string, double> discounts; //mapping between discount code and discount percentage 
-		private List<PurchaseOption> purchaseOptions;
-		
-		public Product(string product_name)
+		public string name { get; set; }
+		public int amountInInventory { get; set; }
+		public List<PurchaseOption> purchaseOptions { get; }
+
+		public double pricePerUnit { get; set; }
+
+		public Product(string product_name, double pricePerUnit)
 		{
-			name = product_name;
-			amountInInventory = 0;
-			discounts = new Dictionary<string, double>();
-			purchaseOptions = new List<PurchaseOption>();
-		}
-		public void AddNewDiscount(string discount_code, double discount_percentage) { 
-			discounts[discount_code] = discount_percentage;
+			this.name = product_name;
+			this.amountInInventory = 0;
+			this.purchaseOptions = new List<PurchaseOption>();
+			this.pricePerUnit = pricePerUnit;
 		}
 		public void AddToInventory(int amountToAdd) { 
 			amountInInventory = amountInInventory + amountToAdd;
@@ -39,5 +37,5 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 				purchaseOptions.Remove(purchaseOption);
 		}
 
-	}
+		}
 }

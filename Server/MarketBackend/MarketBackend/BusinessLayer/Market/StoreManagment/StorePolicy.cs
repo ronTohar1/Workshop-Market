@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
-    internal class StorePolicy
+    public class StorePolicy
     {
+        private List<PurchaseOption> purchaseOptions { get;  }
+        private Dictionary<Product, int> minAmountPerProduct { get;  }
+
     }
 }

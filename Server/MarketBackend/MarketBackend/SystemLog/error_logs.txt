@@ -2,3 +2,4 @@
 2022-04-25 00:58:57.0523|ERROR|SystemLog.SystemLogger|Guest with id: 123 doesn't have the right permission
 2022-04-25 00:59:21.4704|ERROR|SystemLog.SystemLogger|Guest with id: 123 doesn't have the right permission
 2022-04-26 18:45:54.8085|ERROR|SystemLog.SystemLogger|Guest with id: 123 doesn't have the right permission
+2022-04-27 00:14:40.3253|ERROR|SystemLog.SystemLogger|Guest with id: 123 doesn't have the right permission

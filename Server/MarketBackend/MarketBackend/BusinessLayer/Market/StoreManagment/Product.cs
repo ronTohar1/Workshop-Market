@@ -16,19 +16,26 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			this.purchaseOptions = new List<PurchaseOption>();
 			this.pricePerUnit = pricePerUnit;
 		}
+		// r.4.1
 		public void AddToInventory(int amountToAdd) { 
 			amountInInventory = amountInInventory + amountToAdd;
 		} 
+		// cc 9
+		// r.4.1
 		public void RemoveFromInventory(int amountToRemove) { 
 			if (amountInInventory<amountToRemove)
 				throw new StoreManagmentException($"Not enough products of {name} in storage");
 			else
 				amountInInventory = amountInInventory - amountToRemove;
 		}
+
+		// r.4.2
 		public void AddPurchaseOption(PurchaseOption purchaseOption) {
 			if (!purchaseOptions.Contains(purchaseOption))	
 				purchaseOptions.Add(purchaseOption);
 		}
+
+		// r.4.2
 		public void RemovePurchaseOption(PurchaseOption purchaseOption)
 		{
 			if (!purchaseOptions.Contains(purchaseOption))
@@ -37,5 +44,5 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 				purchaseOptions.Remove(purchaseOption);
 		}
 
-		}
+	}
 }

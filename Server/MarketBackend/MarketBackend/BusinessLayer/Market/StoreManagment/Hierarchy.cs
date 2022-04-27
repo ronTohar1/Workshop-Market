@@ -20,7 +20,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			this.parent = parent;
 		}
 
-
+		// r.4.4
+		// r.4.6
 		public void AddToHierarchy(T adder, T valueToAdd) 
 		{
 			// adder is a node somewhere in the current Hierarchy
@@ -35,6 +36,28 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 				throw new StoreManagmentException("allready in the hirearchy");
 			
 			adderHierarchy.children.Add(new Hierarchy<T>(valueToAdd, adderHierarchy));
+
+		}
+
+		// r.4.5
+		// r.4.8
+		public void RemoveFromHierarchy(T remover, T valueToRemove)
+		{
+			// remover is a node somewhere in the current Hierarchy
+			// which attemps to remove existing child (valueToRemove) from it's own Hierarchy
+
+			Hierarchy<T> removerHierarchy = FindHierarchy(remover);
+			if (removerHierarchy == null)
+				throw new StoreManagmentException("the remover isn't in the hierarchy");
+
+			Hierarchy<T> valueHierarchy = removerHierarchy.FindHierarchy(valueToRemove);
+			if (valueHierarchy == null) 
+				throw new StoreManagmentException("the remover doesn't have the appropriate hierarchy classification");
+
+			Hierarchy<T> valueHierarchyParent = valueHierarchy.parent;
+			if (valueHierarchyParent != null) {
+				valueHierarchyParent.children.Remove(valueHierarchy);
+			}
 
 		}
 
@@ -61,27 +84,5 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			// last case, means that value isn;t in this Hierarchy
 			return null;
 		}
-
-	
-		public void RemoveFromHierarchy(T remover, T valueToRemove)
-		{
-			// remover is a node somewhere in the current Hierarchy
-			// which attemps to remove existing child (valueToRemove) from it's own Hierarchy
-
-			Hierarchy<T> removerHierarchy = FindHierarchy(remover);
-			if (removerHierarchy == null)
-				throw new StoreManagmentException("the remover isn't in the hierarchy");
-
-			Hierarchy<T> valueHierarchy = removerHierarchy.FindHierarchy(valueToRemove);
-			if (valueHierarchy == null) 
-				throw new StoreManagmentException("the remover doesn't have the appropriate hierarchy classification");
-
-			Hierarchy<T> valueHierarchyParent = valueHierarchy.parent;
-			if (valueHierarchyParent != null) {
-				valueHierarchyParent.children.Remove(valueHierarchy);
-			}
-
-		}
-
 	}
 }

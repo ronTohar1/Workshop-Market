@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
-    public class Purchase
+    // r.6.4
+    public class Purchase 
     {
         private DateTime purchaseDate { get; }
         private double purchasePrice { get; }

@@ -5,7 +5,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 	{
 		public string name { get; set; }
 		public int amountInInventory { get; set; }
-		public List<PurchaseOption> purchaseOptions { get; }
+		public IList<PurchaseOption> purchaseOptions { get; }
 		public double pricePerUnit { get; set; }
 
 		private Mutex amountInInventoryMutex;
@@ -15,11 +15,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		{
 			this.name = product_name;
 			this.amountInInventory = 0;
-			this.purchaseOptions = new List<PurchaseOption>();
+			this.purchaseOptions = new SynchronizedCollection<PurchaseOption>();
 			this.pricePerUnit = pricePerUnit;
 
 			amountInInventoryMutex = new Mutex();
-			purchaseOptionsMutex = new Mutex();
 		}
 		// r.4.1
 		public void AddToInventory(int amountToAdd) { 
@@ -41,22 +40,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 		// r.4.2
 		public void AddPurchaseOption(PurchaseOption purchaseOption) {
-			purchaseOptionsMutex.WaitOne();
 			if (!purchaseOptions.Contains(purchaseOption))	
 				purchaseOptions.Add(purchaseOption);
-			purchaseOptionsMutex.ReleaseMutex();
 		}
 
 		// r.4.2
 		public void RemovePurchaseOption(PurchaseOption purchaseOption)
 		{
-			purchaseOptionsMutex.WaitOne();
-			if (!purchaseOptions.Contains(purchaseOption)) { 
-				purchaseOptionsMutex.ReleaseMutex();
+			if (!purchaseOptions.Contains(purchaseOption)) 
 				throw new StoreManagmentException($"Not enough products of {name} in storage");
-			}
 			purchaseOptions.Remove(purchaseOption);
-			purchaseOptionsMutex.ReleaseMutex();
 		}
 
 	}

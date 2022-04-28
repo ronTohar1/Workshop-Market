@@ -9,23 +9,30 @@ namespace MarketBackend.ServiceLayer
 {
     internal class MemberFacade : BuyerFacade
     {
+        private readonly MembersController membersController;
 
-        public Response<int> Register(string userName, string password)
+        MemberFacade(MembersController membersController)
+        {
+            this.membersController = membersController;
+        }
+
+        Response<int> Register(string userName, string password)
+        {
+            //membersController.
+            return new Response<int>();
+        }
+
+        Response<int> Login(string userName, string password)
         {
             return new Response<int>();
         }
 
-        public Response<int> Login(string userName, string password)
-        {
-            return new Response<int>();
-        }
-
-        public Response<bool> Logout(int memberId)
+        Response<bool> Logout(int memberId)
         {
             return new Response<bool>();
         }
 
-        public Response<bool> AddProductReview(int memberId, int storeId, int productId, string review)
+        Response<bool> AddProductReview(int memberId, int storeId, int productId, string review)
         {
             return new Response<bool>();
         }

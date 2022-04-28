@@ -2,8 +2,6 @@
 
 public class MembersController
 {
-
-
     public virtual Member GetMember(int id)
     {
         return null; 

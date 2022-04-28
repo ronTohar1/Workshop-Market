@@ -53,7 +53,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             setUpInitialInventory();
             int amountBefore = product.amountInInventory;
-            Assert.Throws<StoreManagmentException>(() => product.RemoveFromInventory(amounToRemove));
+            Assert.Throws<MarketException>(() => product.RemoveFromInventory(amounToRemove));
             int amountAfter = product.amountInInventory;
             Assert.IsTrue(amountBefore == amountAfter);
         }
@@ -95,7 +95,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             setUpInitialPurchasesOptions();
             int amountBefore = product.purchaseOptions.Count;
-            Assert.Throws<StoreManagmentException>(() => product.RemovePurchaseOption(purchaseOptionToRemove));
+            Assert.Throws<MarketException>(() => product.RemovePurchaseOption(purchaseOptionToRemove));
             int amountAfter = product.purchaseOptions.Count;
             Assert.IsTrue(amountBefore == amountAfter);
         }

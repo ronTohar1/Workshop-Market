@@ -78,7 +78,7 @@ public class StoreController
         }
 
 		int newStoreId = GenerateStoreId(); 
-		openStores.Add(newStoreId, new Store(storeName, storeFounder));
+		openStores.Add(newStoreId, new Store(storeName, storeFounder, (memberId) => membersController.GetMember(memberId)));
 
 		openStoresMutex.ReleaseMutex(); 
 

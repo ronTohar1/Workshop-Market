@@ -99,5 +99,18 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             int amountAfter = product.purchaseOptions.Count;
             Assert.IsTrue(amountBefore == amountAfter);
         }
+
+        // AddToInventory test
+        [Test]
+        [TestCase("Amit", "yummy! highly recommend!")]
+        [TestCase("Idan", "yuck! ")]
+        public void AddReview(string memberName, string reviewContent)
+        {
+            int amountOfReviewsBefore = product.reviews.Count;
+            product.AddProductReview(memberName, reviewContent);
+            int amountOfReviewsAfter = product.reviews.Count;
+            Assert.IsTrue(amountOfReviewsBefore + +1 == amountOfReviewsAfter);
+            Assert.IsTrue(product.reviews.Contains(memberName+": "+ reviewContent));
+        }
     }
 }

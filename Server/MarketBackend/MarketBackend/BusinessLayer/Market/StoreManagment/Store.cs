@@ -71,10 +71,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             // todo: implement
         }
+        public void AddProductReview(int memberId, int productId, string review) {
+            // todo: implement note that the member Id here is for the memmber info, such as name
+        }
+        public void GetProductReviews(int productId)
+        {
+            // todo: implement
+        }
 
-        // todo: implement AddProductReview(memberId: int, review: String): bool
+        public bool ContainProductInStock(int productId) 
+            => products.ContainsKey(productId);
 
-        // todo: implement GetProductReviews(productId: int): ... 
+        public Product SearchProductByName(string productName)
+        => products.Values.ToList().Where(p => p.name == productName).FirstOrDefault();//the default is null
+        public Product SearchProductByProductId(int productId)
+        => products.ContainsKey(productId) ? products[productId] : null;
 
         // ------------------------------ Purchase Policy ------------------------------
         public void AddPurchasePolicy(int memberId, int productId, PurchaseOption purchaseOption)

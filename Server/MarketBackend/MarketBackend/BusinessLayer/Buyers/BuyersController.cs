@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using MarketBackend.BusinessLayer.Buyers.Members;
+using MarketBackend.BusinessLayer.Buyers.Guests;
 namespace MarketBackend.BusinessLayer.Buyers
 {
     public class BuyersController

@@ -23,7 +23,7 @@ namespace MarketBackend.BusinessLayer.Buyers
         }
 
         internal Member GetMember(int memberId)
-        {
+    {
             throw new NotImplementedException();
         }
     }

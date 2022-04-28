@@ -18,15 +18,17 @@ namespace MarketBackend.BusinessLayer.Buyers
 
 
         private static Mutex mutex = new Mutex();
+
         public static int NextId
         {   
             get
             {
-                mutex.WaitOne();
-                int lastId = _nextId;
-                NextId++;
-                mutex.ReleaseMutex();
-                return lastId;
+                lock (mutex)
+                {
+                    int lastId = _nextId;
+                    NextId++;
+                    return lastId;
+                }
             }
             private set
             {
@@ -36,11 +38,17 @@ namespace MarketBackend.BusinessLayer.Buyers
 
         public Buyer()
         {
+            //Init properites
             Cart = new Cart();
             Id = NextId;
             purchaseHistory = new SynchronizedCollection<Purchase>();
         }
 
+
+        public bool AddPurchase(Purchase purchase)
+        {
+            throw new NotImplementedException();
+        }
 
     }
 }

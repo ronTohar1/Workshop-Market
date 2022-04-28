@@ -14,10 +14,12 @@ public class MembersController : IBuyersController
     private readonly Security security;
     //private const int invalidId = -1;
 
+    private Mutex mutex;
     public MembersController()
     {
         members = new ConcurrentDictionary<int, Member>();
         this.security = new Security();
+        this.mutex = new Mutex();
     }
 
     public Buyer? GetBuyer(int buyerId)
@@ -25,17 +27,19 @@ public class MembersController : IBuyersController
         return GetMember(buyerId);
     }
 
-
     public int Register(string username, string password)
     {   
         if (this.security.CheckUsername(username) && this.security.CheckPassword(password))
         {
-            if (!this.IsUsernameExists(username))
+            lock (mutex)
             {
-                Member member = new Member(username, this.security.HashPassword(password));
-                if (!this.AddMember(member))
-                    throw new Exception("Could not add valid member to the member controller");
-                return member.Id;
+                if (!this.IsUsernameExists(username))
+                {
+                    Member member = new Member(username, this.security.HashPassword(password));
+                    if (!this.AddMember(member))
+                        throw new Exception("Could not add valid member to the members controller");
+                    return member.Id;
+                }
             }
         }
         throw new MarketException("Username or Password are not valid!");
@@ -53,7 +57,7 @@ public class MembersController : IBuyersController
 
     private bool IsUsernameExists(string username)
     {
-        foreach (Member member in buyers.Values)
+        foreach (Member member in members.Values)
             if (member.Username == username)
                 return true;
         return false;

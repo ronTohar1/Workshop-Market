@@ -9,6 +9,6 @@ namespace MarketBackend.BusinessLayer.Buyers
 {
     interface IBuyersController
     {
-        public Buyer GetBuyer(int buyerId);
+        public Buyer? GetBuyer(int buyerId);
     }
 }

@@ -72,7 +72,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void AddToHierarchyFromSecondLevelFail1(String adder, String nodeToAdd)
         {
             BuildFirstLevel();
-            Assert.Throws<StoreManagmentException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
+            Assert.Throws<MarketException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
         }
         
         [Test]//Cyclic check
@@ -83,7 +83,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             BuildFirstLevel();
             Hierarchy<String> adderH = hierarchy.FindHierarchy(adder);
             int sizeBefore = adderH.children.Count;
-            Assert.Throws<StoreManagmentException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
+            Assert.Throws<MarketException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
             int sizeAfter = adderH.children.Count;
 
             Assert.IsTrue(sizeAfter == sizeBefore);
@@ -154,7 +154,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void RemoveFromHierarchyFail(String remover, String nodeToRemove)
         {
             BuildAidHierarchy();
-            Assert.Throws<StoreManagmentException>(() => hierarchy.RemoveFromHierarchy(remover, nodeToRemove));
+            Assert.Throws<MarketException>(() => hierarchy.RemoveFromHierarchy(remover, nodeToRemove));
         }
     }
 }

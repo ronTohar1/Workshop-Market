@@ -162,11 +162,6 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetupMemberToCoOwner(coOwnerId2);
 
             Assert.Throws<MarketException>(() => store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId));
-
-            // target is not a member
-            // target is alerady a coOwner
-            // target is already a manager
-            // target is storeFounder
         }
 
         [Test]
@@ -180,6 +175,19 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetupMemberToManagerWithAllPermissions(newCoOwnerMemberId); 
 
             Assert.Throws<MarketException>(() => store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId));
+        }
+
+        [Test]
+        [TestCase(coOwnerId1, memberId1)]
+        public void TestMakeCoOwnerSholdPass(int requestingMemberId, int newCoOwnerMemberId)
+        {
+            SetupStoreNoRoles();
+
+            store.MakeCoOwner(founderMemberId, requestingMemberId); // this is part of the testing
+            Assert.IsTrue(store.IsCoOwner(requestingMemberId));
+            
+            store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId);
+            Assert.IsTrue(store.IsCoOwner(newCoOwnerMemberId));
         }
     }
 }

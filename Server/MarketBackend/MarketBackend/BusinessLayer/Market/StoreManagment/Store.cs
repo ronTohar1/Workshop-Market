@@ -108,6 +108,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return null;
         }
 
+        public bool IsFounder(int memberId)
+        {
+            return false;
+        }
+
+        public bool IsCoOwner(int memberId)
+        {
+            return false;
+        }
+
+        public bool IsManager(int memberId)
+        {
+            return false;
+        }
+
         // ------------------------------ General ------------------------------
 
         // 4.9

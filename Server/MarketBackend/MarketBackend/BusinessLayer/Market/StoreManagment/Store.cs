@@ -80,7 +80,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // cc 3
         // r 4.4
         public void MakeCoOwner(int requestingMemberId, int newCoOwnerMemberId) {
-            // todo: implement
+            string permissionError = HasPermission(requestingMemberId, true, null, true); 
+
         }
 
         // cc 3
@@ -123,12 +124,74 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return false;
         }
 
+        public bool HasPermission(int managerId, Permission permission)
+        {
+            if (!IsManager(managerId))
+                throw new ArgumentException(StoreErrorMessage("The id: " + managerId + " is not of a managaer")); 
+            return managersPermissions[managerId].Contains(permission);
+        }
+
         // ------------------------------ General ------------------------------
 
         // 4.9
         public void CloseStore(int memberId)
         {
             // todo: implement
+        }
+
+        // returns null if there is permission or a string describing why not otherwise
+        // the permissions are in the following order:
+        // founder --> coOwner --> manager --> member
+        private string HasPermission(int memberId, bool coOwnerHas, Permission[] permissionsEnough, bool memberHas)
+        {
+            // founder has permission for action
+            if (IsFounder(memberId))
+                return null;
+
+            if (!coOwnerHas)
+                return StoreErrorMessage("The member (of id: " + memberId + ") does not have the permission required in this store: Founder");
+            
+            // coOwner has permission for action
+            if (IsCoOwner(memberId))
+                return null; 
+
+            if (permissionsEnough == null || permissionsEnough.Length == 0)
+                return StoreErrorMessage("The member (of id: " + memberId + ") does not have the permission required in this store: CoOnwer");
+
+            // some manager permissions are enough for action
+            if (IsManager(memberId) && permissionsEnough.Count(permission => HasPermission(memberId, permission)) > 0)
+                return null;
+
+            if (!memberHas)
+            {
+                String errorMessage = "The member(of id: " + memberId + ") does not have the permission for: ";
+                bool firstTime = true;
+                foreach (Permission permission in permissionsEnough)
+                {
+                    if (!firstTime)
+                        errorMessage += "| ";
+                    else
+                        firstTime = false;
+                    errorMessage += permission.ToString() + " ";
+                }
+                return StoreErrorMessage(errorMessage);
+            }
+
+            // members have permission for this action
+            if (IsMember(memberId))
+                return null;
+
+            return StoreErrorMessage("The id: " + memberId + " is not of a member");
+        }
+
+        private bool IsMember(int memberId) // should be private
+        {
+            return false;
+        }
+
+        private string StoreErrorMessage(string errorMessage)
+        {
+            return errorMessage + " in the store: " + name; 
         }
 
     }

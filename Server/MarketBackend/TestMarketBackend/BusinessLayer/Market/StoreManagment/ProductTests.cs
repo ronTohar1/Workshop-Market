@@ -103,7 +103,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         // AddToInventory test
         [Test]
         [TestCase("Amit", "yummy! highly recommend!")]
-        [TestCase("Idan", "yuck! ")]
+        [TestCase("Idan", "yuck!")]
         public void AddReview(string memberName, string reviewContent)
         {
             int amountOfReviewsBefore = product.reviews.Count;

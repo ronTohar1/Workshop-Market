@@ -17,7 +17,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             this.purchasePrice = purchasePrice;
             this.purchaseDescription = purchaseDescription;
         }
-        
+        public virtual string GetPurchaseDescription()
+            => purchaseDescription;
+            
                 
     }
 }

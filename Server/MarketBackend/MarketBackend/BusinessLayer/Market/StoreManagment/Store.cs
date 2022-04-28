@@ -49,7 +49,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return name;
         }
 
-        // ------------------------------ Products ------------------------------
+        // ------------------------------ Products and Policy ------------------------------
         public int AddNewProduct(int memberId, string productName, double pricePerUnit) {
             return 0;
             // todo: implement
@@ -64,33 +64,24 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             // todo: implement
         }
-        public void AddProductPurchasePolicy(int memberId, int productId, PurchaseOption purchaseOption) {
+        public void AddProductPurchaseOption(int memberId, int productId, PurchaseOption purchaseOption) {
             // todo: implement
         }
-        public void SetProductPrice(int memberId, int productId, PurchaseOption purchaseOption)
+        public void SetProductPrice(int memberId, int productId, double productPrice)
         {
             // todo: implement
         }
         public void AddProductReview(int memberId, int productId, string review) {
             // todo: implement note that the member Id here is for the memmber info, such as name
         }
-        public void GetProductReviews(int productId)
+        public void AddPurchaseOption(int memberId, PurchaseOption purchaseOption)
         {
             // todo: implement
         }
-
-        public bool ContainProductInStock(int productId) 
-            => products.ContainsKey(productId);
-
-        public Product SearchProductByName(string productName)
-        => products.Values.ToList().Where(p => p.name == productName).FirstOrDefault();//the default is null
-        public Product SearchProductByProductId(int productId)
-        => products.ContainsKey(productId) ? products[productId] : null;
-
-        // ------------------------------ Purchase Policy ------------------------------
-        public void AddPurchasePolicy(int memberId, int productId, PurchaseOption purchaseOption)
+        public void AddPurchaseRecord(int memberId, Purchase p) 
         {
-            // todo: implement
+            // todo: implement, CHECK THAT HAVE PROPER PERMISSION
+            
         }
         public IList<Purchase> GetPurchaseHistory(int memberId)
         {
@@ -98,8 +89,26 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return null;
         }
 
+        public IList<string> GetProductReviews(int productId)
+        {
+            return null;
+            // todo: implement
+        }
+
+
+        public bool ContainProductInStock(int productId) 
+            => products.ContainsKey(productId);
+
+        public Product SearchProductByName(string productName)
+        => products.Values.ToList().Where(p => p.name == productName).FirstOrDefault();//the default is null
+
+        public Product SearchProductByProductId(int productId)
+        => products.ContainsKey(productId) ? products[productId] : null;
+        public bool ContainPurchase(Purchase purchaseToAdd)
+        => purchaseHistory.Contains(purchaseToAdd);
+
         // ------------------------------ Permission and Roles ------------------------------
-        
+
         // cc 3
         // r 4.4
         public void MakeCoOwner(int requestingMemberId, int newCoOwnerMemberId) {

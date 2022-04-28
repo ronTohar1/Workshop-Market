@@ -4,8 +4,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 	public enum Role
 	{
 		Manager,
-		Owner,
-		Founder
+		Owner
 	};
 
 	public enum Permission

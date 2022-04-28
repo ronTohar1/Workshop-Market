@@ -259,7 +259,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         // todo: maybe write tests about these methods
 
-        public bool HasPermission(int managerId, Permission permission)
+        private bool HasPermission(int managerId, Permission permission)
         {
             rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             if (!IsManager(managerId))
@@ -273,7 +273,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return result; 
         }
 
-        public bool IsManagerWithPermission(int memberId, Permission permission)
+        private bool IsManagerWithPermission(int memberId, Permission permission)
         {
             rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             bool result = IsManager(memberId) && HasPermission(memberId, permission);

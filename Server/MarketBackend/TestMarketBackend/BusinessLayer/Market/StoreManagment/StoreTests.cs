@@ -31,7 +31,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private const int memberId1 = 5;
         private const int memberId2 = 6;
         private const int memberId3 = 7;
-        private int[] membersIds = {coOwnerId1, coOwnerId2, managerId1, managerId2, managerId1, managerId2, memberId3};
+        private int[] membersIds = {coOwnerId1, coOwnerId2, managerId1, managerId2, memberId1, memberId2, memberId3};
         private const int notAMemberId1 = 11;
         private const int notAMemberId2 = 12;
         private const int notAMemberId3 = 13;
@@ -71,7 +71,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private void setupMemberGetter(int[] membersIds)
         {
             if (membersIds.Contains(founderMemberId))
-                throw new ArgumentException("The id: " + founderMemberId + " is taken, its the founder meberId"); 
+                throw new ArgumentException("The id: " + founderMemberId + " is taken, its the founder meberId");
             if (membersIds.Length != membersIds.Distinct().Count()) // if contains duplicates from stackoverflow
                 throw new ArgumentException("Members ids contain duplicates");
 
@@ -306,7 +306,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
 
-            SetupMemberToCoOwner(requestingMemberId); 
+            SetupMemberToCoOwner(coOwnerId1); 
 
             store.MakeManager(requestingMemberId, newManagerMemberId);
             Assert.IsTrue(store.IsManager(newManagerMemberId));

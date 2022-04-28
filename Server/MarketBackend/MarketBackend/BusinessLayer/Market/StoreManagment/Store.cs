@@ -16,7 +16,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private IDictionary<Role, IList<int>> rolesInStore;
         private Func<int, Member> membersGetter;
 
-        private Mutex changePermissionsMutex;
+        private const int timeoutMilis = 2000; // time for wating for the rw lock in the next line, after which it throws an exception
+        private ReaderWriterLock rolesAndPermissionsLock;
 
         // cc 5
         // cc 6
@@ -32,11 +33,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             initializeRolesInStore();
             this.membersGetter = membersGetter;
 
-            this.changePermissionsMutex = new Mutex();
+            this.rolesAndPermissionsLock = new ReaderWriterLock(); // no need to acquire it here (probably) because constructor is of one thread
 	    }
 
         private void initializeRolesInStore()
         {
+            // need to be called from constructor or with acquiring the lock 
             // saving founder as a coOnwer as well
             if (founder == null)
                 throw new ArgumentNullException("Initializing roles in stores should happen after founder is initialized"); 
@@ -96,24 +98,36 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // cc 3
         // r 4.4
         public void MakeCoOwner(int requestingMemberId, int newCoOwnerMemberId) {
-            changePermissionsMutex.WaitOne();
+            rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
             string permissionError = CheckAtLeastCoOwnerPermission(requestingMemberId);
             if (permissionError != null)
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException("Could not make owner: " + permissionError);
+            }
 
             if (IsCoOwner(newCoOwnerMemberId))
-                throw new MarketException(StoreErrorMessage("The member is already a CoOwner")); 
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
+                throw new MarketException(StoreErrorMessage("The member is already a CoOwner"));
+            }
             if (IsManager(newCoOwnerMemberId))
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException(StoreErrorMessage("The member is already a Manager"));
+            }
             if (!IsMember(newCoOwnerMemberId))
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException("The requested new CoOwner is not a member");
+            }
 
             rolesInStore[Role.Owner].Add(newCoOwnerMemberId);
 
             appointmentsHierarchy.AddToHierarchy(membersGetter(requestingMemberId), membersGetter(newCoOwnerMemberId));
             // todo: add tests checking this field has been changed
             
-            changePermissionsMutex.ReleaseMutex();
+            rolesAndPermissionsLock.ReleaseWriterLock();
             // todo: check that this mutex is synchronizing all these things okay
         }
 
@@ -121,17 +135,28 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r 4.6, r 5
         public void MakeManager(int requestingMemberId, int newCoManagerMemberId)
         {
-            changePermissionsMutex.WaitOne(); 
+            rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis); 
             string permissionError = CheckAtLeastManagerWithPermission(requestingMemberId, Permission.MakeCoManager);
             if (permissionError != null)
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException("Could not make manager: " + permissionError);
-
+            }
             if (IsCoOwner(newCoManagerMemberId))
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException(StoreErrorMessage("The member is already a CoOwner"));
+            }
             if (IsManager(newCoManagerMemberId))
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException(StoreErrorMessage("The member is already a Manager"));
+            }
             if (!IsMember(newCoManagerMemberId))
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException("The requested new CoOwner is not a member");
+            }
 
             rolesInStore[Role.Manager].Add(newCoManagerMemberId);
 
@@ -141,12 +166,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             appointmentsHierarchy.AddToHierarchy(membersGetter(requestingMemberId), membersGetter(newCoManagerMemberId));
             // todo: add tests checking this field has been changed
 
-            changePermissionsMutex.ReleaseMutex();
+            rolesAndPermissionsLock.ReleaseWriterLock();
             // todo: check that this mutex is synchronizing all these things okay
         }
 
         private IList<Permission> DefualtManagerPermissions()
         {
+            // no need to lock because not accessing fields (and also the calling function calls after aquireing the lock)
             IList<Permission> managerPermissions = new SynchronizedCollection<Permission>();
             managerPermissions.Add(Permission.RecieveInfo); // dfault managerPermissions
             return managerPermissions;
@@ -154,34 +180,66 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         // r 4.7, r 5
         public void ChangeManagerPermissions(int requestingMemberId, int managerMemberId, IList<Permission> newPermissions) {
-            changePermissionsMutex.WaitOne();
+            rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
             // we allow this only to coOwners
             string permissionError = CheckAtLeastCoOwnerPermission(requestingMemberId);
             if (permissionError != null)
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException("Could not changed manager permissions: " + permissionError);
+            }
 
             if (!IsManager(managerMemberId))
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException(StoreErrorMessage("The id: " + managerMemberId + " is not of a managaer"));
-
+            }
             managersPermissions[managerMemberId] = newPermissions;
 
-            changePermissionsMutex.ReleaseMutex();
+            rolesAndPermissionsLock.ReleaseWriterLock();
             // todo: check that this mutex is synchronizing all these things okay
         }
 
         // r 4.11, r 5
-        public IDictionary<Role, IList<int>> GetMembersRoles(int memberId) {
-            // todo: implement. should be a part of the GetMembersInfo Transaction
-            return null;
+        public IList<int> GetMembersInRole(int memberId, Role role) {
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.RecieiveRolesInfo); 
+            if (permissionError != null)
+                throw new MarketException("Error in getting members in role: " + role.ToString() + " " + permissionError);
+
+            // no need to aquire lock because the second action does not depend on the first
+
+            return new List<int>(rolesInStore[role]); 
+        }
+
+        // r 4.11 r 5
+        public Member GetFounder(int memberId)
+        {
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.RecieiveRolesInfo);
+            if (permissionError != null)
+                throw new MarketException("Error in getting founder: " + permissionError);
+
+            // no need to aquire lock because the second action does not depend on the first
+
+            return founder;
         }
 
         // r 4.11, r 5
-        public IDictionary<int, IList<Permission>> GetManagersPermissions(int memberId)
+        public IList<Permission> GetManagerPermissions(int requestingMemberId, int managerMemberId)
         {
-            // todo: implement. should be a part of the GetMembersInfo Transaction
-            // todo: add permission check 
-            // todo: maybe improve the implementation
-            return new ConcurrentDictionary<int, IList<Permission>>(managersPermissions);
+            string permissionError = CheckAtLeastManagerWithPermission(requestingMemberId, Permission.RecieiveRolesInfo);
+            if (permissionError != null)
+                throw new MarketException("Error in getting manager permissions: " + permissionError);
+
+            rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
+            if (!IsManager(managerMemberId))
+            {
+                rolesAndPermissionsLock.ReleaseReaderLock();
+                throw new MarketException("This is not a manager so its permissions could not be retunrd");
+            }
+
+            IList<Permission> result = new List<Permission>(managersPermissions[managerMemberId]);
+            rolesAndPermissionsLock.ReleaseReaderLock();
+            return result; 
         }
 
         public bool IsFounder(int memberId)
@@ -199,20 +257,27 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return rolesInStore[Role.Manager].Contains(memberId);
         }
 
-        // todo: maybe write tests about thers methods
+        // todo: maybe write tests about these methods
 
         public bool HasPermission(int managerId, Permission permission)
         {
+            rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             if (!IsManager(managerId))
-                throw new ArgumentException(StoreErrorMessage("The id: " + managerId + " is not of a managaer")); 
-            return managersPermissions[managerId].Contains(permission);
-            // todo: check if we want to have Member as key and not memberId,
-            // it won't surly work and we can also get the member by its id
+            {
+                rolesAndPermissionsLock.ReleaseReaderLock();
+                throw new ArgumentException(StoreErrorMessage("The id: " + managerId + " is not of a managaer"));
+
+            }
+            bool result = managersPermissions[managerId].Contains(permission);
+            rolesAndPermissionsLock.ReleaseReaderLock();
+            return result; 
         }
 
         public bool IsManagerWithPermission(int memberId, Permission permission)
         {
-            return IsManager(memberId) && HasPermission(memberId, permission);
+            rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
+            bool result = IsManager(memberId) && HasPermission(memberId, permission);
+            return result;
         }
 
         // ------------------------------ General ------------------------------

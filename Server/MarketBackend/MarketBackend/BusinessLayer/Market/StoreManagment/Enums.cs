@@ -14,7 +14,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		MakeCoManager,
 		RemoveCoManager,
 		MakeCoOwner,
-		RemoveCoOwner
+		RemoveCoOwner, 
+		RecieiveRolesInfo
 	};
 	public enum PurchaseOption
 	{

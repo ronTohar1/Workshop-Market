@@ -335,7 +335,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private void AssertStartingManagerPermissions(int newManagerId)
         {
             IList<Permission> expectedManagerPermissions = new List<Permission>() { Permission.RecieveInfo };
-            Assert.AreEqual(store.GetManagersPermissions(founderMemberId)[newManagerId], expectedManagerPermissions);
+            Assert.AreEqual(store.GetManagerPermissions(founderMemberId, newManagerId), expectedManagerPermissions);
         }
 
         // ------- ChangeManagerPermissions() ----------------------------------------
@@ -417,7 +417,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private void TestSuccessfulChangeManagerPermissionsOnce(int requstingMemberId, int managerMemberId, IList<Permission> newPemissions)
         {
             store.ChangeManagerPermissions(requstingMemberId, managerMemberId, newPemissions); 
-            Assert.AreEqual(store.GetManagersPermissions(founderMemberId)[managerMemberId], newPemissions);
+            Assert.AreEqual(store.GetManagerPermissions(founderMemberId, managerMemberId), newPemissions);
         }
     }
 }

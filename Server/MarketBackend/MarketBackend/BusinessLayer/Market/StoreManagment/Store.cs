@@ -85,13 +85,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         // cc 3
         // r 4.6, r 5
-        public void MakeCoManager(int requestingMemberId, int newCoManagerMemberId)
+        public void MakeManager(int requestingMemberId, int newCoManagerMemberId)
         {
             // todo: implement
         }
 
         // r 4.7, r 5
-        public void ChangeManagerPermission(int requestingMemberId, int managerMemberId, IList<Permission> newPermissions) {
+        public void ChangeManagerPermissions(int requestingMemberId, int managerMemberId, IList<Permission> newPermissions) {
             // todo: implement
         }
 
@@ -102,7 +102,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
 
         // r 4.11, r 5
-        public IDictionary<int, IList<Permission>> GetManagersPermission(int memberId)
+        public IDictionary<int, IList<Permission>> GetManagersPermissions(int memberId)
         {
             // todo: implement. should be a part of the GetMembersInfo Transaction
             return null;

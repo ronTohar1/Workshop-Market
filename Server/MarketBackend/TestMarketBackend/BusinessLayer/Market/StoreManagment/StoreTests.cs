@@ -23,10 +23,11 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         private const string storeName = "moreIsStore";
 
+        // the comments in the following lines are relevant after running SetupStoreFull()
         private const int coOwnerId1 = 1;
         private const int coOwnerId2 = 2; 
-        private const int managerId1 = 3;
-        private const int managerId2 = 4;
+        private const int managerId1 = 3; // all permissions
+        private const int managerId2 = 4; // defualt permissions 
         private const int memberId1 = 5;
         private const int memberId2 = 6;
         private const int memberId3 = 7;
@@ -98,10 +99,45 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             store = new Store(storeName, founder, memberGetter); 
         }
 
+        private void SetupStoreNoPermissionsChange()
+        {
+            SetupStoreNoRoles();
+
+            SetupMemberToCoOwner(coOwnerId1);
+            SetupMemberToCoOwner(coOwnerId2);
+
+            SetupMemberToManager(managerId1);
+            SetupMemberToManager(managerId2);
+        }
+
+        private void SetupStoreFull()
+        {
+            SetupStoreNoPermissionsChange();
+
+            SetupChangeMemberPermissions(managerId1, allPermissions);
+            // managerId2 will be with the defualt permissions
+        }
+
         private void SetupMemberToManagerWithAllPermissions(int memberId)
         {
-            store.MakeCoManager(founderMemberId, memberId);
-            store.ChangeManagerPermission(founderMemberId, memberId, allPermissions);
+            SetupMemberToManager(memberId, allPermissions); 
+        }
+
+        private void SetupMemberToManager(int memberId, IList<Permission> permissions)
+        {
+            store.MakeManager(founderMemberId, memberId);
+            store.ChangeManagerPermissions(founderMemberId, memberId, permissions);
+        }
+
+        private void SetupChangeMemberPermissions(int managerMemberId, IList<Permission> newPermissions)
+        {
+            store.ChangeManagerPermissions(founderMemberId, managerMemberId, newPermissions);
+        }
+
+        // defualt permissions
+        private void SetupMemberToManager(int memberId)
+        {
+            store.MakeManager(founderMemberId, memberId);
         }
 
         private void SetupMemberToCoOwner(int memberId)
@@ -164,6 +200,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.Throws<MarketException>(() => store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId));
         }
 
+        // doing this seperatly so from last test in order not to use MakeManager in the last
+        // test's setup, so we can test the things there without using it
         [Test]
         [TestCase(coOwnerId1, managerId1)]
         public void TestMakeCoOwnerTargetIsManager(int requestingMemberId, int newCoOwnerMemberId)
@@ -188,6 +226,198 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             
             store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId);
             Assert.IsTrue(store.IsCoOwner(newCoOwnerMemberId));
+        }
+
+        // ------- MakeManager() ----------------------------------------
+
+        // requesting not a member
+        // requesting is member and not a manager
+        // requesting is a manager with no permission for this
+
+        // target is not a member
+        // target is alerady a coOwner
+        // target is already a manager
+        // target is storeFounder
+
+        // tests that should pass:
+        //  founder requesting
+        //  coOwner requesting
+        //  manager with permission requesting
+
+
+        // In these tests the set up is not done for all roles, just for the ones
+        // needed for the tests because these are tests for the functions of appointing 
+        // the roles
+
+        [Test]
+        [TestCase(notAMemberId1, memberId2)]
+        [TestCase(memberId1, memberId2)]
+        public void TestMakeManagerByNoRole(int requestingMemberId, int newManagerMemberId)
+        {
+            SetupStoreNoRoles();
+
+            Assert.Throws<MarketException>(() => store.MakeManager(requestingMemberId, newManagerMemberId));
+        }
+
+        [Test]
+        [TestCase(managerId1, memberId1, new Permission[] {})]
+        [TestCase(managerId1, memberId1, new Permission[] {Permission.RecieveInfo})]
+        public void TestMakeManagerByManagerWithNoPermission(int requestingMemberId, int newManagerMemberId, Permission[] reqestingManagerPermissions)
+        {
+            SetupStoreNoRoles();
+
+            SetupMemberToManager(requestingMemberId, reqestingManagerPermissions);
+
+            Assert.Throws<MarketException>(() => store.MakeManager(requestingMemberId, newManagerMemberId));
+        }
+
+        [Test]
+        [TestCase(coOwnerId1, notAMemberId1)]
+        [TestCase(coOwnerId1, coOwnerId2)]
+        [TestCase(coOwnerId1, founderMemberId)]
+        public void TestMakeManagerTargetNotSuitable(int requestingMemberId, int newManagerMemberId)
+        {
+            SetupStoreNoRoles();
+
+            SetupMemberToCoOwner(coOwnerId1);
+            SetupMemberToCoOwner(coOwnerId2);
+
+            Assert.Throws<MarketException>(() => store.MakeManager(requestingMemberId, newManagerMemberId));
+        }
+
+        // doing this seperatly so from last test in order not to use MakeManager in the last
+        // test's setup, so we can test the things there without using it
+        [Test]
+        [TestCase(coOwnerId1, managerId1)]
+        public void TestMakeManagerTargetIsManager(int requestingMemberId, int newManagerMemberId)
+        {
+            SetupStoreNoRoles();
+
+            SetupMemberToCoOwner(coOwnerId1);
+            SetupMemberToManagerWithAllPermissions(newManagerMemberId);
+
+            Assert.Throws<MarketException>(() => store.MakeManager(requestingMemberId, newManagerMemberId));
+        }
+
+        [Test]
+        [TestCase(founderMemberId, memberId1)]
+        [TestCase(coOwnerId1, memberId1)]
+        public void TestMakeManagerSholdPassNotManagerRequesting(int requestingMemberId, int newManagerMemberId)
+        {
+            SetupStoreNoRoles();
+
+            SetupMemberToCoOwner(requestingMemberId); 
+
+            store.MakeManager(requestingMemberId, newManagerMemberId);
+            Assert.IsTrue(store.IsManager(newManagerMemberId));
+            AssertStartingManagerPermissions(newManagerMemberId);
+        }
+
+        // seperaating this from last test in order not to call MakeManager in the setup 
+        // of the last test
+        [Test]
+        [TestCase(managerId1, memberId1)]
+        public void TestMakeManagerSholdPassManagerRequesting(int requestingMemberId, int newManagerMemberId)
+        {
+            SetupStoreNoRoles();
+
+            store.MakeManager(founderMemberId, requestingMemberId); // this is part of the testing
+            Assert.IsTrue(store.IsManager(requestingMemberId));
+            AssertStartingManagerPermissions(requestingMemberId);
+
+            store.ChangeManagerPermissions(founderMemberId, requestingMemberId, new Permission[] { Permission.MakeCoManager });
+
+            store.MakeManager(requestingMemberId, newManagerMemberId);
+            Assert.IsTrue(store.IsManager(newManagerMemberId));
+            AssertStartingManagerPermissions(newManagerMemberId); 
+        }
+
+        private void AssertStartingManagerPermissions(int newManagerId)
+        {
+            IList<Permission> expectedManagerPermissions = new List<Permission>() { Permission.RecieveInfo };
+            Assert.AreEqual(store.GetManagersPermissions(founderMemberId)[newManagerId], expectedManagerPermissions);
+        }
+
+        // ------- ChangeManagerPermissions() ----------------------------------------
+
+        // requesting not a member
+        // requesting is member and not a manager
+        // requesting is a manager with no permission for this
+
+        // target is not a member
+        // target is a coOwner
+        // target is storeFounder
+        
+        // manager asks to change permissions to someone not an ancesster of him which is not him
+        // and maybe that he can change only to permissions that he has
+
+        // tests that should pass:
+
+        //  founder requesting
+        //  coOwner requesting
+        //  manager with permission requesting (if we allow/put this in manager permissions) 
+
+        //  adding permissions
+        //  removeing permissions
+        //  etc. 
+
+        [Test]
+        [TestCase(notAMemberId1, managerId2)]
+        [TestCase(memberId1, managerId2)]
+        [TestCase(managerId1, managerId2)] // assuming it is not in the defualt permissions
+        [TestCase(coOwnerId1, notAMemberId2)]
+        [TestCase(coOwnerId1, coOwnerId2)]
+        [TestCase(coOwnerId1, founderMemberId)]
+        public void TestChangeManagerPermissionsShouldFail(int requestingMemberId, int managerId)
+        {
+            SetupStoreNoPermissionsChange();
+
+            Assert.Throws<MarketException>(() => store.MakeManager(requestingMemberId, managerId));
+        }
+
+        // todo: myabe do the test described in the next lines:
+        // manager asks to change permissions to someone not an ancesster of him which is not him
+        // and maybe that he can change only to permissions that he has
+
+        //// seperaating this from last test in order not to call ChangeManagerPermissions in the setup 
+        //// of the last test
+        //[Test]
+        //[TestCase(managerId1, managerId2)]
+        //public void TestChangeManagerPermissionsSholdPassManagerRequesting(int requestingMemberId, int managerId)
+        //{
+        //    SetupStoreNoRoles();
+
+        //    store.ChangeManagerPermissions(founderMemberId, requestingMemberId); // this is part of the testing
+        //    Assert.IsTrue(store.IsManager(requestingMemberId));
+        //    AssertStartingManagerPermissions(requestingMemberId);
+
+        //    store.ChangeManagerPermission(founderMemberId, requestingMemberId, new Permission[] { Permission.MakeCoManager });
+
+        //    store.ChangeManagerPermissions(requestingMemberId, managerId);
+        //    Assert.IsTrue(store.IsManager(managerId));
+        //    AssertStartingManagerPermissions(managerId);
+        //}
+
+        [Test]
+        [TestCase(founderMemberId, managerId2)]
+        [TestCase(coOwnerId1, managerId2)]
+        public void TestChangeManagerPermissionsSholdPass(int requestingMemberId, int managerId)
+        {
+            SetupStoreNoPermissionsChange();
+
+            Action<IList<Permission>> test = (newPermissions) => TestSuccessfulChangeManagerPermissionsOnce(requestingMemberId, managerId, newPermissions);
+
+            test(new List<Permission>() { Permission.RecieveInfo, Permission.MakeCoManager });
+            test(new List<Permission>() { });
+            test(new List<Permission>() { Permission.RecieveInfo});
+            test(new List<Permission>() { Permission.MakeCoManager });
+            test(allPermissions); 
+        }
+
+        private void TestSuccessfulChangeManagerPermissionsOnce(int requstingMemberId, int managerMemberId, IList<Permission> newPemissions)
+        {
+            store.ChangeManagerPermissions(requstingMemberId, managerMemberId, newPemissions); 
+            Assert.AreEqual(store.GetManagersPermissions(founderMemberId)[managerMemberId], newPemissions);
         }
     }
 }

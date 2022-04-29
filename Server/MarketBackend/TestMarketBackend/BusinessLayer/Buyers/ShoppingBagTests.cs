@@ -13,9 +13,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
     public class ShoppingBagTests
     {
         private ShoppingBag bag;
-        private static ProductInBag pInBag_1;
-        private static ProductInBag pInBag_2;
-        private static ProductInBag pNotInBag_3;
+        private static ProductInBag pInBag_1 = new ProductInBag(1, 1);
+        private static ProductInBag pInBag_2 = new ProductInBag(2, 2);
+        private static ProductInBag pNotInBag_3 = new ProductInBag(3, 3);
 
         // ----------- Setup helping functions -----------------------------
 
@@ -24,18 +24,15 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [SetUp]
         public void Setup()
         {
-            pInBag_1 = new ProductInBag(1, 1);
-            pInBag_2 = new ProductInBag(2,2);
-            pNotInBag_3 = new ProductInBag(3,3);
-
             var products = new Dictionary<ProductInBag, int>();
             products.Add(pInBag_1, 1);
             products.Add(pInBag_2, 2);
             bag = new ShoppingBag(products);
         }
 
+        // -------------------- Add product --------------------
 
-        public static IEnumerable<TestCaseData> ProductsInBagTestCases
+        public static IEnumerable<TestCaseData> Data_TestAddProductToBag_Pass
         {
             get
             {
@@ -45,12 +42,117 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
                 yield return new TestCaseData(pNotInBag_3, 1, 1);
             }
         }
-
         [Test]
-        [TestCaseSource("ProductsInBagTestCases")]
+        [TestCaseSource("Data_TestAddProductToBag_Pass")]
         public void TestAddProductToBag_Pass(ProductInBag product, int amount, int expectedAmount)
         {
-            //Console.WriteLine((new ProductInBag(1, 1)).Equals(pInBag_1));
+            bag.AddProductToBag(product, amount);
+
+            Assert.AreEqual(bag.ProductsAmounts[product], expectedAmount);  
         }
+
+
+        public static IEnumerable<TestCaseData> Data_TestAddProductToBag_Fail
+        {
+            get
+            {
+                yield return new TestCaseData(pInBag_1, -1);
+                yield return new TestCaseData(null, 1);
+            }
+        }
+        [Test]
+        [TestCaseSource("Data_TestAddProductToBag_Fail")]
+        public void TestAddProductToBag_Fail(ProductInBag product, int amount)
+        {
+            Assert.Catch<ArgumentException>(() => bag.AddProductToBag(product, amount));
+        }
+
+
+        // -------------------- Change product amount --------------------
+
+        public static IEnumerable<TestCaseData> Data_ChangeProductAmount_Pass
+        {
+            get
+            {
+                yield return new TestCaseData(pInBag_1, 5);
+            }
+        }
+        [Test]
+        [TestCaseSource("Data_ChangeProductAmount_Pass")]
+        public void TestChangeProductAmount_Pass(ProductInBag product, int amount)
+        {
+            bag.ChangeProductAmount(product, amount);
+
+            Assert.AreEqual(bag.ProductsAmounts[product], amount);
+        }
+
+        public static IEnumerable<TestCaseData> Data_ChangeProductAmount_ToZero_Pass
+        {
+            get
+            {
+                yield return new TestCaseData(pInBag_1);
+            }
+        }
+        [Test]
+        [TestCaseSource("Data_ChangeProductAmount_ToZero_Pass")]
+        public void TestChangeProductAmount_ToZero_Pass(ProductInBag product)
+        {
+            bag.ChangeProductAmount(product, 0);
+
+            Assert.IsFalse(bag.ProductsAmounts.ContainsKey(product));
+        }
+
+
+        public static IEnumerable<TestCaseData> Data_ChangeProductAmount_Fail
+        {
+            get
+            {
+                yield return new TestCaseData(null, 1);
+                yield return new TestCaseData(pInBag_1, -1);
+                yield return new TestCaseData(pNotInBag_3, 5);
+            }
+        }
+        [Test]
+        [TestCaseSource("Data_ChangeProductAmount_Fail")]
+        public void TestChangeProductAmount_Fail(ProductInBag product, int amount)
+        {
+            Assert.Catch<ArgumentException>(() => bag.ChangeProductAmount(product, amount));
+        }
+
+
+
+        // -------------------- Remove product --------------------
+
+        public static IEnumerable<TestCaseData> Data_RemoveProduct_Pass
+        {
+            get
+            {
+                yield return new TestCaseData(pInBag_1);
+            }
+        }
+        [Test]
+        [TestCaseSource("Data_RemoveProduct_Pass")]
+        public void TestChangeProductAmount_Pass(ProductInBag product)
+        {
+            Assert.IsTrue(bag.ProductsAmounts.ContainsKey(product));
+            bag.RemoveProduct(product);
+            Assert.IsFalse(bag.ProductsAmounts.ContainsKey(product));
+        }
+
+        public static IEnumerable<TestCaseData> Data_RemoveProduct_Fail
+        {
+            get
+            {
+                yield return new TestCaseData(pNotInBag_3);
+            }
+        }
+        [Test]
+        [TestCaseSource("Data_RemoveProduct_Fail")]
+        public void TestChangeProductAmount_Fail(ProductInBag product)
+        {
+            Assert.Throws<ArgumentException>(() => bag.RemoveProduct(product));
+        }
+
+
     }
 }

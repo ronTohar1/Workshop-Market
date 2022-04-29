@@ -4,6 +4,8 @@
     {
         private IDictionary<ProductInBag, int> productsAmounts;
 
+        internal IDictionary<ProductInBag, int> ProductsAmounts { get { return productsAmounts; } }
+
         public ShoppingBag(IDictionary<ProductInBag, int> productsAmounts)
         {
             this.productsAmounts = productsAmounts;
@@ -20,7 +22,7 @@
         public void AddProductToBag(ProductInBag product, int amount)
         {
             if (product == null)
-                throw new ArgumentNullException("Product cannot be null");
+                throw new ArgumentNullException("product");
             if (amount < 0)
                 throw new ArgumentOutOfRangeException(nameof(amount));
 
@@ -36,13 +38,16 @@
         public void ChangeProductAmount(ProductInBag product, int amount)
         {
             if (product == null)
-                throw new ArgumentNullException("Product cannot be null");
+                throw new ArgumentNullException("product");
             if (amount < 0)
                 throw new ArgumentOutOfRangeException(nameof(amount));
             if (!productsAmounts.ContainsKey(product))
                 throw new ArgumentException(nameof(product) + "is not exist in cart");
 
-            productsAmounts[product] = amount;
+            if (amount == 0)
+                productsAmounts.Remove(product);
+            else
+                productsAmounts[product] = amount;
         }
 
         /// <summary>

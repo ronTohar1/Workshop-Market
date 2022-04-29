@@ -357,7 +357,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private void AssertStartingManagerPermissions(int newManagerId)
         {
             IList<Permission> expectedManagerPermissions = new List<Permission>() { Permission.RecieveInfo };
-            Assert.AreEqual(store.GetManagersPermissions(founderMemberId)[newManagerId], expectedManagerPermissions);
+            Assert.IsTrue(SameElements(store.GetManagerPermissions(founderMemberId, newManagerId), expectedManagerPermissions));
         }
 
         // ------- ChangeManagerPermissions() ----------------------------------------
@@ -439,7 +439,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private void TestSuccessfulChangeManagerPermissionsOnce(int requstingMemberId, int managerMemberId, IList<Permission> newPemissions)
         {
             store.ChangeManagerPermissions(requstingMemberId, managerMemberId, newPemissions); 
-            Assert.AreEqual(store.GetManagersPermissions(founderMemberId)[managerMemberId], newPemissions);
+            Assert.IsTrue(SameElements(store.GetManagerPermissions(founderMemberId, managerMemberId), newPemissions));
         }
 
 
@@ -506,10 +506,48 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.IsNotNull(store.SearchProductByProductId(productId3));
             store.RemoveProduct(memberId, productId3);
             Assert.IsNull(store.SearchProductByProductId(productId3));
+
+        // ------- GetMembersInRole() ----------------------------------------
+
+        [Test]
+        [TestCase(notAMemberId1, Role.Owner)]
+        [TestCase(memberId1, Role.Manager)]
+        [TestCase(managerId2, Role.Owner)] // not in defualt permissions
+        public void TestGetMembersInRoleNoPermission(int requestingMemberId, Role role)
+        {
+            SetupStoreFull();
+
+            Assert.Throws<MarketException>(() => store.GetMembersInRole(requestingMemberId, role));
+        }
+
+        [Test]
+        [TestCase(coOwnerId1, Role.Manager, new int[] { managerId1, managerId2 })]
+        [TestCase(managerId1, Role.Owner, new int[] { coOwnerId1, coOwnerId2, founderMemberId })]
+        [TestCase(founderMemberId, Role.Manager, new int[] { managerId1, managerId2 })]
+        public void TestGetMembersInRoleShouldPass(int requestingMemberId, Role role, int[] expectedMembersIds)
+        {
+            SetupStoreFull();
+
+            Assert.IsTrue(SameElements(store.GetMembersInRole(requestingMemberId, role)
+                , new List<int>(expectedMembersIds)));
+        }
+
+        // ------- GetFounder() ----------------------------------------
+
+        [Test]
+        [TestCase(notAMemberId1)]
+        [TestCase(memberId1)]
+        [TestCase(managerId2)] // not in defualt permissions
+        public void TestGetFounderNoPermission(int requestingMemberId)
+        {
+            SetupStoreFull();
+
+            Assert.Throws<MarketException>(() => store.GetFounder(requestingMemberId));
         }
 
         [Test]
         [TestCase(coOwnerId1)]
+
         [TestCase(notAMemberId1)]
         public void TestRemoveAProductByLessThanShouldFail(int memberId)
         {
@@ -743,6 +781,96 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.True(store.GetProductReviews(productId1).Count == 0);
             Assert.Throws<MarketException>(() => store.AddProductReview(memberId, productId2, reviewMessage));
             Assert.True(store.GetProductReviews(productId1).Count == 0);
+
+        [TestCase(managerId1)]
+        [TestCase(founderMemberId)]
+        public void TestGetFounderShouldPass(int requestingMemberId)
+        {
+            SetupStoreFull();
+
+            Assert.AreEqual(founderMemberId, store.GetFounder(requestingMemberId).GetId());
+        }
+
+        // ------- GetManagerPermossions() ----------------------------------------
+
+        [Test]
+        [TestCase(notAMemberId1, managerId1)]
+        [TestCase(memberId1, managerId1)]
+        [TestCase(managerId2, managerId1)] // not in defualt permissions
+        [TestCase(coOwnerId1, notAMemberId1)]
+        [TestCase(coOwnerId1, memberId1)]
+        [TestCase(coOwnerId1, coOwnerId1)]
+        [TestCase(coOwnerId1, founderMemberId)]
+        public void TestGetManagerPermissionShouldFail(int requestingMemberId, int managerMemberId)
+        {
+            SetupStoreFull();
+
+            Assert.Throws<MarketException>(() => store.GetManagerPermissions(requestingMemberId, managerMemberId));
+        }
+
+        [Test]
+        [TestCase(coOwnerId1, managerId1, new Permission[] { Permission.MakeCoManager, Permission.RecieiveRolesInfo})]
+        [TestCase(managerId1, managerId2, new Permission[] { Permission.RecieveInfo })]
+        [TestCase(founderMemberId, managerId1, new Permission[] { Permission.RecieveInfo })]
+        public void TestGetManagerPremissionsShouldPass(int requestingMemberId, int managerMemberId, Permission[] excpectedPermossions)
+        {
+            SetupStoreFull();
+
+            SetupChangeMemberPermissions(managerMemberId, excpectedPermossions); 
+
+            Assert.IsTrue(SameElements(store.GetManagerPermissions(requestingMemberId, managerMemberId)
+                , new List<Permission>(excpectedPermossions)));
+        }
+
+        // ------- IsFounder() ----------------------------------------
+
+        [TestCase(notAMemberId1, false)]
+        [TestCase(memberId1, false)]
+        [TestCase(managerId1, false)]
+        [TestCase(coOwnerId1, false)]
+        [TestCase(founderMemberId, true)]
+        public void TestIsFounder(int memberId, bool expected)
+        {
+            SetupStoreNoPermissionsChange();
+
+            Assert.AreEqual(expected, store.IsFounder(memberId));
+        }
+
+        // ------- IsCoOwner() ----------------------------------------
+
+        [TestCase(notAMemberId1, false)]
+        [TestCase(memberId1, false)]
+        [TestCase(managerId1, false)]
+        [TestCase(coOwnerId1, true)]
+        [TestCase(founderMemberId, true)]
+        public void TestIsCoOwner(int memberId, bool expected)
+        {
+            SetupStoreNoPermissionsChange();
+
+            Assert.AreEqual(expected, store.IsCoOwner(memberId));
+        }
+
+        // ------- IsManager() ----------------------------------------
+
+        [TestCase(notAMemberId1, false)]
+        [TestCase(memberId1, false)]
+        [TestCase(managerId1, true)]
+        [TestCase(coOwnerId1, false)]
+        [TestCase(founderMemberId, false)]
+        public void TestIsManager(int memberId, bool expected)
+        {
+            SetupStoreNoPermissionsChange();
+
+            Assert.AreEqual(expected, store.IsManager(memberId));
+        }
+
+
+        private bool SameElements<T>(IList<T> list1, IList<T> list2)
+        {
+            if (list1.Count != list2.Count)
+                return false;
+            return list1.All(element => list2.Contains(element)); 
+
         }
 
     }

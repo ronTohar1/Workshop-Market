@@ -4,15 +4,17 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 	public enum Role
 	{
 		Manager,
-		Owner,
-		Founder
+		Owner
 	};
 
 	public enum Permission
 	{
 		RecieveInfo,
 		MakeCoManager,
-		RemoveCoManager
+		RemoveCoManager,
+		MakeCoOwner,
+		RemoveCoOwner, 
+		RecieiveRolesInfo
 	};
 	public enum PurchaseOption
 	{

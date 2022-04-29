@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <Folder Include="BusinessLayer\Buyers\Guests\" />
-    <Folder Include="BusinessLayer\Market\StoreManagment\" />
+    <Folder Include="BusinessLayer\Buyers\Members\" />
   </ItemGroup>
 
 </Project>

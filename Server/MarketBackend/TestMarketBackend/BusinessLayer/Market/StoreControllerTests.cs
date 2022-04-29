@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TestMarketBackend.BusinessLayer.Market
 {
-    public class StoreControllerTest
+    public class StoreControllerTests
     {
 
         private StoreController storeController;

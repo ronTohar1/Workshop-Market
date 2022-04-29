@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Moq;
+
+using MarketBackend.BusinessLayer;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
@@ -27,7 +29,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             int sizeBefore = hierarchy.children.Count;
             hierarchy.AddToHierarchy(node1, node);
             int sizeAfter = hierarchy.children.Count;
-            List<String> childrenValueSet = hierarchy.children.ConvertAll(h => h.value);
+            List<String> childrenValueSet = hierarchy.children.Select(h => h.value).ToList();
          
             Assert.IsTrue(childrenValueSet.Contains(node) && sizeAfter==sizeBefore+1);
         }
@@ -44,7 +46,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             BuildFirstLevel();
             int sizeBefore = hierarchy.children.Count;
-            Assert.Throws<StoreManagmentException>(()=>hierarchy.AddToHierarchy(node1, node));
+            Assert.Throws<MarketException>(()=>hierarchy.AddToHierarchy(node1, node));
             int sizeAfter = hierarchy.children.Count;
             Assert.IsTrue(sizeAfter == sizeBefore);
         }
@@ -59,7 +61,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             int sizeBefore = adderH.children.Count;
             hierarchy.AddToHierarchy(adder, nodeToAdd);
             int sizeAfter = adderH.children.Count;
-            List<String> childrenValueSet = adderH.children.ConvertAll(h => h.value);
+            List<String> childrenValueSet = adderH.children.Select(h => h.value).ToList();
 
             Assert.IsTrue(childrenValueSet.Contains(nodeToAdd) && sizeAfter == sizeBefore + 1);
         }
@@ -70,7 +72,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void AddToHierarchyFromSecondLevelFail1(String adder, String nodeToAdd)
         {
             BuildFirstLevel();
-            Assert.Throws<StoreManagmentException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
+            Assert.Throws<MarketException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
         }
         
         [Test]//Cyclic check
@@ -81,7 +83,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             BuildFirstLevel();
             Hierarchy<String> adderH = hierarchy.FindHierarchy(adder);
             int sizeBefore = adderH.children.Count;
-            Assert.Throws<StoreManagmentException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
+            Assert.Throws<MarketException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
             int sizeAfter = adderH.children.Count;
 
             Assert.IsTrue(sizeAfter == sizeBefore);
@@ -152,7 +154,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void RemoveFromHierarchyFail(String remover, String nodeToRemove)
         {
             BuildAidHierarchy();
-            Assert.Throws<StoreManagmentException>(() => hierarchy.RemoveFromHierarchy(remover, nodeToRemove));
+            Assert.Throws<MarketException>(() => hierarchy.RemoveFromHierarchy(remover, nodeToRemove));
         }
     }
 }

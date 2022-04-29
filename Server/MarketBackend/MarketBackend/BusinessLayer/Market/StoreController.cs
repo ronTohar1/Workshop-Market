@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
 using System;
+using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
 
 public class StoreController
@@ -77,7 +78,7 @@ public class StoreController
         }
 
 		int newStoreId = GenerateStoreId(); 
-		openStores.Add(newStoreId, new Store(storeName, storeFounder));
+		openStores.Add(newStoreId, new Store(storeName, storeFounder, (memberId) => membersController.GetMember(memberId)));
 
 		openStoresMutex.ReleaseMutex(); 
 

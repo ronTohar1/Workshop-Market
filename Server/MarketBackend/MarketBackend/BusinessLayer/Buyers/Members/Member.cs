@@ -8,6 +8,11 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
 {
     public class Member
     {
-        
+        public string name { get; }
+
+        public virtual int GetId()
+        {
+            return -1; // todo: implement
+        }
     }
 }

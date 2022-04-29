@@ -15,7 +15,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         [SetUp]
         public void setup() {
-            product = new Product("Chocolate", 5.90);
+            product = new Product("Chocolate", 5.90, "Dairy");
         }
 
         // AddToInventory test
@@ -53,7 +53,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             setUpInitialInventory();
             int amountBefore = product.amountInInventory;
-            Assert.Throws<StoreManagmentException>(() => product.RemoveFromInventory(amounToRemove));
+            Assert.Throws<MarketException>(() => product.RemoveFromInventory(amounToRemove));
             int amountAfter = product.amountInInventory;
             Assert.IsTrue(amountBefore == amountAfter);
         }
@@ -95,9 +95,22 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             setUpInitialPurchasesOptions();
             int amountBefore = product.purchaseOptions.Count;
-            Assert.Throws<StoreManagmentException>(() => product.RemovePurchaseOption(purchaseOptionToRemove));
+            Assert.Throws<MarketException>(() => product.RemovePurchaseOption(purchaseOptionToRemove));
             int amountAfter = product.purchaseOptions.Count;
             Assert.IsTrue(amountBefore == amountAfter);
+        }
+
+        // AddToInventory test
+        [Test]
+        [TestCase("Amit", "yummy! highly recommend!")]
+        [TestCase("Idan", "yuck!")]
+        public void AddReview(string memberName, string reviewContent)
+        {
+            int amountOfReviewsBefore = product.reviews.Count;
+            product.AddProductReview(memberName, reviewContent);
+            int amountOfReviewsAfter = product.reviews.Count;
+            Assert.IsTrue(amountOfReviewsBefore + +1 == amountOfReviewsAfter);
+            Assert.IsTrue(product.reviews.Contains(memberName+": "+ reviewContent));
         }
     }
 }

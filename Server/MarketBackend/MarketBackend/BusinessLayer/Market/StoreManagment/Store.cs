@@ -214,14 +214,19 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return productsTotalPrices * (1 - amountDiscount);
         }
         //------------------------- search products within shop --------------------------
+        
+        // r 2.2
+        public IList<Product> SerachProducts(ProductsSearchFilter filter)
+        => products.Values.Where(p => filter.FilterProduct(p)).ToList();
+
         //r.2.2
-        public List<Product> SearchProductsByName(string productName)
+        public IList<Product> SearchProductsByName(string productName)
         => products.Values.ToList().Where(p => p.name.Contains(productName)).ToList();//the default is null
         //r.2.2
-        public List<Product> SearchProductByCategory(string category)
+        public IList<Product> SearchProductByCategory(string category)
          => products.Values.ToList().Where(p => p.category.Equals(category)).ToList();//the default is null
         //r.2.2
-        public List<Product> SearchProductByKeyWords(string keyWord)
+        public IList<Product> SearchProductByKeyWords(string keyWord)
          => products.Values.ToList().Where(p => p.name.Contains(keyWord) || p.category.Contains(keyWord)).ToList();//the default is null
         
         // ------------------------------ Permission and Roles ------------------------------

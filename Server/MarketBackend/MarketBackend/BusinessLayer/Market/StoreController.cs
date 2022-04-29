@@ -3,6 +3,7 @@ using System;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
 
+namespace MarketBackend.BusinessLayer.Market; 
 public class StoreController
 {
 	private IDictionary<int, Store> openStores;
@@ -168,4 +169,31 @@ public class StoreController
 			return false; 
         }
 	}
+
+  //  // r 2.2, r 4.9
+  //  // returns the search results from open stores by their ids
+  //  public IDictionary<int, IList<Product>> SearchInOpenStores(ProductsSearchFilter filter)
+  //  {
+		//IEnumerable<KeyValuePair<int, Store>> passedStoresFilter = openStores.Where(pair => filter.FilterStore(pair.Value));
+
+		//IDictionary<int, IList<Product>> result = new Dictionary<int, IList<Product>>();
+		
+		//IList<Product> passedProductsFilter; 
+		//foreach (KeyValuePair<int, Store> idStorepair in passedStoresFilter)
+  //      {
+		//	passedProductsFilter = idStorepair.Value.Filter...();
+		//	if (passedProductsFilter.Count > 0)
+  //          {
+		//		result[idStorepair.Key] = passedProductsFilter;
+		//	}
+  //      }
+		//return result;
+  //  }
+
+    //// r 2.2, r 4.9
+    //// returns the search results in every open store that satosfieds the predicat by its id
+    //private IDictionary<int, IList<T>> SearchInOpenStores<T>(Func<Store, IList<T>> storeSerach, Predicate<Store> pred)
+    //   {
+    //	throw new Exception();
+    //}
 }

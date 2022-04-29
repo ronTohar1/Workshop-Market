@@ -170,20 +170,17 @@ public class StoreController
         }
 	}
 
-	// r 2.2, r 4.9
-	// returns the search results in every open store by its id
-	private IDictionary<int, IList<T>> SearchInOpenStores<T>(ProductsSearchFilter filter)
-    {
+	//// r 2.2, r 4.9
+	//// returns the search results in open store by their ids
+	//public IDictionary<int, IList<T>> SearchInOpenStores<T>(ProductsSearchFilter filter)
+ //   {
+	//	if(filter)
+ //   }
 
-    }
-    {
-		throw new Exception(); 
-    }
-
-	// r 2.2, r 4.9
-	// returns the search results in every open store that satosfieds the predicat by its id
-	private IDictionary<int, IList<T>> SearchInOpenStores<T>(Func<Store, IList<T>> storeSerach, Predicate<Store> pred)
-    {
-		throw new Exception();
-	}
+	//// r 2.2, r 4.9
+	//// returns the search results in every open store that satosfieds the predicat by its id
+	//private IDictionary<int, IList<T>> SearchInOpenStores<T>(Func<Store, IList<T>> storeSerach, Predicate<Store> pred)
+ //   {
+	//	throw new Exception();
+	//}
 }

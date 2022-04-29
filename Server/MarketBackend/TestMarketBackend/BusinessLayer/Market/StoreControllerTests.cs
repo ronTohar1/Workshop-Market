@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
+using MarketBackend.BusinessLayer.Market;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -266,19 +267,19 @@ namespace TestMarketBackend.BusinessLayer.Market
         // search for all products
         // search using store search function
 
-        [Test]
-        [TestCase(, )]
-        [TestCase(storeName2, new string[] { storeName1 })]
-        public void TestSeracgInOpenStores(string[] openStoresNames, string[] storeExtraExistingNames)
-        {
-            StoreControllerWithStoresSetup(storeExtraExistingNames); // also sets up so that member1 exists in the system
+        //[Test]
+        //[TestCase(, )]
+        //[TestCase(storeName2, new string[] { storeName1 })]
+        //public void TestSeracgInOpenStores(string[] openStoresNames, string[] storeExtraExistingNames)
+        //{
+        //    StoreControllerWithStoresSetup(storeExtraExistingNames); // also sets up so that member1 exists in the system
 
-            int storeId = addOpenStore(memberId1, storeName);
+        //    int storeId = addOpenStore(memberId1, storeName);
 
-            storeController.CloseStore(memberId1, storeId); // should work
+        //    storeController.CloseStore(memberId1, storeId); // should work
 
-            Assert.IsNull(storeController.GetOpenStore(storeId));
-            Assert.NotNull(storeController.GetClosedStore(storeId));
-        }
+        //    Assert.IsNull(storeController.GetOpenStore(storeId));
+        //    Assert.NotNull(storeController.GetClosedStore(storeId));
+        //}
     }
 }

@@ -3,6 +3,7 @@ using System;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
 
+namespace MarketBackend.BusinessLayer.Market; 
 public class StoreController
 {
 	private IDictionary<int, Store> openStores;
@@ -167,5 +168,22 @@ public class StoreController
         {
 			return false; 
         }
+	}
+
+	// r 2.2, r 4.9
+	// returns the search results in every open store by its id
+	private IDictionary<int, IList<T>> SearchInOpenStores<T>(ProductsSearchFilter filter)
+    {
+
+    }
+    {
+		throw new Exception(); 
+    }
+
+	// r 2.2, r 4.9
+	// returns the search results in every open store that satosfieds the predicat by its id
+	private IDictionary<int, IList<T>> SearchInOpenStores<T>(Func<Store, IList<T>> storeSerach, Predicate<Store> pred)
+    {
+		throw new Exception();
 	}
 }

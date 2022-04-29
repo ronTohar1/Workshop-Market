@@ -104,6 +104,19 @@ namespace TestMarketBackend.BusinessLayer.Market
             }
         }
 
+        // open and closed store names should be distinct here
+        private void StoreControllerWithStoresSetup(string[] openStoresNames, string[] closedStoresNames)
+        {
+            StoreControllerWithStoresSetup(openStoresNames);
+
+            int currentStoreId; 
+            for (int i = 0; i < closedStoresNames.Length; i++)
+            {
+                currentStoreId = addOpenStore(memberId1, closedStoresNames[i]);
+                storeController.CloseStore(memberId1, currentStoreId); // memberId1 is the founder of the store so it supposed to have permission
+            }
+        }
+
         // ------- GetStoreIdByName() ----------------------------------------
 
         [Test]
@@ -232,6 +245,31 @@ namespace TestMarketBackend.BusinessLayer.Market
         [TestCase(storeName1, new string[] { })]
         [TestCase(storeName2, new string[] { storeName1 })]
         public void TestCloseStoreShouldPass(string storeName, string[] storeExtraExistingNames)
+        {
+            StoreControllerWithStoresSetup(storeExtraExistingNames); // also sets up so that member1 exists in the system
+
+            int storeId = addOpenStore(memberId1, storeName);
+
+            storeController.CloseStore(memberId1, storeId); // should work
+
+            Assert.IsNull(storeController.GetOpenStore(storeId));
+            Assert.NotNull(storeController.GetClosedStore(storeId));
+        }
+
+        // ------- SerachInOpenStores() ----------------------------------------
+
+        // no stores
+        // some closed stores and no open stores
+        // one open store
+        // two open stores
+
+        // search for all products
+        // search using store search function
+
+        [Test]
+        [TestCase(, )]
+        [TestCase(storeName2, new string[] { storeName1 })]
+        public void TestSeracgInOpenStores(string[] openStoresNames, string[] storeExtraExistingNames)
         {
             StoreControllerWithStoresSetup(storeExtraExistingNames); // also sets up so that member1 exists in the system
 

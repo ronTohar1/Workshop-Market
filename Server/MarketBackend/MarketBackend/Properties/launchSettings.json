@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MarketBackend": {
+      "commandName": "Project"
+    },
+    "Program": {
+      "commandName": "Executable"
+    }
+  }
+}

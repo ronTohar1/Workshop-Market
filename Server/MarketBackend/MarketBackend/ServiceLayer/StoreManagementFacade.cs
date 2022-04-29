@@ -36,12 +36,12 @@ namespace MarketBackend.ServiceLayer
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, "method: AddNewProduct");
+                logger.Error(mex, $"method: AddNewProduct, [userId = {userId}, storeId = {storeId}, productName = {productName}, price = {price}, category = {category}]");
                 return new Response<int>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "method: AddNewProduct");
+                logger.Error(ex, $"method: AddNewProduct, [userId = {userId}, storeId = {storeId}, productName = {productName}, price = {price}, category = {category}]");
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
             }
         }
@@ -55,17 +55,17 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
                 s.AddProductToInventory(userId, productId, amount);
-                logger.Info($"AddProductToInventory was called with parameters [[userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
+                logger.Info($"AddProductToInventory was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(true);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: AddProductToInventory, parameters [[userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
+                logger.Error(mex, $"method: AddProductToInventory, parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: AddProductToInventory,parameters [[userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
+                logger.Error(ex, $"method: AddProductToInventory,parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }
@@ -247,17 +247,17 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<IList<int>>($"There isn't a store with an id {storeId}");
                 IList<int> l = s.GetMembersInRole(memberId, role);
-                logger.Info($"GetMembersInRole was called with parameters: [storeId = {storeId}, memberId = {memberId}, role = {role}");
+                logger.Info($"GetMembersInRole was called with parameters: [storeId = {storeId}, memberId = {memberId}, role = {role}]");
                 return new Response<IList<int>>(l);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: GetMembersInRole, parameters: [storeId = {storeId}, memberId = {memberId}, role = {role}");
+                logger.Error(mex, $"method: GetMembersInRole, parameters: [storeId = {storeId}, memberId = {memberId}, role = {role}]");
                 return new Response<IList<int>>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: GetMembersInRole, parameters: [storeId = {storeId}, memberId = {memberId}, role = {role}");
+                logger.Error(ex, $"method: GetMembersInRole, parameters: [storeId = {storeId}, memberId = {memberId}, role = {role}]");
                 return new Response<IList<int>>("Sorry, an unexpected error occured. Please try again");
             }
         }
@@ -295,17 +295,17 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<IList<Permission>>($"There isn't a store with an id {storeId}");
                 IList<Permission> l = s.GetManagerPermissions(requestingMemberId, managerMemberId);
-                logger.Info($"GetManagerPermissions was called with parameters: [storeId = {storeId}, requestingMemberId = {requestingMemberId}, managerMemberId = {managerMemberId}");
+                logger.Info($"GetManagerPermissions was called with parameters: [storeId = {storeId}, requestingMemberId = {requestingMemberId}, managerMemberId = {managerMemberId}]");
                 return new Response<IList<Permission>>(l);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: GetManagerPermissions, parameters: [storeId = {storeId}, requestingMemberId = {requestingMemberId}, managerMemberId = {managerMemberId}");
+                logger.Error(mex, $"method: GetManagerPermissions, parameters: [storeId = {storeId}, requestingMemberId = {requestingMemberId}, managerMemberId = {managerMemberId}]");
                 return new Response<IList<Permission>>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: GetManagerPermissions, parameters: [storeId = {storeId}, requestingMemberId = {requestingMemberId}, managerMemberId = {managerMemberId}");
+                logger.Error(ex, $"method: GetManagerPermissions, parameters: [storeId = {storeId}, requestingMemberId = {requestingMemberId}, managerMemberId = {managerMemberId}]");
                 return new Response<IList<Permission>>("Sorry, an unexpected error occured. Please try again");
             }
         }
@@ -319,17 +319,17 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
                 s.ChangeManagerPermissions(userId, targetUserId, permissions);
-                logger.Info($"ChangeManagerPermission was called with parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}, permissions = {permissions.ToString}");
+                logger.Info($"ChangeManagerPermission was called with parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}, permissions = {permissions.ToString}]");
                 return new Response<bool>(true);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: ChangeManagerPermission, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}, permissions = {permissions.ToString}");
+                logger.Error(mex, $"method: ChangeManagerPermission, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}, permissions = {permissions.ToString}]");
                 return new Response<bool>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: ChangeManagerPermission, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}, permissions = {permissions.ToString}");
+                logger.Error(ex, $"method: ChangeManagerPermission, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}, permissions = {permissions.ToString}]");
                 return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }

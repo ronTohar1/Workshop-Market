@@ -14,14 +14,17 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private IList<Purchase> purchaseHistory;
         private IDictionary<int, IList<Permission>> managersPermissions;
         private IDictionary<Role, IList<int>> rolesInStore;
-        private Func<int, Member> membersGetter;
+        private Func<int, Member> membersGetter
+
+        private static int productIdCounter = 0; // the next store id
+        private static Mutex productIdCounterMutex = new Mutex();
 
         private const int timeoutMilis = 2000; // time for wating for the rw lock in the next line, after which it throws an exception
         private ReaderWriterLock rolesAndPermissionsLock;
 
         // cc 5
         // cc 6
-	    public Store(string storeName, Member founder, Func<int, Member> membersGetter)
+        public Store(string storeName, Member founder, Func<int, Member> membersGetter)
 	    {
             this.name = storeName;
             this.founder = founder;
@@ -55,46 +58,126 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return name;
         }
 
-        // ------------------------------ Products ------------------------------
-        public int AddNewProduct(int memberId, string productName, double pricePerUnit) {
-            return 0;
-            // todo: implement
+        // ------------------------------ Products and Policy ------------------------------
+        private static int GenerateProductId()
+        {
+            productIdCounterMutex.WaitOne();
+
+            int result = productIdCounter;
+            productIdCounter++;
+
+            productIdCounterMutex.ReleaseMutex();
+
+            return result;
         }
+        private void EnforceAtLeastCoOwnerPermission(int memberId, string message) {
+            string permissionError = CheckAtLeastCoOwnerPermission(memberId);
+            if (permissionError != null)
+                throw new MarketException(StoreErrorMessage(message + permissionError));
+        }
+        // r.4.1
+        public int AddNewProduct(int memberId, string productName, double pricePerUnit, string category) {
+            // we allow this only to coOwners
+            EnforceAtLeastCoOwnerPermission(memberId,"Could not add a new product: ");
+            int id = GenerateProductId();
+            products.Add(id, new Product(productName, pricePerUnit, category));
+            return id;
+        }
+        // r.4.1
         public void AddProductToInventory(int memberId, int productId, int amount) {
-            // todo: implement
+            // we allow this only to coOwners
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not add to inventory: ");
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not add to inventory: there isn't such a product with product id: {productId}"));
+            products[productId].AddToInventory(amount);
         }
+        // r.4.1
         public void RemoveProduct(int memberId, int productId) {
-            // todo: implement
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not remove a product: ");
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not remove a product: there isn't such a product with product id: {productId}"));
+            products.Remove(productId);
         }
+        // r.4.1
+        // c.9
         public void DecreaseProductAmountFromInventory(int memberId, int productId, int amount)
         {
-            // todo: implement
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not take from inventory: ");
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not take from inventory: there isn't such a product with product id: {productId}"));
+            try {
+                products[productId].RemoveFromInventory(amount);
+            }
+            catch(MarketException mEx) {
+                throw new MarketException(StoreErrorMessage($"Could not take from inventory: {mEx.Message}"));
+            }
         }
-        public void AddProductPurchasePolicy(int memberId, int productId, PurchaseOption purchaseOption) {
-            // todo: implement
-        }
-        public void SetProductPrice(int memberId, int productId, PurchaseOption purchaseOption)
+        // r.4.2
+        public void AddPurchaseOption(int memberId, PurchaseOption purchaseOption)//Add to store
         {
-            // todo: implement
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option: ");
+            policy.AddPurchaseOption(purchaseOption); 
         }
-
-        // todo: implement AddProductReview(memberId: int, review: String): bool
-
-        // todo: implement GetProductReviews(productId: int): ... 
-
-        // ------------------------------ Purchase Policy ------------------------------
-        public void AddPurchasePolicy(int memberId, int productId, PurchaseOption purchaseOption)
+        // r.4.2
+        public void AddProductPurchaseOption(int memberId, int productId, PurchaseOption purchaseOption)//Add to product in the store 
         {
-            // todo: implement
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not add purchase option for the product: there isn't such a product with product id: {productId}"));
+            if (!policy.ContainsPurchaseOption(purchaseOption))
+                throw new MarketException(StoreErrorMessage($"Could not add purchase option for the product: the store itself does not support such purchase options"));
+            products[productId].AddPurchaseOption(purchaseOption);
         }
+        // r.4.1
+        public void SetProductPrice(int memberId, int productId, double productPrice)
+        {
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product price per unit: ");
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not set the product price per unit: there isn't such a product with product id: {productId}"));
+            products[productId].pricePerUnit = productPrice;
+        }
+        // r.3.3
+        public void AddProductReview(int memberId, int productId, string review) {
+            string permissionError = CheckAtLeastMemberPermission(memberId);
+            if (permissionError !=null)
+                throw new MarketException("Could not add review: "+permissionError);
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not add review: there isn't such a product with product id: {productId}"));
+            products[productId].AddProductReview(membersGetter(memberId).name,review);
+        }
+        // 6.4, 4.13
+        public void AddPurchaseRecord(int memberId, DateTime purchaseDate, double PurchasePrice, string purchaseDescription) 
+        {
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
+            purchaseHistory.Add(new Purchase(purchaseDate, PurchasePrice, purchaseDescription));
+        }
+        // 6.4, 4.13
         public IList<Purchase> GetPurchaseHistory(int memberId)
         {
-            // todo: implement, CHECK THAT HAVE PROPER PERMISSION
-            return null;
+            EnforceAtLeastCoOwnerPermission(memberId, "could not get the purchase history: ");
+            return purchaseHistory;
+        }
+        // r.3.3
+        public IList<string> GetProductReviews(int productId)
+        {
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could get reviews: there isn't such a product with product id: {productId}"));
+            return products[productId].reviews;
         }
 
-        // ------------------------------ Permission and Roles ------------------------------
+        //------------------------- search products within shop --------------------------
+        //r.2.2
+        public List<Product> SearchProductsByName(string productName)
+        => products.Values.ToList().Where(p => p.name.Contains(productName)).ToList();//the default is null
+        //r.2.2
+        public List<Product> SearchProductByCategory(string category)
+         => products.Values.ToList().Where(p => p.category.Equals(category)).ToList();//the default is null
+        //r.2.2
+        public List<Product> SearchProductByKeyWords(string keyWord)
+         => products.Values.ToList().Where(p => p.name.Contains(keyWord) || p.category.Contains(keyWord)).ToList();//the default is null
         
+        // ------------------------------ Permission and Roles ------------------------------
+
         // cc 3
         // r 4.4
         public void MakeCoOwner(int requestingMemberId, int newCoOwnerMemberId) {
@@ -332,6 +415,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return errorMessage + " in the store: " + name; 
         }
+        public bool ContainProductInStock(int productId)
+        => products.ContainsKey(productId);
+
+        public Product SearchProductByProductId(int productId)
+        => products.ContainsKey(productId) ? products[productId] : null;
+        public List<Purchase> findPurchasesByDate(DateTime date)
+        => purchaseHistory.Where(p => p.purchaseDate == date).ToList();
 
     }
 }

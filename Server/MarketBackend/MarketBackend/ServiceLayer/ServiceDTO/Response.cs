@@ -11,6 +11,13 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public T? Value { get; set; }
         public string ErrorMessage { get; set; }
 
+
+        public Response()
+        {
+            Value = default(T);
+            ErrorMessage = string.Empty;
+        }
+
         public Response(T? value)
         {
             Value = value;
@@ -28,5 +35,5 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             ErrorMessage = errorMessage;
         }
 
-,     }
+    }
 }

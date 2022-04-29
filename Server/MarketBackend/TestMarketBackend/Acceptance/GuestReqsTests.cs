@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
+using MarketBackend.ServiceLayer;
+using MarketBackend.ServiceLayer.ServiceDTO;
 
 namespace MarketBackened.Tests.Acceptance
 {
@@ -14,6 +16,7 @@ namespace MarketBackened.Tests.Acceptance
         public GuestReqsTests()
         {
             // "global" initialization here; Called before every test method.
+            buyerFacade = new BuyerFacade();
         }
 
         public void Dispose()
@@ -22,10 +25,14 @@ namespace MarketBackened.Tests.Acceptance
         }
 
 
-        [Fact]
+        [Test]
         public void GuestEntrance()
         {
+            Response<int> idResponse = buyerFacade.Enter();
 
+            int id = idResponse.Value;
+
+            Response<ServiceCart> cartResponse = buyerFacade.GetCart(id);
         }
     }
 }

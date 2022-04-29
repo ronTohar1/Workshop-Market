@@ -263,28 +263,28 @@ namespace MarketBackend.ServiceLayer
         }
 
         // TODO
-        //public Response<?> GetFounder(int storeId, int memberId)
-        //{
-        //    try
-        //    {
-        //        Store s = storeController.getStore(storeId);
-        //        if (s == null)
-        //            return new Response<?>($"There isn't a store with an id {storeId}");
-        //        ? = s.GetFounder(memberId);
-        //        logger.Info($"GetFounder was called with parameters: [memberId = {memberId}]");
-        //        return new Response<?>(?);
-        //    }
-        //    catch (MarketException mex)
-        //    {
-        //        logger.Error(mex, $"method: GetFounder, parameters: [memberId = {memberId}]");
-        //        return new Response<?>(mex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.Error(ex, $"method: GetFounder, parameters: [memberId = {memberId}]");
-        //        return new Response<?>("Sorry, an unexpected error occured. Please try again");
-        //    }
-        //}
+        public Response<ServiceMember> GetFounder(int storeId, int memberId)
+        {
+            try
+            {
+                Store s = storeController.getStore(storeId);
+                if (s == null)
+                    return new Response<ServiceMember>($"There isn't a store with an id {storeId}");
+                ServiceMember m = new ServiceMember(s.GetFounder(memberId));
+                logger.Info($"GetFounder was called with parameters: [memberId = {memberId}]");
+                return new Response<ServiceMember>(m);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetFounder, parameters: [memberId = {memberId}]");
+                return new Response<ServiceMember>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetFounder, parameters: [memberId = {memberId}]");
+                return new Response<ServiceMember>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
 
         //done
         public Response<IList<Permission>> GetManagerPermissions(int storeId, int requestingMemberId, int managerMemberId)

@@ -66,6 +66,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             amountDiscountMutex.WaitOne();
             if (amountDiscount.Count == 0)
+                amountDiscountMutex.ReleaseMutex();
                 return 0.0;
             int biggestClosestAmount = amountDiscount.Keys.First();
             foreach (int key in amountDiscount.Keys) {

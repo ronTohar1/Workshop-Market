@@ -9,9 +9,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
     // r.6.4
     public class Purchase 
     {
-        private DateTime purchaseDate { get; }
-        private double purchasePrice { get; }
-        private string purchaseDescription { get; }
+        public  DateTime purchaseDate { get; }
+        public double purchasePrice { get; }
+        public string purchaseDescription { get; }
+        public Purchase()
+        {
+           // for tests
+        }
         public Purchase(DateTime purchaseDate, double purchasePrice, string purchaseDescription) { 
             this.purchaseDate = purchaseDate;   
             this.purchasePrice = purchasePrice;

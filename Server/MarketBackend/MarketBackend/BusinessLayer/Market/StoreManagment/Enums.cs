@@ -12,9 +12,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 	{
 		RecieveInfo,
 		MakeCoManager,
-		RemoveCoManager,
-		MakeCoOwner,
-		RemoveCoOwner
+		RemoveCoManager
 	};
 	public enum PurchaseOption
 	{

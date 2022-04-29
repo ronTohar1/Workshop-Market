@@ -6,21 +6,22 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public string name { get; set; }
 		public int amountInInventory { get; set; }
 		public IList<PurchaseOption> purchaseOptions { get; }
-
 		public IList<string> reviews;
 		public double pricePerUnit { get; set; }
+		public string category { get; }
 
 		private Mutex amountInInventoryMutex;
 		private Mutex purchaseOptionsMutex;
 		private Mutex reviewMutex;
 
-		public Product(string product_name, double pricePerUnit)
+		public Product(string product_name, double pricePerUnit, string category)
 		{
 			this.name = product_name;
 			this.amountInInventory = 0;
 			this.purchaseOptions = new SynchronizedCollection<PurchaseOption>();
 			this.reviews = new SynchronizedCollection<string>();
 			this.pricePerUnit = pricePerUnit;
+			this.category = category;
 
 			amountInInventoryMutex = new Mutex();
 			purchaseOptionsMutex = new Mutex();

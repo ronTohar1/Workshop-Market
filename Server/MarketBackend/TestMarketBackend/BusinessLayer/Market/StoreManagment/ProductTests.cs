@@ -15,7 +15,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         [SetUp]
         public void setup() {
-            product = new Product("Chocolate", 5.90);
+            product = new Product("Chocolate", 5.90, "Dairy");
         }
 
         // AddToInventory test

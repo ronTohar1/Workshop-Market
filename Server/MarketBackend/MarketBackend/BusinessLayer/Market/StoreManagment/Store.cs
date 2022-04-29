@@ -14,7 +14,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private IList<Purchase> purchaseHistory;
         private IDictionary<int, IList<Permission>> managersPermissions;
         private IDictionary<Role, IList<int>> rolesInStore;
-        private Func<int, Member> membersGetter
+        private Func<int, Member> membersGetter;
 
         private static int productIdCounter = 0; // the next store id
         private static Mutex productIdCounterMutex = new Mutex();

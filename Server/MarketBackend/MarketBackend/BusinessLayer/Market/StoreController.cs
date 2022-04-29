@@ -170,17 +170,30 @@ public class StoreController
         }
 	}
 
-	//// r 2.2, r 4.9
-	//// returns the search results in open store by their ids
-	//public IDictionary<int, IList<T>> SearchInOpenStores<T>(ProductsSearchFilter filter)
- //   {
-	//	if(filter)
- //   }
+  //  // r 2.2, r 4.9
+  //  // returns the search results from open stores by their ids
+  //  public IDictionary<int, IList<Product>> SearchInOpenStores(ProductsSearchFilter filter)
+  //  {
+		//IEnumerable<KeyValuePair<int, Store>> passedStoresFilter = openStores.Where(pair => filter.FilterStore(pair.Value));
 
-	//// r 2.2, r 4.9
-	//// returns the search results in every open store that satosfieds the predicat by its id
-	//private IDictionary<int, IList<T>> SearchInOpenStores<T>(Func<Store, IList<T>> storeSerach, Predicate<Store> pred)
- //   {
-	//	throw new Exception();
-	//}
+		//IDictionary<int, IList<Product>> result = new Dictionary<int, IList<Product>>();
+		
+		//IList<Product> passedProductsFilter; 
+		//foreach (KeyValuePair<int, Store> idStorepair in passedStoresFilter)
+  //      {
+		//	passedProductsFilter = idStorepair.Value.Filter...();
+		//	if (passedProductsFilter.Count > 0)
+  //          {
+		//		result[idStorepair.Key] = passedProductsFilter;
+		//	}
+  //      }
+		//return result;
+  //  }
+
+    //// r 2.2, r 4.9
+    //// returns the search results in every open store that satosfieds the predicat by its id
+    //private IDictionary<int, IList<T>> SearchInOpenStores<T>(Func<Store, IList<T>> storeSerach, Predicate<Store> pred)
+    //   {
+    //	throw new Exception();
+    //}
 }

@@ -166,6 +166,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
 
         //------------------------- search products within shop --------------------------
+        
+        // r 2.2
+        public IList<Product> SerachProducts(ProductsSearchFilter filter)
+        => products.Values.Where(p => filter.FilterProduct(p)).ToList();
+
         //r.2.2
         public IList<Product> SearchProductsByName(string productName)
         => products.Values.ToList().Where(p => p.name.Contains(productName)).ToList();//the default is null

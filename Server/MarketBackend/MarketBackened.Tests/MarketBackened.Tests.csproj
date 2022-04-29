@@ -25,4 +25,8 @@
     <Folder Include="Unit\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MarketBackend\MarketBackend.csproj" />
+  </ItemGroup>
+
 </Project>

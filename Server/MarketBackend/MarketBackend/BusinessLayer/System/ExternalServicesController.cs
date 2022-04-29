@@ -1,33 +1,26 @@
-﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
-using System;
-using System.Collections.Concurrent;
+﻿using MarketBackend.BusinessLayer.System.ExternalServices;
 
+
+// this class right now has a deault implementation because of the fact we dont have an actual supply/payment
+// systems we can use in our market.
 public class ExternalServicesController
 {
-	private IDictionary<int, IExternalPaymentSystem> paymentsSystems;
-	private IDictionary<int, IExternalSupplySystem> supplySystems;
+	private IExternalPaymentSystem paymentsSystem;
+	private IExternalSupplySystem supplySystem;
 	public ExternalServicesController()
 	{
-		paymentsSystems = new ConcurrentDictionary<int, IExternalPaymentSystem>();
-		supplySystems = new ConcurrentDictionary<int, IExternalSupplySystem>();
+		paymentsSystem = new ExternalPaymentSystem();
+		supplySystem = new ExternalSupplySystem();
 	}
 
-	public bool makePayment(int id)
+	public bool makePayment()
     {
-		if (!paymentsSystems.ContainsKey(id))
-        {
-			throw new MarketException($"No payment system with id {id} in the external payment systems");
-		}
-		return paymentsSystems[id].makePayment();
+		return paymentsSystem.makePayment();
     }
 
-	public bool makeDelivery(int id)
+	public bool makeDelivery()
     {
-		if (!supplySystems.ContainsKey(id))
-        {
-			throw new MarketException($"No supply system with id {id} in the external supply systems");
-		}
-		return supplySystems[id].supplyDelivery();
+		return supplySystem.supplyDelivery();
 	}
 
 }

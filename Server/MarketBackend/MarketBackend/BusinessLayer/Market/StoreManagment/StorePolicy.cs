@@ -10,16 +10,20 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
     public class StorePolicy
     {
         private IList<PurchaseOption> purchaseOptions { get;  }
-        private IDictionary<int, int> minAmountPerProduct { get;  }
+        public  IDictionary<int, int> minAmountPerProduct { get; private set; }
+        public SortedDictionary<int, double> amountDiscount { get; private set; } // note that this may be a not thread safe Collection, but for that we use the amountDiscountMutex
 
         private Mutex purchaseOptionsMutex;
         private Mutex minAmountPerProductMutex;
+        private Mutex amountDiscountMutex;
         public StorePolicy() {
             purchaseOptions = new SynchronizedCollection<PurchaseOption>();
             minAmountPerProduct = new ConcurrentDictionary<int, int>();
+            amountDiscount = new SortedDictionary<int, double>();
 
             purchaseOptionsMutex = new Mutex();
             minAmountPerProductMutex = new Mutex();
+            amountDiscountMutex = new Mutex();
         }
         public void AddPurchaseOption(PurchaseOption purchaseOption)
         {
@@ -52,5 +56,27 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public int GetMinAmountPerProduct(int productId) // for each product at the store that isn't in this class the default value is 0 
         => minAmountPerProduct.ContainsKey(productId) ? minAmountPerProduct[productId] : 0;
 
+        public void AddDiscountAmountPolicy(int amount, double discountPercentage)
+        {
+            amountDiscountMutex.WaitOne();
+            amountDiscount.Add(amount, discountPercentage/100);
+            amountDiscountMutex.ReleaseMutex();
+        }
+        public double GetDiscountForAmount(int amount)
+        {
+            amountDiscountMutex.WaitOne();
+            if (amountDiscount.Count == 0)
+                amountDiscountMutex.ReleaseMutex();
+                return 0.0;
+            int biggestClosestAmount = amountDiscount.Keys.First();
+            foreach (int key in amountDiscount.Keys) {
+                if (amountDiscount[key] < amount)
+                    biggestClosestAmount = key;
+                else
+                    break;
+            }
+            amountDiscountMutex.ReleaseMutex();
+            return amountDiscount[biggestClosestAmount];
+        }
     }
 }

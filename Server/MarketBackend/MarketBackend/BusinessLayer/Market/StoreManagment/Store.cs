@@ -119,6 +119,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option: ");
             policy.AddPurchaseOption(purchaseOption); 
         }
+       
         // r.4.2
         public void AddProductPurchaseOption(int memberId, int productId, PurchaseOption purchaseOption)//Add to product in the store 
         {
@@ -129,6 +130,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException(StoreErrorMessage($"Could not add purchase option for the product: the store itself does not support such purchase options"));
             products[productId].AddPurchaseOption(purchaseOption);
         }
+        // r.4.2
+        public void SetMinAmountPerProduct(int memberId, int productId, int newMinAmount)//Add to store
+        {
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not set minimum amount for product: ");
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not set minimum amount for product: there isn't such a product with product id: {productId}"));
+            policy.SetMinAmountPerProduct(productId, newMinAmount);
+        }
+
         // r.4.1
         public void SetProductPrice(int memberId, int productId, double productPrice)
         {
@@ -178,10 +188,31 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public IList<string> GetProductReviews(int productId)
         {
             if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could get reviews: there isn't such a product with product id: {productId}"));
+                throw new MarketException(StoreErrorMessage($"Could not get reviews: there isn't such a product with product id: {productId}"));
             return products[productId].reviews;
         }
-
+        // r.3.3
+        public void AddDiscountForAmountPolicy(int memeberId, int amount, double discount)
+        {
+            EnforceAtLeastCoOwnerPermission(memeberId, "Could not add store discount for a certain amount: ");
+            policy.AddDiscountAmountPolicy(amount, discount);
+        }
+        // r.3.3
+        //recieves <productId, productAmount> and calculates the total to pay, consideroing all the restroctions
+        public double GetTotalBagCost(IDictionary<int,int> productsAmounts) 
+        {
+            foreach (int productId in productsAmounts.Keys)
+            {
+                if (!products.ContainsKey(productId))
+                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay: there isn't such a product with product id: {productId}"));
+                int amountPerProduct = policy.GetMinAmountPerProduct(productId);
+                if (productsAmounts[productId] < amountPerProduct)
+                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay:  {products[productId].name} can be bought only in a set of {amountPerProduct} or more"));
+            }
+            double productsTotalPrices = productsAmounts.Keys.Select(productId => products[productId].getUnitPriceWithDiscount()).ToList().Sum();
+            double amountDiscount = policy.GetDiscountForAmount(productsAmounts.Values.Sum());
+            return productsTotalPrices * (1 - amountDiscount);
+        }
         //------------------------- search products within shop --------------------------
         //r.2.2
         public List<Product> SearchProductsByName(string productName)

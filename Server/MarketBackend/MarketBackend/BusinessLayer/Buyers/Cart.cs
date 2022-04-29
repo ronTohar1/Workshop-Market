@@ -9,10 +9,15 @@ namespace MarketBackend.BusinessLayer.Buyers
 {
     public class Cart
     {
-        private ConcurrentDictionary<int, ShoppingBag> shoppingBags;
+        private IDictionary<int, ShoppingBag> shoppingBags;
+
+        internal IDictionary<int, ShoppingBag> ShoppingBags { get { return shoppingBags; } }
+
+        public Cart(IDictionary<int, ShoppingBag> shoppingBags) =>
+            this.shoppingBags = shoppingBags;
 
         public Cart() => 
-            this.shoppingBags = new ConcurrentDictionary<int, ShoppingBag>();
+            this.shoppingBags = new Dictionary<int, ShoppingBag>();
 
         public void AddProductToCart(ProductInBag product, int amount)
         {
@@ -22,5 +27,12 @@ namespace MarketBackend.BusinessLayer.Buyers
 
             shoppingBags[storeId].AddProductToBag(product, amount);
         }
+
+        public void RemoveProductFromCart(ProductInBag product)
+        {
+            int storeId = product.StoreId;
+            shoppingBags[storeId].RemoveProduct(product);
+        }
+
     }
 }

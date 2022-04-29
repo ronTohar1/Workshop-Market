@@ -7,34 +7,38 @@ using NUnit.Framework;
 using Moq;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer.Buyers;
+using Autofac.Extras.Moq;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
     public class CartTests
     {
-        private Cart cart;
+        private ShoppingBag bag1 = new ShoppingBag();
+        private ShoppingBag bag2 = new ShoppingBag();
+        private ProductInBag product = new ProductInBag(1,1);
 
-        
-        // ----------- Setup helping functions -----------------------------
-
-        [SetUp]
-        private void Setup()
+        private void SetupShoppingBags(Cart cart)
         {
-            cart = new Cart();
-
+            cart.ShoppingBags[1] = bag1;
+            cart.ShoppingBags[2] = bag2;
         }
         
         [Test]
         //[TestCase(coOwnerId1, memberId1)]
-        public void TestMakeCoOwnerSholdPass(int requestingMemberId, int newCoOwnerMemberId)
+        public void TestAddProductToCart_Pass()
         {
-            //SetupStoreNoRoles();
+            using (var mock = AutoMock.GetLoose())
+            {
+                mock.Mock<ShoppingBag>()
+                    .Setup(bag => bag.AddProductToBag(product, 5))
+                    .Callback(() => Assert.Pass());
 
-            //store.MakeCoOwner(founderMemberId, requestingMemberId); // this is part of the testing
-            //Assert.IsTrue(store.IsCoOwner(requestingMemberId));
-            
-            //store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId);
-            //Assert.IsTrue(store.IsCoOwner(newCoOwnerMemberId));
+                ShoppingBag bag = mock.Create<ShoppingBag>();
+                Cart cart = mock.Create<Cart>();
+                cart.ShoppingBags.Add(1, bag);
+                cart.AddProductToCart(product, 5);
+                Assert.Fail();
+            }
         }
     }
 }

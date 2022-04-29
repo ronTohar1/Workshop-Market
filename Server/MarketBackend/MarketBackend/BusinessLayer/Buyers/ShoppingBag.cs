@@ -1,6 +1,6 @@
 ﻿namespace MarketBackend.BusinessLayer.Buyers
 {
-    internal class ShoppingBag
+    public class ShoppingBag
     {
         private IDictionary<ProductInBag, int> productsAmounts;
 
@@ -19,7 +19,7 @@
         /// <summary>
         /// Add given amount of product units to the bag. If product not exist in bag, it will be added to the bag
         /// </summary>
-        public void AddProductToBag(ProductInBag product, int amount)
+        virtual public void AddProductToBag(ProductInBag product, int amount)
         {
             if (product == null)
                 throw new ArgumentNullException("product");
@@ -35,7 +35,7 @@
         /// <summary>
         /// Sets new amount to the product, product must be exist
         /// </summary>
-        public void ChangeProductAmount(ProductInBag product, int amount)
+        virtual public void ChangeProductAmount(ProductInBag product, int amount)
         {
             if (product == null)
                 throw new ArgumentNullException("product");
@@ -53,7 +53,7 @@
         /// <summary>
         /// Removes product from the bag, product must be exist
         /// </summary>
-        public void RemoveProduct(ProductInBag product)
+        virtual public void RemoveProduct(ProductInBag product)
         {
             if (!productsAmounts.Remove(product))
                 throw new ArgumentException(nameof(product) + "is not exist in cart");

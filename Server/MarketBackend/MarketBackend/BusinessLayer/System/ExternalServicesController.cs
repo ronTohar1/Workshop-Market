@@ -7,10 +7,10 @@ public class ExternalServicesController
 {
 	private IExternalPaymentSystem paymentsSystem;
 	private IExternalSupplySystem supplySystem;
-	public ExternalServicesController()
+	public ExternalServicesController(IExternalPaymentSystem ep, IExternalSupplySystem es)
 	{
-		paymentsSystem = new ExternalPaymentSystem();
-		supplySystem = new ExternalSupplySystem();
+		paymentsSystem = ep;
+		supplySystem = es;
 	}
 
 	public bool makePayment()

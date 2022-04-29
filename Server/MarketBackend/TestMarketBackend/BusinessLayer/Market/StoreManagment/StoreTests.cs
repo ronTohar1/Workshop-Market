@@ -461,7 +461,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             Assert.Throws<MarketException>(()=>store.AddNewProduct(memberId, productName, pricePerUnit, category));
-            Assert.IsNull(store.SearchProductByName(productName).FirstOrDefault());
+            Assert.IsNull(store.SearchProductsByName(productName).FirstOrDefault());
         }
         private void SetUpProductsIdInStore() {
             productId1 = store.AddNewProduct(founderMemberId, productName1, productPrice1, category1);
@@ -506,45 +506,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.IsNotNull(store.SearchProductByProductId(productId3));
             store.RemoveProduct(memberId, productId3);
             Assert.IsNull(store.SearchProductByProductId(productId3));
-
-        // ------- GetMembersInRole() ----------------------------------------
-
-        [Test]
-        [TestCase(notAMemberId1, Role.Owner)]
-        [TestCase(memberId1, Role.Manager)]
-        [TestCase(managerId2, Role.Owner)] // not in defualt permissions
-        public void TestGetMembersInRoleNoPermission(int requestingMemberId, Role role)
-        {
-            SetupStoreFull();
-
-            Assert.Throws<MarketException>(() => store.GetMembersInRole(requestingMemberId, role));
         }
-
-        [Test]
-        [TestCase(coOwnerId1, Role.Manager, new int[] { managerId1, managerId2 })]
-        [TestCase(managerId1, Role.Owner, new int[] { coOwnerId1, coOwnerId2, founderMemberId })]
-        [TestCase(founderMemberId, Role.Manager, new int[] { managerId1, managerId2 })]
-        public void TestGetMembersInRoleShouldPass(int requestingMemberId, Role role, int[] expectedMembersIds)
-        {
-            SetupStoreFull();
-
-            Assert.IsTrue(SameElements(store.GetMembersInRole(requestingMemberId, role)
-                , new List<int>(expectedMembersIds)));
-        }
-
-        // ------- GetFounder() ----------------------------------------
-
-        [Test]
-        [TestCase(notAMemberId1)]
-        [TestCase(memberId1)]
-        [TestCase(managerId2)] // not in defualt permissions
-        public void TestGetFounderNoPermission(int requestingMemberId)
-        {
-            SetupStoreFull();
-
-            Assert.Throws<MarketException>(() => store.GetFounder(requestingMemberId));
-        }
-
         [Test]
         [TestCase(coOwnerId1)]
 
@@ -553,13 +515,14 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             SetUpProductsIdInStore();
-            Assert.Throws<MarketException>(() => store.RemoveProduct(memberId,productId1));
+            Assert.Throws<MarketException>(() => store.RemoveProduct(memberId, productId1));
             Assert.IsNotNull(store.SearchProductByProductId(productId1));
         }
 
-        private void SetUpProductAmount() {
+        private void SetUpProductAmount()
+        {
             SetUpProductsIdInStore();
-            store.AddProductToInventory(founderMemberId,productId1,amount2);
+            store.AddProductToInventory(founderMemberId, productId1, amount2);
             store.AddProductToInventory(founderMemberId, productId2, amount2);
             store.AddProductToInventory(founderMemberId, productId3, amount2);
         }
@@ -570,9 +533,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoPermissionsChange();
             SetUpProductAmount();
-            int amountBefore = store.SearchProductByName(productName1).First().amountInInventory;
+            int amountBefore = store.SearchProductsByName(productName1).First().amountInInventory;
             store.DecreaseProductAmountFromInventory(memberId, productId1, amountToReduce);
-            int amountAfter = store.SearchProductByName(productName1).First().amountInInventory;
+            int amountAfter = store.SearchProductsByName(productName1).First().amountInInventory;
             Assert.AreEqual(amountBefore - amountToReduce, amountAfter);
         }
         [Test]
@@ -582,9 +545,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             SetUpProductAmount();
-            int amountBefore = store.SearchProductByName(productName1).First().amountInInventory;
-            Assert.Throws<MarketException>(()=>store.DecreaseProductAmountFromInventory(memberId, productId1, amountToReduce));
-            int amountAfter = store.SearchProductByName(productName1).First().amountInInventory;
+            int amountBefore = store.SearchProductsByName(productName1).First().amountInInventory;
+            Assert.Throws<MarketException>(() => store.DecreaseProductAmountFromInventory(memberId, productId1, amountToReduce));
+            int amountAfter = store.SearchProductsByName(productName1).First().amountInInventory;
             Assert.AreEqual(amountBefore, amountAfter);
         }
         [Test]
@@ -593,14 +556,14 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoPermissionsChange();// we want to check inventory managment 
             SetUpProductAmount();
-            int amountBefore = store.SearchProductByName(productName1).First().amountInInventory;
+            int amountBefore = store.SearchProductsByName(productName1).First().amountInInventory;
             Assert.Throws<MarketException>(() => store.DecreaseProductAmountFromInventory(memberId, productId1, amountToReduce));
-            int amountAfter = store.SearchProductByName(productName1).First().amountInInventory;
+            int amountAfter = store.SearchProductsByName(productName1).First().amountInInventory;
             Assert.AreEqual(amountBefore, amountAfter);
         }
 
         [Test]
-        [TestCase(coOwnerId1,PurchaseOption.Bid)]
+        [TestCase(coOwnerId1, PurchaseOption.Bid)]
         [TestCase(coOwnerId2, PurchaseOption.Raffle)]
         [TestCase(founderMemberId, PurchaseOption.Immediate)]
         public void TestAddPurchaseOptionWithPermissionsSuccess(int memberId, PurchaseOption purchaseOptionToAdd)
@@ -610,7 +573,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             store.AddPurchaseOption(memberId, purchaseOptionToAdd);
             Assert.True(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
         }
-        
+
         [Test]
         [TestCase(notAMemberId1, PurchaseOption.Public)]
         [TestCase(coOwnerId2, PurchaseOption.Raffle)]
@@ -622,9 +585,10 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.False(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
         }
 
-        private void SetUpStoreWithPurchaseOption() {
+        private void SetUpStoreWithPurchaseOption()
+        {
             SetUpProductsIdInStore();
-            store.AddPurchaseOption(founderMemberId,PurchaseOption.Public);
+            store.AddPurchaseOption(founderMemberId, PurchaseOption.Public);
             store.AddPurchaseOption(founderMemberId, PurchaseOption.Immediate);
         }
 
@@ -637,7 +601,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetupStoreNoPermissionsChange();
             SetUpStoreWithPurchaseOption();
             Assert.False(store.SearchProductByProductId(productId1).ContainsPurchasePolicy(purchaseOptionToAdd));
-            store.AddProductPurchaseOption(memberId,productId1, purchaseOptionToAdd);
+            store.AddProductPurchaseOption(memberId, productId1, purchaseOptionToAdd);
             Assert.True(store.SearchProductByProductId(productId1).ContainsPurchasePolicy(purchaseOptionToAdd));
         }
 
@@ -673,11 +637,11 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoPermissionsChange();
             SetUpProductsIdInStore();
-            Assert.False(store.SearchProductByProductId(productId1).pricePerUnit==price);
+            Assert.False(store.SearchProductByProductId(productId1).pricePerUnit == price);
             store.SetProductPrice(memberId, productId1, price);
             Assert.True(store.SearchProductByProductId(productId1).pricePerUnit == price);
         }
-        
+
         [Test]
         [TestCase(notAMemberId1, productPrice2)]
         [TestCase(notAMemberId2, productPrice3)]
@@ -718,9 +682,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestAddPurchaseRecordWithoutPermissionFail(int memberId)
         {
             SetupStoreNoRoles();
-            DateTime date = DateTime.Now; 
+            DateTime date = DateTime.Now;
             Assert.Throws<MarketException>(() => store.AddPurchaseRecord(memberId, date, purchasePrice, purchaseDescription));
-            Assert.True(store.findPurchasesByDate(date).Count==0);
+            Assert.True(store.findPurchasesByDate(date).Count == 0);
         }
 
         private void SetUpPurchasesInStore()
@@ -734,10 +698,10 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoPermissionsChange();
             SetUpPurchasesInStore();
-            IList<Purchase> purchases =  store.GetPurchaseHistory(memberId);
-            Assert.True(purchases.Count==1 && purchases.First().GetPurchaseDescription()==purchaseDescription);
+            IList<Purchase> purchases = store.GetPurchaseHistory(memberId);
+            Assert.True(purchases.Count == 1 && purchases.First().GetPurchaseDescription() == purchaseDescription);
         }
-        
+
         [Test]
         [TestCase(notAMemberId1)]
         [TestCase(notAMemberId2)]
@@ -747,7 +711,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetUpPurchasesInStore();
             Assert.Throws<MarketException>(() => store.GetPurchaseHistory(memberId));
         }
-        
+
         [Test]
         [TestCase(memberId1, reviewMessage1)]
         [TestCase(memberId2, reviewMessage2)]
@@ -756,7 +720,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             SetUpProductsIdInStore();
-            Assert.True(store.GetProductReviews(productId1).Count==0);
+            Assert.True(store.GetProductReviews(productId1).Count == 0);
             store.AddProductReview(memberId, productId1, reviewMessage);
             IList<string> reviews = store.GetProductReviews(productId1);
             Assert.True(reviews.Count == 1 && reviews.First().Contains(reviewMessage));
@@ -768,7 +732,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestAddProductReviewMemberExistsProductDoesNotFail(int memberId, string reviewMessage)
         {
             SetupStoreNoRoles();
-            Assert.Throws<MarketException>(() => store.AddProductReview(memberId,productId1,reviewMessage));
+            Assert.Throws<MarketException>(() => store.AddProductReview(memberId, productId1, reviewMessage));
         }
         [Test]
         [TestCase(notAMemberId1, reviewMessage1)]
@@ -781,7 +745,47 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.True(store.GetProductReviews(productId1).Count == 0);
             Assert.Throws<MarketException>(() => store.AddProductReview(memberId, productId2, reviewMessage));
             Assert.True(store.GetProductReviews(productId1).Count == 0);
+        }
 
+        // ------- GetMembersInRole() ----------------------------------------
+
+        [Test]
+        [TestCase(notAMemberId1, Role.Owner)]
+        [TestCase(memberId1, Role.Manager)]
+        [TestCase(managerId2, Role.Owner)] // not in defualt permissions
+        public void TestGetMembersInRoleNoPermission(int requestingMemberId, Role role)
+        {
+            SetupStoreFull();
+
+            Assert.Throws<MarketException>(() => store.GetMembersInRole(requestingMemberId, role));
+        }
+
+        [Test]
+        [TestCase(coOwnerId1, Role.Manager, new int[] { managerId1, managerId2 })]
+        [TestCase(managerId1, Role.Owner, new int[] { coOwnerId1, coOwnerId2, founderMemberId })]
+        [TestCase(founderMemberId, Role.Manager, new int[] { managerId1, managerId2 })]
+        public void TestGetMembersInRoleShouldPass(int requestingMemberId, Role role, int[] expectedMembersIds)
+        {
+            SetupStoreFull();
+
+            Assert.IsTrue(SameElements(store.GetMembersInRole(requestingMemberId, role)
+                , new List<int>(expectedMembersIds)));
+        }
+
+        // ------- GetFounder() ----------------------------------------
+
+        [Test]
+        [TestCase(notAMemberId1)]
+        [TestCase(memberId1)]
+        [TestCase(managerId2)] // not in defualt permissions
+        public void TestGetFounderNoPermission(int requestingMemberId)
+        {
+            SetupStoreFull();
+
+            Assert.Throws<MarketException>(() => store.GetFounder(requestingMemberId));
+        }
+
+        
         [TestCase(managerId1)]
         [TestCase(founderMemberId)]
         public void TestGetFounderShouldPass(int requestingMemberId)

@@ -52,5 +52,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public int GetMinAmountPerProduct(int productId) // for each product at the store that isn't in this class the default value is 0 
         => minAmountPerProduct.ContainsKey(productId) ? minAmountPerProduct[productId] : 0;
 
+        public void AddDiscountAmountPolicy(int amount, double discount)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

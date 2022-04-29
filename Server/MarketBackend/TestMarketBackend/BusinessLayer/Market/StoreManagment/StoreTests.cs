@@ -54,6 +54,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private int productId1;
         private int productId2;
         private int productId3;
+        private const double discountPercentage1 = 30;
+        private const double discountPercentage2 = 45;
+        private const double discountPercentage3 = 90;
         private const double purchasePrice = 5.5;
         private const string purchaseDescription = "eggs, 3X Milk carton, 2X peanut jar  ";
         private const string reviewMessage1 = "very nice";
@@ -653,16 +656,55 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.Throws<MarketException>(() => store.SetProductPrice(memberId, productId3, price));
             Assert.False(store.SearchProductByProductId(productId1).pricePerUnit == price);
         }
-
-        private Purchase SetUpMockPurchases()
+       
+        [Test]
+        [TestCase(coOwnerId1, discountPercentage1)]
+        [TestCase(coOwnerId2, discountPercentage2)]
+        [TestCase(founderMemberId, discountPercentage3)]
+        public void TestSetProductDiscountPercentageWithPermissionsSuccess(int memberId, double discountPercentage)
         {
-            Mock<Purchase> purchaseMock = new Mock<Purchase>();
+            SetupStoreNoPermissionsChange();
+            SetUpProductsIdInStore();
+            Assert.False(store.SearchProductByProductId(productId1).productdicount == (discountPercentage/100));
+            store.SetProductDiscountPercentage(memberId, productId1, discountPercentage);
+            Assert.True(store.SearchProductByProductId(productId1).productdicount == (discountPercentage / 100));
+        }
 
-            purchaseMock.Setup(purchase =>
-               purchase.GetPurchaseDescription()).
-                   Returns(purchaseDescription);
+        [Test]
+        [TestCase(notAMemberId1, productPrice2)]
+        [TestCase(notAMemberId2, productPrice3)]
+        public void TestSetProductDiscountPercentageWithoutPermissionsFail(int memberId, double discountPercentage)
+        {
+            SetupStoreNoRoles();
+            SetUpProductsIdInStore();
+            Assert.False(store.SearchProductByProductId(productId1).productdicount == (discountPercentage / 100));
+            Assert.Throws<MarketException>(() => store.SetProductDiscountPercentage(memberId, productId3, discountPercentage));
+            Assert.False(store.SearchProductByProductId(productId1).productdicount == (discountPercentage / 100));
+        }
 
-            return purchaseMock.Object;
+        [Test]
+        [TestCase(coOwnerId1, category2)]
+        [TestCase(coOwnerId2, category2)]
+        [TestCase(founderMemberId, category3)]
+        public void TestSetProductCategoryWithPermissionsSuccess(int memberId, string category)
+        {
+            SetupStoreNoPermissionsChange();
+            SetUpProductsIdInStore();
+            Assert.False(store.SearchProductByProductId(productId1).category == category);
+            store.SetProductCategory(memberId, productId1, category);
+            Assert.True(store.SearchProductByProductId(productId1).category == category);
+        }
+
+        [Test]
+        [TestCase(notAMemberId1, category2)]
+        [TestCase(notAMemberId2, category3)]
+        public void TestSetProductCategoryWithoutPermissionsFail(int memberId, string category)
+        {
+            SetupStoreNoRoles();
+            SetUpProductsIdInStore();
+            Assert.False(store.SearchProductByProductId(productId1).category == category);
+            Assert.Throws<MarketException>(() => store.SetProductCategory(memberId, productId3, category));
+            Assert.False(store.SearchProductByProductId(productId1).category == category);
         }
 
         [Test]

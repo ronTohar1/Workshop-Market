@@ -28,5 +28,5 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             ErrorMessage = errorMessage;
         }
 
-,     }
+     }
 }

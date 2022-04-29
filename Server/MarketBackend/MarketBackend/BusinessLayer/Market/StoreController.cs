@@ -28,6 +28,15 @@ public class StoreController
 		this.closedStoresMutex = new Mutex();
 	}
 
+
+	public Store getStore(int storeId)
+    {
+		Store s = GetOpenStore(storeId);
+		if (s == null)
+			s = GetClosedStore(storeId);
+		return s;
+    }
+
 	public Store GetOpenStore(int storeId)
     {
 		if (!openStores.ContainsKey(storeId))

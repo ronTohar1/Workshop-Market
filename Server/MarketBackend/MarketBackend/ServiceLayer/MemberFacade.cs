@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using System;
 using System.Collections.Generic;

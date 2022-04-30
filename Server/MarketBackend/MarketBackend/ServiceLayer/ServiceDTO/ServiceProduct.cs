@@ -9,6 +9,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     internal class ServiceProduct
     {
+        public int Id { get; set; }
         public ServiceProduct(Product p)
         {
 

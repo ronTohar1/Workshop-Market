@@ -31,6 +31,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			purchaseOptionsMutex = new Mutex();
 			reviewMutex = new Mutex();
 		}
+
+		public Product(string product_name, double pricePerUnit, string category) : this(product_name, pricePerUnit, category, 0.0) { }
+		
 		// r.4.1
 		public void AddToInventory(int amountToAdd) { 
 			amountInInventoryMutex.WaitOne();

@@ -7,7 +7,7 @@ using NUnit.Framework;
 using Moq;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer.Buyers.Members;
-using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.BusinessLayer;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -80,10 +80,10 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         private Member setupMcokedMember(int memberId)
         {
-            Mock<Member> memberMock = new Mock<Member>(); // todo: add arguments to send to constructor
+            Mock<Member> memberMock = new Mock<Member>("user123", 12345678); // todo: make sure these arguments to the constructor are okay
 
             memberMock.Setup(member =>
-                member.GetId()).
+                member.Id).
                     Returns(memberId);
 
             return memberMock.Object;
@@ -117,7 +117,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
             memberGetter = memberId =>
             {
-                if (founder.GetId() == memberId)
+                if (founder.Id == memberId)
                 {
                     return founder;
                 }
@@ -947,7 +947,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreFull();
 
-            Assert.AreEqual(founderMemberId, store.GetFounder(requestingMemberId).GetId());
+            Assert.AreEqual(founderMemberId, store.GetFounder(requestingMemberId).Id);
         }
 
         // ------- GetManagerPermossions() ----------------------------------------

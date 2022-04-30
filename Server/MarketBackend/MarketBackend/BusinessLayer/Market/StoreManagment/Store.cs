@@ -50,7 +50,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             {
                 rolesInStore.Add(role, new SynchronizedCollection<int>());
             }
-            this.rolesInStore[Role.Owner].Add(founder.GetId());
+            this.rolesInStore[Role.Owner].Add(founder.Id);
         }
 
         public virtual string GetName()
@@ -170,7 +170,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException("Could not add review: "+permissionError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not add review: there isn't such a product with product id: {productId}"));
-            products[productId].AddProductReview(membersGetter(memberId).name,review);
+            products[productId].AddProductReview(membersGetter(memberId).Username,review);
         }
         // 6.4, 4.13
         public void AddPurchaseRecord(int memberId, DateTime purchaseDate, double PurchasePrice, string purchaseDescription) 
@@ -380,7 +380,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         public bool IsFounder(int memberId)
         {
-            return founder.GetId() == memberId;
+            return founder.Id == memberId;
         }
 
         public bool IsCoOwner(int memberId)

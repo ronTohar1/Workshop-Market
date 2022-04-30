@@ -8,15 +8,9 @@ namespace MyApp // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            Example example = new Example();
-            Console.WriteLine("Hello World!");
-            if (example.IsEven(2))
-                Console.WriteLine($"the number 2 is even");
-            else
-                Console.WriteLine($"the number 2 is not even");
             log_example();
-
         }
+
         static void log_example()
         {
             Logger logger = SystemLogger.getLogger();

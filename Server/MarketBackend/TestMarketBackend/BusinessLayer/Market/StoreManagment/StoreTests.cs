@@ -80,7 +80,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         private Member setupMcokedMember(int memberId)
         {
-            Mock<Member> memberMock = new Mock<Member>(); // todo: add arguments to send to constructor
+            Mock<Member> memberMock = new Mock<Member>("user123", 12345678); // todo: make sure these arguments to the constructor are okay
 
             memberMock.Setup(member =>
                 member.Id).

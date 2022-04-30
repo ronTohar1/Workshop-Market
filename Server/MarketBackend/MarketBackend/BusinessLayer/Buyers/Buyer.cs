@@ -13,7 +13,7 @@ namespace MarketBackend.BusinessLayer.Buyers
     {
         private static int _nextId;
         public Cart Cart { get; internal set; }
-        public int Id { get; internal set; }
+        public virtual int Id { get; internal set; }
         private IList<Purchase> purchaseHistory;
 
 
@@ -26,7 +26,7 @@ namespace MarketBackend.BusinessLayer.Buyers
                 lock (mutex)
                 {
                     int lastId = _nextId;
-                    NextId++;
+                    _nextId++;
                     return lastId;
                 }
             }

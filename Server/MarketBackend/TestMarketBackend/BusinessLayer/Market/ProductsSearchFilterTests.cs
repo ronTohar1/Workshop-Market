@@ -32,7 +32,7 @@ namespace TestMarketBackend.BusinessLayer.Market
 
         private Mock<Store> MakeStoreWithMockFields(string name)
         {
-            Mock<Member> founderMock = new Mock<Member>();
+            Mock<Member> founderMock = new Mock<Member>("user123", 12345678); // todo: check if okay
             Member founder = founderMock.Object; 
 
             return new Mock<Store>(name, founder, (int id) => (Member)null);

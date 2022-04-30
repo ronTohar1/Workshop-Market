@@ -34,7 +34,7 @@ namespace MarketBackend.ServiceLayer
             return new Response<int>();
         }
 
-        public Response<bool> Leave()
+        public Response<bool> Leave(int userId)
         {
             return new Response<bool>();
         }

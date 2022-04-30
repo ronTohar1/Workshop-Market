@@ -113,6 +113,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException(StoreErrorMessage($"Could not take from inventory: {mEx.Message}"));
             }
         }
+
+        internal IList<Product> SerachProducts(ProductsSearchFilter filter)
+        {
+            // in conflicts, delete this method...
+            // why the develop is not compiling every single time :(
+            throw new NotImplementedException();
+        }
+
         // r.4.2
         public void AddPurchaseOption(int memberId, PurchaseOption purchaseOption)//Add to store
         {
@@ -254,6 +262,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             rolesAndPermissionsLock.ReleaseWriterLock();
             // todo: check that this mutex is synchronizing all these things okay
         }
+
+
+
 
         // cc 3
         // r 4.6, r 5

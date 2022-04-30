@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac.Extras.Moq" Version="6.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.17.2" />
     <PackageReference Include="NUnit" Version="3.13.2" />
@@ -21,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="BusinessLayer\Buyers\Guests\" />
-    <Folder Include="BusinessLayer\Buyers\Members\" />
     <Folder Include="BusinessLayer\Market\StoreManagment\" />
   </ItemGroup>
 

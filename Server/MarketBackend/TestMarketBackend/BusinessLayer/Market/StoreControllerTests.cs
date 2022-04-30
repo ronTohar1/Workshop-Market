@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
+using MarketBackend.BusinessLayer.Buyers;
 using Moq;
 using NUnit.Framework;
 using System;

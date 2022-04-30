@@ -120,7 +120,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void SetPriceByUnit(double newPriceByUnit)
         {
             product.SetProductPriceByUnit(newPriceByUnit);
-            Assert.Equals(product.pricePerUnit, newPriceByUnit);
+            Assert.True(product.pricePerUnit == newPriceByUnit);
         }
         // SetDiscount test
         [Test]
@@ -128,9 +128,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCase(90.5)]
         public void SetDiscountPercentage(double discount)
         {
-            Assert.Equals(product.productdicount,0.0);
+            Assert.True(product.productdicount == 0.0);
             product.SetProductDiscountPercentage(discount);
-            Assert.Equals(product.productdicount, 1- (discount/100));
+            Assert.True(product.productdicount == discount/100);
         }
         // SetCategory test
         [Test]

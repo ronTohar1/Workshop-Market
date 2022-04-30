@@ -66,11 +66,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             amountDiscountMutex.WaitOne();
             if (amountDiscount.Count == 0)
+            {
                 amountDiscountMutex.ReleaseMutex();
                 return 0.0;
+            }
             int biggestClosestAmount = amountDiscount.Keys.First();
+            if (biggestClosestAmount > amount) // if the first amount is bigger than the the searched amount there isn't a discount
+                return 0.0;
             foreach (int key in amountDiscount.Keys) {
-                if (amountDiscount[key] < amount)
+                if (key <= amount)
                     biggestClosestAmount = key;
                 else
                     break;

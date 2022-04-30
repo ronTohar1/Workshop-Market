@@ -42,7 +42,7 @@ public class MembersController : IBuyersController
             {
                 if (!this.IsUsernameExists(username))
                 {
-                    Member member = new Member(username, password);
+                    Member member = this.createNewMember(username,password);
                     if (!this.AddMember(member))
                         throw new Exception("Could not add valid member to the members controller");
                     return member.Id;
@@ -73,6 +73,11 @@ public class MembersController : IBuyersController
         Member member;
 
         return null;
+    }
+
+    private Member createNewMember(string username,string password)
+    {
+        return new Member(username,password,new Security());
     }
 
     private bool IsUsernameExists(string username)

@@ -37,14 +37,14 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         }
 
 
-        public Member(string username, string password)
+        public Member(string username, string password, Security security)
         {
             //Init locks first
             this.mutex = new Mutex();
             this.loggedInLock = new ReaderWriterLock();
 
             //Init fields
-            this.security = new Security();
+            this.security = security;
             this.Username = username;
             this.password = security.HashPassword(password);
             this._loggedIn = false;

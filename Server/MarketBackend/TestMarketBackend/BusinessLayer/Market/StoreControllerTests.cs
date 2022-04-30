@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market;
+using MarketBackend.BusinessLayer.Market.StoreManagment;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -257,29 +258,90 @@ namespace TestMarketBackend.BusinessLayer.Market
             Assert.NotNull(storeController.GetClosedStore(storeId));
         }
 
-        // ------- SerachInOpenStores() ----------------------------------------
+        // ------- SearchProductsInOpenStores() --------------------------------
 
         // no stores
         // some closed stores and no open stores
-        // one open store
-        // two open stores
+        // two open stores one closed store
 
-        // search for all products
-        // search using store search function
+        // no stores match
+        // some stores
+        // no products match in store - in this case should not return store
+
+        [Test]
+        [TestCase(new string[] { }, new string[] { }, "store", new string[] { })]
+        [TestCase(new string[] { }, new string[] { "store3" }, "store", new string[] { })]
+        [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "store", new string[] { })]
+        [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "st123", new string[] { })]
+        [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "re1", new string[] { })]
+        public void TestSerachProductsInOpenStoresNoProduts(string[] openStoresNames, string[] closedStoreNames, string nameInSearch, string[] expectedStoreNames)
+        {
+            StoreControllerWithStoresSetup(openStoresNames, closedStoreNames); // also sets up so that member1 exists in the system
+
+            ProductsSearchFilter filter = new ProductsSearchFilter();
+            filter.FilterStoreName(nameInSearch);
+
+            IDictionary<int, IList<Product>> result = storeController.SearchProductsInOpenStores(filter);
+
+            IList<string> resultStoresNames = result.Keys.Select(id => storeController.getStore(id).GetName()).ToList();
+        
+            Assert.IsTrue(SameElements(expectedStoreNames, resultStoresNames));
+        }
 
         //[Test]
-        //[TestCase(, )]
-        //[TestCase(storeName2, new string[] { storeName1 })]
-        //public void TestSeracgInOpenStores(string[] openStoresNames, string[] storeExtraExistingNames)
+        //[TestCase(new string[] { }, new string[] { }, "store", new string[] { })]
+        //[TestCase(new string[] { }, new string[] { "store3" }, "store", new string[] { })]
+        //[TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "store", new string[] { "store1", "store2" })]
+        //[TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "st123", new string[] { })]
+        //[TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "re1", new string[] { "store1" })]
+        //public void TestSerachProductsInOpenStores(string[] openStoresNames, string[] closedStoreNames, string nameInSearch, string[] expectedStoreNames)
         //{
-        //    StoreControllerWithStoresSetup(storeExtraExistingNames); // also sets up so that member1 exists in the system
+        //    StoreControllerWithStoresSetup(openStoresNames, closedStoreNames); // also sets up so that member1 exists in the system
 
-        //    int storeId = addOpenStore(memberId1, storeName);
+        //    ProductsSearchFilter filter = new ProductsSearchFilter();
+        //    filter.FilterStoreName(nameInSearch);
 
-        //    storeController.CloseStore(memberId1, storeId); // should work
+        //    IDictionary<int, IList<Product>> result = storeController.SearchProductsInOpenStores(filter);
 
-        //    Assert.IsNull(storeController.GetOpenStore(storeId));
-        //    Assert.NotNull(storeController.GetClosedStore(storeId));
+        //    IList<string> resultStoresNames = result.Keys.Select(id => storeController.getStore(id).GetName()).ToList();
+
+        //    Assert.IsTrue(SameElements(expectedStoreNames, resultStoresNames));
+
+        //    // todo: add products and test this (need to add many tests) 
         //}
+
+        // ------- SearchOpenStores() ---------------------------------
+
+        // these tests are similar to the ones of SearchProductsInOpenStores above, 
+        // but one function does not use the other for efficiency so they are both 
+        // tested on the implementation that they both have in their code 
+
+        [Test]
+        [TestCase(new string[] { }, new string[] { }, "store", new string[] { })]
+        [TestCase(new string[] { }, new string[] { "store3" }, "store", new string[] { })]
+        [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "store", new string[] { "store1", "store2" })]
+        [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "st123", new string[] { })]
+        [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "re1", new string[] { "store1" })]
+        public void TestSerachOpenStores(string[] openStoresNames, string[] closedStoreNames, string nameInSearch, string[] expectedStoreNames)
+        {
+            StoreControllerWithStoresSetup(openStoresNames, closedStoreNames); // also sets up so that member1 exists in the system
+
+            ProductsSearchFilter filter = new ProductsSearchFilter();
+            filter.FilterStoreName(nameInSearch);
+
+            IList<int> result = storeController.SearchOpenStores(filter);
+
+            IList<string> resultStoresNames = result.Select(id => storeController.getStore(id).GetName()).ToList();
+
+            Assert.IsTrue(SameElements(expectedStoreNames, resultStoresNames));
+        }
+
+        private bool SameElements<T>(IList<T> list1, IList<T> list2)
+        {
+            if (list1.Count != list2.Count)
+                return false;
+            return list1.All(element => list2.Contains(element));
+
+        }
     }
 }

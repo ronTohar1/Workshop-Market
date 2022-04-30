@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace MarketBackend.BusinessLayer.Buyers
     public class Buyer
     {
         private static int _nextId;
-        public Cart Cart { get; internal set; }
+        public Cart Cart { get; private set; }
         public virtual int Id { get; internal set; }
         private IList<Purchase> purchaseHistory;
 
@@ -45,10 +46,15 @@ namespace MarketBackend.BusinessLayer.Buyers
         }
 
 
-        public bool AddPurchase(Purchase purchase)
+        public void AddPurchase(Purchase purchase)
         {
-            throw new NotImplementedException();
+            if (purchase == null) { throw new ArgumentNullException(nameof(purchase)); }
+            this.purchaseHistory.Add(purchase);
         }
 
+        public IReadOnlyCollection<Purchase> GetPurchaseHistory() 
+        {
+            return new ReadOnlyCollection<Purchase>(this.purchaseHistory);
+        }
     }
 }

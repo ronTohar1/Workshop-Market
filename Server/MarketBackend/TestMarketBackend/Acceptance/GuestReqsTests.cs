@@ -16,7 +16,7 @@ namespace MarketBackened.Tests.Acceptance
         public GuestReqsTests()
         {
             // "global" initialization here; Called before every test method.
-            buyerFacade = new BuyerFacade();
+            //buyerFacade = new BuyerFacade();
         }
 
         public void Dispose()

@@ -9,6 +9,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public IList<string> reviews;
 		public double pricePerUnit { get; set; }
 		public virtual string category { get; private set; }
+
 		public double productdicount { get; set; }
 		
 		private Mutex amountInInventoryMutex;

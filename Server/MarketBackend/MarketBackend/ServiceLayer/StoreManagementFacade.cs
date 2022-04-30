@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Market;
+using MarketBackend.BusinessLayer;
 
 namespace MarketBackend.ServiceLayer
 {

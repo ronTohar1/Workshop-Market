@@ -1,5 +1,5 @@
 using System;
-namespace MarketBackend.BusinessLayer.Market.StoreManagment
+namespace MarketBackend.BusinessLayer
 {
     public class MarketException : Exception
     {

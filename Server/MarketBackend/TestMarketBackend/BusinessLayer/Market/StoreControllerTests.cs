@@ -1,6 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.BusinessLayer.Buyers;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -34,7 +35,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         private void membersConrtollerMemberExistsSetup(int[] exsitingMembersIds)
         {
             membersControllerMock = new Mock<MembersController>();
-            memberMock = new Mock<Member>();
+            memberMock = new Mock<Member>("user123", 12345678); // todo: is this okay
             member = memberMock.Object;
 
             foreach (int existingMemberId in exsitingMembersIds)

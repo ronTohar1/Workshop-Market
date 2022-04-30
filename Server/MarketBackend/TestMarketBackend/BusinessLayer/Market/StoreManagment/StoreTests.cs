@@ -7,7 +7,7 @@ using NUnit.Framework;
 using Moq;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer.Buyers.Members;
-using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.BusinessLayer;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -80,10 +80,10 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         private Member setupMcokedMember(int memberId)
         {
-            Mock<Member> memberMock = new Mock<Member>(); // todo: add arguments to send to constructor
+            Mock<Member> memberMock = new Mock<Member>("user123", 12345678); // todo: make sure these arguments to the constructor are okay
 
             memberMock.Setup(member =>
-                member.GetId()).
+                member.Id).
                     Returns(memberId);
 
             return memberMock.Object;
@@ -117,7 +117,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
             memberGetter = memberId =>
             {
-                if (founder.GetId() == memberId)
+                if (founder.Id == memberId)
                 {
                     return founder;
                 }
@@ -695,9 +695,11 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.True(store.policy.GetMinAmountPerProduct(productId1) == 0); 
         }
         [Test]
+        [TestCase(coOwnerId1, amount2)]
+        [TestCase(founderMemberId, amount3)]
         public void TestSetMinAmountPerProductDoesNotExistFail(int memberId, int newAmount)
         {
-            SetupStoreNoRoles();
+            SetupStoreNoPermissionsChange();
             Assert.Throws<MarketException>(() => store.SetMinAmountPerProduct(memberId, productId1, newAmount));
         }
 
@@ -842,7 +844,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetupStoreNoPermissionsChange();
             Assert.True(store.policy.amountDiscount.Count == 0);
             store.AddDiscountForAmountPolicy(memeberId, amount, discount);
-            Assert.True(store.policy.amountDiscount.Count == 1 && store.policy.amountDiscount[amount]==discount);
+            Assert.True(store.policy.amountDiscount.Count == 1 && store.policy.amountDiscount[amount]==discount/100);
         }
         [Test]
         [TestCase(notAMemberId1, amount1, discountPercentage1)]
@@ -870,7 +872,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             }; ;
             correctTotal = productIdAmount1 * productPrice1 * (1 - (discountPercentage1 / 100)) +
                             productIdAmount2 * productPrice2 * (1 - (discountPercentage2 / 100)) +
-                                productIdAmount3 * productPrice2;
+                                productIdAmount3 * productPrice3;
             if (productIdAmount1 + productIdAmount2 + productIdAmount3 >= amount1)
                 correctTotal = correctTotal * (1 - (discountPercentage3 / 100));
 
@@ -883,7 +885,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetupStoreNoPermissionsChange();
             SetUpProductsIdInStore();
             SetupDiscountPercentages(productIdAmount1, productIdAmount2, productIdAmount3);
-            Assert.Equals(store.GetTotalBagCost(productsAmount), correctTotal);
+            Assert.True(store.GetTotalBagCost(productsAmount) == correctTotal);
         }
         [Test]
         public void TestGetTotalBagCostMinProductAmountPolicyFail()
@@ -947,7 +949,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreFull();
 
-            Assert.AreEqual(founderMemberId, store.GetFounder(requestingMemberId).GetId());
+            Assert.AreEqual(founderMemberId, store.GetFounder(requestingMemberId).Id);
         }
 
         // ------- GetManagerPermossions() ----------------------------------------

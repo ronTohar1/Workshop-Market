@@ -8,8 +8,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public IList<PurchaseOption> purchaseOptions { get; }
 		public IList<string> reviews;
 		public double pricePerUnit { get; set; }
-		public virtual string category { get; }
+		public virtual string category { get; private set; }
 		public double productdicount { get; set; }
+		
 		private Mutex amountInInventoryMutex;
 		private Mutex purchaseOptionsMutex;
 		private Mutex reviewMutex;
@@ -30,7 +31,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			amountInInventoryMutex = new Mutex();
 			purchaseOptionsMutex = new Mutex();
 			reviewMutex = new Mutex();
+			pricePerUnitMutex = new Mutex();
+			categoryMutex = new Mutex();
+			productDiscountMutex = new Mutex();
+
 		}
+
+		public Product(string product_name, double pricePerUnit, string category) : this(product_name, pricePerUnit, category, 0.0) { }
+		
 		// r.4.1
 		public void AddToInventory(int amountToAdd) { 
 			amountInInventoryMutex.WaitOne();

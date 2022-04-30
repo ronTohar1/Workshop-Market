@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Buyers.Guests
 {
-    internal class Example
+    public class GuestsController : IBuyersController
     {
-        public bool IsEven(int num) => num % 2 == 0;
+        public Buyer GetBuyer(int buyerId)
+        {
+            throw new NotImplementedException();
+        }
 
     }
 }

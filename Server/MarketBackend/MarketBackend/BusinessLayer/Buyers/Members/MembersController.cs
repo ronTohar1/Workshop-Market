@@ -60,18 +60,11 @@ public class MembersController : IBuyersController
         return member;
     }
 
-    public Member? GetMember(string username)
+    public virtual Member? GetMember(string username)
     {
         foreach (Member member in members.Values)
             if (member.Username == username)
                 return member;
-        return null;
-    }
-
-    public virtual Member? GetMember(string name)
-    {
-        Member member;
-
         return null;
     }
 

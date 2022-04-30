@@ -24,6 +24,7 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Members
         private Member SetUpMember(string username, string password)
         {
             Mock<Security> mock = new Mock<Security>();
+            //Trying to figure how to replace a method with another method that depends on parameter.
             //mock.Setup(s => s.HashPassword(It.IsAny<string>())).Returns((string x) => x.GetHashCode());
             Security security = mock.Object;
             //Console.WriteLine(security.HashPassword("hello"));
@@ -59,21 +60,22 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Members
         }
 
         [Test]
-        public void TestLogoutValid() { 
+        public void TestLogoutValid()
+        {
 
             Assert.IsTrue(member1.Login(password1));
             Assert.DoesNotThrow(() => member1.Logout());
 
         }
 
-        
+
         [Test]
         public void TestLogoutNoLogin()
         {
             Assert.Throws<Exception>(() => member1.Logout());
         }
 
-        
+
         [Test]
         public void TestLogoutTwice()
         {

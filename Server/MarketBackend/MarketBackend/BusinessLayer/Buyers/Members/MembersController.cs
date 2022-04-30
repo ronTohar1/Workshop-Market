@@ -47,12 +47,8 @@ public class MembersController : IBuyersController
 
     public Member? GetMember(int memberId)
     {
-        Member member;
-        if (members.TryGetValue(memberId, out member))
-        {
-            return member;
-        }
-        return null;
+        members.TryGetValue(memberId, out Member? member);
+        return member;
     }
 
     private bool IsUsernameExists(string username)

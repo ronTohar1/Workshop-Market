@@ -16,6 +16,7 @@
             productsAmounts = new Dictionary<ProductInBag, int>();
         }
 
+
         /// <summary>
         /// Add given amount of product units to the bag. If product not exist in bag, it will be added to the bag
         /// </summary>

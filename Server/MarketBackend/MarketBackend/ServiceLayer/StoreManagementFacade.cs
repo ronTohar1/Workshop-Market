@@ -38,12 +38,12 @@ namespace MarketBackend.ServiceLayer
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: AddNewProduct, [userId = {userId}, storeId = {storeId}, productName = {productName}, price = {price}, category = {category}]");
+                logger.Error(mex, $"method: AddNewProduct, parameters: [userId = {userId}, storeId = {storeId}, productName = {productName}, price = {price}, category = {category}]");
                 return new Response<int>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: AddNewProduct, [userId = {userId}, storeId = {storeId}, productName = {productName}, price = {price}, category = {category}]");
+                logger.Error(ex, $"method: AddNewProduct, parameters: [userId = {userId}, storeId = {storeId}, productName = {productName}, price = {price}, category = {category}]");
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
             }
         }
@@ -62,12 +62,12 @@ namespace MarketBackend.ServiceLayer
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: AddProductToInventory, parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
+                logger.Error(mex, $"method: AddProductToInventory, parameters: [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: AddProductToInventory,parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
+                logger.Error(ex, $"method: AddProductToInventory, parameters: [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }

@@ -45,13 +45,20 @@ public class MembersController : IBuyersController
         throw new MarketException("Username or Password are not valid!");
     }
 
-    public Member? GetMember(int memberId)
+    public virtual Member? GetMember(int memberId)
     {
         Member member;
         if (members.TryGetValue(memberId, out member))
         {
             return member;
         }
+        return null;
+    }
+
+    public virtual Member? GetMember(string name)
+    {
+        Member member;
+
         return null;
     }
 
@@ -67,4 +74,5 @@ public class MembersController : IBuyersController
     {
         return this.members.TryAdd(member.Id, member);
     }
+
 }

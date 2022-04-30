@@ -34,5 +34,10 @@ namespace MarketBackend.BusinessLayer.Buyers
             shoppingBags[storeId].RemoveProduct(product);
         }
 
+        public void changeProductAmount(ProductInBag product, int amount)
+        {
+            int storeId = product.StoreId;
+            shoppingBags[storeId].ChangeProductAmount(product, amount);
+        }
     }
 }

@@ -209,25 +209,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 if (productsAmounts[productId] < amountPerProduct)
                     throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay:  {products[productId].name} can be bought only in a set of {amountPerProduct} or more"));
             }
-            double productsTotalPrices = productsAmounts.Keys.Select(productId => products[productId].getUnitPriceWithDiscount()).ToList().Sum();
+            double productsTotalPrices = productsAmounts.Keys.Select(productId => productsAmounts[productId]*products[productId].getUnitPriceWithDiscount()).ToList().Sum();
             double amountDiscount = policy.GetDiscountForAmount(productsAmounts.Values.Sum());
             return productsTotalPrices * (1 - amountDiscount);
         }
-        //------------------------- search products within shop --------------------------
-        
         // r 2.2
-        public IList<Product> SerachProducts(ProductsSearchFilter filter)
+        public IList<Product> SearchProducts(ProductsSearchFilter filter)
         => products.Values.Where(p => filter.FilterProduct(p)).ToList();
-
-        //r.2.2
-        public IList<Product> SearchProductsByName(string productName)
-        => products.Values.ToList().Where(p => p.name.Contains(productName)).ToList();//the default is null
-        //r.2.2
-        public IList<Product> SearchProductByCategory(string category)
-         => products.Values.ToList().Where(p => p.category.Equals(category)).ToList();//the default is null
-        //r.2.2
-        public IList<Product> SearchProductByKeyWords(string keyWord)
-         => products.Values.ToList().Where(p => p.name.Contains(keyWord) || p.category.Contains(keyWord)).ToList();//the default is null
         
         // ------------------------------ Permission and Roles ------------------------------
 

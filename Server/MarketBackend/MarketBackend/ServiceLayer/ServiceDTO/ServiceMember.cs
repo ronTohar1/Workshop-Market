@@ -13,13 +13,6 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         private string userName;
         private bool loggedIn;
         private IList<string> notifications;
-
-        public ServiceMember(string userName, bool loggedIn, IList<string> notifications)
-        {
-            this.userName = userName;
-            this.loggedIn = loggedIn;
-            this.notifications = notifications;
-        }
         
         // need to change that when adding fields to member
         public ServiceMember(Member m)

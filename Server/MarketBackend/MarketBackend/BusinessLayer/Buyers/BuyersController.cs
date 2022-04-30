@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Buyers.Guests;
+
 namespace MarketBackend.BusinessLayer.Buyers
 {
     public class BuyersController
     {
         private readonly IList<IBuyersController> buyersControllers;
+
         public BuyersController()
         {
             buyersControllers = new List<IBuyersController>();
@@ -36,6 +38,10 @@ namespace MarketBackend.BusinessLayer.Buyers
             else
                 return null;
         }
+
+       
+
+
 
     }
 }

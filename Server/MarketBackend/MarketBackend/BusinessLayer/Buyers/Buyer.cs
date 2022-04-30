@@ -12,7 +12,7 @@ namespace MarketBackend.BusinessLayer.Buyers
     public class Buyer
     {
         private static int _nextId;
-        public Cart Cart { get; internal set; }
+        public virtual Cart Cart { get; internal set; }
         public virtual int Id { get; internal set; }
         private IList<Purchase> purchaseHistory;
 

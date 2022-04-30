@@ -19,7 +19,7 @@ namespace MarketBackend.BusinessLayer.Buyers
         public Cart() => 
             this.shoppingBags = new Dictionary<int, ShoppingBag>();
 
-        public void AddProductToCart(ProductInBag product, int amount)
+        public virtual void AddProductToCart(ProductInBag product, int amount)
         {
             int storeId = product.StoreId;
             if (!shoppingBags.ContainsKey(storeId))         // creating new bag for first product from store
@@ -28,7 +28,7 @@ namespace MarketBackend.BusinessLayer.Buyers
             shoppingBags[storeId].AddProductToBag(product, amount);
         }
 
-        public void RemoveProductFromCart(ProductInBag product)
+        public virtual void RemoveProductFromCart(ProductInBag product)
         {
             int storeId = product.StoreId;
             shoppingBags[storeId].RemoveProduct(product);

@@ -20,6 +20,11 @@ namespace MarketBackend.BusinessLayer.Buyers
         public bool BuyerAvailable(int buyerId) => 
             buyersControllers.Any(controller => controller.GetBuyer(buyerId) is not null);
 
+        public virtual Buyer? GetBuyer(int buyerId)
+        {
+            throw new Exception(); // todo: implements
+        }
+
         public Cart? GetCart(int buyerId)
         {
             foreach (var controller in buyersControllers)

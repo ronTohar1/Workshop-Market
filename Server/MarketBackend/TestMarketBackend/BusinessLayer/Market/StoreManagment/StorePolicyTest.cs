@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Moq;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.BusinessLayer;
+
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
     public class StorePolicyTest

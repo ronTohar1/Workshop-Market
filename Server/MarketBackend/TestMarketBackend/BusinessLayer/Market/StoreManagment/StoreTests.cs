@@ -947,7 +947,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreFull();
 
-            Assert.AreEqual(founderMemberId, store.GetFounder(requestingMemberId).GetId());
+            Assert.AreEqual(founderMemberId, store.GetFounder(requestingMemberId).Id);
         }
 
         // ------- GetManagerPermossions() ----------------------------------------

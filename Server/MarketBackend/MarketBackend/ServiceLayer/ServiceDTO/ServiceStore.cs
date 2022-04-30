@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,9 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     internal class ServiceStore
     {
+        public ServiceStore(Store s)
+        {
+
+        }
     }
 }

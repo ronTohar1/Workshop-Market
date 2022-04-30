@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Moq;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.BusinessLayer;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -100,7 +101,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.IsTrue(amountBefore == amountAfter);
         }
 
-        // AddToInventory test
+        // AddReview test
         [Test]
         [TestCase("Amit", "yummy! highly recommend!")]
         [TestCase("Idan", "yuck!")]
@@ -109,8 +110,37 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             int amountOfReviewsBefore = product.reviews.Count;
             product.AddProductReview(memberName, reviewContent);
             int amountOfReviewsAfter = product.reviews.Count;
-            Assert.IsTrue(amountOfReviewsBefore + +1 == amountOfReviewsAfter);
+            Assert.IsTrue(amountOfReviewsBefore +1 == amountOfReviewsAfter);
             Assert.IsTrue(product.reviews.Contains(memberName+": "+ reviewContent));
+        }
+        // SetUpPriceByUnit test
+        [Test]
+        [TestCase(65)]
+        [TestCase(95.2)]
+        public void SetPriceByUnit(double newPriceByUnit)
+        {
+            product.SetProductPriceByUnit(newPriceByUnit);
+            Assert.Equals(product.pricePerUnit, newPriceByUnit);
+        }
+        // SetDiscount test
+        [Test]
+        [TestCase(60)]
+        [TestCase(90.5)]
+        public void SetDiscountPercentage(double discount)
+        {
+            Assert.Equals(product.productdicount,0.0);
+            product.SetProductDiscountPercentage(discount);
+            Assert.Equals(product.productdicount, 1- (discount/100));
+        }
+        // SetCategory test
+        [Test]
+        [TestCase("Vegetables")]
+        [TestCase("Fruits")]
+        public void SetCategory(string category)
+        {
+            Assert.False(product.category.Equals(category));
+            product.SetProductCategory(category);
+            Assert.True(product.category.Equals(category));
         }
     }
 }

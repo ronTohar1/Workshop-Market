@@ -50,7 +50,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             {
                 rolesInStore.Add(role, new SynchronizedCollection<int>());
             }
-            this.rolesInStore[Role.Owner].Add(founder.GetId());
+            this.rolesInStore[Role.Owner].Add(founder.Id);
         }
 
         public virtual string GetName()
@@ -75,6 +75,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (permissionError != null)
                 throw new MarketException(StoreErrorMessage(message + permissionError));
         }
+        
         // r.4.1
         public int AddNewProduct(int memberId, string productName, double pricePerUnit, string category) {
             // we allow this only to coOwners
@@ -118,6 +119,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option: ");
             policy.AddPurchaseOption(purchaseOption); 
         }
+       
         // r.4.2
         public void AddProductPurchaseOption(int memberId, int productId, PurchaseOption purchaseOption)//Add to product in the store 
         {
@@ -128,13 +130,38 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException(StoreErrorMessage($"Could not add purchase option for the product: the store itself does not support such purchase options"));
             products[productId].AddPurchaseOption(purchaseOption);
         }
+        // r.4.2
+        public void SetMinAmountPerProduct(int memberId, int productId, int newMinAmount)//Add to store
+        {
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not set minimum amount for product: ");
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not set minimum amount for product: there isn't such a product with product id: {productId}"));
+            policy.SetMinAmountPerProduct(productId, newMinAmount);
+        }
+
         // r.4.1
         public void SetProductPrice(int memberId, int productId, double productPrice)
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product price per unit: ");
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not set the product price per unit: there isn't such a product with product id: {productId}"));
-            products[productId].pricePerUnit = productPrice;
+            products[productId].SetProductPriceByUnit(productPrice);
+        }
+        // r.4.1
+        public void SetProductDiscountPercentage(int memberId, int productId, double discountPercentage)
+        {
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product's discount percentage: ");
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not set the product's discount percentage: there isn't such a product with product id: {productId}"));
+            products[productId].SetProductDiscountPercentage(discountPercentage);
+        }
+        // r.4.1
+        public void SetProductCategory(int memberId, int productId, string category)
+        {
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product's category: ");
+            if (!products.ContainsKey(productId))
+                throw new MarketException(StoreErrorMessage($"Could not set the product's category: there isn't such a product with product id: {productId}"));
+            products[productId].SetProductCategory(category);
         }
         // r.3.3
         public void AddProductReview(int memberId, int productId, string review) {
@@ -143,7 +170,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException("Could not add review: "+permissionError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not add review: there isn't such a product with product id: {productId}"));
-            products[productId].AddProductReview(membersGetter(memberId).name,review);
+            products[productId].AddProductReview(membersGetter(memberId).Username,review);
         }
         // 6.4, 4.13
         public void AddPurchaseRecord(int memberId, DateTime purchaseDate, double PurchasePrice, string purchaseDescription) 
@@ -161,19 +188,45 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public IList<string> GetProductReviews(int productId)
         {
             if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could get reviews: there isn't such a product with product id: {productId}"));
+                throw new MarketException(StoreErrorMessage($"Could not get reviews: there isn't such a product with product id: {productId}"));
             return products[productId].reviews;
         }
-
+        // r.3.3
+        public void AddDiscountForAmountPolicy(int memeberId, int amount, double discount)
+        {
+            EnforceAtLeastCoOwnerPermission(memeberId, "Could not add store discount for a certain amount: ");
+            policy.AddDiscountAmountPolicy(amount, discount);
+        }
+        // r.3.3
+        //recieves <productId, productAmount> and calculates the total to pay, consideroing all the restroctions
+        public double GetTotalBagCost(IDictionary<int,int> productsAmounts) 
+        {
+            foreach (int productId in productsAmounts.Keys)
+            {
+                if (!products.ContainsKey(productId))
+                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay: there isn't such a product with product id: {productId}"));
+                int amountPerProduct = policy.GetMinAmountPerProduct(productId);
+                if (productsAmounts[productId] < amountPerProduct)
+                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay:  {products[productId].name} can be bought only in a set of {amountPerProduct} or more"));
+            }
+            double productsTotalPrices = productsAmounts.Keys.Select(productId => products[productId].getUnitPriceWithDiscount()).ToList().Sum();
+            double amountDiscount = policy.GetDiscountForAmount(productsAmounts.Values.Sum());
+            return productsTotalPrices * (1 - amountDiscount);
+        }
         //------------------------- search products within shop --------------------------
+        
+        // r 2.2
+        public IList<Product> SerachProducts(ProductsSearchFilter filter)
+        => products.Values.Where(p => filter.FilterProduct(p)).ToList();
+
         //r.2.2
-        public List<Product> SearchProductsByName(string productName)
+        public IList<Product> SearchProductsByName(string productName)
         => products.Values.ToList().Where(p => p.name.Contains(productName)).ToList();//the default is null
         //r.2.2
-        public List<Product> SearchProductByCategory(string category)
+        public IList<Product> SearchProductByCategory(string category)
          => products.Values.ToList().Where(p => p.category.Equals(category)).ToList();//the default is null
         //r.2.2
-        public List<Product> SearchProductByKeyWords(string keyWord)
+        public IList<Product> SearchProductByKeyWords(string keyWord)
          => products.Values.ToList().Where(p => p.name.Contains(keyWord) || p.category.Contains(keyWord)).ToList();//the default is null
         
         // ------------------------------ Permission and Roles ------------------------------
@@ -327,7 +380,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         public bool IsFounder(int memberId)
         {
-            return founder.GetId() == memberId;
+            return founder.Id == memberId;
         }
 
         public bool IsCoOwner(int memberId)
@@ -415,9 +468,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return errorMessage + " in the store: " + name; 
         }
+       
         public bool ContainProductInStock(int productId)
         => products.ContainsKey(productId);
-
         public Product SearchProductByProductId(int productId)
         => products.ContainsKey(productId) ? products[productId] : null;
         public List<Purchase> findPurchasesByDate(DateTime date)

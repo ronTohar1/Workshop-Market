@@ -9,7 +9,7 @@ namespace MarketBackened.Tests.Acceptance
 {
     public class GuestReqsTests : IDisposable
     {
-        private BuyerFacade buyerFacade;
+        //private BuyerFacade buyerFacade; todo: take it out from comment
 
         public GuestReqsTests()
         {

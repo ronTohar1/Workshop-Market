@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,10 +9,26 @@ namespace MarketBackend.BusinessLayer.Buyers.Guests
 {
     public class GuestsController : IBuyersController
     {
-        public Buyer GetBuyer(int buyerId)
+        private IDictionary<int, Buyer> buyers;
+
+        public GuestsController() => 
+            buyers = new ConcurrentDictionary<int, Buyer>();
+
+        public Buyer? GetBuyer(int buyerId)
         {
-            throw new NotImplementedException();
+            buyers.TryGetValue(buyerId, out Buyer? buyer);
+            return buyer;
         }
+
+        public int Enter()
+        {
+            Buyer buyer = new();
+            buyers[buyer.Id] = buyer;
+            return buyer.Id;
+        }
+
+        public void Leave(Buyer buyer) =>
+            buyers.Remove(buyer.Id);
 
     }
 }

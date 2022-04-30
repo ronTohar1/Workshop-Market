@@ -12,7 +12,8 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         private int password;
         private bool _loggedIn;
         private IList<string> notifications;
-
+        private Security security; // Responsible for securing the member's details.
+        /*private Notifier notifier;*/
 
         private Mutex mutex;
         private ReaderWriterLock loggedInLock;
@@ -21,7 +22,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         public bool LoggedIn
         {
             get
-            {
+            {   
                 loggedInLock.AcquireReaderLock(lockTime);
                 try { return _loggedIn; }
                 finally { loggedInLock.ReleaseReaderLock(); }
@@ -36,29 +37,44 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         }
 
 
-        public Member(string username, int password)
+        public Member(string username, string password)
         {
             //Init locks first
             this.mutex = new Mutex();
             this.loggedInLock = new ReaderWriterLock();
 
             //Init fields
+            this.security = new Security();
             this.Username = username;
-            this.password = password;
+            this.password = security.HashPassword(password);
             this._loggedIn = false;
             this.notifications = new SynchronizedCollection<string>();
 
         }
 
 
-        public bool Login(string password)
+        /* Login with notifications
+         * public bool Login(string password,Notifier notifier)
         {
             lock (mutex)
             {
                 if (LoggedIn)
                     throw new MarketException("Cannot login to a user that is logged in!");
                 LoggedIn = true;
+                this.notifier = notifier;
                 return this.password == password.GetHashCode();
+            }
+        }*/
+
+        public bool Login(string password)
+        {
+            lock (mutex)
+            {
+                if (LoggedIn)
+                    throw new MarketException("This user is already logged in!");
+                if (this.password == security.HashPassword(password))
+                    LoggedIn = true;
+                return LoggedIn;
             }
         }
 
@@ -70,16 +86,6 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
                     throw new Exception("Called Member Logout() when member was logged in!");
                 LoggedIn = false;
             }
-        }
-
-        public void NotifyMember(string notification)
-        {   // Do we really need this method?
-            throw new NotImplementedException();
-        }
-
-        private void AddNotification(string notification)
-        {
-            this.notifications.Add(notification);
         }
 
 

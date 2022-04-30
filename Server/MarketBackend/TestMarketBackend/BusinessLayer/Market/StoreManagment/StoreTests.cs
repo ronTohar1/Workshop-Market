@@ -695,9 +695,11 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.True(store.policy.GetMinAmountPerProduct(productId1) == 0); 
         }
         [Test]
+        [TestCase(coOwnerId1, amount2)]
+        [TestCase(founderMemberId, amount3)]
         public void TestSetMinAmountPerProductDoesNotExistFail(int memberId, int newAmount)
         {
-            SetupStoreNoRoles();
+            SetupStoreNoPermissionsChange();
             Assert.Throws<MarketException>(() => store.SetMinAmountPerProduct(memberId, productId1, newAmount));
         }
 
@@ -842,7 +844,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetupStoreNoPermissionsChange();
             Assert.True(store.policy.amountDiscount.Count == 0);
             store.AddDiscountForAmountPolicy(memeberId, amount, discount);
-            Assert.True(store.policy.amountDiscount.Count == 1 && store.policy.amountDiscount[amount]==discount);
+            Assert.True(store.policy.amountDiscount.Count == 1 && store.policy.amountDiscount[amount]==discount/100);
         }
         [Test]
         [TestCase(notAMemberId1, amount1, discountPercentage1)]
@@ -870,7 +872,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             }; ;
             correctTotal = productIdAmount1 * productPrice1 * (1 - (discountPercentage1 / 100)) +
                             productIdAmount2 * productPrice2 * (1 - (discountPercentage2 / 100)) +
-                                productIdAmount3 * productPrice2;
+                                productIdAmount3 * productPrice3;
             if (productIdAmount1 + productIdAmount2 + productIdAmount3 >= amount1)
                 correctTotal = correctTotal * (1 - (discountPercentage3 / 100));
 
@@ -883,7 +885,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetupStoreNoPermissionsChange();
             SetUpProductsIdInStore();
             SetupDiscountPercentages(productIdAmount1, productIdAmount2, productIdAmount3);
-            Assert.Equals(store.GetTotalBagCost(productsAmount), correctTotal);
+            Assert.True(store.GetTotalBagCost(productsAmount) == correctTotal);
         }
         [Test]
         public void TestGetTotalBagCostMinProductAmountPolicyFail()

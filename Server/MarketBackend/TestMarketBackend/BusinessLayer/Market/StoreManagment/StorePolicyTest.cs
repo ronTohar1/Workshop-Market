@@ -78,9 +78,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCase(20, 90.5)]
         public void AddDiscountAmountPolicySuccess(int amount, double discountPercentage)
         {
-            Assert.False(storePolicy.amountDiscount.Keys.Contains(amount));
             storePolicy.AddDiscountAmountPolicy(amount, discountPercentage);
-            Assert.True(storePolicy.amountDiscount.Keys.Contains(amount) && storePolicy.amountDiscount[amount] == discountPercentage);
+            Assert.True(storePolicy.amountDiscount.Keys.Contains(amount) && storePolicy.amountDiscount[amount] == discountPercentage/100);
         }
         private void SetUpDiscountAmount() {
             storePolicy.AddDiscountAmountPolicy(10, 10);
@@ -98,7 +97,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void GetDiscountForAmountSuccess(int amount, double properDiscount)
         {
             SetUpDiscountAmount();
-            Assert.Equals(storePolicy.GetDiscountForAmount(amount), properDiscount);
+            Assert.True(storePolicy.GetDiscountForAmount(amount) == properDiscount);
         }
     }
 }

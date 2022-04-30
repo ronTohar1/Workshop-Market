@@ -55,6 +55,13 @@ public class MembersController : IBuyersController
         return null;
     }
 
+    public virtual Member? GetMember(string name)
+    {
+        Member member;
+
+        return null;
+    }
+
     private bool IsUsernameExists(string username)
     {
         foreach (Member member in members.Values)
@@ -67,4 +74,5 @@ public class MembersController : IBuyersController
     {
         return this.members.TryAdd(member.Id, member);
     }
+
 }

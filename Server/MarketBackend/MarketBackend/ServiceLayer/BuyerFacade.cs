@@ -149,20 +149,21 @@ namespace MarketBackend.ServiceLayer
         //TODO
         public Response<int> Enter()
         {
-            try
-            {
-                logger.Info($"Enter was called");
-            }
-            catch (MarketException mex)
-            {
-                logger.Error(mex, $"method: Enter, parameters: []");
-                return new Response<int>(mex.Message);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, $"method: Enter, parameters: []");
-                return new Response<int>("Sorry, an unexpected error occured. Please try again");
-            }
+            //try
+            //{
+            //    logger.Info($"Enter was called");
+            //}
+            //catch (MarketException mex)
+            //{
+            //    logger.Error(mex, $"method: Enter, parameters: []");
+            //    return new Response<int>(mex.Message);
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.Error(ex, $"method: Enter, parameters: []");
+            //    return new Response<int>("Sorry, an unexpected error occured. Please try again");
+            //}
+            return new Response<int>();
         }
 
         //TODO
@@ -184,6 +185,8 @@ namespace MarketBackend.ServiceLayer
             //}
             return new Response<bool>();
         }
+
+        //done
         public Response<ServiceStore> GetStoreInfo(int storeId)
         {
             try
@@ -229,8 +232,24 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        //TODO
-        public Response<IList<ServiceProduct>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null)
+        private IDictionary<int, IList<ServiceProduct>> mapToServiceMap(IDictionary<int, IList<Product>> map)
+        {
+            IDictionary<int, IList<ServiceProduct>> result = new Dictionary<int, IList<ServiceProduct>>();
+            foreach (int key in map.Keys)
+            {
+                IList<Product> products = map[key];
+                IList<ServiceProduct> l = new List<ServiceProduct>();
+                foreach (Product product in products)
+                {
+                    l.Add(new ServiceProduct(product));
+                }
+                result[key] = l;
+            }
+            return result;
+        }
+
+        //done
+        public Response<IDictionary<int, IList<ServiceProduct>>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null)
         {
             try
             {
@@ -243,21 +262,20 @@ namespace MarketBackend.ServiceLayer
                     filter.FilterProductCategory(category);
                 if (keyword != null)
                     filter.FilterProductKeyword(keyword);
-
-                
+                IDictionary<int, IList<Product>> prods = storeController.SearchProductsInOpenStores(filter);
                 logger.Info($"ProductsSearch was called with parameters [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}]");
+                return new Response<IDictionary<int, IList<ServiceProduct>>>(mapToServiceMap(prods));
             }
             catch (MarketException mex)
             {
                 logger.Error(mex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}]");
-                return new Response<IList<ServiceProduct>>(mex.Message);
+                return new Response<IDictionary<int, IList<ServiceProduct>>>(mex.Message);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}]");
-                return new Response<IList<ServiceProduct>>("Sorry, an unexpected error occured. Please try again");
+                return new Response<IDictionary<int, IList<ServiceProduct>>>("Sorry, an unexpected error occured. Please try again");
             }
-            return new Response<IList<ServiceProduct>>();
         }
 
         //done
@@ -281,30 +299,44 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
+        //done
         public Response<int> Login(string userName, string password)
         {
             try
             {
-                
-                logger.Info($"Login");
+                Member? m = membersController.GetMember(userName);
+                if (m == null)
+                    return new Response<int>($"No member with userName {userName}");
+                bool logged = m.Login(password);
+                if (logged == false)
+                    return new Response<int>("Incorrect password");
+                int id = m.Id;
+                logger.Info($"Login was called with parameters [userName = {userName}, password undisclosed]");
+                return new Response<int>(id);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: Login, parameters: [userName = {userName}, password = {password}]");
+                logger.Error(mex, $"method: Login, parameters: [userName = {userName}, password undisclosed]");
                 return new Response<int>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: Login, parameters: []");
+                logger.Error(ex, $"method: Login, parameters: [userName = {userName}, password undisclosed]");
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
             }
         }
 
+        //done
         public Response<bool> Logout(int memberId)
         {
             try
             {
+                Member? m = membersController.GetMember(memberId);
+                if (m == null)
+                    return new Response<bool>($"No member with the id {memberId}");
                 logger.Info($"Logout was called with parameters [memberId = {memberId}]");
+                m.Logout();
+                return new Response<bool>(true);
             }
             catch (MarketException mex)
             {
@@ -318,6 +350,7 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
+        //TODO
         public Response<bool> AddProductReview(int memberId, int storeId, int productId, string review)
         {
             //try

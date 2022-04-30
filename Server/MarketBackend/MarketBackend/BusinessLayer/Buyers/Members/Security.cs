@@ -14,16 +14,6 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
 
         }
 
-        public bool CheckUsername(string username)
-        {
-            return true;
-        }
-
-        public bool CheckPassword(string password)
-        {
-            return true;
-        }
-
         public int HashPassword(string password)
         {
             return password.GetHashCode();

@@ -11,14 +11,11 @@ namespace MarketBackend.BusinessLayer.Buyers.Members;
 public class MembersController : IBuyersController
 {
     private readonly ConcurrentDictionary<int, Member> members;
-    private readonly Security security;
-    //private const int invalidId = -1;
-
     private Mutex mutex;
+
     public MembersController()
     {
         members = new ConcurrentDictionary<int, Member>();
-        this.security = new Security();
         this.mutex = new Mutex();
     }
 
@@ -27,19 +24,31 @@ public class MembersController : IBuyersController
         return GetMember(buyerId);
     }
 
+
+    /*  Registers a new member to the controller.
+    *   First, validates the username and password.
+    *   Second, checks the username is unique.
+    *   If conditions met then adding a new member.
+    *   Returns: ID of new member.
+    *   Throws: 
+    *       - MarketException when username or password not valid or taken
+    *       - Exception otherwise.
+    */
     public int Register(string username, string password)
     {   
-        if (this.security.CheckUsername(username) && this.security.CheckPassword(password))
+        if (this.CheckUsername(username) && this.CheckPassword(password))
         {
             lock (mutex)
             {
                 if (!this.IsUsernameExists(username))
                 {
-                    Member member = new Member(username, this.security.HashPassword(password));
+                    Member member = new Member(username, password);
                     if (!this.AddMember(member))
                         throw new Exception("Could not add valid member to the members controller");
                     return member.Id;
                 }
+                else
+                    throw new MarketException("Username already exists");
             }
         }
         throw new MarketException("Username or Password are not valid!");
@@ -55,6 +64,14 @@ public class MembersController : IBuyersController
         return null;
     }
 
+    public Member? GetMember(string username)
+    {
+        foreach (Member member in members.Values)
+            if (member.Username == username)
+                return member;
+        return null;
+    }
+
     private bool IsUsernameExists(string username)
     {
         foreach (Member member in members.Values)
@@ -66,5 +83,15 @@ public class MembersController : IBuyersController
     private bool AddMember(Member member)
     {
         return this.members.TryAdd(member.Id, member);
+    }
+
+    private bool CheckUsername(string username)
+    {
+        return true;
+    }
+
+    private bool CheckPassword(string username)
+    {
+        return true;
     }
 }

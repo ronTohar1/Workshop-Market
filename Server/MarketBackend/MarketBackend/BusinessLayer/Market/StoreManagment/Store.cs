@@ -101,7 +101,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
         // r.4.1
         // c.9
-        public void DecreaseProductAmountFromInventory(int memberId, int productId, int amount)
+        public virtual void DecreaseProductAmountFromInventory(int memberId, int productId, int amount)
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not take from inventory: ");
             if (!products.ContainsKey(productId))
@@ -221,6 +221,39 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             double amountDiscount = policy.GetDiscountForAmount(productsAmounts.Values.Sum());
             return productsTotalPrices * (1 - amountDiscount);
         }
+
+        public virtual string CanBuyProduct(int buyerId, int productId, int amount)
+        {
+            if (!products.ContainsKey(productId))
+                return $"The product can't be bought, there isn't such a product with id: {productId}";
+            string productPurchaseFailMessage = "The product can't be bought: ";
+            bool productCanBePurchased = true;
+            int minAmount = policy.GetMinAmountPerProduct(productId);
+            if (minAmount > amount)
+            {
+                productPurchaseFailMessage = productPurchaseFailMessage + $"\n     { products[productId].name} can be bought only in a set of { minAmount} or more";
+                productCanBePurchased = false;
+            }
+            if (products[productId].amountInInventory == 0)
+            {
+                productPurchaseFailMessage = productPurchaseFailMessage + $"\n     there arn't any {products[productId].name} currently at the inventory";
+                productCanBePurchased = false;
+            }
+            else if (amount > products[productId].amountInInventory)
+            {
+                productPurchaseFailMessage = productPurchaseFailMessage + $"\n     there are only {products[productId].amountInInventory} products of {products[productId].name} at the inventory";
+                productCanBePurchased = false;
+            }
+            if (productCanBePurchased)
+                return null;
+
+            return productPurchaseFailMessage;
+
+
+        }
+
+        //------------------------- search products within shop --------------------------
+
         // r 2.2
         public IList<Product> SearchProducts(ProductsSearchFilter filter)
         => products.Values.Where(p => filter.FilterProduct(p)).ToList();

@@ -39,7 +39,7 @@ public class StoreController
 		return s;
     }
 
-	public Store GetOpenStore(int storeId)
+	public virtual Store GetOpenStore(int storeId)
     {
 		if (!openStores.ContainsKey(storeId))
 			return null;

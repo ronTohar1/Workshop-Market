@@ -210,7 +210,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
         // r.3.3
         //recieves <productId, productAmount> and calculates the total to pay, consideroing all the restroctions
-        public double GetTotalBagCost(IDictionary<int,int> productsAmounts) 
+        public virtual double GetTotalBagCost(IDictionary<int,int> productsAmounts) 
         {
             foreach (int productId in productsAmounts.Keys)
             {

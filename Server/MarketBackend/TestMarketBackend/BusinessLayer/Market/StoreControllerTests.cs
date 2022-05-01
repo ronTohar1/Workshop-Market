@@ -284,7 +284,7 @@ namespace TestMarketBackend.BusinessLayer.Market
 
             IDictionary<int, IList<Product>> result = storeController.SearchProductsInOpenStores(filter);
 
-            IList<string> resultStoresNames = result.Keys.Select(id => storeController.getStore(id).GetName()).ToList();
+            IList<string> resultStoresNames = result.Keys.Select(id => storeController.GetStore(id).GetName()).ToList();
         
             Assert.IsTrue(SameElements(expectedStoreNames, resultStoresNames));
         }
@@ -332,7 +332,7 @@ namespace TestMarketBackend.BusinessLayer.Market
 
             IList<int> result = storeController.SearchOpenStores(filter);
 
-            IList<string> resultStoresNames = result.Select(id => storeController.getStore(id).GetName()).ToList();
+            IList<string> resultStoresNames = result.Select(id => storeController.GetStore(id).GetName()).ToList();
 
             Assert.IsTrue(SameElements(expectedStoreNames, resultStoresNames));
         }

@@ -186,6 +186,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
             purchaseHistory.Add(new Purchase(purchaseDate, PurchasePrice, purchaseDescription));
         }
+
+        // TODO: amit and david should disscus it
+        public IList<Purchase> GetPurchaseHistory()
+        {
+            return purchaseHistory;
+        }
+
         // 6.4, 4.13
         public IList<Purchase> GetPurchaseHistory(int memberId)
         {

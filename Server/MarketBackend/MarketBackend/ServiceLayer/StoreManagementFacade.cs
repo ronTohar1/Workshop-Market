@@ -28,7 +28,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<int>($"There isn't a store with an id {storeId}");
                 int id = s.AddNewProduct(userId, productName, price, category);
@@ -53,7 +53,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
                 s.AddProductToInventory(userId, productId, amount);
@@ -77,7 +77,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
                 s.DecreaseProductAmountFromInventory(userId, productId, amount);
@@ -101,7 +101,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
                 s.AddPurchaseOption(userId, type);
@@ -199,7 +199,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
                 s.MakeCoOwner(userId, targetUserId);
@@ -223,7 +223,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
                 s.MakeCoOwner(userId, targetUserId);
@@ -247,7 +247,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<IList<int>>($"There isn't a store with an id {storeId}");
                 IList<int> l = s.GetMembersInRole(memberId, role);
@@ -271,7 +271,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<ServiceMember>($"There isn't a store with an id {storeId}");
                 ServiceMember m = new ServiceMember(s.GetFounder(memberId));
@@ -295,7 +295,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<IList<Permission>>($"There isn't a store with an id {storeId}");
                 IList<Permission> l = s.GetManagerPermissions(requestingMemberId, managerMemberId);
@@ -319,7 +319,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
                 s.ChangeManagerPermissions(userId, targetUserId, permissions);
@@ -344,7 +344,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<IList<Purchase>>($"There isn't a store with an id {storeId}");
                 IList<Purchase> l = s.GetPurchaseHistory(userId);

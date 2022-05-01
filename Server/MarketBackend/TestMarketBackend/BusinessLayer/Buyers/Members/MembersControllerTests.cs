@@ -14,8 +14,6 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Members
     public class MembersControllerTests
     {
         private MembersController membersController = new MembersController();
-        
-
 
         private readonly string validUsername = "Ron";
         private readonly string validPassword = "pass";

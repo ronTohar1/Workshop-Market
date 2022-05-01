@@ -11,6 +11,8 @@ namespace MarketBackend.BusinessLayer.Buyers.Guests
     {
         private IDictionary<int, Buyer> buyers;
 
+        internal IDictionary<int, Buyer> Buyers { get { return buyers; } }
+
         public GuestsController() => 
             buyers = new ConcurrentDictionary<int, Buyer>();
 

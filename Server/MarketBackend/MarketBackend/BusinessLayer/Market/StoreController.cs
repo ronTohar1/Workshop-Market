@@ -31,7 +31,7 @@ public class StoreController
 	}
 
 
-	public Store getStore(int storeId)
+	public Store? GetStore(int storeId)
     {
 		Store s = GetOpenStore(storeId);
 		if (s == null)

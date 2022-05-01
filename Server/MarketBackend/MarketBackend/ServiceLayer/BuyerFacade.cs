@@ -196,7 +196,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<ServiceStore>($"No store with id {storeId}");
                 logger.Info($"GetStoreInfo was called with parameters [storeId = {storeId}]");
@@ -219,7 +219,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeController.GetStoreIdByName(storeName));
+                Store s = storeController.GetStore(storeController.GetStoreIdByName(storeName));
                 if (s == null) // never
                     return new Response<ServiceStore>($"No store with name {storeName}");
                 logger.Info($"GetStoreInfo was called with parameters [storeName = {storeName}]");

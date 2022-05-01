@@ -177,10 +177,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             products[productId].AddProductReview(membersGetter(memberId).Username,review);
         }
         // 6.4, 4.13
-        public virtual void AddPurchaseRecord(int memberId, DateTime purchaseDate, string purchaseDescription) 
+        public virtual void AddPurchaseRecord(int memberId, DateTime purchaseDate,double totalPrice, string purchaseDescription) 
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
-            purchaseHistory.Add(new Purchase(purchaseDate, purchaseDescription));
+            purchaseHistory.Add(new Purchase(purchaseDate, totalPrice, purchaseDescription));
         }
         // 6.4, 4.13
         public IList<Purchase> GetPurchaseHistory(int memberId)

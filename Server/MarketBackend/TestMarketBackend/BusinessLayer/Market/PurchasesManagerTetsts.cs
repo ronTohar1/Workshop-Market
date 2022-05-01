@@ -310,7 +310,7 @@ namespace TestMarketBackend.BusinessLayer.Market
                    store.SearchProductByProductId(It.IsAny<int>())).
                        Returns(productMock.Object);
             storeMock.Setup(store =>
-                   store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>()));
+                   store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<double>(), It.IsAny<string>()));
 
             return storeMock.Object;
         }

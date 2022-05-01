@@ -769,7 +769,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoPermissionsChange();
             DateTime date = DateTime.Now;
-            store.AddPurchaseRecord(memberId, date, purchaseDescription);
+            store.AddPurchaseRecord(memberId, date, productPrice2, purchaseDescription);
             Assert.True(store.findPurchasesByDate(date).Count == 1);
         }
         [Test]
@@ -779,12 +779,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             DateTime date = DateTime.Now;
-            Assert.Throws<MarketException>(() => store.AddPurchaseRecord(memberId, date, purchaseDescription));
+            Assert.Throws<MarketException>(() => store.AddPurchaseRecord(memberId, date, productPrice1, purchaseDescription));
             Assert.True(store.findPurchasesByDate(date).Count == 0);
         }
 
         private void SetUpPurchasesInStore()
-           => store.AddPurchaseRecord(founderMemberId, DateTime.Now, purchaseDescription);
+           => store.AddPurchaseRecord(founderMemberId, DateTime.Now, productPrice2, purchaseDescription);
 
         [Test]
         [TestCase(coOwnerId1)]

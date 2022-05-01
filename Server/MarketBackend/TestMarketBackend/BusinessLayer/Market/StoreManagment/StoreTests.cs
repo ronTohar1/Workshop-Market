@@ -83,7 +83,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         private Member setupMcokedMember(int memberId)
         {
-            Mock<Member> memberMock = new Mock<Member>("user123", 12345678); // todo: make sure these arguments to the constructor are okay
+            Mock<Security> securityMock = new Mock<Security>();
+            Mock<Member> memberMock = new Mock<Member>("user123", "12345678", securityMock.Object); // todo: make sure these arguments to the constructor are okay
 
             memberMock.Setup(member =>
                 member.Id).
@@ -768,7 +769,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoPermissionsChange();
             DateTime date = DateTime.Now;
-            store.AddPurchaseRecord(memberId, date, purchasePrice, purchaseDescription);
+            store.AddPurchaseRecord(memberId, date, purchaseDescription);
             Assert.True(store.findPurchasesByDate(date).Count == 1);
         }
         [Test]
@@ -778,12 +779,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             DateTime date = DateTime.Now;
-            Assert.Throws<MarketException>(() => store.AddPurchaseRecord(memberId, date, purchasePrice, purchaseDescription));
+            Assert.Throws<MarketException>(() => store.AddPurchaseRecord(memberId, date, purchaseDescription));
             Assert.True(store.findPurchasesByDate(date).Count == 0);
         }
 
         private void SetUpPurchasesInStore()
-           => store.AddPurchaseRecord(founderMemberId, DateTime.Now, purchasePrice, purchaseDescription);
+           => store.AddPurchaseRecord(founderMemberId, DateTime.Now, purchaseDescription);
 
         [Test]
         [TestCase(coOwnerId1)]

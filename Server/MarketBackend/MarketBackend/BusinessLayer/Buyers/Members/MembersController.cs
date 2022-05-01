@@ -42,7 +42,7 @@ public class MembersController : IBuyersController
             {
                 if (!this.IsUsernameExists(username))
                 {
-                    Member member = new Member(username, password);
+                    Member member = this.createNewMember(username,password);
                     if (!this.AddMember(member))
                         throw new Exception("Could not add valid member to the members controller");
                     return member.Id;
@@ -60,7 +60,7 @@ public class MembersController : IBuyersController
         return member;
     }
 
-    public Member? GetMember(string username)
+    public virtual Member? GetMember(string username)
     {
         foreach (Member member in members.Values)
             if (member.Username == username)
@@ -68,11 +68,9 @@ public class MembersController : IBuyersController
         return null;
     }
 
-    public virtual Member? GetMember(string name)
+    private Member createNewMember(string username,string password)
     {
-        Member member;
-
-        return null;
+        return new Member(username,password,new Security());
     }
 
     private bool IsUsernameExists(string username)

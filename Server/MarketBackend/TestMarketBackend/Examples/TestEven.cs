@@ -19,6 +19,7 @@ namespace TestMarketBackend
             // Returns 5 always, as long as first integer is between 1 and 10 (including 10).
             // IMPORTANT: 'Add' must be virtual method (everything mocked must be overridable).
             calcMock.Setup(p => p.Add(It.IsInRange<int>(1,10,Range.Inclusive), It.IsAny<int>())).Returns(5);
+            //calcMock.Setup(p => p.Add(It.IsInRange<int>(1, 10, Range.Inclusive), It.IsAny<int>())).Returns((int a, int b) => a + b);
 
             calcFake = calcMock.Object;
         }
@@ -26,8 +27,8 @@ namespace TestMarketBackend
         [Test]
         public void TestMock()
         {
-            Assert.IsTrue(calcFake.Add(4,6) == 5);
-            Assert.IsFalse(calcFake.Add(0,76) == 5);
+            Assert.IsTrue(calcFake.Add(4, 6) == 5);
+            Assert.IsFalse(calcFake.Add(0, 76) == 5);
         }
         [Test]
         public void TestRegular()

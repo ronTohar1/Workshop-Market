@@ -9,9 +9,21 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     internal class ServiceCart
     {
+        internal IDictionary<int, ServiceShoppingBag> ShoppingBags { get; }
+
+        public ServiceCart() =>
+            ShoppingBags = new Dictionary<int, ServiceShoppingBag>();
+
         public ServiceCart(Cart c)
         {
+            ShoppingBags = new Dictionary<int, ServiceShoppingBag>();
 
+            IDictionary<int, ShoppingBag> sb = c.ShoppingBags;
+            foreach (int id in sb.Keys)
+                ShoppingBags.Add(id, new ServiceShoppingBag(sb[id]));
         }
+
+        public bool IsEmpty() =>
+            ShoppingBags.Count == 0;
     }
 }

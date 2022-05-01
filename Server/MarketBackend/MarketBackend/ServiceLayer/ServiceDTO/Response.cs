@@ -8,32 +8,23 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     internal class Response<T>
     {
-        public T? Value { get; set; }
+        public T Value { get; set; }
         public string ErrorMessage { get; set; }
 
-
-        public Response()
-        {
-            Value = default(T);
+        public Response() =>
             ErrorMessage = string.Empty;
-        }
 
-        public Response(T? value)
-        {
+        public Response(T value) : this() =>
             Value = value;
-            ErrorMessage = string.Empty;
-        }
 
-        public Response(string errorMessage)
-        {
+        public Response(string errorMessage) =>
             ErrorMessage = errorMessage;
-            Value = default(T);
-        }
 
-        public Response(T? value, string errorMessage) : this(value)
-        {
+        public Response(T value, string errorMessage) : this(value) =>
             ErrorMessage = errorMessage;
-        }
+
+        public bool ErrorOccured() =>
+            ErrorMessage != string.Empty;
 
      }
 

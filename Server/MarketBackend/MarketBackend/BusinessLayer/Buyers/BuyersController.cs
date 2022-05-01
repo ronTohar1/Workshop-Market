@@ -19,9 +19,6 @@ namespace MarketBackend.BusinessLayer.Buyers
             buyersControllers.Add(new GuestsController());
         }
 
-        public bool BuyerAvailable(int buyerId) => 
-            buyersControllers.Any(controller => controller.GetBuyer(buyerId) is not null);
-
         public Buyer? GetBuyer(int buyerId)
         {
             foreach (var controller in buyersControllers)

@@ -12,14 +12,12 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
     {
         private string userName;
         private bool loggedIn;
-        private IList<string> notifications;
         
         // need to change that when adding fields to member
         public ServiceMember(Member m)
         {
-            userName = string.Empty;
-            loggedIn = false;
-            notifications = new List<string>();
+            userName = m.Username;
+            loggedIn = m.LoggedIn;
         }
     }
 }

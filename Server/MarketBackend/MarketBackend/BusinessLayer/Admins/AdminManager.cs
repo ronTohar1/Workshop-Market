@@ -24,6 +24,12 @@ namespace MarketBackend.BusinessLayer.Admins
             this.buyersController = buyersController;
         }
 
+        private void VerifyAdmin(int adminId)
+        {
+            if (!admins.Contains(adminId))
+                throw new MarketException("Permission error - user is not system admin");
+        }
+
         /// <summary>
         /// Adds new system admin and returns if admin has added (false if already existed)
         /// </summary>
@@ -46,16 +52,24 @@ namespace MarketBackend.BusinessLayer.Admins
             return found;
         }
 
-        public IList<Purchase> GetUserHistory(int adminId, int userId)
+        public IReadOnlyCollection<Purchase> GetUserHistory(int adminId, int userId)
         {
-            return new List<Purchase>();
-            //return buyersController.GetBuyer(userId).GetPurchaseHistory();
+            VerifyAdmin(adminId);
+            Buyer? buyer = buyersController.GetBuyer(userId);
+            if (buyer == null)
+                throw new MarketException($"User with id={userId} does not exist");
+            else
+               return buyer.GetPurchaseHistory();
         }
 
         public IList<Purchase> GetStoreHistory(int adminId, int storeId)
         {
-            return new List<Purchase>();
-            //return storeController.getStore(storeId).GetPurchaseHistory();
+            VerifyAdmin(adminId);
+            Store? store = storeController.GetStore(storeId);
+            if (store == null)
+                throw new MarketException($"store with id={storeId} does not exist");
+            else
+                return store.GetPurchaseHistory();
         }
 
         public IList<Purchase> GetStoreHistory(int adminId, string storeName) =>

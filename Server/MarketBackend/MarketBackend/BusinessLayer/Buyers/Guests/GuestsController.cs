@@ -11,6 +11,8 @@ namespace MarketBackend.BusinessLayer.Buyers.Guests
     {
         private IDictionary<int, Buyer> buyers;
 
+        internal IDictionary<int, Buyer> Buyers { get { return buyers; } }
+
         public GuestsController() => 
             buyers = new ConcurrentDictionary<int, Buyer>();
 
@@ -27,8 +29,8 @@ namespace MarketBackend.BusinessLayer.Buyers.Guests
             return buyer.Id;
         }
 
-        public void Leave(Buyer buyer) =>
-            buyers.Remove(buyer.Id);
+        public void Leave(int id) =>
+            buyers.Remove(id);
 
     }
 }

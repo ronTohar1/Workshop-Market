@@ -20,14 +20,16 @@ namespace MarketBackend.ServiceLayer
         private MembersController membersController;
         private GuestsController guestsController;
         private StoreController storeController;
+        private PurchasesManager purchasesManager;
         private Logger logger;
 
-        public BuyerFacade(StoreController storeController, BuyersController buyersController, MembersController membersController, GuestsController guestsController, Logger logger)
+        public BuyerFacade(StoreController storeController, BuyersController buyersController, MembersController membersController, GuestsController guestsController, PurchasesManager purchasesManager, Logger logger)
         {
             this.buyersController = buyersController;
             this.storeController = storeController;
             this.membersController = membersController;
             this.guestsController = guestsController;
+            this.purchasesManager = purchasesManager;
             this.logger = logger;
         }
 
@@ -127,63 +129,66 @@ namespace MarketBackend.ServiceLayer
         }
 
         //TODO
-        public Response<bool> PurchaseCartContent(int userId)
+        public Response<IDictionary<int, IList<Tuple<int, int>>>> PurchaseCartContent(int userId, IDictionary<int, IList<Tuple<int, int>>> producstToBuyByStoresIds)
         {
-            //try
-            //{
-            //    logger.Info($"");
-            //}
-            //catch (MarketException mex)
-            //{
-            //    logger.Error(mex, $"method: , parameters: []");
-            //    return new Response<bool>(mex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex, $"method: , parameters: []");
-            //    return new Response<bool>("Sorry, an unexpected error occured. Please try again");
-            //}
-            return new Response<bool>();
+            try
+            {
+                IDictionary<int, IList<Tuple<int, int>>>  cantBuy = purchasesManager.PurchaseCartContent(userId, producstToBuyByStoresIds);
+                logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
+                return new Response<IDictionary<int, IList<Tuple<int, int>>>>(cantBuy);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: , parameters: [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
+                return new Response<IDictionary<int, IList<Tuple<int, int>>>>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: , parameters: [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
+                return new Response<IDictionary<int, IList<Tuple<int, int>>>>("Sorry, an unexpected error occured. Please try again");
+            }
         }
 
         //TODO
         public Response<int> Enter()
         {
-            //try
-            //{
-            //    logger.Info($"Enter was called");
-            //}
-            //catch (MarketException mex)
-            //{
-            //    logger.Error(mex, $"method: Enter, parameters: []");
-            //    return new Response<int>(mex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex, $"method: Enter, parameters: []");
-            //    return new Response<int>("Sorry, an unexpected error occured. Please try again");
-            //}
+            try
+            {
+                int id = guestsController.Enter();
+                logger.Info($"Enter was called");
+                return new Response<int>(id);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: Enter, parameters: []");
+                return new Response<int>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: Enter, parameters: []");
+                return new Response<int>("Sorry, an unexpected error occured. Please try again");
+            }
             return new Response<int>();
         }
 
-        //TODO
-        public Response<bool> Leave()
+        public Response<bool> Leave(int userId)
         {
-            //try
-            //{
-            //    logger.Info($"Leave was called");
-            //}
-            //catch (MarketException mex)
-            //{
-            //    logger.Error(mex, $"method: Leave, parameters: []");
-            //    return new Response<bool>(mex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex, $"method: Leave, parameters: []");
-            //    return new Response<bool>("Sorry, an unexpected error occured. Please try again");
-            //}
-            return new Response<bool>();
+            try
+            {
+                guestsController.Leave(userId);
+                logger.Info($"Leave was called");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: Leave, parameters: []");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: Leave, parameters: []");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
         }
 
         //done
@@ -191,7 +196,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeId);
+                Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<ServiceStore>($"No store with id {storeId}");
                 logger.Info($"GetStoreInfo was called with parameters [storeId = {storeId}]");
@@ -214,7 +219,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.getStore(storeController.GetStoreIdByName(storeName));
+                Store s = storeController.GetStore(storeController.GetStoreIdByName(storeName));
                 if (s == null) // never
                     return new Response<ServiceStore>($"No store with name {storeName}");
                 logger.Info($"GetStoreInfo was called with parameters [storeName = {storeName}]");

@@ -166,8 +166,7 @@ namespace MarketBackend.ServiceLayer
             return new Response<int>();
         }
 
-        //TODO
-        public Response<bool> Leave()
+        public Response<bool> Leave(int userId)
         {
             //try
             //{

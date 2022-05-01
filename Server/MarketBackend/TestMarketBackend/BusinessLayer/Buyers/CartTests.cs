@@ -22,23 +22,23 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             cart.ShoppingBags[1] = bag1;
             cart.ShoppingBags[2] = bag2;
         }
-        
-        [Test]
-        //[TestCase(coOwnerId1, memberId1)]
-        public void TestAddProductToCart_Pass()
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                mock.Mock<ShoppingBag>()
-                    .Setup(bag => bag.AddProductToBag(product, 5))
-                    .Callback(() => Assert.Pass());
 
-                ShoppingBag bag = mock.Create<ShoppingBag>();
-                Cart cart = mock.Create<Cart>();
-                cart.ShoppingBags.Add(1, bag);
-                cart.AddProductToCart(product, 5);
-                Assert.Fail();
-            }
-        }
+        //[Test]
+        //[TestCase(coOwnerId1, memberId1)]
+        //public void TestAddProductToCart_Pass()
+        //{
+        //    using (var mock = AutoMock.GetLoose())
+        //    {
+        //        mock.Mock<ShoppingBag>()
+        //            .Setup(bag => bag.AddProductToBag(product, 5))
+        //            .Callback(() => Assert.Pass());
+
+        //        ShoppingBag bag = mock.Create<ShoppingBag>();
+        //        Cart cart = mock.Create<Cart>();
+        //        cart.ShoppingBags.Add(1, bag);
+        //        cart.AddProductToCart(product, 5);
+        //        Assert.Fail();
+        //    }
+        //}
     }
 }

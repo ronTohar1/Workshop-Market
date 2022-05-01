@@ -26,7 +26,7 @@ namespace MarketBackend.BusinessLayer.Buyers
             buyersControllers.Add(new GuestsController());
         }
 
-        public Buyer? GetBuyer(int buyerId)
+        public virtual Buyer? GetBuyer(int buyerId)
         {
             foreach (var controller in buyersControllers)
             {

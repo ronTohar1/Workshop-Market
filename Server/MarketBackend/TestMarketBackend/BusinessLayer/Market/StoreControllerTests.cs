@@ -35,7 +35,8 @@ namespace TestMarketBackend.BusinessLayer.Market
         private void membersConrtollerMemberExistsSetup(int[] exsitingMembersIds)
         {
             membersControllerMock = new Mock<MembersController>();
-            memberMock = new Mock<Member>("user123", 12345678); // todo: is this okay
+            Mock<Security> securityMock = new Mock<Security>();
+            memberMock = new Mock<Member>("user123", "12345678", securityMock.Object); // todo: is this okay
             member = memberMock.Object;
 
             foreach (int existingMemberId in exsitingMembersIds)

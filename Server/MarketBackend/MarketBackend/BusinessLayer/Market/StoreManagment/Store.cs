@@ -114,12 +114,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             }
         }
 
-        internal IList<Product> SerachProducts(ProductsSearchFilter filter)
-        {
-            // in conflicts, delete this method...
-            // why the develop is not compiling every single time :(
-            throw new NotImplementedException();
-        }
+        public IList<Product> SerachProducts(ProductsSearchFilter filter)
+        => new SynchronizedCollection<Product>(products.Values.Where(p=>filter.FilterProduct(p)).ToList());
 
         // r.4.2
         public void AddPurchaseOption(int memberId, PurchaseOption purchaseOption)//Add to store
@@ -181,10 +177,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             products[productId].AddProductReview(membersGetter(memberId).Username,review);
         }
         // 6.4, 4.13
-        public void AddPurchaseRecord(int memberId, DateTime purchaseDate, double PurchasePrice, string purchaseDescription) 
+        public virtual void AddPurchaseRecord(int memberId, DateTime purchaseDate,double totalPrice, string purchaseDescription) 
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
-            purchaseHistory.Add(new Purchase(purchaseDate, PurchasePrice, purchaseDescription));
+            purchaseHistory.Add(new Purchase(purchaseDate, totalPrice, purchaseDescription));
         }
 
         // TODO: amit and david should disscus it
@@ -510,7 +506,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
        
         public bool ContainProductInStock(int productId)
         => products.ContainsKey(productId);
-        public Product SearchProductByProductId(int productId)
+        public virtual Product SearchProductByProductId(int productId)
         => products.ContainsKey(productId) ? products[productId] : null;
         public List<Purchase> findPurchasesByDate(DateTime date)
         => purchaseHistory.Where(p => p.purchaseDate == date).ToList();

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer;
-
+using MarketBackend.BusinessLayer.System.ExternalServices;
 namespace TestMarketBackend.BusinessLayer.Market
 {
     public class PurchasesManagerTetsts
@@ -116,7 +116,8 @@ namespace TestMarketBackend.BusinessLayer.Market
 
         private Store MockStoreThatReturns(string result)
         {
-            Mock<Member> founderMock = new Mock<Member>("user123", 12345678); // todo: check if okay
+            Mock<Security> securityMock = new Mock<Security>();
+            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object); // todo: check if okay
             Member founder = founderMock.Object;
 
             Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null);
@@ -152,7 +153,7 @@ namespace TestMarketBackend.BusinessLayer.Market
 
         private void ExternalServicesControllerSetup()
         {
-            externalServicesControllerMock = new Mock<ExternalServicesController>(null, null); // initialized external services
+            externalServicesControllerMock = new Mock<ExternalServicesController>(new ExternalPaymentSystem(), new ExternalSupplySystem()); // initialized external services
 
             externalServicesController = externalServicesControllerMock.Object;
         }
@@ -268,7 +269,8 @@ namespace TestMarketBackend.BusinessLayer.Market
             buyerMock.Setup(buyer =>
                     buyer.Cart).
                         Returns(cart);
-
+            buyerMock.Setup(buyer =>
+                    buyer.AddPurchase(It.IsAny<Purchase>()));
             return buyerMock.Object;
         }
         private void BuyersControllerSetup2()
@@ -289,10 +291,13 @@ namespace TestMarketBackend.BusinessLayer.Market
 
         private Store MockStoreThatReturns2(string result)
         {
-            Mock<Member> founderMock = new Mock<Member>("user123", 12345678); // todo: check if okay
+            Mock<Security> securityMock = new Mock<Security>();
+            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object); // todo: check if okay
             Member founder = founderMock.Object;
 
             Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null);
+
+            Mock<Product> productMock = new Mock<Product>("cheese", 5.90, "dairy");
 
             storeMock.Setup(store =>
                     store.DecreaseProductAmountFromInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).
@@ -301,6 +306,11 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeMock.Setup(store =>
                     store.CanBuyProduct(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).
                         Returns(result);
+            storeMock.Setup(store =>
+                   store.SearchProductByProductId(It.IsAny<int>())).
+                       Returns(productMock.Object);
+            storeMock.Setup(store =>
+                   store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<double>(), It.IsAny<string>()));
 
             return storeMock.Object;
         }
@@ -325,6 +335,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeControllerMock.Setup(storeController =>
                     storeController.GetOpenStore(It.Is<int>(id => id == notAStoreId1))).
                         Returns((Store)null);
+
 
 
 

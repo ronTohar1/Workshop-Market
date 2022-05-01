@@ -46,7 +46,7 @@ namespace MarketBackend.BusinessLayer.Buyers
         }
 
 
-        public void AddPurchase(Purchase purchase)
+        public virtual void AddPurchase(Purchase purchase)
         {
             if (purchase == null) { throw new ArgumentNullException(nameof(purchase)); }
             this.purchaseHistory.Add(purchase);

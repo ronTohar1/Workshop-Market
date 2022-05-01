@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.BusinessLayer.Buyers.Guests;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -104,8 +106,11 @@ namespace TestMarketBackend.Acceptance
         public void SetUp()
         {
             // "global" initialization here; Called before every test method.
-            buyerFacade = new BuyerFacade();
             StoreController storeController = new StoreController(new MembersController());
+            BuyersController bc = new BuyersController();
+            MembersController mc = new MembersController();
+            GuestsController gc = new GuestsController();
+            buyerFacade = new BuyerFacade(storeController, bc, mc, gc, LogManager.GetCurrentClassLogger());
             storeManagementFacade = new StoreManagementFacade(storeController, LogManager.GetCurrentClassLogger());
 
             SetUpUsers();

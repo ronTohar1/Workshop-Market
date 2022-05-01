@@ -22,7 +22,7 @@ namespace MarketBackend.BusinessLayer.Buyers
         public bool BuyerAvailable(int buyerId) => 
             buyersControllers.Any(controller => controller.GetBuyer(buyerId) is not null);
 
-        public Buyer? GetBuyer(int buyerId)
+        public virtual Buyer? GetBuyer(int buyerId)
         {
             foreach (var controller in buyersControllers)
             {

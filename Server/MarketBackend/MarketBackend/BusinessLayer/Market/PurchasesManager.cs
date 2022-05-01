@@ -76,17 +76,36 @@ public class PurchasesManager
 			}
 		}
 		// now update the cart and the store approprietly 
-		if (canPurchase)
+		if (canPurchase && externalServicesController.makePayment())
 		{
-			foreach (int storeId in producstToBuyByStoresIds.Keys)
+			string purchaseDescriptionTitle = $"buyer with id {buyer.Id} has succefully purchased: \n";
+			string purchaseAllAtoresDescription = purchaseDescriptionTitle;
+			DateTime purchaseDate = DateTime.Now;
+			double purchaseAllStoresTotal = 0;
+
+			foreach (int storeId in producstToBuyByStoresIds.Keys) {
+				
+				string purchaseSingleStoreDescription = "";
+				Store store = storeController.getStore(storeId);
+				purchaseAllAtoresDescription = purchaseAllAtoresDescription + $"	from {storeController.getStore(storeId).name}:\n";
+				
 				foreach (Tuple<int, int> productAmount in producstToBuyByStoresIds[storeId]) {
 					int productId = productAmount.Item1;
 					int amount = productAmount.Item2;
-					Store store = GetOpenStoreOrThrowException(storeId);
 					store.DecreaseProductAmountFromInventory(store.founder.Id, productId, amount);
-					ProductInBag productInBag = buyer.Cart.GetProductInBag(storeId,productId);
+					ProductInBag productInBag = buyer.Cart.GetProductInBag(storeId, productId);
 					buyer.Cart.RemoveProductFromCart(productInBag);
+					purchaseSingleStoreDescription = purchaseSingleStoreDescription + $"	> {amount} x {store.SearchProductByProductId(productId).name}  - {amount * store.SearchProductByProductId(productId).getUnitPriceWithDiscount()} shekels \n";
 				}
+
+				double purchaseSingleTotal = store.GetTotalBagCost(producstToBuyByStoresIds[storeId].ToDictionary(x=>x.Item1, x => x.Item2));
+				store.AddPurchaseRecord(buyerId, purchaseDate, purchaseSingleTotal, purchaseDescriptionTitle + purchaseSingleStoreDescription+$"Total of: {purchaseSingleTotal} shekels\n");
+				
+				purchaseAllAtoresDescription = purchaseAllAtoresDescription + purchaseSingleStoreDescription;
+				purchaseAllStoresTotal = purchaseAllStoresTotal + purchaseSingleTotal;
+			}
+			purchaseAllAtoresDescription = purchaseAllAtoresDescription + $"\n>>>Total of: {purchaseAllStoresTotal} shekels\n";
+			buyer.AddPurchase(new Purchase(purchaseDate, purchaseAllStoresTotal, purchaseAllAtoresDescription));
 			return null;
 		}
 		return productsCanNotPurchase;

@@ -11,34 +11,105 @@ using Autofac.Extras.Moq;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
-    public class CartTests
+    internal class CartTests
     {
-        private ShoppingBag bag1 = new ShoppingBag();
-        private ShoppingBag bag2 = new ShoppingBag();
-        private ProductInBag product = new ProductInBag(1,1);
+        private static Cart cart = new Cart();
+        private static ShoppingBag bag1 = new ShoppingBag();
+        private static ShoppingBag bag2 = new ShoppingBag();
+        private static ProductInBag productNotInBag1 = new ProductInBag(1, 1);
+        private static ProductInBag productInBag2    = new ProductInBag(2, 2);
+        private static ProductInBag productNotInBag3 = new ProductInBag(3, 3);
 
-        private void SetupShoppingBags(Cart cart)
+        [SetUp]
+        public void SetUp()
         {
             cart.ShoppingBags[1] = bag1;
+            bag2.AddProductToBag(productInBag2, 2);
             cart.ShoppingBags[2] = bag2;
+           
         }
 
-        //[Test]
-        //[TestCase(coOwnerId1, memberId1)]
-        //public void TestAddProductToCart_Pass()
-        //{
-        //    using (var mock = AutoMock.GetLoose())
-        //    {
-        //        mock.Mock<ShoppingBag>()
-        //            .Setup(bag => bag.AddProductToBag(product, 5))
-        //            .Callback(() => Assert.Pass());
+        [TearDown]
+        public void TearDown()
+        {
+            bag2.ProductsAmounts.Clear();
+            cart.ShoppingBags.Clear();
+        }
 
-        //        ShoppingBag bag = mock.Create<ShoppingBag>();
-        //        Cart cart = mock.Create<Cart>();
-        //        cart.ShoppingBags.Add(1, bag);
-        //        cart.AddProductToCart(product, 5);
-        //        Assert.Fail();
-        //    }
-        //}
+        #region AddProductToCart
+        public static IEnumerable<TestCaseData> Data_TestAddProductToCart
+        {
+            get
+            {
+                yield return new TestCaseData(productNotInBag1, 1, 10, 10);
+                yield return new TestCaseData(productInBag2, 2, 10, 12);
+                yield return new TestCaseData(productNotInBag3, 3, 10, 10);
+            }
+        }
+
+        [Test]
+        [TestCaseSource("Data_TestAddProductToCart")]
+        public void TestAddProductToCart(ProductInBag product, int storeId, int amountToAdd, int expectedAmount)
+        {
+            cart.AddProductToCart(product, amountToAdd);
+            Assert.AreEqual(expectedAmount, cart.ShoppingBags[storeId].ProductsAmounts[product]);
+        }
+        #endregion
+
+
+        #region RemoveProductFromCart
+        public static IEnumerable<TestCaseData> Data_TestRemoveProductFromCart
+        {
+            get
+            {
+                yield return new TestCaseData(productInBag2);
+            }
+        }
+
+        [Test]
+        [TestCaseSource("Data_TestRemoveProductFromCart")]
+        public void TestRemoveProductFromCart(ProductInBag product)
+        {
+            Assert.IsTrue(cart.ShoppingBags.Any(pair => pair.Value.ProductsAmounts.ContainsKey(product)));
+            cart.RemoveProductFromCart(product);
+            Assert.IsFalse(cart.ShoppingBags.Any(pair => pair.Value.ProductsAmounts.ContainsKey(product)));
+        }
+        #endregion
+
+        #region ChangeProductAmount
+        public static IEnumerable<TestCaseData> Data_TestChangeProductAmount_ToNonZero
+        {
+            get
+            {
+                yield return new TestCaseData(productInBag2, 2, 5);
+            }
+        }
+
+        [Test]
+        [TestCaseSource("Data_TestChangeProductAmount_ToNonZero")]
+        public void TestChangeProductAmount_ToNonZero(ProductInBag product, int storeId, int newAmount)
+        {
+            Assert.AreNotEqual(newAmount, cart.ShoppingBags[storeId].ProductsAmounts[product]);
+            cart.ChangeProductAmount(product, newAmount);
+            Assert.AreEqual(newAmount, cart.ShoppingBags[storeId].ProductsAmounts[product]);
+        }
+
+        public static IEnumerable<TestCaseData> Data_TestChangeProductAmount_ToZero
+        {
+            get
+            {
+                yield return new TestCaseData(productInBag2, 2, 0);
+            }
+        }
+
+        [Test]
+        [TestCaseSource("Data_TestChangeProductAmount_ToZero")]
+        public void TestChangeProductAmount_ToZero(ProductInBag product, int storeId, int newAmount)
+        {
+            Assert.AreNotEqual(newAmount, cart.ShoppingBags[storeId].ProductsAmounts[product]);
+            cart.ChangeProductAmount(product, newAmount);
+            Assert.IsFalse(cart.ShoppingBags[storeId].ProductsAmounts.ContainsKey(product));
+        }
+        #endregion
     }
 }

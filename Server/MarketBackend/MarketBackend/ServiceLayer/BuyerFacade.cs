@@ -112,7 +112,7 @@ namespace MarketBackend.ServiceLayer
                 Cart? c = buyersController.GetCart(userId);
                 if (c == null)
                     return new Response<bool>($"No cart with user id {userId}");
-                c.changeProductAmount(new ProductInBag(productId, storeId), amount);
+                c.ChangeProductAmount(new ProductInBag(productId, storeId), amount);
                 logger.Info($"changeProductAmountInCart was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(true);
             }

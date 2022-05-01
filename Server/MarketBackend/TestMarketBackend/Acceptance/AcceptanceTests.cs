@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Buyers.Guests;
+using MarketBackend.BusinessLayer.System.ExternalServices;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -110,7 +111,9 @@ namespace TestMarketBackend.Acceptance
             BuyersController bc = new BuyersController();
             MembersController mc = new MembersController();
             GuestsController gc = new GuestsController();
-            buyerFacade = new BuyerFacade(storeController, bc, mc, gc, LogManager.GetCurrentClassLogger());
+            ExternalServicesController esc = new ExternalServicesController(new ExternalPaymentSystem(), new ExternalSupplySystem());
+            PurchasesManager pm = new PurchasesManager(storeController, bc, esc);
+            buyerFacade = new BuyerFacade(storeController, bc, mc, gc, pm, LogManager.GetCurrentClassLogger());
             storeManagementFacade = new StoreManagementFacade(storeController, LogManager.GetCurrentClassLogger());
 
             SetUpUsers();

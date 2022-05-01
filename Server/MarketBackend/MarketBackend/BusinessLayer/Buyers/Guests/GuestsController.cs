@@ -27,8 +27,8 @@ namespace MarketBackend.BusinessLayer.Buyers.Guests
             return buyer.Id;
         }
 
-        public void Leave(Buyer buyer) =>
-            buyers.Remove(buyer.Id);
+        public void Leave(int id) =>
+            buyers.Remove(id);
 
     }
 }

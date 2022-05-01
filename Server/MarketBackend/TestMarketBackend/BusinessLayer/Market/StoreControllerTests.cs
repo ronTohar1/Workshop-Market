@@ -183,18 +183,43 @@ namespace TestMarketBackend.BusinessLayer.Market
 
         [Test]
         [TestCase(new int[] { memberId1 }, new string[] { storeName1 })]
-        [TestCase(new int[] {memberId1, memberId2 }, new string[] {storeName1, storeName2 })]
-        public void TestOpenNewStoreShouldPass(int[] memberIds, string[] storeNames)
+        [TestCase(new int[] { memberId1, memberId2 }, new string[] { storeName1, storeName2 })]
+        public void TestOpenNewStoreShouldPassMcokHelpingFunctions(int[] memberIds, string[] storeNames)
         {
             membersConrtollerMemberExistsSetup(memberIds);
 
             storeControllerMock = new Mock<StoreController>(membersController);
             mockNoStores();
-
             storeController = storeControllerMock.Object;
+            // mock so in this test not checking using all helping function, checking this in the next test function
 
             List<int> storeIds = new List<int>();
-            int currentId; 
+            int currentId;
+
+            for (int i = 0; i < memberIds.Length; i++)
+            {
+                currentId = storeController.OpenNewStore(memberIds[i], storeNames[i]);
+
+                Assert.False(storeIds.Contains(currentId));
+
+                storeIds.Add(currentId);
+            }
+
+            // todo: maybe add synchronization tests
+        }
+
+        [Test]
+        [TestCase(new int[] { memberId1 }, new string[] { storeName1 })]
+        [TestCase(new int[] { memberId1, memberId2 }, new string[] { storeName1, storeName2 })]
+        public void TestOpenNewStoreShouldPassUseGetOpenStore(int[] memberIds, string[] storeNames)
+        {
+            membersConrtollerMemberExistsSetup(memberIds);
+
+            storeController = new StoreController(membersController);
+            // also using store exists bevause not mocking 
+
+            List<int> storeIds = new List<int>();
+            int currentId;
 
             for (int i = 0; i < memberIds.Length; i++)
             {

@@ -44,6 +44,8 @@ namespace TestMarketBackend.BusinessLayer.Market
         private const int amount2 = 5;
         private const int amount3 = 6;
 
+        private const double totalPrice = 99.9;
+
         private int counter;
         private bool removeFromStore1FromCart;
         private bool removeFromStore2FromCart;
@@ -311,6 +313,8 @@ namespace TestMarketBackend.BusinessLayer.Market
                        Returns(productMock.Object);
             storeMock.Setup(store =>
                    store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<double>(), It.IsAny<string>()));
+            storeMock.Setup(store =>
+                   store.GetTotalBagCost(It.IsAny<IDictionary<int,int>>())).Returns(totalPrice);
 
             return storeMock.Object;
         }

@@ -11,6 +11,13 @@ namespace MarketBackend.BusinessLayer.Buyers
     public class BuyersController
     {
         private readonly IList<IBuyersController> buyersControllers;
+        public IList<IBuyersController> BuyersControllers { get { return buyersControllers; } }
+
+        /// <summary>
+        /// For tests purposes
+        /// </summary>
+        public BuyersController(IList<IBuyersController> buyersControllers) =>
+            this.buyersControllers = buyersControllers;
 
         public BuyersController()
         {
@@ -18,9 +25,6 @@ namespace MarketBackend.BusinessLayer.Buyers
             buyersControllers.Add(new MembersController());
             buyersControllers.Add(new GuestsController());
         }
-
-        public bool BuyerAvailable(int buyerId) => 
-            buyersControllers.Any(controller => controller.GetBuyer(buyerId) is not null);
 
         public virtual Buyer? GetBuyer(int buyerId)
         {
@@ -41,10 +45,5 @@ namespace MarketBackend.BusinessLayer.Buyers
             else
                 return null;
         }
-
-       
-
-
-
     }
 }

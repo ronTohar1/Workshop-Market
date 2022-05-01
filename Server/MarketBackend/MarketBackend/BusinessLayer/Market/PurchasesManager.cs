@@ -86,8 +86,8 @@ public class PurchasesManager
 			foreach (int storeId in producstToBuyByStoresIds.Keys) {
 				
 				string purchaseSingleStoreDescription = "";
-				Store store = storeController.getStore(storeId);
-				purchaseAllAtoresDescription = purchaseAllAtoresDescription + $"	from {storeController.getStore(storeId).name}:\n";
+				Store? store = storeController.GetStore(storeId);
+				purchaseAllAtoresDescription = purchaseAllAtoresDescription + $"	from {storeController.GetStore(storeId).name}:\n";
 				
 				foreach (Tuple<int, int> productAmount in producstToBuyByStoresIds[storeId]) {
 					int productId = productAmount.Item1;

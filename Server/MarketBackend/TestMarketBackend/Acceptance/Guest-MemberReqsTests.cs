@@ -264,40 +264,40 @@ namespace TestMarketBackend.Acceptance
         }
 
         // r.2.5
-        [Test]
-        public void SuccessfulPurchase()
-        {
-            Response<bool> response = buyerFacade.PurchaseCartContent(member3Id);
+        //[Test]
+        //public void SuccessfulPurchase()
+        //{
+        //    Response<bool> response = buyerFacade.PurchaseCartContent(member3Id);
 
-            Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
-            ServiceCart cart = cartResponse.Value;
+        //    Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
+        //    ServiceCart cart = cartResponse.Value;
 
-            Assert.IsTrue(!response.ErrorOccured() && cart.IsEmpty());
-        }
-
-        // r.2.5
-        [Test]
-        public void FailedPurchaseEmptyCart()
-        {
-            Response<bool> response = buyerFacade.PurchaseCartContent(member3Id);
-
-            Assert.IsTrue(response.ErrorOccured());
-        }
+        //    Assert.IsTrue(!response.ErrorOccured() && cart.IsEmpty());
+        //}
 
         // r.2.5
-        [Test]
-        public void FailedPurchaseProductsOutOfStock()
-        {
-            // A user purchases all iphones in the store
-            buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
+        //[Test]
+        //public void FailedPurchaseEmptyCart()
+        //{
+        //    Response<bool> response = buyerFacade.PurchaseCartContent(member3Id);
 
-            Response<bool> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id);
+        //    Assert.IsTrue(response.ErrorOccured());
+        //}
 
-            // Another user tries to purchase iphones from the same store
-            Response<bool> response = buyerFacade.PurchaseCartContent(member3Id);
+        // r.2.5
+        //[Test]
+        //public void FailedPurchaseProductsOutOfStock()
+        //{
+        //    // A user purchases all iphones in the store
+        //    buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
 
-            Assert.IsTrue(!firstUserResponse.ErrorOccured() && response.ErrorOccured());
-        }
+        //    Response<bool> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id);
+
+        //    // Another user tries to purchase iphones from the same store
+        //    Response<bool> response = buyerFacade.PurchaseCartContent(member3Id);
+
+        //    Assert.IsTrue(!firstUserResponse.ErrorOccured() && response.ErrorOccured());
+        //}
 
     }
 }

@@ -5,16 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Buyers.Guests;
+
 namespace MarketBackend.BusinessLayer.Buyers
 {
     public class BuyersController
     {
         private readonly IList<IBuyersController> buyersControllers;
+
         public BuyersController()
         {
-            this.buyersControllers = new List<IBuyersController>();
-            this.buyersControllers.Add(new MembersController());
-            this.buyersControllers.Add(new GuestsController());
+            buyersControllers = new List<IBuyersController>();
+            buyersControllers.Add(new MembersController());
+            buyersControllers.Add(new GuestsController());
         }
 
         public bool BuyerAvailable(int buyerId) => 
@@ -25,16 +27,29 @@ namespace MarketBackend.BusinessLayer.Buyers
             throw new Exception(); // todo: implements
         }
 
-        public Cart? GetCart(int buyerId)
+        public Buyer? GetBuyer(int buyerId)
         {
             foreach (var controller in buyersControllers)
             {
-                Buyer buyer = controller.GetBuyer(buyerId);
+                Buyer? buyer = controller.GetBuyer(buyerId);
                 if (buyer is not null)
-                    return buyer.Cart;
+                    return buyer;
             }
             return null;
         }
+
+        public Cart? GetCart(int buyerId)
+        {
+            Buyer? buyer = GetBuyer(buyerId);
+            if (buyer is not null)
+                return buyer.Cart;
+            else
+                return null;
+        }
+
+       
+
+
 
     }
 }

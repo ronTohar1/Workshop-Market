@@ -6,7 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Buyers
-{
+{   
+    // Represents a controller for all kinds of buyers.
     interface IBuyersController
     {
         public Buyer? GetBuyer(int buyerId);

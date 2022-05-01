@@ -113,6 +113,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException(StoreErrorMessage($"Could not take from inventory: {mEx.Message}"));
             }
         }
+
+        internal IList<Product> SerachProducts(ProductsSearchFilter filter)
+        {
+            // in conflicts, delete this method...
+            // why the develop is not compiling every single time :(
+            throw new NotImplementedException();
+        }
+
         // r.4.2
         public void AddPurchaseOption(int memberId, PurchaseOption purchaseOption)//Add to store
         {
@@ -247,18 +255,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         //------------------------- search products within shop --------------------------
 
         // r 2.2
-        public IList<Product> SerachProducts(ProductsSearchFilter filter)
+        public IList<Product> SearchProducts(ProductsSearchFilter filter)
         => products.Values.Where(p => filter.FilterProduct(p)).ToList();
-
-        //r.2.2
-        public IList<Product> SearchProductsByName(string productName)
-        => products.Values.ToList().Where(p => p.name.Contains(productName)).ToList();//the default is null
-        //r.2.2
-        public IList<Product> SearchProductByCategory(string category)
-         => products.Values.ToList().Where(p => p.category.Equals(category)).ToList();//the default is null
-        //r.2.2
-        public IList<Product> SearchProductByKeyWords(string keyWord)
-         => products.Values.ToList().Where(p => p.name.Contains(keyWord) || p.category.Contains(keyWord)).ToList();//the default is null
         
         // ------------------------------ Permission and Roles ------------------------------
 
@@ -297,6 +295,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             rolesAndPermissionsLock.ReleaseWriterLock();
             // todo: check that this mutex is synchronizing all these things okay
         }
+
+
+
 
         // cc 3
         // r 4.6, r 5

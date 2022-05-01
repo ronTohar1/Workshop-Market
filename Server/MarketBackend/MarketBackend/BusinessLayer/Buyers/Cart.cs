@@ -34,5 +34,8 @@ namespace MarketBackend.BusinessLayer.Buyers
             shoppingBags[storeId].RemoveProduct(product);
         }
 
+        public virtual ProductInBag? GetProductInBag(int storeId, int productId)
+        => ShoppingBags[storeId].ProductsAmounts.Keys.Where(p => p.ProductId == productId).First();
+
     }
 }

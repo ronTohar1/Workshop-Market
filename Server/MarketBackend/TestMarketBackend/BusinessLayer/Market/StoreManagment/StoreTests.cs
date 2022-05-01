@@ -869,7 +869,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
                 [productId1] = productIdAmount1,
                 [productId2] = productIdAmount2,
                 [productId3] = productIdAmount3
-            }; ;
+            };
             correctTotal = productIdAmount1 * productPrice1 * (1 - (discountPercentage1 / 100)) +
                             productIdAmount2 * productPrice2 * (1 - (discountPercentage2 / 100)) +
                                 productIdAmount3 * productPrice3;

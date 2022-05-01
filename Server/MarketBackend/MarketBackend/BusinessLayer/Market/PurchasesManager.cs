@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 
@@ -52,9 +53,43 @@ public class PurchasesManager
 	// cc 10
 	// r I 3, r I 4
 	// r 1.5
-	public IDictionary<int, IList<int>> PurchaseCartContent(int buyerId, IDictionary<int, IList<int>> producstToBuyByStoresIds)
+	public IDictionary<int, IList<Tuple<int, int>>> PurchaseCartContent(int buyerId, IDictionary<int, IList<Tuple<int,int>>> producstToBuyByStoresIds)
 	{
-		throw new Exception(); 
+		Buyer buyer = GetBuyerOrThrowException(buyerId);
+		// Firstly check if can purchase the content
+		bool canPurchase = true;
+		IDictionary<int, IList<Tuple<int, int>>> productsCanNotPurchase = new ConcurrentDictionary<int, IList<Tuple<int, int>>>();
+		foreach (int storeId in producstToBuyByStoresIds.Keys) {
+			foreach (Tuple<int,int> productAmount in producstToBuyByStoresIds[storeId])
+			{
+				int productId = productAmount.Item1;
+				int amount = productAmount.Item2;
+				Store store = GetOpenStoreOrThrowException(storeId);
+				if (store.CanBuyProduct(buyerId, productId, amount) != null) {
+					// meaning that we couldn't purchase for that specific store 
+					canPurchase = false;
+					if (!productsCanNotPurchase.ContainsKey(storeId))
+						canPurchase = false;
+						productsCanNotPurchase.Add(storeId, new SynchronizedCollection<Tuple<int, int>>());
+					productsCanNotPurchase[storeId].Add(productAmount);
+				}
+			}
+		}
+		// now update the cart and the store approprietly 
+		if (canPurchase)
+		{
+			foreach (int storeId in producstToBuyByStoresIds.Keys)
+				foreach (Tuple<int, int> productAmount in producstToBuyByStoresIds[storeId]) {
+					int productId = productAmount.Item1;
+					int amount = productAmount.Item2;
+					Store store = GetOpenStoreOrThrowException(storeId);
+					store.DecreaseProductAmountFromInventory(store.founder.Id, productId, amount);
+					ProductInBag productInBag = buyer.Cart.GetProductInBag(storeId,productId);
+					buyer.Cart.RemoveProductFromCart(productInBag);
+				}
+			return null;
+		}
+		return productsCanNotPurchase;
 	}
 
 	private Buyer GetBuyerOrThrowException(int buyerId)

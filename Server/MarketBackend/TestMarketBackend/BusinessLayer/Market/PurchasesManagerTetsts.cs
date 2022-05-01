@@ -36,22 +36,38 @@ namespace TestMarketBackend.BusinessLayer.Market
         private const int storeNoId1 = 12;
         private const int notAStoreId1 = 13;
 
-        private const int productId1 = 1; 
+        private const int storeYesId2 = 14;
+        private const int productId1 = 1;
+        private const int productId2 = 2;
+        private const int productId3 = 3;
+        private const int amount1 = 4;
+        private const int amount2 = 5;
+        private const int amount3 = 6;
+
+        private int counter;
+        private bool removeFromStore1FromCart;
+        private bool removeFromStore2FromCart;
+
+        private IDictionary<int, IList<Tuple<int, int>>> case1legal = new Dictionary<int, IList<Tuple<int, int>>>()
+        {
+            [storeYesId1] = new List<Tuple<int, int>>() { new Tuple<int, int> (productId1, amount1), new Tuple<int, int>(productId2, amount1) },
+            [storeYesId2] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount2), new Tuple<int, int>(productId2, amount3) },
+        };
+        private IDictionary<int, IList<Tuple<int, int>>> case2legal = new Dictionary<int, IList<Tuple<int, int>>>()
+        { 
+            [storeYesId1] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount2), new Tuple<int, int>(productId2, amount3) },
+        };
+        private IDictionary<int, IList<Tuple<int, int>>> case3illegal = new Dictionary<int, IList<Tuple<int, int>>>()
+        {
+            [storeYesId1] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount1), new Tuple<int, int>(productId2, amount1) },
+            [storeNoId1] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount2), new Tuple<int, int>(productId2, amount3) },
+        };
+        private IDictionary<int, IList<Tuple<int, int>>> case4illegal = new Dictionary<int, IList<Tuple<int, int>>>()
+        {
+            [notAStoreId1] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount1), new Tuple<int, int>(productId2, amount1) }
+        };
 
 
-
-        // todo: decide if to remove with the next lines
-
-        //private Cart cart;
-        //private Mock<Cart> cartMock;
-       
-        //private Store store1;
-        //private Mock<Store> storeMock1;
-        //private Store store2;
-        //private Mock<Store> storeMock2;
-        //private Func<int, Member> memberGetter;
-        //private const string storeName1 = "Amazon";
-        //private const string storeName2 = "Ebay";
 
         // ------- Setup helping functions -------------------------------------
 
@@ -129,6 +145,8 @@ namespace TestMarketBackend.BusinessLayer.Market
                     storeController.GetOpenStore(It.Is<int>(id => id == notAStoreId1))).
                         Returns((Store)null);
 
+   
+
             storeController = storeControllerMock.Object;
         }
 
@@ -158,48 +176,6 @@ namespace TestMarketBackend.BusinessLayer.Market
 
 
         // todo: decide if to remove the next lines
-
-        //private void buyersConrtollerBuyersExistsSetup(int[] exisitingBuyersIds)
-        //{
-        //    buyersControllerMock = new Mock<BuyersController>();
-        //    cartMock = new Mock<Cart>(); 
-        //    cart = cartMock.Object;
-
-        //    // returns mock cart for every buyer Id
-        //    foreach (int existingBuyerId in exisitingBuyersIds)
-        //    {
-        //        buyersControllerMock.Setup(buyersController =>
-        //        buyersController.GetCart(It.Is<int>(id => id == existingBuyerId))).
-        //            Returns(cart);
-
-        //        buyersControllerMock.Setup(buyersController =>
-        //        buyersController.BuyerAvailable(It.Is<int>(id => id == existingBuyerId))).
-        //            Returns(true);
-        //    }
-        //    buyersControllerMock.Setup(buyersController =>
-        //        buyersController.BuyerAvailable(It.Is<int>(id => !exisitingBuyersIds.Contains(id)))).
-        //            Returns(false);
-        //}
-        //private void storeConrtollerSetup()
-        //{
-        //    // store simple setup
-        //    Mock<Member> memberMock = new Mock<Member>("user123", 12345678);
-        //    Member founderOfBothStores = memberMock.Object;
-
-        //    memberGetter = memberId =>
-        //    {
-        //        if (founderOfBothStores.Id == memberId)
-        //            return founderOfBothStores;
-
-        //        return null;
-        //    };
-
-
-        //    storeControllerMock = new Mock<StoreController>();
-        //    storeMock1 = new Mock<Store>();
-        //    store1 = storeMock1.Object;
-
-        //}
 
         // ------- AddProductToCart() ----------------------------------------
 
@@ -263,6 +239,138 @@ namespace TestMarketBackend.BusinessLayer.Market
 
             Assert.IsTrue(removedFromCart); // cart is mocked to change this
         }
+        
+        
+        // from here purchase managment tests
+      
+        private Cart MockCart2()
+        {
+            Mock<Cart> cartMock = new Mock<Cart>();
 
+            cartMock.Setup(cart =>
+                    cart.GetProductInBag(It.Is<int>(id => id == storeYesId1), It.IsAny<int>())).
+                        Returns((ProductInBag)null).Callback(()=>removeFromStore1FromCart=true);
+            cartMock.Setup(cart =>
+                    cart.GetProductInBag(It.Is<int>(id => id == storeYesId2), It.IsAny<int>())).
+                        Returns((ProductInBag)null).Callback(() => removeFromStore2FromCart = true);
+            cartMock.Setup(cart =>
+                    cart.RemoveProductFromCart(It.IsAny<ProductInBag>())).
+                        Callback(() => { removedFromCart = true; });
+
+            return cartMock.Object;
+        }
+        private Buyer MockBuyer2()
+        {
+            Mock<Buyer> buyerMock = new Mock<Buyer>();
+
+            Cart cart = MockCart2();
+
+            buyerMock.Setup(buyer =>
+                    buyer.Cart).
+                        Returns(cart);
+
+            return buyerMock.Object;
+        }
+        private void BuyersControllerSetup2()
+        {
+            buyersControllerMock = new Mock<BuyersController>();
+
+            Buyer mockedBuyer = MockBuyer2();
+
+            buyersControllerMock.Setup(buyersController =>
+                    buyersController.GetBuyer(It.Is<int>(id => id == buyerId1))).
+                        Returns(mockedBuyer);
+            buyersControllerMock.Setup(buyersController =>
+                    buyersController.GetBuyer(It.Is<int>(id => id == notABuyerId1))).
+                        Returns((Buyer)null);
+
+            buyersController = buyersControllerMock.Object;
+        }
+
+        private Store MockStoreThatReturns2(string result)
+        {
+            Mock<Member> founderMock = new Mock<Member>("user123", 12345678); // todo: check if okay
+            Member founder = founderMock.Object;
+
+            Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null);
+
+            storeMock.Setup(store =>
+                    store.DecreaseProductAmountFromInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).
+                        Callback(() => counter++);
+
+            storeMock.Setup(store =>
+                    store.CanBuyProduct(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).
+                        Returns(result);
+
+            return storeMock.Object;
+        }
+
+        private void StoreControllerSetup2()
+        {
+            storeControllerMock = new Mock<StoreController>(null); // sending null MembersController
+
+            Store mockedYesStore1 = MockStoreThatReturns2(null); 
+            Store mockedYesStore2 = MockStoreThatReturns2(null); 
+            Store mockedNoStore = MockStoreThatReturns("Product not in store"); 
+
+            storeControllerMock.Setup(storeController =>
+                    storeController.GetOpenStore(It.Is<int>(id => id == storeYesId1))).
+                        Returns(mockedYesStore1);
+            storeControllerMock.Setup(storeController =>
+                    storeController.GetOpenStore(It.Is<int>(id => id == storeYesId2))).
+                        Returns(mockedYesStore2);
+            storeControllerMock.Setup(storeController =>
+                    storeController.GetOpenStore(It.Is<int>(id => id == storeNoId1))).
+                        Returns(mockedNoStore);
+            storeControllerMock.Setup(storeController =>
+                    storeController.GetOpenStore(It.Is<int>(id => id == notAStoreId1))).
+                        Returns((Store)null);
+
+
+
+            storeController = storeControllerMock.Object;
+        }
+
+       
+        private void setUpPurchase() {
+            removeFromStore1FromCart = false;
+            removeFromStore2FromCart = false;
+            counter = 0;
+            BuyersControllerSetup2();
+            StoreControllerSetup2();
+
+            purchasesManager = new PurchasesManager(storeController, buyersController, externalServicesController);
+        }
+        [Test]
+        public void TestPurchaseFromTwoStores1Success() {
+            setUpPurchase();
+            Assert.IsNull(purchasesManager.PurchaseCartContent(buyerId1,case1legal));
+            Assert.True(removeFromStore1FromCart && removeFromStore2FromCart);
+            Assert.AreEqual(counter, 4);
+        }
+        [Test]
+        public void TestPurchaseFromTwoStores2Success()
+        {
+            setUpPurchase();
+            Assert.IsNull(purchasesManager.PurchaseCartContent(buyerId1, case2legal));
+            Assert.True(removeFromStore1FromCart && !removeFromStore2FromCart);
+            Assert.AreEqual(counter, 2);
+        }
+        [Test]
+        public void TestPurchaseFromTwpStoresBuyerDoesNotExistFail()
+        {
+            setUpPurchase();
+            Assert.Throws<ArgumentException>(()=>purchasesManager.PurchaseCartContent(notABuyerId1, case2legal));
+            Assert.True(!removeFromStore1FromCart && !removeFromStore2FromCart);
+            Assert.AreEqual(counter, 0);
+        }
+        [Test]
+        public void TestPurchaseFromTStoresStoreDoesNotExistFail()
+        {
+            setUpPurchase();
+            Assert.Throws<ArgumentException>(() => purchasesManager.PurchaseCartContent(notABuyerId1, case2legal));
+            Assert.True(!removeFromStore1FromCart && !removeFromStore2FromCart);
+            Assert.AreEqual(counter, 0);
+        }
     }
 }

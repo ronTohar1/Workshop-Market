@@ -7,16 +7,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer
 {
-    internal class SystemFacade
+    // for now this class has no purpoe because of the lack of systems
+    internal class ExternalSystemFacade
     {
-        public SystemFacade()
+        public ExternalSystemFacade()
         {
 
-        }
-
-        public Response<bool> OpenMarket()
-        {
-            return new Response<bool>();
         }
 
         public Response<int> AddNewSupplier(string supplierName)

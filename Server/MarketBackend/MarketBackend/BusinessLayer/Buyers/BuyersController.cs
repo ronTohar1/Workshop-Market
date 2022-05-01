@@ -11,6 +11,13 @@ namespace MarketBackend.BusinessLayer.Buyers
     public class BuyersController
     {
         private readonly IList<IBuyersController> buyersControllers;
+        public IList<IBuyersController> BuyersControllers { get { return buyersControllers; } }
+
+        /// <summary>
+        /// For tests purposes
+        /// </summary>
+        public BuyersController(IList<IBuyersController> buyersControllers) =>
+            this.buyersControllers = buyersControllers;
 
         public BuyersController()
         {
@@ -38,10 +45,5 @@ namespace MarketBackend.BusinessLayer.Buyers
             else
                 return null;
         }
-
-       
-
-
-
     }
 }

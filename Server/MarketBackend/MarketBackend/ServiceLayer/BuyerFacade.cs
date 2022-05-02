@@ -200,7 +200,7 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<ServiceStore>($"No store with id {storeId}");
                 logger.Info($"GetStoreInfo was called with parameters [storeId = {storeId}]");
-                return new Response<ServiceStore>(new ServiceStore(s));
+                return new Response<ServiceStore>(CreateServiceStore(s));
             }
             catch (MarketException mex)
             {
@@ -214,6 +214,17 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
+        private ServiceStore CreateServiceStore(Store store)
+        {
+            throw new NotImplementedException();
+            // todo: use next lines and add try and catch
+
+
+            //IList<int> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => product.Id);
+
+            //return new ServiceStore(store.GetName(), productsIds);
+        }
+
         //done
         public Response<ServiceStore> GetStoreInfo(string storeName)
         {
@@ -223,7 +234,7 @@ namespace MarketBackend.ServiceLayer
                 if (s == null) // never
                     return new Response<ServiceStore>($"No store with name {storeName}");
                 logger.Info($"GetStoreInfo was called with parameters [storeName = {storeName}]");
-                return new Response<ServiceStore>(new ServiceStore(s));
+                return new Response<ServiceStore>(CreateServiceStore(s));
             }
             catch (MarketException mex)
             {

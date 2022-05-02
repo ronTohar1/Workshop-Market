@@ -8,5 +8,6 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     internal class ProductFilter
     {
+        // will maybe bu implemented and used in the future
     }
 }

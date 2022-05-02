@@ -80,13 +80,14 @@ public class PurchasesManager
         if (canPurchase)
         {
             if (externalServicesController.makePayment())
-                return new purchaseAttempt("the payment attempt has failed, please address your local payment serviced");
+                return new purchaseAttempt("the payment attempt has failed, please address your local payment services");
 
             // Init descriptive strings
             string purchaseTitle = $"buyer with id {buyer.Id} has succefully purchased: \n";
             string purchaseDescription = purchaseTitle;
             double purchaseTotal = 0;
             DateTime purchaseDate = DateTime.Now;
+            IDictionary<int, Purchase> purchasesRecord = new ConcurrentDictionary<int, Purchase>();
 
             foreach (int storeId in productsByStoreId.Keys)
             {
@@ -97,15 +98,23 @@ public class PurchasesManager
                 string purchaseStoreDescription = null; //Holder for the description of the purchase
 
                 double purchaseStoreTotal = BuyFromStore(store, storeId, productsByStoreId[storeId], buyer, out purchaseStoreDescription);
-                store.AddPurchaseRecord(buyerId, purchaseDate, purchaseStoreTotal, purchaseTitle + purchaseStoreDescription + $"Total of: {purchaseStoreTotal} shekels\n");
+                purchasesRecord.Add(storeId, new Purchase(purchaseDate, purchaseStoreTotal, purchaseTitle + purchaseStoreDescription + $"Total of: {purchaseStoreTotal} shekels\n"));
 
                 purchaseDescription += purchaseStoreDescription;
                 purchaseTotal = purchaseTotal + purchaseStoreTotal;
             }
-            purchaseDescription = purchaseDescription + $"\n>>>Total of: {purchaseTotal} shekels\n";
-            Purchase purchase = new Purchase(purchaseDate, purchaseTotal, purchaseDescription)
+            purchaseDescription += $"\n>>>Total of: {purchaseTotal} shekels\n";
+
+
+            if (externalServicesController.makeDelivery())
+                return new purchaseAttempt("the delivery attempt has failed, please address your local delivery services");
+        
+            else { //now that there aren't any problems with the external services we can update the stores and the Cart 
+            }
+
+            Purchase purchase = new Purchase(purchaseDate, purchaseTotal, purchaseDescription);
             buyer.AddPurchase(purchase);
-            return null;
+            return new purchaseAttempt(purchase);
         }
         return new purchaseAttempt(canNotPurchaseMessage);
     }

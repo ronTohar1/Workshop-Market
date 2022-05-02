@@ -217,7 +217,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public virtual string CanBuyProduct(int buyerId, int productId, int amount)
         {
             if (!products.ContainsKey(productId))
-                return $"The product can't be bought, there isn't such a product with id: {productId}";
+                return $"The product can't be bought in the {name} store, there isn't such a product with id: {productId}";
             string productPurchaseFailMessage = "The product can't be bought: ";
             bool productCanBePurchased = true;
             int minAmount = policy.GetMinAmountPerProduct(productId);

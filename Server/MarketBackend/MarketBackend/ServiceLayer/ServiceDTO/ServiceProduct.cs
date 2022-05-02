@@ -7,12 +7,24 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO
 {
-    internal class ServiceProduct
+    public class ServiceProduct
     {
         public int Id { get; }
         public ServiceProduct(Product p)
         {
             Id = p.id; 
+        }
+
+        public override bool Equals(Object? other)
+        {
+            if (other == null || !(other is ServiceProduct))
+                return false;
+            return this.Id == ((ServiceProduct)other).Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id; // todo: make sure this is okay
         }
     }
 }

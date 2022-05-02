@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
@@ -53,13 +53,15 @@ public class PurchasesManager
     // cc 10
     // r I 3, r I 4
     // r 1.5
-    public purchaseAttempt PurchaseCartContent(int buyerId, IDictionary<int, IList<Tuple<int, int>>> productsByStoreId)
+    public PurchaseAttempt PurchaseCartContent(int buyerId, IDictionary<int, IList<Tuple<int, int>>> productsByStoreId)
     {
         Buyer buyer = GetBuyerOrThrowException(buyerId);
         // Firstly check if can purchase the content
         bool canPurchase = true;
         string canNotPurchaseMessage = null;
         
+        if (buyer.Cart.isEmpty())
+            return new PurchaseAttempt("your cart is empty");
         // Check if can purchase
         foreach (int storeId in productsByStoreId.Keys)
         {
@@ -79,8 +81,8 @@ public class PurchasesManager
         // Update cart and store
         if (canPurchase)
         {
-            if (externalServicesController.makePayment())
-                return new purchaseAttempt("the payment attempt has failed, please address your local payment services");
+            if (!externalServicesController.makePayment())
+                return new PurchaseAttempt("the payment attempt has failed, please address your local payment services");
 
             // Init descriptive strings
             string purchaseTitle = $"buyer with id {buyer.Id} has succefully purchased: \n";
@@ -106,8 +108,8 @@ public class PurchasesManager
             purchaseDescription += $"\n>>>Total of: {purchaseTotal} shekels\n";
 
 
-            if (externalServicesController.makeDelivery())
-                return new purchaseAttempt("the delivery attempt has failed, please address your local delivery services");
+            if (!externalServicesController.makeDelivery())
+                return new PurchaseAttempt("the delivery attempt has failed, please address your local delivery services");
         
             else { //now that there aren't any problems with the external services we can update the stores and the Cart 
                 foreach (int storeId in productsByStoreId.Keys)
@@ -118,9 +120,9 @@ public class PurchasesManager
             }
             Purchase purchase = new Purchase(purchaseDate, purchaseTotal, purchaseDescription);
             buyer.AddPurchase(purchase);
-            return new purchaseAttempt(purchase);
+            return new PurchaseAttempt(purchase);
         }
-        return new purchaseAttempt(canNotPurchaseMessage);
+        return new PurchaseAttempt(canNotPurchaseMessage);
     }
 
 
@@ -152,6 +154,8 @@ public class PurchasesManager
 
             //Remove from cart
             ProductInBag productInBag = buyer.Cart.GetProductInBag(storeId, productId);
+            buyer.Cart.RemoveProductFromCart(productInBag);
+
         }
     }
 

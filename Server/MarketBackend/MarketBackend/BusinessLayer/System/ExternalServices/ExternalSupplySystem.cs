@@ -16,7 +16,7 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
         }
 
         // will contact the external service for the delivery, for now default
-        public bool supplyDelivery()
+        public virtual bool supplyDelivery()
         {
             return true;
         }

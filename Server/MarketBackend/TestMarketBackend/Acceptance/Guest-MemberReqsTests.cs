@@ -263,41 +263,61 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(response.ErrorOccured());
         }
 
-        // r.2.5
-        //[Test]
-        //public void SuccessfulPurchase()
-        //{
-        //    Response<bool> response = buyerFacade.PurchaseCartContent(member3Id);
+        private void SetUpShoppingCarts()
+        {
+            buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, 25);
+            buyerFacade.AddProdcutToCart(member3Id, storeId, calculatorProductId, 5);
 
-        //    Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
-        //    ServiceCart cart = cartResponse.Value;
+        }
+        //r.2.5
+        [Test]
+        public void SuccessfulPurchase()
+        {
+            SetUpShoppingCarts();
+            IDictionary<int, IList<Tuple<int, int>>> legalCase = new Dictionary<int, IList<Tuple<int, int>>>()
+            {
+                [storeId] = new List<Tuple<int, int>>() { new Tuple<int, int>(iphoneProductId, 12) }
+            };
+            Response<ServicePurchaseAttempt> response = buyerFacade.PurchaseCartContent(member3Id, legalCase);
 
-        //    Assert.IsTrue(!response.ErrorOccured() && cart.IsEmpty());
-        //}
+            Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
+            ServiceCart cart = cartResponse.Value;
 
-        // r.2.5
-        //[Test]
-        //public void FailedPurchaseEmptyCart()
-        //{
-        //    Response<bool> response = buyerFacade.PurchaseCartContent(member3Id);
+            Assert.IsTrue(!response.ErrorOccured() && !cart.IsEmpty() && response.Value.purchaseSucceeded);
+        }
 
-        //    Assert.IsTrue(response.ErrorOccured());
-        //}
+        //r.2.5
+        [Test]
+        public void FailedPurchaseEmptyCart()
+        {
+            IDictionary<int, IList<Tuple<int, int>>> legalCase = new Dictionary<int, IList<Tuple<int, int>>>()
+            {
+                [storeId] = new List<Tuple<int, int>>() {}
+            };
+            Response<ServicePurchaseAttempt> response = buyerFacade.PurchaseCartContent(member3Id, legalCase);
 
-        // r.2.5
-        //[Test]
-        //public void FailedPurchaseProductsOutOfStock()
-        //{
-        //    // A user purchases all iphones in the store
-        //    buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
+            Assert.IsTrue(!response.ErrorOccured() && !response.Value.purchaseSucceeded);
+        }
 
-        //    Response<bool> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id);
+        //r.2.5
+        [Test]
+        public void FailedPurchaseProductsOutOfStock()
+        {
+            IDictionary<int, IList<Tuple<int, int>>> legalCase = new Dictionary<int, IList<Tuple<int, int>>>()
+            {
+                [storeId] = new List<Tuple<int, int>>() { new Tuple<int, int>(iphoneProductId, iphoneProductAmount) }
+            };
+            // A user purchases all iphones in the store
+            buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
+            buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, iphoneProductAmount);
+            Response<ServicePurchaseAttempt> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id, legalCase);
+            Assert.True(!firstUserResponse.ErrorOccured() && firstUserResponse.Value.purchaseSucceeded);
 
-        //    // Another user tries to purchase iphones from the same store
-        //    Response<bool> response = buyerFacade.PurchaseCartContent(member3Id);
+            Response<ServicePurchaseAttempt> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id, legalCase);
 
-        //    Assert.IsTrue(!firstUserResponse.ErrorOccured() && response.ErrorOccured());
-        //}
+            Assert.IsTrue(!secondUserResponse.ErrorOccured() && !secondUserResponse.Value.purchaseSucceeded);
+        }
+
 
     }
 }

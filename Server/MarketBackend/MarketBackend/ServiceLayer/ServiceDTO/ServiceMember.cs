@@ -10,14 +10,23 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 
     internal class ServiceMember
     {
-        private string userName;
-        private bool loggedIn;
+        public string UserName { get; }
+        public bool LoggedIn { get;  }
         
         // need to change that when adding fields to member
         public ServiceMember(Member m)
         {
-            userName = m.Username;
-            loggedIn = m.LoggedIn;
+            UserName = m.Username;
+            LoggedIn = m.LoggedIn;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            ServiceMember otherServiceMember = (ServiceMember)obj;
+            return otherServiceMember.UserName == this.UserName && otherServiceMember.LoggedIn == this.LoggedIn;
         }
     }
 }

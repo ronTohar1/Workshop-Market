@@ -112,7 +112,14 @@ namespace TestMarketBackend.Acceptance
         private bool CartHasThisAmountOfProductFromStore(ServiceCart cart, int storeId, int productId, int amount)
         {
             // Verify that the product has been successfuly added to the cart
-            return true;
+            ServiceShoppingBag shoppingBag = cart.ShoppingBags[storeId];
+
+            foreach(ServiceProductInBag p in shoppingBag.ProductsAmounts.Keys)
+            {
+                if (p.ProductId == productId && p.StoreId == storeId && shoppingBag.ProductsAmounts[p] == amount)
+                    return true;
+            }
+            return false;
 
         }
 

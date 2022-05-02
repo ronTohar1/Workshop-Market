@@ -42,6 +42,10 @@ namespace TestMarketBackend.Acceptance
         protected const string userName4 = "userName4";
         protected const string password4 = "password4";
 
+        //Admin
+        protected const string adminUsername = "admin";
+        protected const string adminPassword = "admin";
+
         // stores
         protected static int storeOwnerId;
         protected static int storeId;
@@ -125,7 +129,7 @@ namespace TestMarketBackend.Acceptance
         public void SetUp()
         {
             systemOperator = new SystemOperator();
-            Response<bool> response = systemOperator.OpenMarket();
+            Response<bool> response = systemOperator.OpenMarket(adminUsername,adminPassword);
             if (response.ErrorOccured())
                 throw new Exception("Unexpected exception in acceptance setup");
 

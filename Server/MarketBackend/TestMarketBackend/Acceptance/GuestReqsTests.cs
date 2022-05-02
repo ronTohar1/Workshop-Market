@@ -1,5 +1,6 @@
 ﻿using MarketBackend.ServiceLayer.ServiceDTO;
 using NUnit.Framework;
+using System.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,6 +73,20 @@ namespace TestMarketBackend.Acceptance
             response = buyerFacade.Register(userName, password);
 
             Assert.IsTrue(response.ErrorOccured());
+        }
+
+        [Test]
+        [TestCase("userName", "password", 2)]
+        [TestCase("userName", "password", 10)]
+        [TestCase("userName", "password", 40)]
+        public void ConcurrentRegistration(string userName, string password, int threadsNumber)
+        {
+            Func<Response<int>>[] jobs = 
+                Enumerable.Repeat(() => buyerFacade.Register(userName, password), threadsNumber).ToArray();
+
+            Response<int>[] responses = GetResponsesFromThreads(jobs);
+
+            Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
         }
 
         // r.1.4

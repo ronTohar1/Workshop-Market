@@ -4,6 +4,7 @@ using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using NUnit.Framework;
 using NLog;
+using System.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -148,6 +149,30 @@ namespace TestMarketBackend.Acceptance
 
             SetUpStoresInventories();
 
+        }
+
+        protected Response<T>[] GetResponsesFromThreads<T>(Func<Response<T>>[] jobs)
+        {
+            Response<T>[] responses = new Response<T>[jobs.Length];
+            Thread[] threads = new Thread[jobs.Length];
+            //int[] indexes = Enumerable.Range(0, jobs.Length).ToArray();
+
+            for(int i = 0; i < jobs.Length; i++)
+            {
+                int temp = i;
+                threads[i] = new Thread(() => { responses[temp] = jobs[temp](); });
+                threads[i].Start();
+            }
+
+            foreach(Thread thread in threads)
+                thread.Join();
+
+            return responses;
+        }
+
+        protected bool Exactly1ResponseIsSuccessful<T>(Response<T>[] responses)
+        {
+            return responses.Where(r => !r.ErrorOccured()).Count() == 1;
         }
     }
 }

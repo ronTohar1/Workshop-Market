@@ -42,5 +42,7 @@ namespace MarketBackend.BusinessLayer.Buyers
         
        public virtual ProductInBag? GetProductInBag(int storeId, int productId)
         => ShoppingBags[storeId].ProductsAmounts.Keys.Where(p => p.ProductId == productId).First();
+       public virtual bool isEmpty()
+       => shoppingBags.Count==0 || shoppingBags.Values.Where(p=>p.ProductsAmounts.Count>0).Count()==0;
     }
 }

@@ -17,5 +17,20 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             ProductId = pib.ProductId;
             StoreId = pib.StoreId;
         }
+
+        public override bool Equals(object? obj)
+        {
+
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            ServiceProductInBag other = (ServiceProductInBag)obj;
+            return ProductId == other.ProductId && StoreId == other.StoreId;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(ProductId, StoreId);
+        }
     }
 }

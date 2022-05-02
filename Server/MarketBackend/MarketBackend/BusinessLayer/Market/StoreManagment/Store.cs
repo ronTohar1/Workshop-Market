@@ -7,7 +7,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
     {
         public string name { get; }
         public Member founder { get; }
-        public Hierarchy<Member> appointmentsHierarchy { get; }
+        public Hierarchy<int> appointmentsHierarchy { get; }
         public StorePolicy policy { get; }
         public IDictionary<int,Product> products { get; }
         
@@ -28,7 +28,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 	    {
             this.name = storeName;
             this.founder = founder;
-            this.appointmentsHierarchy = new Hierarchy<Member>(founder);
+            this.appointmentsHierarchy = new Hierarchy<int>(founder.Id);
             this.purchaseHistory = new SynchronizedCollection<Purchase>();
             this.policy = new StorePolicy();
             this.products = new ConcurrentDictionary<int,Product>();
@@ -59,17 +59,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
 
         // ------------------------------ Products and Policy ------------------------------
-        private static int GenerateProductId()
-        {
-            productIdCounterMutex.WaitOne();
-
-            int result = productIdCounter;
-            productIdCounter++;
-
-            productIdCounterMutex.ReleaseMutex();
-
-            return result;
-        }
         private void EnforceAtLeastCoOwnerPermission(int memberId, string message) {
             string permissionError = CheckAtLeastCoOwnerPermission(memberId);
             if (permissionError != null)
@@ -80,9 +69,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public int AddNewProduct(int memberId, string productName, double pricePerUnit, string category) {
             // we allow this only to coOwners
             EnforceAtLeastCoOwnerPermission(memberId,"Could not add a new product: ");
-            int id = GenerateProductId();
-            products.Add(id, new Product(productName, pricePerUnit, category));
-            return id;
+            Product newProduct = new Product(productName, pricePerUnit, category);
+            products.Add(newProduct.id, newProduct);
+            return newProduct.id;
         }
         // r.4.1
         public void AddProductToInventory(int memberId, int productId, int amount) {
@@ -228,7 +217,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public virtual string CanBuyProduct(int buyerId, int productId, int amount)
         {
             if (!products.ContainsKey(productId))
-                return $"The product can't be bought, there isn't such a product with id: {productId}";
+                return $"The product can't be bought in the {name} store, there isn't such a product with id: {productId}";
             string productPurchaseFailMessage = "The product can't be bought: ";
             bool productCanBePurchased = true;
             int minAmount = policy.GetMinAmountPerProduct(productId);
@@ -279,21 +268,36 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException(StoreErrorMessage("The member is already a CoOwner"));
             }
-            if (IsManager(newCoOwnerMemberId))
-            {
-                rolesAndPermissionsLock.ReleaseWriterLock();
-                throw new MarketException(StoreErrorMessage("The member is already a Manager"));
-            }
             if (!IsMember(newCoOwnerMemberId))
             {
                 rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException("The requested new CoOwner is not a member");
             }
 
-            rolesInStore[Role.Owner].Add(newCoOwnerMemberId);
+            // todo: check if okay to appoint manager to coOwner, according to  
+            // the requirements, the hierarchy (also notice it stays where it was),
+            // permissions etc. 
+            if (IsManager(newCoOwnerMemberId)) // removing from being a manager
+            {
+                Hierarchy<int> managerInHierarchy = appointmentsHierarchy.FindHierarchy(newCoOwnerMemberId);
+                int parentId = managerInHierarchy.parent.value; 
+                if (parentId != requestingMemberId)
+                {
+                    rolesAndPermissionsLock.ReleaseWriterLock();
+                    throw new MarketException("The requesting member is not the one that appointed the member to a manager, so can not appoint it to be a coOwner");
+                    // todo: also add tests for when the appointing coOwner is not the one that appointed the member of newCoOwnerId to be a manager
+                }
 
-            appointmentsHierarchy.AddToHierarchy(membersGetter(requestingMemberId), membersGetter(newCoOwnerMemberId));
-            // todo: add tests checking this field has been changed
+                managersPermissions.Remove(newCoOwnerMemberId);
+                rolesInStore[Role.Manager].Remove(newCoOwnerMemberId); 
+            }
+            else
+            {
+                appointmentsHierarchy.AddToHierarchy(requestingMemberId, newCoOwnerMemberId);
+                // todo: add tests checking this field has been changed (and for what happens when newCoOwnerId is of a manager)
+            }
+
+            rolesInStore[Role.Owner].Add(newCoOwnerMemberId);
             
             rolesAndPermissionsLock.ReleaseWriterLock();
             // todo: check that this mutex is synchronizing all these things okay
@@ -334,7 +338,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
             managersPermissions[newCoManagerMemberId] = DefualtManagerPermissions(); 
 
-            appointmentsHierarchy.AddToHierarchy(membersGetter(requestingMemberId), membersGetter(newCoManagerMemberId));
+            appointmentsHierarchy.AddToHierarchy(requestingMemberId, newCoManagerMemberId);
             // todo: add tests checking this field has been changed
 
             rolesAndPermissionsLock.ReleaseWriterLock();

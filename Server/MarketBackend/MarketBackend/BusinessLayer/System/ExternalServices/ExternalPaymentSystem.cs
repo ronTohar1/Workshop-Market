@@ -16,7 +16,7 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
         }
 
         // will contact the external service to make the payment, for now deafult
-        public bool makePayment()
+        public virtual bool makePayment()
         {
             return true;
         }

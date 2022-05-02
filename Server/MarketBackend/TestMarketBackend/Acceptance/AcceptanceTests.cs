@@ -173,6 +173,12 @@ namespace TestMarketBackend.Acceptance
         protected bool Exactly1ResponseIsSuccessful<T>(Response<T>[] responses)
         {
             return responses.Where(r => !r.ErrorOccured()).Count() == 1;
+        protected bool SameElements<T>(IList<T> list1, IList<T> list2)
+        {
+            if (list1.Count != list2.Count)
+                return false;
+            return list1.All(element => list2.Contains(element));
+
         }
     }
 }

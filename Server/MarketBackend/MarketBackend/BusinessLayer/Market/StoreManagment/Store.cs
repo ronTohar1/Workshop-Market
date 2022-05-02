@@ -115,7 +115,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
 
         public IList<Product> SerachProducts(ProductsSearchFilter filter)
-        => new SynchronizedCollection<Product>(products.Values.Where(p=>filter.FilterProduct(p)).ToList());
+        => products.Values.Where(p=>filter.FilterProduct(p)).ToList();
 
         // r.4.2
         public void AddPurchaseOption(int memberId, PurchaseOption purchaseOption)//Add to store

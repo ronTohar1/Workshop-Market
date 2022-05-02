@@ -22,8 +22,11 @@ namespace MarketBackend.BusinessLayer.Buyers
         public BuyersController()
         {
             buyersControllers = new List<IBuyersController>();
-            buyersControllers.Add(new MembersController());
-            buyersControllers.Add(new GuestsController());
+        }
+
+        public void AddBuyersController(IBuyersController buyersController)
+        {
+            buyersControllers.Add(buyersController);
         }
 
         public virtual Buyer? GetBuyer(int buyerId)

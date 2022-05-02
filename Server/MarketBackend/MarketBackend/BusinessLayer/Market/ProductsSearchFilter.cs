@@ -32,32 +32,38 @@ namespace MarketBackend.BusinessLayer.Market
 
         public void FilterStoreName(string name)
         {
-            Predicate<Store> newFilter = store => store.GetName().Contains(name); 
+            Predicate<Store> newFilter = store => CheckStrings(store.GetName(), name); 
             storePred = And(storePred, newFilter); 
         }
 
         public void FilterProductName(string name)
         {
-            Predicate<Product> newFilter = product => product.name.Contains(name);
+            Predicate<Product> newFilter = product => CheckStrings(product.name, name);
             productPred = And(productPred, newFilter);
         }
 
         public void FilterProductCategory(string category)
         {
-            Predicate<Product> newFilter = product => product.category.Contains(category);
+            Predicate<Product> newFilter = product => CheckStrings(product.category, category);
             productPred = And(productPred, newFilter);
         }
 
         public void FilterProductKeyword(string keyword)
         {
             Predicate<Product> newFilter = 
-                product => product.name.Contains(keyword) || product.category.Contains(keyword);
+                product => CheckStrings(product.name, keyword) || CheckStrings(product.category, keyword);
             productPred = And(productPred, newFilter);
         }
 
         public static Predicate<T> And<T>(Predicate<T> pred1, Predicate<T> pred2)
         {
             return input => pred1(input) && pred2(input); 
+        }
+
+        private bool CheckStrings(string resultString, string searchString)
+        {
+            bool result =  resultString.ToLower().Contains(searchString.ToLower());
+            return result; 
         }
     }
 }

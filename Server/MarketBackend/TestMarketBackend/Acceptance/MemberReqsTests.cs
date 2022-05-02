@@ -30,8 +30,6 @@ namespace TestMarketBackend.Acceptance
 
         // r.3.2
         [Test]
-        [TestCase("!#@$!!@#$")]
-        [TestCase("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaTooLong")]
         [TestCase("")]
         public void FailedCreationOfStoreWithInvalidDetails(string storeName)
         {

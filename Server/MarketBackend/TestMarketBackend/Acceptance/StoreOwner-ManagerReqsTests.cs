@@ -16,7 +16,7 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData( new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "Gaming Chair", 800, "Gaming", 20);
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "Gaming Chair", 800, "Gaming", 20);
             }
         }
 
@@ -29,14 +29,14 @@ namespace TestMarketBackend.Acceptance
             int userId = userId1();
             int storeId = storeId1();
             // Adding the product
-            Response<int> productIdResponse = 
+            Response<int> productIdResponse =
                 storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
 
             Assert.IsTrue(!productIdResponse.ErrorOccured());
 
             int productId = productIdResponse.Value;
 
-            Response<bool> response = 
+            Response<bool> response =
                 storeManagementFacade.AddProductToInventory(userId, storeId, productId, amount);
 
             Assert.IsTrue(!response.ErrorOccured());
@@ -67,18 +67,17 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), iphoneProductId, iphoneProductAmount / 2);
-                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), calculatorProductId, calculatorProductAmount);
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), new Func<int>(() => iphoneProductId), new Func<int>(() => iphoneProductAmount / 2));
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), new Func<int>(() => calculatorProductId), new Func<int>(() => calculatorProductAmount / 2));
             }
         }
 
         // r.4.1
         [Test]
         [TestCaseSource("DataSuccessfulProductDecreaseInStore")]
-        public void SuccessfulProductDecreaseInStore(Func<int> ownerId1, Func<int> storeId1, int productId, int amount)
+        public void SuccessfulProductDecreaseInStore(Func<int> ownerId, Func<int> storeId, Func<int> productId, Func<int> amount)
         {
-
-            Response<bool> response = storeManagementFacade.DecreaseProduct(ownerId1(), storeId1(), productId, amount);
+            Response<bool> response = storeManagementFacade.DecreaseProduct(ownerId(), storeId(), productId(), amount());
 
             Assert.IsTrue(!response.ErrorOccured());
         }
@@ -87,8 +86,8 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "124@#$!@$4444", 800, "Gaming");
-                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "Gaming Chair", 800, "!@#$eddddddd");
+                //yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "124@#$!@$4444", 800, "Gaming");
+                //yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "Gaming Chair", 800, "!@#$eddddddd");
                 yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "Gaming Chair", -400, "Gaming");
             }
         }
@@ -102,7 +101,7 @@ namespace TestMarketBackend.Acceptance
             int userId = userId1();
             int storeId = storeId1();
             // Adding the product
-            Response<int> productIdResponse = 
+            Response<int> productIdResponse =
                 storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
 
             Assert.IsTrue(productIdResponse.ErrorOccured());
@@ -122,7 +121,7 @@ namespace TestMarketBackend.Acceptance
         [TestCaseSource("DataFailedProductDecrease")]
         public void FailedProductDecrease(int userId, int storeId, int productId, int amount)
         {
-            Response<bool> response = 
+            Response<bool> response =
                 storeManagementFacade.DecreaseProduct(userId, storeId, productId, amount);
 
             Assert.IsTrue(response.ErrorOccured());
@@ -153,13 +152,13 @@ namespace TestMarketBackend.Acceptance
         [Test]
         public void FailedStoreOwnerAppointment()
         {
-            Response<IList<int>> ownersBefore = 
+            Response<IList<int>> ownersBefore =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
-            
+
             // Appointing a store owner as a store owner
             Response<bool> response = storeManagementFacade.MakeCoOwner(storeOwnerId, member3Id, storeId);
 
-            Response<IList<int>> ownersAfter = 
+            Response<IList<int>> ownersAfter =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
             Assert.IsTrue(response.ErrorOccured());
@@ -180,13 +179,13 @@ namespace TestMarketBackend.Acceptance
         [Test]
         public void FailedStoreManagerAppointment()
         {
-            Response<IList<int>> managersBefore = 
+            Response<IList<int>> managersBefore =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             // Appointing a store manager as a store manager
             Response<bool> response = storeManagementFacade.MakeCoManager(storeOwnerId, member4Id, storeId);
 
-            Response<IList<int>> managersAfter = 
+            Response<IList<int>> managersAfter =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             Assert.IsTrue(response.ErrorOccured());
@@ -213,10 +212,10 @@ namespace TestMarketBackend.Acceptance
         [TestCaseSource("DataSuccessfulStoreManagerPermissionsAddition")]
         public void SuccessfulStoreManagerPermissionsAddition(IList<Permission> permissions)
         {
-            Response<bool> response = 
+            Response<bool> response =
                 storeManagementFacade.ChangeManagerPermission(storeOwnerId, member4Id, storeId, permissions);
 
-            Response<IList<Permission>> newPermissionResponse = 
+            Response<IList<Permission>> newPermissionResponse =
                 storeManagementFacade.GetManagerPermissions(storeId, storeOwnerId, member4Id);
 
             Assert.IsTrue(!response.ErrorOccured() && !newPermissionResponse.ErrorOccured());
@@ -250,25 +249,28 @@ namespace TestMarketBackend.Acceptance
         }
         */
         // r.4.11
+
+        [Test]
         public void SuccessfulGetStorePersonnelInformation()
         {
-            Response<IList<int>> managers = 
+            Response<IList<int>> managers =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             Assert.IsTrue(!managers.ErrorOccured());
             Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id }));
 
-            Response<IList<int>> owners = 
+            Response<IList<int>> owners =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
             Assert.IsTrue(!owners.ErrorOccured());
             Assert.IsTrue(SameElements(owners.Value, new List<int>() { storeOwnerId, member3Id }));
         }
 
+        [Test]
         // r.4.13
         public void SuccessfulGetStorePurchaseHistoryInformation()
         {
-            Response<IList<Purchase>> purchaseHistory = 
+            Response<IList<Purchase>> purchaseHistory =
                 storeManagementFacade.GetPurchaseHistory(storeOwnerId, storeId);
 
             Assert.IsTrue(!purchaseHistory.ErrorOccured());

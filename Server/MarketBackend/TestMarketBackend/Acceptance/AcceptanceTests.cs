@@ -117,6 +117,8 @@ namespace TestMarketBackend.Acceptance
             // Adding calculators to the store but there arent any in the stock
             Response<int> calculatorProductIdResponse = storeManagementFacade.AddNewProduct(storeOwnerId, storeId, calculatorProductName, calculatorProductPrice, officeCategory);
             calculatorProductId = calculatorProductIdResponse.Value;
+            storeManagementFacade.AddProductToInventory(storeOwnerId, storeId, calculatorProductId, calculatorProductAmount);
+
         }
 
         public void SetUpShoppingCarts()

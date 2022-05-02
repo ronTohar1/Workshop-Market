@@ -64,11 +64,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (permissionError != null)
                 throw new MarketException(StoreErrorMessage(message + permissionError));
         }
-        
+
         // r.4.1
         public int AddNewProduct(int memberId, string productName, double pricePerUnit, string category) {
             // we allow this only to coOwners
-            EnforceAtLeastCoOwnerPermission(memberId,"Could not add a new product: ");
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not add a new product: ");
+            if (pricePerUnit <= 0)
+                throw new Exception("Cannot add product with price smaller or equal to 0!");
             Product newProduct = new Product(productName, pricePerUnit, category);
             products.Add(newProduct.id, newProduct);
             return newProduct.id;

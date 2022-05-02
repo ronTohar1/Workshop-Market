@@ -64,6 +64,16 @@ namespace MarketBackend.ServiceLayer
                 Cart? c = buyersController.GetCart(userId);
                 if (c == null)
                     return new Response<bool>($"No cart with user id {userId}");
+                // Check can buy product
+                Store? store = storeController.GetOpenStore(storeId);
+                if (store == null)
+                    return new Response<bool>($"Trying to by from a closed store: {storeId}");
+
+                string failMsg = store.CanBuyProduct(userId, productId, amount);
+                if (failMsg != null)
+                    return new Response<bool>(failMsg);
+
+                // Can add product to cart
                 c.AddProductToCart(new ProductInBag(productId, storeId), amount);
                 logger.Info($"AddProdcutToCart was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(true);

@@ -19,5 +19,14 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             UserName = m.Username;
             LoggedIn = m.LoggedIn;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            ServiceMember otherServiceMember = (ServiceMember)obj;
+            return otherServiceMember.UserName == this.UserName && otherServiceMember.LoggedIn == this.LoggedIn;
+        }
     }
 }

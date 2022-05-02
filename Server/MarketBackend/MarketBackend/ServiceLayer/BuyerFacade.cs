@@ -216,13 +216,11 @@ namespace MarketBackend.ServiceLayer
 
         private ServiceStore CreateServiceStore(Store store)
         {
-            throw new NotImplementedException();
-            // todo: use next lines and add try and catch
+            // try and catch is in calling functions 
 
+            IList<int> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => product.id).ToList();
 
-            //IList<int> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => product.Id);
-
-            //return new ServiceStore(store.GetName(), productsIds);
+            return new ServiceStore(store.GetName(), productsIds);
         }
 
         //done

@@ -12,7 +12,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public int Id { get; }
         public ServiceProduct(Product p)
         {
-            throw new NotImplementedException();
+            Id = p.id; 
         }
     }
 }

@@ -149,5 +149,13 @@ namespace TestMarketBackend.Acceptance
             SetUpStoresInventories();
 
         }
+
+        protected bool SameElements<T>(IList<T> list1, IList<T> list2)
+        {
+            if (list1.Count != list2.Count)
+                return false;
+            return list1.All(element => list2.Contains(element));
+
+        }
     }
 }

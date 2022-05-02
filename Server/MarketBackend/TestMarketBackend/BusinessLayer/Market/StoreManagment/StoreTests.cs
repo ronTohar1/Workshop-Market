@@ -243,19 +243,19 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.Throws<MarketException>(() => store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId));
         }
 
-        // doing this seperatly so from last test in order not to use MakeManager in the last
-        // test's setup, so we can test the things there without using it
         [Test]
-        [TestCase(coOwnerId1, managerId1)]
-        public void TestMakeCoOwnerTargetIsManager(int requestingMemberId, int newCoOwnerMemberId)
+        [TestCase(managerId1)]
+        public void TestMakeCoOwnerTargetIsManager(int newCoOwnerMemberId)
         {
             SetupStoreNoRoles();
 
-            SetupMemberToCoOwner(coOwnerId1);
-            SetupMemberToCoOwner(coOwnerId2);
+            int requestingMemberId = founderMemberId; // needs to be the one that appoints it to be a manager
+
             SetupMemberToManagerWithAllPermissions(newCoOwnerMemberId);
 
-            Assert.Throws<MarketException>(() => store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId));
+            store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId);
+            Assert.IsTrue(store.IsCoOwner(requestingMemberId));
+            Assert.IsFalse(store.IsManager(requestingMemberId));
         }
 
         [Test]

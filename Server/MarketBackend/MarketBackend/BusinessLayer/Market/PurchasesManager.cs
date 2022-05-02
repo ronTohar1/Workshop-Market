@@ -97,7 +97,7 @@ public class PurchasesManager
                 // buy from the store and record the purhcase 
                 string purchaseStoreDescription = null; //Holder for the description of the purchase
 
-                double purchaseStoreTotal = BuyFromStore(store, storeId, productsByStoreId[storeId], buyer, out purchaseStoreDescription);
+                double purchaseStoreTotal = GetTotal(store, storeId, productsByStoreId[storeId], buyer, out purchaseStoreDescription);
                 purchasesRecord.Add(storeId, new Purchase(purchaseDate, purchaseStoreTotal, purchaseTitle + purchaseStoreDescription + $"Total of: {purchaseStoreTotal} shekels\n"));
 
                 purchaseDescription += purchaseStoreDescription;
@@ -110,8 +110,12 @@ public class PurchasesManager
                 return new purchaseAttempt("the delivery attempt has failed, please address your local delivery services");
         
             else { //now that there aren't any problems with the external services we can update the stores and the Cart 
+                foreach (int storeId in productsByStoreId.Keys)
+                {
+                    Store? store = storeController.GetStore(storeId);
+                    UpdateCartAndStore(store, storeId, productsByStoreId[storeId], buyer);
+                }
             }
-
             Purchase purchase = new Purchase(purchaseDate, purchaseTotal, purchaseDescription);
             buyer.AddPurchase(purchase);
             return new purchaseAttempt(purchase);
@@ -120,9 +124,24 @@ public class PurchasesManager
     }
 
 
-    private double BuyFromStore(Store store, int storeId, IList<Tuple<int, int>> products, Buyer buyer, out string purchaseDesc)
+    private double GetTotal(Store store, int storeId, IList<Tuple<int, int>> products, Buyer buyer, out string purchaseDesc)
     {
         string description = "";
+        foreach (Tuple<int, int> productAmount in products)
+        {
+            int productId = productAmount.Item1;
+            int amount = productAmount.Item2;
+
+           
+
+            description += $"	> {amount} x {store.SearchProductByProductId(productId).name}  - {amount * store.SearchProductByProductId(productId).getUnitPriceWithDiscount()} shekels \n";
+        }
+        double purchaseStoreTotal = store.GetTotalBagCost(products.ToDictionary(x => x.Item1, x => x.Item2));
+        purchaseDesc = description;
+
+        return purchaseStoreTotal;
+    }
+    private void UpdateCartAndStore(Store store, int storeId, IList<Tuple<int, int>> products, Buyer buyer) {
         foreach (Tuple<int, int> productAmount in products)
         {
             int productId = productAmount.Item1;
@@ -133,14 +152,7 @@ public class PurchasesManager
 
             //Remove from cart
             ProductInBag productInBag = buyer.Cart.GetProductInBag(storeId, productId);
-            buyer.Cart.RemoveProductFromCart(productInBag);
-
-            description += $"	> {amount} x {store.SearchProductByProductId(productId).name}  - {amount * store.SearchProductByProductId(productId).getUnitPriceWithDiscount()} shekels \n";
         }
-        double purchaseStoreTotal = store.GetTotalBagCost(products.ToDictionary(x => x.Item1, x => x.Item2));
-        purchaseDesc = description;
-
-        return purchaseStoreTotal;
     }
 
     private string getNotPurchasable(Store store, IList<Tuple<int, int>> products, int buyerId)

@@ -129,11 +129,11 @@ namespace MarketBackend.ServiceLayer
         }
 
         //TODO
-        public Response<IDictionary<int, IList<Tuple<int, int>>>> PurchaseCartContent(int userId, IDictionary<int, IList<Tuple<int, int>>> producstToBuyByStoresIds)
+        public Response<ServicePurchaseAttempt> PurchaseCartContent(int userId, IDictionary<int, IList<Tuple<int, int>>> producstToBuyByStoresIds)
         {
             try
             {
-                IDictionary<int, IList<Tuple<int, int>>>  cantBuy = purchasesManager.PurchaseCartContent(userId, producstToBuyByStoresIds);
+                PurchaseAttempt  cantBuy = new purchasesManager.PurchaseCartContent(userId, producstToBuyByStoresIds);
                 logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
                 return new Response<IDictionary<int, IList<Tuple<int, int>>>>(cantBuy);
             }

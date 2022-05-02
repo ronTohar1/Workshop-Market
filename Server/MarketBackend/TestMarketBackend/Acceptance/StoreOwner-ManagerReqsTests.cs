@@ -16,7 +16,7 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(storeOwnerId, storeId, "Gaming Chair", 800, "Gaming", 20);
+                yield return new TestCaseData( new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "Gaming Chair", 800, "Gaming", 20);
             }
         }
 
@@ -24,8 +24,10 @@ namespace TestMarketBackend.Acceptance
         [Test]
         [TestCaseSource("DataSuccessfulProductAdditionToStore")]
         public void SuccessfulProductAdditionToStore(
-            int userId, int storeId, string productName, double price, string category, int amount)
+           Func<int> userId1, Func<int> storeId1, string productName, double price, string category, int amount)
         {
+            int userId = userId1();
+            int storeId = storeId1();
             // Adding the product
             Response<int> productIdResponse = 
                 storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
@@ -65,17 +67,18 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(storeId, storeOwnerId, iphoneProductId, iphoneProductAmount / 2);
-                yield return new TestCaseData(storeId, storeOwnerId, calculatorProductId, calculatorProductAmount);
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), iphoneProductId, iphoneProductAmount / 2);
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), calculatorProductId, calculatorProductAmount);
             }
         }
 
         // r.4.1
         [Test]
         [TestCaseSource("DataSuccessfulProductDecreaseInStore")]
-        public void SuccessfulProductDecreaseInStore(int storeId, int ownerId, int productId, int amount)
+        public void SuccessfulProductDecreaseInStore(Func<int> ownerId1, Func<int> storeId1, int productId, int amount)
         {
-            Response<bool> response = storeManagementFacade.DecreaseProduct(ownerId, storeId, productId, amount);
+
+            Response<bool> response = storeManagementFacade.DecreaseProduct(ownerId1(), storeId1(), productId, amount);
 
             Assert.IsTrue(!response.ErrorOccured());
         }
@@ -84,9 +87,9 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(storeOwnerId, storeId, "124@#$!@$4444", 800, "Gaming");
-                yield return new TestCaseData(storeOwnerId, storeId, "Gaming Chair", 800, "!@#$eddddddd");
-                yield return new TestCaseData(storeOwnerId, storeId, "Gaming Chair", -400, "Gaming");
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "124@#$!@$4444", 800, "Gaming");
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "Gaming Chair", 800, "!@#$eddddddd");
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), "Gaming Chair", -400, "Gaming");
             }
         }
 
@@ -94,8 +97,10 @@ namespace TestMarketBackend.Acceptance
         [Test]
         [TestCaseSource("DataFailedInvalidProductAdditionToStore")]
         public void FailedInvalidProductAdditionToStore(
-            int userId, int storeId, string productName, double price, string category)
+            Func<int> userId1, Func<int> storeId1, string productName, double price, string category)
         {
+            int userId = userId1();
+            int storeId = storeId1();
             // Adding the product
             Response<int> productIdResponse = 
                 storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
@@ -141,7 +146,7 @@ namespace TestMarketBackend.Acceptance
             Response<bool> response = storeManagementFacade.MakeCoOwner(storeOwnerId, member1Id, storeId);
 
             Assert.IsTrue(!response.ErrorOccured());
-            Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Manager));
+            Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Owner));
         }
 
         // r.4.4
@@ -185,7 +190,7 @@ namespace TestMarketBackend.Acceptance
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             Assert.IsTrue(response.ErrorOccured());
-            Assert.IsTrue(managersBefore.Value.Equals(managersAfter.Value));
+            Assert.IsTrue(managersBefore.Value.Equals(managersAfter.Value) );
         }
 
         public static IEnumerable<TestCaseData> DataSuccessfulStoreManagerPermissionsAddition

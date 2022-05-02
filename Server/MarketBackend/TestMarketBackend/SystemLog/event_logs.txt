@@ -1,0 +1,581 @@
+2022-05-02 22:38:43.3193|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.3848|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:38:43.3848|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.3848|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:38:43.3848|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.3848|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:38:43.3848|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.3848|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:38:43.4021|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:38:43.4021|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:38:43.4384|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 22:38:43.4481|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 22:38:43.4481|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 22:38:43.4751|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:38:43.4787|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 22:38:43.4787|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:38:43.5039|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5039|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:38:43.5090|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5090|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:38:43.5090|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5090|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:38:43.5090|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5090|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:38:43.5090|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:38:43.5254|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:38:43.5254|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 11, storeName = TheStore]
+2022-05-02 22:38:43.5254|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 11, targetUserId = 13, storeId = 1]
+2022-05-02 22:38:43.5254|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 11, targetUserId = 15, storeId = 1]
+2022-05-02 22:38:43.5254|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 11, storeId = 1, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:38:43.5254|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 11, storeId = 1, productId = 2, amount = 50]
+2022-05-02 22:38:43.5254|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 11, storeId = 1, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:38:43.5420|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5420|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:38:43.5420|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5420|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:38:43.5420|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5420|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:38:43.5420|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5420|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:38:43.5547|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:38:43.5547|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:38:43.5547|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 19, storeName = TheStore]
+2022-05-02 22:38:43.5547|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 19, targetUserId = 21, storeId = 2]
+2022-05-02 22:38:43.5547|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 19, targetUserId = 23, storeId = 2]
+2022-05-02 22:38:43.5547|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 19, storeId = 2, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:38:43.5547|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 19, storeId = 2, productId = 4, amount = 50]
+2022-05-02 22:38:43.5547|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 19, storeId = 2, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:38:43.5848|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:38:43.5871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:38:43.5871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:38:43.5871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.5871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:38:43.6034|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:38:43.6034|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:38:43.6034|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 27, storeName = TheStore]
+2022-05-02 22:38:43.6034|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 27, targetUserId = 29, storeId = 3]
+2022-05-02 22:38:43.6034|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 27, targetUserId = 31, storeId = 3]
+2022-05-02 22:38:43.6034|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 27, storeId = 3, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:38:43.6034|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 27, storeId = 3, productId = 6, amount = 50]
+2022-05-02 22:38:43.6034|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 27, storeId = 3, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:38:43.6206|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.6206|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:38:43.6206|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.6206|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:38:43.6206|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.6356|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:38:43.6356|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.6356|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:38:43.6356|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:38:43.6356|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:38:43.6513|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 35, storeName = TheStore]
+2022-05-02 22:38:43.6513|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 35, targetUserId = 37, storeId = 4]
+2022-05-02 22:38:43.6513|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 35, targetUserId = 39, storeId = 4]
+2022-05-02 22:38:43.6669|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 35, storeId = 4, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:38:43.6807|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 35, storeId = 4, productId = 8, amount = 50]
+2022-05-02 22:38:43.6807|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 35, storeId = 4, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:38:43.6807|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.6807|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:38:43.7014|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.7014|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:38:43.7014|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.7116|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:38:43.7116|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:43.7116|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:38:43.7116|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:38:43.7285|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:38:43.7285|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 43, storeName = TheStore]
+2022-05-02 22:38:43.7285|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 43, targetUserId = 45, storeId = 5]
+2022-05-02 22:38:43.7285|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 43, targetUserId = 47, storeId = 5]
+2022-05-02 22:38:43.7285|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 43, storeId = 5, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:38:43.7285|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 43, storeId = 5, productId = 10, amount = 50]
+2022-05-02 22:38:43.7446|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 43, storeId = 5, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:38:43.7446|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 5, memberId = 43, role = Manager]
+2022-05-02 22:38:43.7582|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 5, memberId = 43, role = Manager]
+2022-05-02 22:38:44.3106|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.3106|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:38:44.3302|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.3382|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:38:44.3382|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.3382|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:38:44.3382|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.3583|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:38:44.3583|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:38:44.3751|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:38:44.3751|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 51, storeName = TheStore]
+2022-05-02 22:38:44.3886|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 51, targetUserId = 53, storeId = 6]
+2022-05-02 22:38:44.3886|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 51, targetUserId = 55, storeId = 6]
+2022-05-02 22:38:44.3990|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 51, storeId = 6, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:38:44.4252|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 51, storeId = 6, productId = 12, amount = 50]
+2022-05-02 22:38:44.4338|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 51, storeId = 6, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:38:44.4493|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 6, memberId = 51, role = Owner]
+2022-05-02 22:38:44.4636|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 6, memberId = 51, role = Owner]
+2022-05-02 22:38:44.5620|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.5768|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:38:44.5768|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.6037|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:38:44.6347|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.6347|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:38:44.6347|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.6347|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:38:44.6576|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:38:44.6650|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:38:44.6650|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 59, storeName = TheStore]
+2022-05-02 22:38:44.6650|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 59, targetUserId = 61, storeId = 7]
+2022-05-02 22:38:44.6650|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 59, targetUserId = 63, storeId = 7]
+2022-05-02 22:38:44.6650|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 59, storeId = 7, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:38:44.7014|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 59, storeId = 7, productId = 14, amount = 50]
+2022-05-02 22:38:44.7014|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 59, storeId = 7, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:38:44.7142|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 59, targetUserId = 57, storeId = 7]
+2022-05-02 22:38:44.7142|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 7, memberId = 59, role = Manager]
+2022-05-02 22:38:44.7362|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.7362|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:38:44.7362|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 67, storeName = TheStore]
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 67, targetUserId = 69, storeId = 8]
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 67, targetUserId = 71, storeId = 8]
+2022-05-02 22:38:44.7436|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 67, storeId = 8, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:38:44.7596|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 67, storeId = 8, productId = 16, amount = 50]
+2022-05-02 22:38:44.7596|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 67, storeId = 8, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:38:44.7596|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 67, targetUserId = 65, storeId = 8]
+2022-05-02 22:38:44.7596|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 8, memberId = 67, role = Manager]
+2022-05-02 22:41:07.4402|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:41:07.4651|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:41:07.4651|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:41:07.4651|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:41:07.4651|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:41:07.4651|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:41:07.4651|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:41:07.4651|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:41:07.4776|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:41:07.4776|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:41:07.4991|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 22:41:07.4991|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 22:41:07.5083|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 22:41:07.5083|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:41:07.5083|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 22:41:07.5083|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:44:25.7578|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:44:25.8423|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:44:25.8423|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:44:25.8423|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:44:25.8423|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:44:25.8423|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:44:25.8542|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:44:25.8542|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:44:25.8542|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:44:25.8899|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:44:26.3269|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 22:44:26.3721|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 22:44:26.3943|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 22:44:26.4013|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:44:26.4604|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 22:44:26.4624|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:45:18.1262|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:45:18.1549|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:45:18.1549|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:45:18.1549|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:45:18.1549|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:45:18.1549|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:45:18.1549|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:45:18.1639|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:45:18.1639|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:45:18.1639|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:45:18.1871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 22:45:18.1871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 22:45:18.1871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 22:45:18.1989|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:45:18.1989|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 22:45:18.1989|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:45:18.1989|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Gaming Chair, price = 800, category = Gaming]
+2022-05-02 22:45:18.2113|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 2, amount = 20]
+2022-05-02 22:45:18.2113|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProdcutToCart was called with parameters [userId = 3, storeId = 0, productId = 2, amount = 5]
+2022-05-02 22:53:18.9425|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:53:18.9846|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:53:18.9846|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:53:18.9846|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:53:18.9923|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:53:18.9923|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:53:19.0711|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:53:19.0711|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:53:19.0892|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:53:19.0892|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:53:19.2196|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 22:53:19.2271|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 22:53:19.2523|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 22:53:19.2640|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:53:19.2963|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 22:53:19.3157|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:54:33.5851|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:54:33.6789|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:54:33.6863|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:54:33.6863|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:54:33.6863|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:54:33.6863|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:54:33.6995|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:54:33.6995|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:54:33.6995|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:54:33.6995|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:54:33.8294|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 22:54:33.8392|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 22:54:33.8392|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 22:54:33.8392|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:54:33.8550|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 22:54:33.8691|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 22:55:14.8636|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:55:14.9370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 22:55:14.9370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:55:14.9370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 22:55:14.9370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:55:14.9467|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 22:55:14.9467|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 22:55:14.9467|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 22:55:14.9621|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 22:55:14.9621|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 22:55:15.0898|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 22:55:15.0898|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 22:55:15.1053|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 22:55:15.1355|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 22:55:15.1634|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 22:55:15.1700|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:03:07.9662|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.0157|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:03:08.0157|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.0157|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:03:08.0269|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.0269|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:03:08.0269|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.0269|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:03:08.0399|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:03:08.0399|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:03:08.0761|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:03:08.0761|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:03:08.0885|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:03:08.0885|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:03:08.0885|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:03:08.0885|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:03:08.1044|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:03:08.1044|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:03:08.2700|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.2700|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:03:08.2700|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.2700|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:03:08.2745|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.2745|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:03:08.2745|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.2745|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:03:08.2745|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:03:08.2745|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:03:08.2745|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 11, storeName = TheStore]
+2022-05-02 23:03:08.2745|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 11, targetUserId = 13, storeId = 1]
+2022-05-02 23:03:08.2897|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 11, targetUserId = 15, storeId = 1]
+2022-05-02 23:03:08.2897|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 11, storeId = 1, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:03:08.2897|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 11, storeId = 1, productId = 2, amount = 50]
+2022-05-02 23:03:08.2897|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 11, storeId = 1, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:03:08.2897|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 1, memberId = 11, role = Owner]
+2022-05-02 23:03:08.3086|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 1, memberId = 11, role = Owner]
+2022-05-02 23:03:08.3086|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.3086|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:03:08.3086|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.3256|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:03:08.3256|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.3256|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:03:08.3256|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.3256|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:03:08.3370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:03:08.3370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:03:08.3370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 19, storeName = TheStore]
+2022-05-02 23:03:08.3370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 19, targetUserId = 21, storeId = 2]
+2022-05-02 23:03:08.3370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 19, targetUserId = 23, storeId = 2]
+2022-05-02 23:03:08.3370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 19, storeId = 2, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:03:08.3370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 19, storeId = 2, productId = 4, amount = 50]
+2022-05-02 23:03:08.3370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 19, storeId = 2, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:03:08.3370|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 19, targetUserId = 17, storeId = 2]
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 2, memberId = 19, role = Manager]
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:03:08.3533|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:03:08.3705|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:03:08.3705|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 27, storeName = TheStore]
+2022-05-02 23:03:08.3705|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 27, targetUserId = 29, storeId = 3]
+2022-05-02 23:03:08.3705|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 27, targetUserId = 31, storeId = 3]
+2022-05-02 23:03:08.3705|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 27, storeId = 3, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:03:08.3705|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 27, storeId = 3, productId = 6, amount = 50]
+2022-05-02 23:03:08.3705|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 27, storeId = 3, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:03:08.3705|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 27, targetUserId = 25, storeId = 3]
+2022-05-02 23:03:08.3705|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 3, memberId = 27, role = Manager]
+2022-05-02 23:04:02.2070|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:04:02.2671|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:04:02.2671|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:04:02.2671|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:04:02.2671|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:04:02.2755|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:04:02.2755|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:04:02.2755|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:04:02.2755|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:04:02.2755|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:04:02.3890|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:04:02.4080|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:04:02.4080|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:04:02.4502|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:04:02.4502|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:04:02.4502|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:05:11.4313|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:05:11.4727|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:05:11.4727|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:05:11.4785|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:05:11.4785|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:05:11.4785|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:05:11.4785|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:05:11.4785|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:05:11.4785|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:05:11.4785|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:05:11.5903|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:05:11.5903|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:05:11.6043|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:05:11.6043|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:05:11.6043|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:05:11.6181|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:05:24.1428|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:06:35.4789|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:07:37.7871|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:07:37.8702|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:07:37.8702|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:07:37.8702|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:07:37.8834|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:07:37.8834|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:07:37.8834|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:07:37.9364|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:07:37.9903|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:07:38.0098|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:07:38.3356|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:07:38.3614|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:07:38.4113|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:07:38.4403|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:07:38.4403|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:07:38.4403|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:07:43.0453|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:08:01.3179|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:11:05.7300|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:11:05.7570|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:11:05.7588|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:11:05.7588|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:11:05.7742|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:11:05.7742|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:11:05.7742|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:11:05.7742|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:11:05.7742|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:11:05.7742|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:11:05.8304|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:11:05.8304|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:11:05.8385|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:11:05.8385|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:11:05.8385|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:11:05.8385|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:11:05.8385|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:11:05.8588|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Owner]
+2022-05-02 23:11:48.5542|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:11:48.5843|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:11:48.5861|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:11:48.5861|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:11:48.6044|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:11:48.6044|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:11:48.6224|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:11:48.6224|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:11:48.6355|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:11:48.6355|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:11:48.6818|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:11:48.6818|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:11:48.6818|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:11:48.6979|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:11:48.6979|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:11:48.6979|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:11:48.6979|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:11:48.7139|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:12:17.1237|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:12:17.4528|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:12:17.4656|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:12:17.4656|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:12:17.4656|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:12:17.4819|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:12:17.4819|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:12:17.4819|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:12:17.5026|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:12:17.5111|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:12:17.6944|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:12:17.7016|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:12:17.7016|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:12:17.7125|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:12:17.7125|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:12:17.7125|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:13:59.3358|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:14:41.8295|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:18:05.6944|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:18:05.8013|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:18:05.8013|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:18:05.8058|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:18:05.8058|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:18:05.8058|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:18:05.8058|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:18:05.8058|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:18:05.8058|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:18:05.8207|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:18:05.9410|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:18:05.9502|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:18:05.9502|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:18:05.9502|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:18:05.9502|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:18:05.9612|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:18:08.8914|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:18:28.3709|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:19:33.7274|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:19:33.7832|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:19:33.8163|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:19:33.8236|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:19:33.8236|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:19:33.8236|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:19:33.8236|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:19:33.8236|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:19:33.8391|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:19:33.8391|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:19:33.9650|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:19:33.9650|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:19:34.0226|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:19:34.0865|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:19:34.0906|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:19:34.0906|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:19:36.0800|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:22:01.9219|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:22:02.0816|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:22:02.0883|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:22:02.0883|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:22:02.1040|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:22:02.1040|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:22:02.1190|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:22:02.1190|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:22:02.1190|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:22:02.1190|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:22:02.2796|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:22:02.2796|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:22:02.2941|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:22:02.3053|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:22:02.3053|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:22:02.3053|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:22:09.4825|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:24:58.0968|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:25:38.5665|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:25:38.6378|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:25:38.6378|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:25:38.6378|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:25:38.6378|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:25:38.6378|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:25:38.6378|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:25:38.6492|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:25:38.6492|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:25:38.6492|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:25:38.7713|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:25:38.7828|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:25:38.7828|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:25:38.7989|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:25:38.7989|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:25:38.7989|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:25:38.8068|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:26:26.2870|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:26:26.4822|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:26:26.5204|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:26:26.5298|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:26:26.5298|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:26:26.5298|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:26:26.5402|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:26:26.5402|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:26:26.5683|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:26:26.5737|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:26:26.7053|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:26:26.7053|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:26:26.7133|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:26:26.7133|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:26:26.7133|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:26:26.7133|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:26:26.7133|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:27:40.5772|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:27:40.6465|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:27:40.6465|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:27:40.6505|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:27:40.6505|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:27:40.6505|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:27:40.6652|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:27:40.6652|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:27:40.6652|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:27:40.6652|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:27:40.8049|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:27:40.8119|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:29:04.2278|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:04.2461|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:29:04.2461|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:04.2461|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:29:04.2461|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:04.2461|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:29:04.2461|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:04.2461|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:29:04.2461|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:29:04.2461|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:29:04.3102|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:29:04.3240|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:29:04.3479|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:29:04.3731|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:29:04.3731|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:29:04.3731|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:29:04.4472|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 1, storeId = 0]
+2022-05-02 23:29:04.4472|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:29:19.3599|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:19.3786|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:29:19.3786|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:19.3786|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:29:19.3786|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:19.3847|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:29:19.3847|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:19.3847|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:29:19.3847|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:29:19.3989|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:29:19.4326|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:29:19.4326|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:29:19.4326|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:29:19.4471|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:29:19.4471|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:29:19.4471|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:29:19.4471|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:29:19.4623|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]
+2022-05-02 23:29:53.2412|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:53.3287|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName1, password = password]
+2022-05-02 23:29:53.3287|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:53.3287|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName2, password = password2]
+2022-05-02 23:29:53.3287|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:53.3287|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName3, password = password3]
+2022-05-02 23:29:53.3372|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Enter was called
+2022-05-02 23:29:53.3372|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Register was called with parameters [userName = userName4, password = password4]
+2022-05-02 23:29:53.3372|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-02 23:29:53.3730|INFO|TestMarketBackend.Acceptance.AcceptanceTests|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-02 23:29:53.5311|INFO|TestMarketBackend.Acceptance.AcceptanceTests|OpenStore was called with parameters: [userId = 3, storeName = TheStore]
+2022-05-02 23:29:53.5311|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoOwner was called with parameters: [userId = 3, targetUserId = 5, storeId = 0]
+2022-05-02 23:30:02.0275|INFO|TestMarketBackend.Acceptance.AcceptanceTests|MakeCoManager was called with parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:30:49.2833|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-02 23:30:49.3132|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddProductToInventory was called with parameters [userId = 3, storeId = 0, productId = 0, amount = 50]
+2022-05-02 23:30:49.3292|INFO|TestMarketBackend.Acceptance.AcceptanceTests|AddNewProduct was called with parameters [userId = 3, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-02 23:31:03.2731|INFO|TestMarketBackend.Acceptance.AcceptanceTests|GetMembersInRole was called with parameters: [storeId = 0, memberId = 3, role = Manager]

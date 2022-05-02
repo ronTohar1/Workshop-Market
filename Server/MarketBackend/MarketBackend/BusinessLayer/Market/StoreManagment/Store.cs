@@ -393,8 +393,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException("Error in getting members in role: " + role.ToString() + " " + permissionError);
 
             // no need to aquire lock because the second action does not depend on the first
-
-            return new List<int>(rolesInStore[role]); 
+            IList<int> rollers = rolesInStore[role];
+            return new List<int>(rollers); 
         }
 
         // r 4.11 r 5

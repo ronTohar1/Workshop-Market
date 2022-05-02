@@ -1,0 +1,8 @@
+2022-05-02 22:38:43.4787|ERROR|TestMarketBackend.Acceptance.AcceptanceTests|method: AddNewProduct, parameters: [userId = 0, storeId = 0, productName = 124@#$!@$4444, price = 800, category = Gaming]
+2022-05-02 22:38:43.7446|ERROR|TestMarketBackend.Acceptance.AcceptanceTests|method: MakeCoManager, parameters: [userId = 43, targetUserId = 47, storeId = 5]
+2022-05-02 22:38:44.4636|ERROR|TestMarketBackend.Acceptance.AcceptanceTests|method: MakeCoOwner, parameters: [userId = 51, targetUserId = 53, storeId = 6]
+2022-05-02 22:41:07.5083|ERROR|TestMarketBackend.Acceptance.AcceptanceTests|method: AddNewProduct, parameters: [userId = 0, storeId = 0, productName = Gaming Chair, price = 800, category = Gaming]
+2022-05-02 23:03:08.1044|ERROR|TestMarketBackend.Acceptance.AcceptanceTests|method: MakeCoManager, parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:03:08.2897|ERROR|TestMarketBackend.Acceptance.AcceptanceTests|method: MakeCoOwner, parameters: [userId = 11, targetUserId = 13, storeId = 1]
+2022-05-02 23:29:19.4471|ERROR|TestMarketBackend.Acceptance.AcceptanceTests|method: MakeCoManager, parameters: [userId = 3, targetUserId = 7, storeId = 0]
+2022-05-02 23:31:21.6072|ERROR|TestMarketBackend.Acceptance.AcceptanceTests|method: MakeCoManager, parameters: [userId = 3, targetUserId = 7, storeId = 0]

@@ -118,11 +118,6 @@ namespace MarketBackend.ServiceLayer
 
         }
 
-        private AdminManager InitAdminManager()
-        {
-
-        }
-
         private bool VerifyAdmin(string username, string password)
         {
             return true;

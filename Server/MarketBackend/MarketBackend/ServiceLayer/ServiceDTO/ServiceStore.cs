@@ -9,9 +9,13 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     internal class ServiceStore
     {
-        public ServiceStore(Store s)
-        {
+        public string Name { get; }
+        public IList<int> ProductsIds { get; }
 
+        public ServiceStore(string name, IList<int> productsIds)
+        {
+            Name = name;
+            ProductsIds = productsIds;
         }
     }
 }

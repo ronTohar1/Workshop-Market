@@ -95,6 +95,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		{
 			reviewMutex.WaitOne();
 			reviews.Add(memberRevierName + ": " + review);
+			if (String.IsNullOrWhiteSpace(review)) {
+				reviewMutex.ReleaseMutex();
+				throw new MarketException($"can't recieve an empty comment");
+			}
+
 			reviewMutex.ReleaseMutex();
 		}
 		// r.4.2

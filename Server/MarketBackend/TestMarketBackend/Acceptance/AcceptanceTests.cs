@@ -134,19 +134,8 @@ namespace TestMarketBackend.Acceptance
             Response<bool> response = systemOperator.OpenMarket(adminUsername,adminPassword);
             if (response.ErrorOccured())
                 throw new Exception("Unexpected exception in acceptance setup");
-
-            // "global" initialization here; Called before every test method.
-            MembersController membersController = new MembersController();
-            StoreController storeController = new StoreController(membersController);
-            BuyersController bc = new BuyersController();
-            MembersController mc = membersController;
-            GuestsController gc = new GuestsController();
-            bc.AddBuyersController(mc);
-            bc.AddBuyersController(gc); 
-            ExternalServicesController esc = new ExternalServicesController(new ExternalPaymentSystem(), new ExternalSupplySystem());
-            PurchasesManager pm = new PurchasesManager(storeController, bc, esc);
-            buyerFacade = new BuyerFacade(storeController, bc, mc, gc, pm, LogManager.GetCurrentClassLogger());
-            storeManagementFacade = new StoreManagementFacade(storeController, LogManager.GetCurrentClassLogger());
+            buyerFacade = systemOperator.GetBuyerFacade().Value;
+            storeManagementFacade = systemOperator.GetStoreManagementFacade().Value;
 
             SetUpUsers();
 
@@ -155,6 +144,7 @@ namespace TestMarketBackend.Acceptance
             SetUpStoresInventories();
 
         }
+
 
         protected bool SameElements<T>(IList<T> list1, IList<T> list2)
         {

@@ -5,6 +5,7 @@ using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.ServiceLayer.ServiceDTO;
+using SystemLog;
 using NLog;
 using System;
 using System.Collections.Generic;

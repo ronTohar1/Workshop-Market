@@ -12,7 +12,6 @@ using MarketBackend.BusinessLayer.Buyers;
 using SystemLog;
 using NLog;
 using MarketBackend.BusinessLayer.System.ExternalServices;
-
 namespace MarketBackend.ServiceLayer
 {
     internal class SystemOperator
@@ -53,6 +52,7 @@ namespace MarketBackend.ServiceLayer
             InitLogger();
             InitFacades(membersController, guestsController, storeController, buyersController, adminManager, purchasesManager);
 
+            marketOpen = true;
             return new(true);
 
         }

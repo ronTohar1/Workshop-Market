@@ -129,23 +129,23 @@ namespace MarketBackend.ServiceLayer
         }
 
         //TODO
-        public Response<IDictionary<int, IList<Tuple<int, int>>>> PurchaseCartContent(int userId, IDictionary<int, IList<Tuple<int, int>>> producstToBuyByStoresIds)
+        public Response<ServicePurchaseAttempt> PurchaseCartContent(int userId, IDictionary<int, IList<Tuple<int, int>>> producstToBuyByStoresIds)
         {
             try
             {
-                IDictionary<int, IList<Tuple<int, int>>>  cantBuy = purchasesManager.PurchaseCartContent(userId, producstToBuyByStoresIds);
+                ServicePurchaseAttempt canBuy = new ServicePurchaseAttempt(purchasesManager.PurchaseCartContent(userId, producstToBuyByStoresIds));
                 logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
-                return new Response<IDictionary<int, IList<Tuple<int, int>>>>(cantBuy);
+                return new Response<ServicePurchaseAttempt>(canBuy);
             }
             catch (MarketException mex)
             {
                 logger.Error(mex, $"method: , parameters: [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
-                return new Response<IDictionary<int, IList<Tuple<int, int>>>>(mex.Message);
+                return new Response<ServicePurchaseAttempt>(mex.Message);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"method: , parameters: [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
-                return new Response<IDictionary<int, IList<Tuple<int, int>>>>("Sorry, an unexpected error occured. Please try again");
+                return new Response<ServicePurchaseAttempt>("Sorry, an unexpected error occured. Please try again");
             }
         }
 

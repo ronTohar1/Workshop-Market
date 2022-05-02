@@ -8,7 +8,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
 		public int amountInInventory { get; set; }
 		public IList<PurchaseOption> purchaseOptions { get; }
-
 		public IList<string> reviews; //mapping between member name and 
 		public double pricePerUnit { get; set; }
 		public virtual string category { get; private set; }

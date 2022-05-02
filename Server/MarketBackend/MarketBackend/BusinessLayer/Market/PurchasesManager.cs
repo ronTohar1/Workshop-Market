@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
@@ -53,30 +53,43 @@ public class PurchasesManager
     // cc 10
     // r I 3, r I 4
     // r 1.5
-    public IDictionary<int, IList<Tuple<int, int>>> PurchaseCartContent(int buyerId, IDictionary<int, IList<Tuple<int, int>>> productsByStoreId)
+    public PurchaseAttempt PurchaseCartContent(int buyerId, IDictionary<int, IList<Tuple<int, int>>> productsByStoreId)
     {
         Buyer buyer = GetBuyerOrThrowException(buyerId);
         // Firstly check if can purchase the content
         bool canPurchase = true;
-        IDictionary<int, IList<Tuple<int, int>>> productsCanNotPurchase = new ConcurrentDictionary<int, IList<Tuple<int, int>>>();
+        string canNotPurchaseMessage = null;
         
+        if (buyer.Cart.isEmpty())
+            return new PurchaseAttempt("your cart is empty");
         // Check if can purchase
         foreach (int storeId in productsByStoreId.Keys)
         {
             Store store = GetOpenStoreOrThrowException(storeId);
-            productsCanNotPurchase.Add(storeId, getNotPurchasable(store, productsByStoreId[storeId], buyerId));
-            if (productsCanNotPurchase[storeId].Count > 0)
+            string purchasable =  getNotPurchasable(store, productsByStoreId[storeId], buyerId);
+            if (purchasable != null)
+            {
                 canPurchase = false;
+                if (canNotPurchaseMessage==null)
+                    canNotPurchaseMessage = purchasable;
+                else
+                    canNotPurchaseMessage = canNotPurchaseMessage + purchasable;
+            }
         }
 
+
         // Update cart and store
-        if (canPurchase && externalServicesController.makePayment())
+        if (canPurchase)
         {
+            if (!externalServicesController.makePayment())
+                return new PurchaseAttempt("the payment attempt has failed, please address your local payment services");
+
             // Init descriptive strings
             string purchaseTitle = $"buyer with id {buyer.Id} has succefully purchased: \n";
             string purchaseDescription = purchaseTitle;
             double purchaseTotal = 0;
             DateTime purchaseDate = DateTime.Now;
+            IDictionary<int, Purchase> purchasesRecord = new ConcurrentDictionary<int, Purchase>();
 
             foreach (int storeId in productsByStoreId.Keys)
             {
@@ -86,23 +99,51 @@ public class PurchasesManager
                 // buy from the store and record the purhcase 
                 string purchaseStoreDescription = null; //Holder for the description of the purchase
 
-                double purchaseStoreTotal = BuyFromStore(store, storeId, productsByStoreId[storeId], buyer, out purchaseStoreDescription);
-                store.AddPurchaseRecord(buyerId, purchaseDate, purchaseStoreTotal, purchaseTitle + purchaseStoreDescription + $"Total of: {purchaseStoreTotal} shekels\n");
+                double purchaseStoreTotal = GetTotal(store, storeId, productsByStoreId[storeId], buyer, out purchaseStoreDescription);
+                purchasesRecord.Add(storeId, new Purchase(purchaseDate, purchaseStoreTotal, purchaseTitle + purchaseStoreDescription + $"Total of: {purchaseStoreTotal} shekels\n"));
 
                 purchaseDescription += purchaseStoreDescription;
                 purchaseTotal = purchaseTotal + purchaseStoreTotal;
             }
-            purchaseDescription = purchaseDescription + $"\n>>>Total of: {purchaseTotal} shekels\n";
-            buyer.AddPurchase(new Purchase(purchaseDate, purchaseTotal, purchaseDescription));
-            return null;
+            purchaseDescription += $"\n>>>Total of: {purchaseTotal} shekels\n";
+
+
+            if (!externalServicesController.makeDelivery())
+                return new PurchaseAttempt("the delivery attempt has failed, please address your local delivery services");
+        
+            else { //now that there aren't any problems with the external services we can update the stores and the Cart 
+                foreach (int storeId in productsByStoreId.Keys)
+                {
+                    Store? store = storeController.GetStore(storeId);
+                    UpdateCartAndStore(store, storeId, productsByStoreId[storeId], buyer);
+                }
+            }
+            Purchase purchase = new Purchase(purchaseDate, purchaseTotal, purchaseDescription);
+            buyer.AddPurchase(purchase);
+            return new PurchaseAttempt(purchase);
         }
-        return productsCanNotPurchase;
+        return new PurchaseAttempt(canNotPurchaseMessage);
     }
 
 
-    private double BuyFromStore(Store store, int storeId, IList<Tuple<int, int>> products, Buyer buyer, out string purchaseDesc)
+    private double GetTotal(Store store, int storeId, IList<Tuple<int, int>> products, Buyer buyer, out string purchaseDesc)
     {
         string description = "";
+        foreach (Tuple<int, int> productAmount in products)
+        {
+            int productId = productAmount.Item1;
+            int amount = productAmount.Item2;
+
+           
+
+            description += $"	> {amount} x {store.SearchProductByProductId(productId).name}  - {amount * store.SearchProductByProductId(productId).getUnitPriceWithDiscount()} shekels \n";
+        }
+        double purchaseStoreTotal = store.GetTotalBagCost(products.ToDictionary(x => x.Item1, x => x.Item2));
+        purchaseDesc = description;
+
+        return purchaseStoreTotal;
+    }
+    private void UpdateCartAndStore(Store store, int storeId, IList<Tuple<int, int>> products, Buyer buyer) {
         foreach (Tuple<int, int> productAmount in products)
         {
             int productId = productAmount.Item1;
@@ -115,17 +156,12 @@ public class PurchasesManager
             ProductInBag productInBag = buyer.Cart.GetProductInBag(storeId, productId);
             buyer.Cart.RemoveProductFromCart(productInBag);
 
-            description += $"	> {amount} x {store.SearchProductByProductId(productId).name}  - {amount * store.SearchProductByProductId(productId).getUnitPriceWithDiscount()} shekels \n";
         }
-        double purchaseStoreTotal = store.GetTotalBagCost(products.ToDictionary(x => x.Item1, x => x.Item2));
-        purchaseDesc = description;
-
-        return purchaseStoreTotal;
     }
 
-    private SynchronizedCollection<Tuple<int, int>> getNotPurchasable(Store store, IList<Tuple<int, int>> products, int buyerId)
+    private string getNotPurchasable(Store store, IList<Tuple<int, int>> products, int buyerId)
     {
-        SynchronizedCollection<Tuple<int, int>> notPurchasable = new();
+        string output = null;
         foreach (Tuple<int, int> product in products)
         {
             int productId = product.Item1;
@@ -134,10 +170,13 @@ public class PurchasesManager
 
             if (failedPurchaseMsg != null)
             {   //Cannot purchase
-                notPurchasable.Add(new(productId, amount));
+                if (output==null)
+                    output = failedPurchaseMsg;
+                else
+                    output = output+"\n"+failedPurchaseMsg;
             }
         }
-        return notPurchasable;
+        return output;
     }
 
     private Buyer GetBuyerOrThrowException(int buyerId)

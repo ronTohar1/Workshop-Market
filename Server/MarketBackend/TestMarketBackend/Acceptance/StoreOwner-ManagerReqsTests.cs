@@ -163,7 +163,7 @@ namespace TestMarketBackend.Acceptance
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
             Assert.IsTrue(response.ErrorOccured());
-            Assert.IsTrue(ownersBefore.Value.Equals(ownersAfter.Value));
+            Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
         }
 
         // r.4.6
@@ -190,7 +190,7 @@ namespace TestMarketBackend.Acceptance
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             Assert.IsTrue(response.ErrorOccured());
-            Assert.IsTrue(managersBefore.Value.Equals(managersAfter.Value) );
+            Assert.IsTrue(SameElements(managersBefore.Value, managersAfter.Value));
         }
 
         public static IEnumerable<TestCaseData> DataSuccessfulStoreManagerPermissionsAddition
@@ -220,7 +220,7 @@ namespace TestMarketBackend.Acceptance
                 storeManagementFacade.GetManagerPermissions(storeId, storeOwnerId, member4Id);
 
             Assert.IsTrue(!response.ErrorOccured() && !newPermissionResponse.ErrorOccured());
-            Assert.IsTrue(newPermissionResponse.Value.Equals(permissions));
+            Assert.IsTrue(SameElements(newPermissionResponse.Value, permissions));
         }
         /*TODO
         // r.4.9
@@ -256,13 +256,13 @@ namespace TestMarketBackend.Acceptance
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             Assert.IsTrue(!managers.ErrorOccured());
-            Assert.IsTrue(managers.Value.Equals(new List<int>() { member4Id }));
+            Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id }));
 
             Response<IList<int>> owners = 
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
             Assert.IsTrue(!owners.ErrorOccured());
-            Assert.IsTrue(owners.Value.Equals(new List<int>() { storeOwnerId, member3Id }));
+            Assert.IsTrue(SameElements(owners.Value, new List<int>() { storeOwnerId, member3Id }));
         }
 
         // r.4.13

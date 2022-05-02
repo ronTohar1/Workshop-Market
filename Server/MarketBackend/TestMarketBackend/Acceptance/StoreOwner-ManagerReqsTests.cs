@@ -1,4 +1,5 @@
 ﻿using MarketBackend.ServiceLayer.ServiceDTO;
+using MarketBackend.BusinessLayer.Market.StoreManagment;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(member2Id, storeId, "Gaming Chair", 800, "Gaming", 20);
+                yield return new TestCaseData(storeOwnerId, storeId, "Gaming Chair", 800, "Gaming", 20);
             }
         }
 
@@ -26,13 +27,15 @@ namespace TestMarketBackend.Acceptance
             int userId, int storeId, string productName, double price, string category, int amount)
         {
             // Adding the product
-            Response<int> productIdResponse = storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
+            Response<int> productIdResponse = 
+                storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
 
             Assert.IsTrue(!productIdResponse.ErrorOccured());
 
             int productId = productIdResponse.Value;
 
-            Response<bool> response = storeManagementFacade.AddProductToInventory(userId, storeId, productId, amount);
+            Response<bool> response = 
+                storeManagementFacade.AddProductToInventory(userId, storeId, productId, amount);
 
             Assert.IsTrue(!response.ErrorOccured());
 
@@ -42,6 +45,7 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(!response.ErrorOccured());
         }
 
+        /*TODO
         // r.4.1
         [Test]
         public void SuccessfulProductDetailsUpdate()
@@ -55,14 +59,34 @@ namespace TestMarketBackend.Acceptance
         {
 
         }
+        */
+
+        public static IEnumerable<TestCaseData> DataSuccessfulProductDecreaseInStore
+        {
+            get
+            {
+                yield return new TestCaseData(storeId, storeOwnerId, iphoneProductId, iphoneProductAmount / 2);
+                yield return new TestCaseData(storeId, storeOwnerId, calculatorProductId, calculatorProductAmount);
+            }
+        }
+
+        // r.4.1
+        [Test]
+        [TestCaseSource("DataSuccessfulProductDecreaseInStore")]
+        public void SuccessfulProductDecreaseInStore(int storeId, int ownerId, int productId, int amount)
+        {
+            Response<bool> response = storeManagementFacade.DecreaseProduct(ownerId, storeId, productId, amount);
+
+            Assert.IsTrue(!response.ErrorOccured());
+        }
 
         public static IEnumerable<TestCaseData> DataFailedInvalidProductAdditionToStore
         {
             get
             {
-                yield return new TestCaseData(member2Id, storeId, "124@#$!@$4444", 800, "Gaming");
-                yield return new TestCaseData(member2Id, storeId, "Gaming Chair", 800, "!@#$eddddddd");
-                yield return new TestCaseData(member2Id, storeId, "Gaming Chair", -400, "Gaming");
+                yield return new TestCaseData(storeOwnerId, storeId, "124@#$!@$4444", 800, "Gaming");
+                yield return new TestCaseData(storeOwnerId, storeId, "Gaming Chair", 800, "!@#$eddddddd");
+                yield return new TestCaseData(storeOwnerId, storeId, "Gaming Chair", -400, "Gaming");
             }
         }
 
@@ -73,7 +97,8 @@ namespace TestMarketBackend.Acceptance
             int userId, int storeId, string productName, double price, string category)
         {
             // Adding the product
-            Response<int> productIdResponse = storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
+            Response<int> productIdResponse = 
+                storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
 
             Assert.IsTrue(productIdResponse.ErrorOccured());
         }
@@ -82,8 +107,8 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(member2Id, storeId, iphoneProductId, 99999);
-                yield return new TestCaseData(member2Id, storeId, 123, 1);
+                yield return new TestCaseData(storeOwnerId, storeId, iphoneProductId, 99999);
+                yield return new TestCaseData(storeOwnerId, storeId, 123, 1);
             }
         }
 
@@ -92,89 +117,156 @@ namespace TestMarketBackend.Acceptance
         [TestCaseSource("DataFailedProductDecrease")]
         public void FailedProductDecrease(int userId, int storeId, int productId, int amount)
         {
-            Response<bool> response = storeManagementFacade.DecreaseProduct(userId, storeId, productId, amount);
+            Response<bool> response = 
+                storeManagementFacade.DecreaseProduct(userId, storeId, productId, amount);
 
             Assert.IsTrue(response.ErrorOccured());
+        }
+
+        private bool MemberIsRoleInStore(int storeOwnerId, int memberId, int storeId, Role role)
+        {
+            Response<IList<int>> ownersResponse =
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, role);
+
+            Assert.IsTrue(!ownersResponse.ErrorOccured());
+
+            IList<int> ownersIds = ownersResponse.Value;
+            return ownersIds.Contains(memberId);
         }
 
         // r.4.4
         [Test]
         public void SuccessfulStoreOwnerAppointment()
         {
+            Response<bool> response = storeManagementFacade.MakeCoOwner(storeOwnerId, member1Id, storeId);
 
+            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Manager));
         }
 
         // r.4.4
         [Test]
         public void FailedStoreOwnerAppointment()
         {
+            Response<IList<int>> ownersBefore = 
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+            
+            // Appointing a store owner as a store owner
+            Response<bool> response = storeManagementFacade.MakeCoOwner(storeOwnerId, member3Id, storeId);
 
+            Response<IList<int>> ownersAfter = 
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(ownersBefore.Value.Equals(ownersAfter.Value));
         }
 
         // r.4.6
         [Test]
         public void SuccessfulStoreManagerAppointment()
         {
+            Response<bool> response = storeManagementFacade.MakeCoManager(storeOwnerId, member1Id, storeId);
 
+            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Manager));
         }
 
         // r.4.6
         [Test]
         public void FailedStoreManagerAppointment()
         {
+            Response<IList<int>> managersBefore = 
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
+            // Appointing a store manager as a store manager
+            Response<bool> response = storeManagementFacade.MakeCoManager(storeOwnerId, member4Id, storeId);
+
+            Response<IList<int>> managersAfter = 
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
+
+            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(managersBefore.Value.Equals(managersAfter.Value));
+        }
+
+        public static IEnumerable<TestCaseData> DataSuccessfulStoreManagerPermissionsAddition
+        {
+            get
+            {
+                yield return new TestCaseData(new List<Permission>()
+                    { Permission.RecieveInfo, Permission.RecieiveRolesInfo });
+                yield return new TestCaseData(new List<Permission>()
+                    { Permission.RecieiveRolesInfo });
+                yield return new TestCaseData(new List<Permission>()
+                    { Permission.MakeCoOwner });
+                yield return new TestCaseData(new List<Permission>()
+                    { Permission.RemoveCoManager });
+            }
         }
 
         // r.4.7
         [Test]
-        public void SuccessfulStoreManagerPermissionsAddition()
+        [TestCaseSource("DataSuccessfulStoreManagerPermissionsAddition")]
+        public void SuccessfulStoreManagerPermissionsAddition(IList<Permission> permissions)
         {
+            Response<bool> response = 
+                storeManagementFacade.ChangeManagerPermission(storeOwnerId, member4Id, storeId, permissions);
 
+            Response<IList<Permission>> newPermissionResponse = 
+                storeManagementFacade.GetManagerPermissions(storeId, storeOwnerId, member4Id);
+
+            Assert.IsTrue(!response.ErrorOccured() && !newPermissionResponse.ErrorOccured());
+            Assert.IsTrue(newPermissionResponse.Value.Equals(permissions));
         }
-
-        // r.4.7
-        [Test]
-        public void FailedStoreManagerPermissionsAddition()
-        {
-
-        }
-
-        // r.4.7
-        [Test]
-        public void FailedStoreManagerPermissionsAdditionWhenHeAlreadyHasThem()
-        {
-
-        }
-
-        // r.4.7
-        [Test]
-        public void FailedStoreManagerPermissionsRemovalWhenHeDoesntHaveThem()
-        {
-
-        }
-
+        /*TODO
         // r.4.9
         public void SuccessfulStoreClosing()
         {
+            Response<bool> response = storeManagementFacade.CloseStore(storeOwnerId, storeId);
 
+            Assert.IsTrue(!response.ErrorOccured());
+
+            // After closing, only owners and system managers can get any information about the store
+            response = storeManagementFacade.GetPurchaseHistory(member4Id, storeId);
+
+            Assert.IsTrue(response.ErrorOccured());
         }
 
         // r.4.9
         public void FailedClosedStoreClosing()
         {
+            Response<bool> response = storeManagementFacade.CloseStore(storeOwnerId, storeId);
 
+            Assert.IsTrue(!response.ErrorOccured());
+
+            // closing an already closed store
+            response = storeManagementFacade.CloseStore(storeOwnerId, storeId);
+
+            Assert.IsTrue(response.ErrorOccured());
         }
-
+        */
         // r.4.11
         public void SuccessfulGetStorePersonnelInformation()
         {
+            Response<IList<int>> managers = 
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
+            Assert.IsTrue(!managers.ErrorOccured());
+            Assert.IsTrue(managers.Value.Equals(new List<int>() { member4Id }));
+
+            Response<IList<int>> owners = 
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+            Assert.IsTrue(!owners.ErrorOccured());
+            Assert.IsTrue(owners.Value.Equals(new List<int>() { storeOwnerId, member3Id }));
         }
 
         // r.4.13
         public void SuccessfulGetStorePurchaseHistoryInformation()
         {
+            Response<IList<Purchase>> purchaseHistory = 
+                storeManagementFacade.GetPurchaseHistory(storeOwnerId, storeId);
 
+            Assert.IsTrue(!purchaseHistory.ErrorOccured());
         }
     }
 }

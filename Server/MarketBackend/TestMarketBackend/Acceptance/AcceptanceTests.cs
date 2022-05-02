@@ -17,6 +17,9 @@ namespace TestMarketBackend.Acceptance
 {
     internal class AcceptanceTests
     {
+        // system operator
+        private SystemOperator systemOperator;
+
         // facades
         protected BuyerFacade buyerFacade;
         protected StoreManagementFacade storeManagementFacade;
@@ -25,15 +28,19 @@ namespace TestMarketBackend.Acceptance
         protected static int guest1Id;
         protected static int guest2Id;
         protected static int guest3Id;
+        protected static int guest4Id;
         protected static int member1Id;
         protected static int member2Id;
         protected static int member3Id;
+        protected static int member4Id;
         protected const string userName1 = "userName1";
         protected const string password1 = "password";
         protected const string userName2 = "userName2";
         protected const string password2 = "password2";
         protected const string userName3 = "userName3";
         protected const string password3 = "password3";
+        protected const string userName4 = "userName4";
+        protected const string password4 = "password4";
 
         // stores
         protected static int storeOwnerId;
@@ -73,6 +80,11 @@ namespace TestMarketBackend.Acceptance
             Response<int> member3IdResponse = buyerFacade.Register(userName3, password3);
             member3Id = member3IdResponse.Value;
 
+            Response<int> guest4IdResponse = buyerFacade.Enter();
+            guest4Id = guest4IdResponse.Value;
+            Response<int> member4IdResponse = buyerFacade.Register(userName4, password4);
+            member4Id = member4IdResponse.Value;
+
             buyerFacade.Login(userName2, password2);
             buyerFacade.Login(userName3, password3);
         }
@@ -83,6 +95,12 @@ namespace TestMarketBackend.Acceptance
             storeOwnerId = member2Id;
             Response<int> serviceStoreIdResponse = storeManagementFacade.OpenStore(storeOwnerId, storeName);
             storeId = serviceStoreIdResponse.Value;
+
+            // the owner(member2) appoints member3 as a store owner
+            Response<bool> response = storeManagementFacade.MakeCoOwner(member2Id, member3Id, storeId);
+
+            // the owner(member2) appoints member4 as a store owner
+            response = storeManagementFacade.MakeCoManager(member2Id, member4Id, storeId);
         }
 
         public void SetUpStoresInventories()
@@ -106,6 +124,11 @@ namespace TestMarketBackend.Acceptance
         [SetUp]
         public void SetUp()
         {
+            systemOperator = new SystemOperator();
+            Response<bool> response = systemOperator.OpenMarket();
+            if (response.ErrorOccured())
+                throw new Exception("Unexpected exception in acceptance setup");
+
             // "global" initialization here; Called before every test method.
             MembersController membersController = new MembersController();
             StoreController storeController = new StoreController(membersController);

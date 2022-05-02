@@ -42,5 +42,5 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore ./Server/MarketBackend
 
-#     - name: Test
-#       run: dotnet test ./Server/MarketBackend/TestMarketBackend
+    - name: Test
+      run: dotnet test ./Server/MarketBackend/TestMarketBackend

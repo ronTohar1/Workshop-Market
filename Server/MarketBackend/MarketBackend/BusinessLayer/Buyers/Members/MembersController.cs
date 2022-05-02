@@ -88,10 +88,10 @@ public class MembersController : IBuyersController
 
     private bool CheckUsername(string username)
     {
-        return true;
+        return username.Length < 10;
     }
 
-    private bool CheckPassword(string username)
+    private bool CheckPassword(string password)
     {
         return true;
     }

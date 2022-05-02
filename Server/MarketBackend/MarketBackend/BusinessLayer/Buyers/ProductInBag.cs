@@ -33,7 +33,7 @@
             return result;
         }
 
-        public override int GetHashCode() => base.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(ProductId,StoreId);
 
 
 

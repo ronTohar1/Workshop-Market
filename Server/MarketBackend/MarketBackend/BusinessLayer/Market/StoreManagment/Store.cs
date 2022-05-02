@@ -64,11 +64,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (permissionError != null)
                 throw new MarketException(StoreErrorMessage(message + permissionError));
         }
-        
+
         // r.4.1
         public int AddNewProduct(int memberId, string productName, double pricePerUnit, string category) {
             // we allow this only to coOwners
-            EnforceAtLeastCoOwnerPermission(memberId,"Could not add a new product: ");
+            EnforceAtLeastCoOwnerPermission(memberId, "Could not add a new product: ");
+            if (pricePerUnit <= 0)
+                throw new Exception("Cannot add product with price smaller or equal to 0!");
             Product newProduct = new Product(productName, pricePerUnit, category);
             products.Add(newProduct.id, newProduct);
             return newProduct.id;
@@ -382,8 +384,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException("Error in getting members in role: " + role.ToString() + " " + permissionError);
 
             // no need to aquire lock because the second action does not depend on the first
-
-            return new List<int>(rolesInStore[role]); 
+            IList<int> rollers = rolesInStore[role];
+            return new List<int>(rollers); 
         }
 
         // r 4.11 r 5

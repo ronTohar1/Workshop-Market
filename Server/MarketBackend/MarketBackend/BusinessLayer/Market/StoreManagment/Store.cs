@@ -59,17 +59,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
 
         // ------------------------------ Products and Policy ------------------------------
-        private static int GenerateProductId()
-        {
-            productIdCounterMutex.WaitOne();
-
-            int result = productIdCounter;
-            productIdCounter++;
-
-            productIdCounterMutex.ReleaseMutex();
-
-            return result;
-        }
         private void EnforceAtLeastCoOwnerPermission(int memberId, string message) {
             string permissionError = CheckAtLeastCoOwnerPermission(memberId);
             if (permissionError != null)
@@ -80,9 +69,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public int AddNewProduct(int memberId, string productName, double pricePerUnit, string category) {
             // we allow this only to coOwners
             EnforceAtLeastCoOwnerPermission(memberId,"Could not add a new product: ");
-            int id = GenerateProductId();
-            products.Add(id, new Product(productName, pricePerUnit, category));
-            return id;
+            Product newProduct = new Product(productName, pricePerUnit, category);
+            products.Add(newProduct.id, newProduct);
+            return newProduct.id;
         }
         // r.4.1
         public void AddProductToInventory(int memberId, int productId, int amount) {

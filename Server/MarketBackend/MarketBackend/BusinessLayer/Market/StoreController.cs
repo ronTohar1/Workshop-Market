@@ -63,7 +63,7 @@ public class StoreController
 
 		if (id == -1)
         {
-			throw new ArgumentException("A store with the name: " + storeName + " does not exists in the system");
+			throw new MarketException("A store with the name: " + storeName + " does not exists in the system");
 		}
 
 		return id;
@@ -77,7 +77,7 @@ public class StoreController
 		Member storeFounder = membersController.GetMember(memberId);
 		if (storeFounder == null)
 		{
-			throw new ArgumentException("The member id: " + memberId + " does not exists in the system");
+			throw new MarketException("The member id: " + memberId + " does not exists in the system");
 		}
 
 		openStoresMutex.WaitOne();
@@ -85,7 +85,7 @@ public class StoreController
 		string errorDescription = CanAddOpenStore(storeName);
 		if (errorDescription != null){
 			openStoresMutex.ReleaseMutex();
-			throw new ArgumentException(errorDescription); 
+			throw new MarketException(errorDescription); 
         }
 
 		int newStoreId = GenerateStoreId(); 
@@ -127,7 +127,7 @@ public class StoreController
 		if (!openStores.ContainsKey(storeId))
         {
 			openStoresMutex.ReleaseMutex();
-			throw new ArgumentException("An open store with an id: " + storeId + " does not exist in the system");
+			throw new MarketException("An open store with an id: " + storeId + " does not exist in the system");
 		}
 
 		Store store = openStores[storeId];

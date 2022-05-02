@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarketBackend.BusinessLayer;
 
 namespace TestMarketBackend.BusinessLayer.Market
 {
@@ -130,7 +131,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         {
             StoreControllerWithStoresSetup(storeExtraExistingNames); 
 
-            Assert.Throws<ArgumentException>(() => storeController.GetStoreIdByName(storeName));
+            Assert.Throws<MarketException>(() => storeController.GetStoreIdByName(storeName));
         }
 
         [Test]
@@ -161,7 +162,7 @@ namespace TestMarketBackend.BusinessLayer.Market
 
             storeController = storeControllerMock.Object;
 
-            Assert.Throws<ArgumentException>(() => storeController.OpenNewStore(memberId, storeName));
+            Assert.Throws<MarketException>(() => storeController.OpenNewStore(memberId, storeName));
 
             // todo: add a test for opening a store with an existing closed store name
         }
@@ -178,7 +179,7 @@ namespace TestMarketBackend.BusinessLayer.Market
 
             storeController = storeControllerMock.Object;
 
-            Assert.Throws<ArgumentException>(() => storeController.OpenNewStore(memberId, storeName));
+            Assert.Throws<MarketException>(() => storeController.OpenNewStore(memberId, storeName));
         }
 
         [Test]
@@ -251,7 +252,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             mockNoStores(); // to make sure
             storeController = storeControllerMock.Object;
 
-            Assert.Throws<ArgumentException>(() => storeController.CloseStore(memberId1, storeId)); 
+            Assert.Throws<MarketException>(() => storeController.CloseStore(memberId1, storeId)); 
         }
 
         [Test]
@@ -265,7 +266,7 @@ namespace TestMarketBackend.BusinessLayer.Market
 
             storeController.CloseStore(memberId1, storeId); // should work
 
-            Assert.Throws<ArgumentException>(() => storeController.CloseStore(memberId1, storeId));
+            Assert.Throws<MarketException>(() => storeController.CloseStore(memberId1, storeId));
         }
 
         // todo: should add tests for CloseStore in the Store testing

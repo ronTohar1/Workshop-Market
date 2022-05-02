@@ -259,6 +259,9 @@ namespace TestMarketBackend.BusinessLayer.Market
             cartMock.Setup(cart =>
                     cart.RemoveProductFromCart(It.IsAny<ProductInBag>())).
                         Callback(() => { removedFromCart = true; });
+            cartMock.Setup(cart =>
+                    cart.isEmpty()).
+                        Returns(false);
 
             return cartMock.Object;
         }
@@ -359,7 +362,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         [Test]
         public void TestPurchaseFromTwoStores1Success() {
             setUpPurchase();
-            Assert.IsNull(purchasesManager.PurchaseCartContent(buyerId1,case1legal));
+            Assert.True(purchasesManager.PurchaseCartContent(buyerId1,case1legal).purchaseSucceeded);
             Assert.True(removeFromStore1FromCart && removeFromStore2FromCart);
             Assert.AreEqual(counter, 4);
         }
@@ -367,7 +370,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseFromTwoStores2Success()
         {
             setUpPurchase();
-            Assert.IsNull(purchasesManager.PurchaseCartContent(buyerId1, case2legal));
+            Assert.True(purchasesManager.PurchaseCartContent(buyerId1, case2legal).purchaseSucceeded);
             Assert.True(removeFromStore1FromCart && !removeFromStore2FromCart);
             Assert.AreEqual(counter, 2);
         }

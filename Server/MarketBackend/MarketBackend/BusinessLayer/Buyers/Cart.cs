@@ -32,6 +32,8 @@ namespace MarketBackend.BusinessLayer.Buyers
         {
             int storeId = product.StoreId;
             shoppingBags[storeId].RemoveProduct(product);
+            if (shoppingBags[storeId].IsEmpty())
+                shoppingBags.Remove(storeId);
         }
 
         public void ChangeProductAmount(ProductInBag product, int amount)

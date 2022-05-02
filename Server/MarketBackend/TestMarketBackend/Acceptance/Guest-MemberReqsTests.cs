@@ -134,17 +134,17 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(new Func<int>(() => guest1Id), new Func<int>(() => storeId), iphoneProductId, 2);
-                yield return new TestCaseData(new Func<int>(() => member2Id), new Func<int>(() => storeId), iphoneProductId, 20);
+                yield return new TestCaseData(new Func<int>(() => guest1Id), new Func<int>(() => storeId), new Func<int>(() => iphoneProductId), 2);
+                yield return new TestCaseData(new Func<int>(() => member2Id), new Func<int>(() => storeId), new Func<int>(() => iphoneProductId), 20);
             }
         }
 
         // r.2.3
         [Test]
         [TestCaseSource("DataSuccessfulProductKeeping")]
-        public void SuccessfulProductKeeping(Func<int> userId, Func<int> storeId, int productId, int amount)
+        public void SuccessfulProductKeeping(Func<int> userId, Func<int> storeId, Func<int> productId, int amount)
         {
-            Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId, amount);
+            Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
 
             Assert.IsTrue(!response.ErrorOccured());
 
@@ -152,7 +152,7 @@ namespace TestMarketBackend.Acceptance
 
             Assert.IsTrue(!cartResponse.ErrorOccured());
             Assert.IsNotNull(cartResponse);
-            Assert.IsTrue(CartHasThisAmountOfProductFromStore(cartResponse.Value, storeId(), productId, amount));
+            Assert.IsTrue(CartHasThisAmountOfProductFromStore(cartResponse.Value, storeId(), productId(), amount));
         }
 
         public static IEnumerable<TestCaseData> DataFailedProductKeeping
@@ -219,6 +219,7 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulRemoveProductFromCart(Func<int> userId, Func<int> storeId, Func<int> productId)
         {
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(userId());
+            Assert.IsFalse(cartResponse.ErrorOccured());
             ServiceCart cartBefore = cartResponse.Value;
 
             Response<bool> additionResponse = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), 5);
@@ -226,6 +227,7 @@ namespace TestMarketBackend.Acceptance
             Response<bool> removeResponse = buyerFacade.RemoveProductFromCart(userId(), storeId(), productId());
 
             cartResponse = buyerFacade.GetCart(userId());
+            Assert.IsFalse(cartResponse.ErrorOccured());
             ServiceCart cartAfter = cartResponse.Value;
 
             Assert.IsNotNull(cartBefore);
@@ -237,7 +239,7 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(new Func<int>(() => guest1Id), new Func<int>(() => storeId), new Func<int>(() => iphoneProductPrice), 8);
+                yield return new TestCaseData(new Func<int>(() => guest1Id), new Func<int>(() => storeId), new Func<int>(() => iphoneProductId), 8);
                 yield return new TestCaseData(new Func<int>(() => member2Id), new Func<int>(() => storeId), new Func<int>(() => calculatorProductId), 4);
             }
         }
@@ -255,7 +257,7 @@ namespace TestMarketBackend.Acceptance
             ServiceCart cart = cartResponse.Value;
 
             Assert.IsNotNull(cart);
-            Assert.IsTrue(CartHasThisAmountOfProductFromStore(cart, storeId(), productId(), amount - amount / 2));
+            Assert.IsTrue(CartHasThisAmountOfProductFromStore(cart, storeId(), productId(),amount / 2));
         }
 
         public static IEnumerable<TestCaseData> DataFailedRemoveProductFromCart

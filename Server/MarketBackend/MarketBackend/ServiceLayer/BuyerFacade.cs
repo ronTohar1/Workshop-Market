@@ -367,20 +367,24 @@ namespace MarketBackend.ServiceLayer
         //TODO
         public Response<bool> AddProductReview(int memberId, int storeId, int productId, string review)
         {
-            //try
-            //{
-            //    logger.Info($"AddProductReview was called with parameters [memberId = {memberId}, storeId = {storeId}, productId = {productId}, review = {review}]");
-            //}
-            //catch (MarketException mex)
-            //{
-            //    logger.Error(mex, $"method: AddProductReview, parameters: [memberId = {memberId}, storeId = {storeId}, productId = {productId}, review = {review}]");
-            //    return new Response<bool>(mex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex, $"method: AddProductReview, parameters: [memberId = {memberId}, storeId = {storeId}, productId = {productId}, review = {review}]");
-            //    return new Response<bool>("Sorry, an unexpected error occured. Please try again");
-            //}
+            try
+            {
+                logger.Info($"addproductreview was called with parameters [memberid = {memberId}, storeid = {storeId}, productid = {productId}, review = {review}]");
+                Store s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"No store with id {storeId}");
+                s.AddProductReview(memberId, productId, review);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: addproductreview, parameters: [memberid = {memberId}, storeid = {storeId}, productid = {productId}, review = {review}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: addproductreview, parameters: [memberid = {memberId}, storeid = {storeId}, productid = {productId}, review = {review}]");
+                return new Response<bool>("sorry, an unexpected error occured. please try again");
+            }
             return new Response<bool>();
         }
 

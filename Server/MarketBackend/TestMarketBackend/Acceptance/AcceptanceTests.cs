@@ -107,10 +107,13 @@ namespace TestMarketBackend.Acceptance
         public void SetUp()
         {
             // "global" initialization here; Called before every test method.
-            StoreController storeController = new StoreController(new MembersController());
+            MembersController membersController = new MembersController();
+            StoreController storeController = new StoreController(membersController);
             BuyersController bc = new BuyersController();
-            MembersController mc = new MembersController();
+            MembersController mc = membersController;
             GuestsController gc = new GuestsController();
+            bc.AddBuyersController(mc);
+            bc.AddBuyersController(gc); 
             ExternalServicesController esc = new ExternalServicesController(new ExternalPaymentSystem(), new ExternalSupplySystem());
             PurchasesManager pm = new PurchasesManager(storeController, bc, esc);
             buyerFacade = new BuyerFacade(storeController, bc, mc, gc, pm, LogManager.GetCurrentClassLogger());

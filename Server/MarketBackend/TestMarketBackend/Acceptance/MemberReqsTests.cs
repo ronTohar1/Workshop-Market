@@ -30,6 +30,27 @@ namespace TestMarketBackend.Acceptance
 
         // r.3.2
         [Test]
+        [TestCase("BestStoreEver", 2)]
+        [TestCase("BestStoreEver", 10)]
+        [TestCase("BestStoreEver", 30)]
+        public void ConcurrentStoreCreation(string storeName, int threadsNumber)
+        {
+            int[] ids = GetFreshMembersIds(threadsNumber);
+
+            Func<Response<int>>[] jobs = new Func<Response<int>>[threadsNumber];
+            for(int i = 0; i < threadsNumber; i++)
+            {
+                int temp = i;
+                jobs[i] = () => { return storeManagementFacade.OpenStore(ids[temp], storeName); };
+            }
+
+            Response<int>[] responses = GetResponsesFromThreads(jobs);
+
+            Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+        }
+
+        // r.3.2
+        [Test]
         [TestCase("")]
         public void FailedCreationOfStoreWithInvalidDetails(string storeName)
         {

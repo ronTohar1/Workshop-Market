@@ -4,6 +4,7 @@ using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using NUnit.Framework;
 using NLog;
+using System.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -145,6 +146,46 @@ namespace TestMarketBackend.Acceptance
 
         }
 
+        protected Response<T>[] GetResponsesFromThreads<T>(Func<Response<T>>[] jobs)
+        {
+            Response<T>[] responses = new Response<T>[jobs.Length];
+            Thread[] threads = new Thread[jobs.Length];
+
+            for(int i = 0; i < jobs.Length; i++)
+            {
+                int temp = i;
+                threads[i] = new Thread(() => { responses[temp] = jobs[temp](); });
+                threads[i].Start();
+            }
+
+            foreach(Thread thread in threads)
+                thread.Join();
+
+            return responses;
+        }
+
+        protected int[] GetFreshMembersIds(int usersNumber)
+        {
+            int[] ids = new int[usersNumber];
+
+            for (int i = 0; i < usersNumber; i++)
+            {
+                Response<int> enterResponse = buyerFacade.Enter();
+                Response<int> registerResponse = buyerFacade.Register($"Name_{i}", $"Pass_{i}");
+                Response<int> loginResponse = buyerFacade.Login($"Name_{i}", $"Pass_{i}");
+
+                if (enterResponse.ErrorOccured() || registerResponse.ErrorOccured() || loginResponse.ErrorOccured())
+                    throw new Exception("Unexpected erorr occured: 'GetFreshMembersIds'");
+                ids[i] = registerResponse.Value;
+            }
+
+            return ids;
+        }
+
+        protected bool Exactly1ResponseIsSuccessful<T>(Response<T>[] responses)
+        {
+            return responses.Where(r => !r.ErrorOccured()).Count() == 1;
+        }
 
         protected bool SameElements<T>(IList<T> list1, IList<T> list2)
         {

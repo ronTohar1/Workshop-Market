@@ -9,23 +9,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
     internal class Discount
     {
-        private string description;
-        private IDiscountExpression discountExpression;
+        public int id { get; set; }
+        public string description { get; set; }
 
-        public Discount(string description, IDiscountExpression discountExpression)
+        public IDiscountExpression discountExpression { get; set; }
+
+        public Discount(int id, string description, IDiscountExpression discountExpression)
         {
+            this.id = id;
             this.description = description;
             this.discountExpression = discountExpression;
-        }
-
-        public void setDiscount(IDiscountExpression newDiscount)
-        {
-            discountExpression = newDiscount;
-        }
-
-        public IDiscountExpression GetDiscount() 
-        {
-            return discountExpression; 
         }
 
     }

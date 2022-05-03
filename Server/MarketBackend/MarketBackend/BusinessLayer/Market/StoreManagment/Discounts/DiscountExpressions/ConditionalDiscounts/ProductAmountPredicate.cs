@@ -5,17 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions
+namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts
 {
-    internal class BasicDiscount : IDiscountExpression
+    internal class ProductAmountPredicate : IDiscountExpression
     {
-        public int productId { get; set; }
-        public int discount { get; set; }
+        private int id;
+        private int quantity;
 
-        public BasicDiscount(int productId, int discount)
+        public ProductAmountPredicate(int id, int quantity)
         {
-            this.productId = productId;
-            this.discount = discount;
+            this.id = id;
+            this.quantity = quantity;
         }
 
         public int EvaluateDiscount(ShoppingBag bag)

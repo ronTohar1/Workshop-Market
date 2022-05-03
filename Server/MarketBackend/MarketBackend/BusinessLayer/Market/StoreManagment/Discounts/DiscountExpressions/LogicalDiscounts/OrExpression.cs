@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MarketBackend.BusinessLayer.Buyers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         public OrExpression(IDiscountExpression firstExpression, IDiscountExpression secondExpression) : base(firstExpression, secondExpression)
         {
 
+        }
+
+        public override int EvaluateDiscount(ShoppingBag bag)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool EvaluatePredicate(ShoppingBag bag)
+        {
+            return firstExpression.EvaluatePredicate(bag) || secondExpression.EvaluatePredicate(bag);
         }
     }
 }

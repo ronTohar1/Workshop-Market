@@ -19,9 +19,20 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             this.then = then;
         }
 
-        public int CalcDiscount(Cart cart)
+        public int EvaluateDiscount(ShoppingBag bag)
         {
-            throw new NotImplementedException();
+            if (pred.EvaluatePredicate(bag))
+            {
+                return then.EvaluateDiscount(bag);
+            }
+            return 0;
+        }
+
+
+        //never
+        public bool EvaluatePredicate(ShoppingBag bag)
+        {
+            throw new NotSupportedException();
         }
     }
 }

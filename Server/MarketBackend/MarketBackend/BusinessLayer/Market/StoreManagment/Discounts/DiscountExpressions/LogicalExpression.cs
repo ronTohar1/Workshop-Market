@@ -9,8 +9,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
 {
     internal abstract class LogicalExpression : IDiscountExpression
     {
-        private IDiscountExpression firstExpression;
-        private IDiscountExpression secondExpression;
+        public IDiscountExpression firstExpression { get; set; }
+        public IDiscountExpression secondExpression { get; set; }
 
         public LogicalExpression(IDiscountExpression firstExpression, IDiscountExpression secondExpression)
         {
@@ -18,19 +18,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             this.secondExpression = secondExpression;
         }
 
-        public IDiscountExpression GetFirstExpression()
-        {
-            return firstExpression;
-        }
-
-        public IDiscountExpression GetSecondExpression()
-        {
-            return secondExpression;
-        }
-
-        public int CalcDiscount(Cart cart)
+        public virtual int EvaluateDiscount(ShoppingBag bag)
         {
             throw new NotImplementedException();
         }
+
+        public virtual bool EvaluatePredicate(ShoppingBag bag)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

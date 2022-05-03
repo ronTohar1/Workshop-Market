@@ -7,9 +7,14 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions
 {
-    internal class NumericExpression : IDiscountExpression
+    internal abstract class NumericExpression : IDiscountExpression
     {
-        public int CalcDiscount(Cart cart)
+        public int EvaluateDiscount(ShoppingBag bag)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EvaluatePredicate(ShoppingBag bag)
         {
             throw new NotImplementedException();
         }

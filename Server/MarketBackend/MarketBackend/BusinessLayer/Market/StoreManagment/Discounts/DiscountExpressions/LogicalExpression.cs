@@ -1,31 +1,22 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions
 {
-    internal abstract class LogicalExpression : IDiscountExpression
+    internal abstract class LogicalExpression : IPredicateExpression
     {
-        public IDiscountExpression firstExpression { get; set; }
-        public IDiscountExpression secondExpression { get; set; }
+        public IPredicateExpression firstExpression { get; set; }
+        public IPredicateExpression secondExpression { get; set; }
 
-        public LogicalExpression(IDiscountExpression firstExpression, IDiscountExpression secondExpression)
+        public LogicalExpression(IPredicateExpression firstExpression, IPredicateExpression secondExpression)
         {
             this.firstExpression = firstExpression;
             this.secondExpression = secondExpression;
         }
 
-        public virtual int EvaluateDiscount(ShoppingBag bag)
-        {
-            throw new NotImplementedException();
-        }
-
         public virtual bool EvaluatePredicate(ShoppingBag bag)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
     }

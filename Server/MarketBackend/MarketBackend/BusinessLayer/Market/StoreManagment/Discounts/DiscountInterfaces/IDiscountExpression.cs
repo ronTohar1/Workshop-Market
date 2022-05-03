@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
-    internal interface IDiscountExpression
+    internal interface IDiscountExpression : IExpression
     {
-        public int EvaluateDiscount(ShoppingBag bag);
-        public bool EvaluatePredicate(ShoppingBag bag);
+
     }
 }

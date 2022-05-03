@@ -1,6 +1,10 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions;
-using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalDiscounts;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.BasicDiscounts;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalOperators;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.NumericExpressions;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -31,31 +35,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             idMutex.ReleaseMutex();
             return res;
         }
-        public IDiscountExpression newAndExpression(IDiscountExpression ex1, IDiscountExpression ex2)
-        {
-            IDiscountExpression newExp = new AndExpression(ex1, ex2);
-            return newExp;
-        }
 
-        public IDiscountExpression newXorExpression(IDiscountExpression ex1, IDiscountExpression ex2)
-        {
-            IDiscountExpression newExp = new XorExpression(ex1, ex2);
-            return newExp;
-        }
-
-        public IDiscountExpression newOrExpression(IDiscountExpression ex1, IDiscountExpression ex2)
-        {
-            IDiscountExpression newExp = new OrExpression(ex1, ex2);
-            return newExp;
-        }
-
-        public IDiscountExpression newBasicDiscount(int id, int discount)
-        {
-            IDiscountExpression newExp = new BasicDiscount(id, discount);
-            return newExp;
-        }
-
-        public void AddDiscount(string description ,IDiscountExpression dis)
+        public void AddDiscount(string description ,IExpression dis)
         {
             int id = getId();
             discounts.Add(id, new Discount(id, description, dis));
@@ -66,11 +47,63 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             int sum = 0;
             foreach (Discount dis in discounts.Values)
             {
-                IDiscountExpression exp = dis.discountExpression;
-                
+                IExpression exp = dis.discountExpression;
+                sum += exp.EvaluateDiscount(bag);
             }
             return sum;
         }
+
+
+        //-------------------------------- builders -----------------------------------------
+        public IPredicateExpression NewAndExpression(IPredicateExpression ex1, IPredicateExpression ex2)
+        {
+            IPredicateExpression newExp = new AndExpression(ex1, ex2);
+            return newExp;
+        }
+
+        public IPredicateExpression NewXorExpression(IPredicateExpression ex1, IPredicateExpression ex2)
+        {
+            IPredicateExpression newExp = new XorExpression(ex1, ex2);
+            return newExp;
+        }
+
+        public IPredicateExpression NewOrExpression(IPredicateExpression ex1, IPredicateExpression ex2)
+        {
+            IPredicateExpression newExp = new OrExpression(ex1, ex2);
+            return newExp;
+        }
+
+        public IDiscountExpression NewBasicDiscount(int id, int discount)
+        {
+            IDiscountExpression newExp = new OneProductDiscount(id, discount);
+            return newExp;
+        }
+
+        public IDiscountExpression NewStoreDiscount(int discount)
+        {
+            IDiscountExpression newExp = new StoreDiscount(discount);
+            return newExp;
+        }
+
+        public IPredicateExpression NewBagValuePredicate(int worth)
+        {
+            IPredicateExpression newExp = new BagValuePredicate(worth);
+            return newExp;
+        }
+
+        public IPredicateExpression NewProductAmountPredicate(int pid, int quantity)
+        {
+            IPredicateExpression newExp = new ProductAmountPredicate(pid, quantity);
+            return newExp;
+        }
+
+        public IDiscountExpression NewMaxExpression()
+        {
+            IDiscountExpression newExp = new MaxExpression();
+            return newExp;
+        }
+
+        //-------------------------------- builders -----------------------------------------
 
     }
 }

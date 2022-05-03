@@ -1,28 +1,21 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
+
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts
 {
-    internal class ProductAmountPredicate : IDiscountExpression
+    internal class ProductAmountPredicate : IPredicateExpression
     {
-        private int id;
-        private int quantity;
+        public int pid { get; set; }
+        public int quantity { get; set; }
 
-        public ProductAmountPredicate(int id, int quantity)
+        public ProductAmountPredicate(int pid, int quantity)
         {
-            this.id = id;
+            this.pid = pid;
             this.quantity = quantity;
         }
 
-        public int EvaluateDiscount(ShoppingBag bag)
-        {
-            throw new NotImplementedException();
-        }
-
+        // check if there is atleast quantity of pid 
         public bool EvaluatePredicate(ShoppingBag bag)
         {
             throw new NotImplementedException();

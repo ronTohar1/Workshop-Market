@@ -1,13 +1,9 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts
 {
-    internal abstract class BagValuePredicate : IDiscountExpression
+    internal class BagValuePredicate : IPredicateExpression
     {
         private int worth;
         
@@ -16,11 +12,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             this.worth = worth;
         }
 
-        public int EvaluateDiscount(ShoppingBag bag)
-        {
-            throw new NotImplementedException();
-        }
-
+        //check of the bag worth more than worth
         public bool EvaluatePredicate(ShoppingBag bag)
         {
             throw new NotImplementedException();

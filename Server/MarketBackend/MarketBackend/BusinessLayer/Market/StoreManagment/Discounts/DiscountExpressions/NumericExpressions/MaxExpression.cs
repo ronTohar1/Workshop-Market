@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MarketBackend.BusinessLayer.Buyers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,31 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.NumericExpressions
 {
-    internal class MaxExpression : NumericExpression
+    internal class MaxExpression : IDiscountExpression
     {
+        IList<IDiscountExpression> discounts;
+        public MaxExpression()
+        {
+            discounts = new List<IDiscountExpression>();
+        }
 
+        public void AddDiscount(IDiscountExpression discount)
+        {
+            discounts.Add(discount);
+        }
+
+        public int EvaluateDiscount(ShoppingBag bag)
+        {
+            int maxDis = 0;
+            for (int i = 0; i < discounts.Count; i++)
+            {
+                int newDis = discounts[i].EvaluateDiscount(bag);
+                if (newDis > maxDis)
+                {
+                    maxDis = newDis;
+                }
+            }
+            return maxDis;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions
 {
-    internal class ConditionDiscount : IDiscountExpression
+    internal class ConditionDiscount : IConditionalExpression
     {
-        private PredicateExpression pred;
+        private IPredicateExpression pred;
         private IDiscountExpression then;
 
-        public ConditionDiscount(PredicateExpression pred, IDiscountExpression then)
+        public ConditionDiscount(IPredicateExpression pred, IDiscountExpression then)
         {
             this.pred = pred;
             this.then = then;
@@ -22,17 +23,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         public int EvaluateDiscount(ShoppingBag bag)
         {
             if (pred.EvaluatePredicate(bag))
-            {
                 return then.EvaluateDiscount(bag);
-            }
             return 0;
         }
 
-
-        //never
-        public bool EvaluatePredicate(ShoppingBag bag)
-        {
-            throw new NotSupportedException();
-        }
     }
 }

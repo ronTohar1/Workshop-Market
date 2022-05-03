@@ -5,6 +5,7 @@ using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.ServiceLayer.ServiceDTO;
+using SystemLog;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -64,6 +65,16 @@ namespace MarketBackend.ServiceLayer
                 Cart? c = buyersController.GetCart(userId);
                 if (c == null)
                     return new Response<bool>($"No cart with user id {userId}");
+                // Check can buy product
+                Store? store = storeController.GetOpenStore(storeId);
+                if (store == null)
+                    return new Response<bool>($"Trying to by from a closed store: {storeId}");
+
+                string failMsg = store.CanBuyProduct(userId, productId, amount);
+                if (failMsg != null)
+                    return new Response<bool>(failMsg);
+
+                // Can add product to cart
                 c.AddProductToCart(new ProductInBag(productId, storeId), amount);
                 logger.Info($"AddProdcutToCart was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(true);
@@ -367,20 +378,24 @@ namespace MarketBackend.ServiceLayer
         //TODO
         public Response<bool> AddProductReview(int memberId, int storeId, int productId, string review)
         {
-            //try
-            //{
-            //    logger.Info($"AddProductReview was called with parameters [memberId = {memberId}, storeId = {storeId}, productId = {productId}, review = {review}]");
-            //}
-            //catch (MarketException mex)
-            //{
-            //    logger.Error(mex, $"method: AddProductReview, parameters: [memberId = {memberId}, storeId = {storeId}, productId = {productId}, review = {review}]");
-            //    return new Response<bool>(mex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex, $"method: AddProductReview, parameters: [memberId = {memberId}, storeId = {storeId}, productId = {productId}, review = {review}]");
-            //    return new Response<bool>("Sorry, an unexpected error occured. Please try again");
-            //}
+            try
+            {
+                logger.Info($"addproductreview was called with parameters [memberid = {memberId}, storeid = {storeId}, productid = {productId}, review = {review}]");
+                Store s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"No store with id {storeId}");
+                s.AddProductReview(memberId, productId, review);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: addproductreview, parameters: [memberid = {memberId}, storeid = {storeId}, productid = {productId}, review = {review}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: addproductreview, parameters: [memberid = {memberId}, storeid = {storeId}, productid = {productId}, review = {review}]");
+                return new Response<bool>("sorry, an unexpected error occured. please try again");
+            }
             return new Response<bool>();
         }
 

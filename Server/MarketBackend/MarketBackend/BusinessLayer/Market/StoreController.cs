@@ -39,7 +39,7 @@ public class StoreController
 		return s;
     }
 
-	public virtual Store GetOpenStore(int storeId)
+	public virtual Store? GetOpenStore(int storeId)
     {
 		if (!openStores.ContainsKey(storeId))
 			return null;
@@ -76,9 +76,10 @@ public class StoreController
     {
 		Member storeFounder = membersController.GetMember(memberId);
 		if (storeFounder == null)
-		{
 			throw new MarketException("The member id: " + memberId + " does not exists in the system");
-		}
+
+		if (String.IsNullOrWhiteSpace(storeName))
+			throw new MarketException("Store must have a name!");
 
 		openStoresMutex.WaitOne();
 

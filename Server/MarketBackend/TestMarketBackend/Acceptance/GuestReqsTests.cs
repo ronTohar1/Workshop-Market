@@ -92,12 +92,20 @@ namespace TestMarketBackend.Acceptance
         // r.1.4
         [Test]
         [TestCase(userName1, password1)]
-        [TestCase(userName2, password2)]
         public void SuccessfulLogin(string userName, string password)
         {
             Response<int> reponse = buyerFacade.Login(userName, password);
 
             Assert.IsTrue(!reponse.ErrorOccured());
+        }
+
+        [TestCase(userName1, password1)]
+        public void FailureDoubleLogin(string username, string password)
+        {
+            buyerFacade.Login(username, password);
+            Response<int> reponse = buyerFacade.Login(username, password);
+
+            Assert.IsTrue(reponse.ErrorOccured());
         }
 
         [Test]

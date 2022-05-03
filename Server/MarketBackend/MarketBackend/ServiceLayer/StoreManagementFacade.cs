@@ -226,7 +226,7 @@ namespace MarketBackend.ServiceLayer
                 Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
-                s.MakeCoOwner(userId, targetUserId);
+                s.MakeManager(userId, targetUserId);
                 logger.Info($"MakeCoManager was called with parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
                 return new Response<bool>(true);
             }

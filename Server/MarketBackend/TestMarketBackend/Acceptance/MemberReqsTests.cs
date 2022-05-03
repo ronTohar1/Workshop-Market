@@ -30,8 +30,6 @@ namespace TestMarketBackend.Acceptance
 
         // r.3.2
         [Test]
-        [TestCase("!#@$!!@#$")]
-        [TestCase("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaTooLong")]
         [TestCase("")]
         public void FailedCreationOfStoreWithInvalidDetails(string storeName)
         {
@@ -62,7 +60,7 @@ namespace TestMarketBackend.Acceptance
         // r.3.3
         [Test]
         [TestCase("")]
-        [TestCase("!@#!@#!$#@!$")]
+        [TestCase("   ")]
         public void FailedInvalidProductReview(string review)
         {
             Response<bool> response = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
@@ -73,15 +71,14 @@ namespace TestMarketBackend.Acceptance
         // r.3.3
         [Test]
         [TestCase("The quality is great. Shipment was very quick. Would recommend.")]
-        public void FailedDoubleProductReview(string review)
+        public void SuccessDoubleProductReview(string review)
         {
             Response<bool> firstResponse = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
             Response<bool> secondResponse = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
-            Assert.IsTrue(!firstResponse.ErrorOccured() && secondResponse.ErrorOccured());
+            Assert.IsTrue(!firstResponse.ErrorOccured() && !secondResponse.ErrorOccured());
         }
-
 
     }
 }

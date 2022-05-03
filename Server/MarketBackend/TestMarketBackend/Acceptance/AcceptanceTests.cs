@@ -43,6 +43,10 @@ namespace TestMarketBackend.Acceptance
         protected const string userName4 = "userName4";
         protected const string password4 = "password4";
 
+        //Admin
+        protected const string adminUsername = "admin";
+        protected const string adminPassword = "admin";
+
         // stores
         protected static int storeOwnerId;
         protected static int storeId;
@@ -114,6 +118,8 @@ namespace TestMarketBackend.Acceptance
             // Adding calculators to the store but there arent any in the stock
             Response<int> calculatorProductIdResponse = storeManagementFacade.AddNewProduct(storeOwnerId, storeId, calculatorProductName, calculatorProductPrice, officeCategory);
             calculatorProductId = calculatorProductIdResponse.Value;
+            storeManagementFacade.AddProductToInventory(storeOwnerId, storeId, calculatorProductId, calculatorProductAmount);
+
         }
 
         public void SetUpShoppingCarts()
@@ -126,22 +132,11 @@ namespace TestMarketBackend.Acceptance
         public void SetUp()
         {
             systemOperator = new SystemOperator();
-            Response<bool> response = systemOperator.OpenMarket();
+            Response<bool> response = systemOperator.OpenMarket(adminUsername,adminPassword);
             if (response.ErrorOccured())
                 throw new Exception("Unexpected exception in acceptance setup");
-
-            // "global" initialization here; Called before every test method.
-            MembersController membersController = new MembersController();
-            StoreController storeController = new StoreController(membersController);
-            BuyersController bc = new BuyersController();
-            MembersController mc = membersController;
-            GuestsController gc = new GuestsController();
-            bc.AddBuyersController(mc);
-            bc.AddBuyersController(gc); 
-            ExternalServicesController esc = new ExternalServicesController(new ExternalPaymentSystem(), new ExternalSupplySystem());
-            PurchasesManager pm = new PurchasesManager(storeController, bc, esc);
-            buyerFacade = new BuyerFacade(storeController, bc, mc, gc, pm, LogManager.GetCurrentClassLogger());
-            storeManagementFacade = new StoreManagementFacade(storeController, LogManager.GetCurrentClassLogger());
+            buyerFacade = systemOperator.GetBuyerFacade().Value;
+            storeManagementFacade = systemOperator.GetStoreManagementFacade().Value;
 
             SetUpUsers();
 
@@ -173,6 +168,7 @@ namespace TestMarketBackend.Acceptance
         protected bool Exactly1ResponseIsSuccessful<T>(Response<T>[] responses)
         {
             return responses.Where(r => !r.ErrorOccured()).Count() == 1;
+
         protected bool SameElements<T>(IList<T> list1, IList<T> list2)
         {
             if (list1.Count != list2.Count)

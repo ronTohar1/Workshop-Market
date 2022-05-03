@@ -59,5 +59,10 @@
             if (!productsAmounts.Remove(product))
                 throw new ArgumentException(nameof(product) + "is not exist in cart");
         }
+
+        public bool IsEmpty()
+        {
+            return productsAmounts.Count == 0;
+        }
     }
 }

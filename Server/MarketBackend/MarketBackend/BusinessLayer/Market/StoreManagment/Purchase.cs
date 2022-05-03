@@ -12,15 +12,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public DateTime purchaseDate { get; }
         public double purchasePrice { get; }
         public string purchaseDescription { get; }
+
+        public int BuyerId { get; }
         public Purchase()
         {
             // for tests
         }
-        public Purchase(DateTime purchaseDate, double purchasePrice, string purchaseDescription)
+        public Purchase(int buyerId, DateTime purchaseDate, double purchasePrice, string purchaseDescription)
         {
             this.purchaseDate = purchaseDate;
             this.purchasePrice = purchasePrice;
             this.purchaseDescription = purchaseDescription;
+            this.BuyerId = buyerId;
         }
         public virtual string GetPurchaseDescription()
             => purchaseDescription;

@@ -3,6 +3,7 @@
     public class ShoppingBag
     {
         private IDictionary<ProductInBag, int> productsAmounts;
+        public int StoreId { get; private set; }
 
         internal IDictionary<ProductInBag, int> ProductsAmounts { get { return productsAmounts; } }
 

@@ -9,7 +9,7 @@ namespace MarketBackend.BusinessLayer.Buyers
 {
     public class Cart
     {
-        private IDictionary<int, ShoppingBag> shoppingBags;
+        private IDictionary<int, ShoppingBag> shoppingBags { get; }
 
         internal IDictionary<int, ShoppingBag> ShoppingBags { get { return shoppingBags; } }
 

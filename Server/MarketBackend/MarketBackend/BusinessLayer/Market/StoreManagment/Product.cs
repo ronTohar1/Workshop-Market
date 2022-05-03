@@ -138,7 +138,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public bool ContainsPurchasePolicy(PurchaseOption purchaseOption)
 			=> purchaseOptions.Contains(purchaseOption);
 
-		public double getUnitPriceWithDiscount()
+		public double GetPrice()
 			=> pricePerUnit * (1 - productdicount);
 
 	}

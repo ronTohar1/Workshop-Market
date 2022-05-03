@@ -333,7 +333,35 @@ namespace TestMarketBackend.Acceptance
 
             Assert.IsTrue(!secondUserResponse.ErrorOccured() && !secondUserResponse.Value.purchaseSucceeded);
         }
+        /*
+        // r.2.5
+        [Test]
+        [TestCase(2)]
+        public void ConcurrentPurchaseProducts(int numberThreads)
+        {
+            int[] ids = GetFreshMembersIds(numberThreads);
 
+            IDictionary<int, IList<Tuple<int, int>>>[] shoppingBags =
+                Enumerable.Repeat(
+                    new Dictionary<int, IList<Tuple<int, int>>>() {
+                    [storeId] = new List<Tuple<int, int>>() { new Tuple<int, int>(iphoneProductId, (2/3)*iphoneProductAmount) }
+                    },
+                    numberThreads)
+                .ToArray();
+
+            Func<Response<ServicePurchaseAttempt>>[] jobs = new Func<Response<ServicePurchaseAttempt>>[numberThreads];
+            for(int i = 0; i < numberThreads; i++)
+            {
+                int temp = i;
+                jobs[i] = () => { return buyerFacade.PurchaseCartContent(ids[temp], shoppingBags[temp]); };
+            }
+
+            Response<ServicePurchaseAttempt>[] responses = GetResponsesFromThreads(jobs);
+
+            Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+
+        }
+        */
 
     }
 }

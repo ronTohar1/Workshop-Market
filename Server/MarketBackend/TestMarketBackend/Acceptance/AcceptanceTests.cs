@@ -150,7 +150,6 @@ namespace TestMarketBackend.Acceptance
         {
             Response<T>[] responses = new Response<T>[jobs.Length];
             Thread[] threads = new Thread[jobs.Length];
-            //int[] indexes = Enumerable.Range(0, jobs.Length).ToArray();
 
             for(int i = 0; i < jobs.Length; i++)
             {
@@ -165,9 +164,28 @@ namespace TestMarketBackend.Acceptance
             return responses;
         }
 
+        protected int[] GetFreshMembersIds(int usersNumber)
+        {
+            int[] ids = new int[usersNumber];
+
+            for (int i = 0; i < usersNumber; i++)
+            {
+                Response<int> enterResponse = buyerFacade.Enter();
+                Response<int> registerResponse = buyerFacade.Register($"Name_{i}", $"Pass_{i}");
+                Response<int> loginResponse = buyerFacade.Login($"Name_{i}", $"Pass_{i}");
+
+                if (enterResponse.ErrorOccured() || registerResponse.ErrorOccured() || loginResponse.ErrorOccured())
+                    throw new Exception("Unexpected erorr occured: 'GetFreshMembersIds'");
+                ids[i] = registerResponse.Value;
+            }
+
+            return ids;
+        }
+
         protected bool Exactly1ResponseIsSuccessful<T>(Response<T>[] responses)
         {
             return responses.Where(r => !r.ErrorOccured()).Count() == 1;
+        }
 
         protected bool SameElements<T>(IList<T> list1, IList<T> list2)
         {

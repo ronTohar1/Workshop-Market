@@ -294,12 +294,12 @@ namespace TestMarketBackend.Acceptance
             {
                 [storeId] = new List<Tuple<int, int>>() { new Tuple<int, int>(iphoneProductId, 12) }
             };
-            Response<ServicePurchaseAttempt> response = buyerFacade.PurchaseCartContent(member3Id, legalCase);
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
             ServiceCart cart = cartResponse.Value;
 
-            Assert.IsTrue(!response.ErrorOccured() && !cart.IsEmpty() && response.Value.purchaseSucceeded);
+            Assert.IsTrue(!response.ErrorOccured() && !cart.IsEmpty());
         }
 
         //r.2.5
@@ -310,9 +310,9 @@ namespace TestMarketBackend.Acceptance
             {
                 [storeId] = new List<Tuple<int, int>>() {}
             };
-            Response<ServicePurchaseAttempt> response = buyerFacade.PurchaseCartContent(member3Id, legalCase);
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
 
-            Assert.IsTrue(!response.ErrorOccured() && !response.Value.purchaseSucceeded);
+            Assert.IsTrue(!response.ErrorOccured());
         }
 
         //r.2.5
@@ -326,12 +326,12 @@ namespace TestMarketBackend.Acceptance
             // A user purchases all iphones in the store
             buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
             buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, iphoneProductAmount);
-            Response<ServicePurchaseAttempt> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id, legalCase);
-            Assert.True(!firstUserResponse.ErrorOccured() && firstUserResponse.Value.purchaseSucceeded);
+            Response<ServicePurchase> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id);
+            Assert.True(!firstUserResponse.ErrorOccured());
 
-            Response<ServicePurchaseAttempt> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id, legalCase);
+            Response<ServicePurchase> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id);
 
-            Assert.IsTrue(!secondUserResponse.ErrorOccured() && !secondUserResponse.Value.purchaseSucceeded);
+            Assert.IsTrue(!secondUserResponse.ErrorOccured() );
         }
         /*
         // r.2.5

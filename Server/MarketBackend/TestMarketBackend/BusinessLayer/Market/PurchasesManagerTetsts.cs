@@ -315,7 +315,7 @@ namespace TestMarketBackend.BusinessLayer.Market
                    store.SearchProductByProductId(It.IsAny<int>())).
                        Returns(productMock.Object);
             storeMock.Setup(store =>
-                   store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<double>(), It.IsAny<string>()));
+                   store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<Purchase>()));
             storeMock.Setup(store =>
                    store.GetTotalBagCost(It.IsAny<IDictionary<int,int>>())).Returns(totalPrice);
 
@@ -362,7 +362,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         [Test]
         public void TestPurchaseFromTwoStores1Success() {
             setUpPurchase();
-            Assert.True(purchasesManager.PurchaseCartContent(buyerId1,case1legal).purchaseSucceeded);
+            Assert.DoesNotThrow(() => purchasesManager.PurchaseCartContent(buyerId1));
             Assert.True(removeFromStore1FromCart && removeFromStore2FromCart);
             Assert.AreEqual(counter, 4);
         }
@@ -370,7 +370,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseFromTwoStores2Success()
         {
             setUpPurchase();
-            Assert.True(purchasesManager.PurchaseCartContent(buyerId1, case2legal).purchaseSucceeded);
+            Assert.DoesNotThrow(() => purchasesManager.PurchaseCartContent(buyerId1));
             Assert.True(removeFromStore1FromCart && !removeFromStore2FromCart);
             Assert.AreEqual(counter, 2);
         }
@@ -378,7 +378,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseFromTwpStoresBuyerDoesNotExistFail()
         {
             setUpPurchase();
-            Assert.Throws<ArgumentException>(()=>purchasesManager.PurchaseCartContent(notABuyerId1, case2legal));
+            Assert.Throws<ArgumentException>(()=>purchasesManager.PurchaseCartContent(notABuyerId1));
             Assert.True(!removeFromStore1FromCart && !removeFromStore2FromCart);
             Assert.AreEqual(counter, 0);
         }
@@ -386,7 +386,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseFromTStoresStoreDoesNotExistFail()
         {
             setUpPurchase();
-            Assert.Throws<ArgumentException>(() => purchasesManager.PurchaseCartContent(notABuyerId1, case2legal));
+            Assert.Throws<ArgumentException>(() => purchasesManager.PurchaseCartContent(notABuyerId1));
             Assert.True(!removeFromStore1FromCart && !removeFromStore2FromCart);
             Assert.AreEqual(counter, 0);
         }

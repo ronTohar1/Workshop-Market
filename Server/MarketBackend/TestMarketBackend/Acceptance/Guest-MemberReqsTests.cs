@@ -290,39 +290,30 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulPurchase()
         {
             SetUpShoppingCarts();
-            IDictionary<int, IList<Tuple<int, int>>> legalCase = new Dictionary<int, IList<Tuple<int, int>>>()
-            {
-                [storeId] = new List<Tuple<int, int>>() { new Tuple<int, int>(iphoneProductId, 12) }
-            };
+            
             Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
             ServiceCart cart = cartResponse.Value;
 
-            Assert.IsTrue(!response.ErrorOccured() && !cart.IsEmpty());
+            Assert.IsTrue(!response.ErrorOccured() && cart.IsEmpty());
         }
 
         //r.2.5
         [Test]
         public void FailedPurchaseEmptyCart()
         {
-            IDictionary<int, IList<Tuple<int, int>>> legalCase = new Dictionary<int, IList<Tuple<int, int>>>()
-            {
-                [storeId] = new List<Tuple<int, int>>() {}
-            };
+          
             Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(response.ErrorOccured());
         }
 
         //r.2.5
         [Test]
         public void FailedPurchaseProductsOutOfStock()
         {
-            IDictionary<int, IList<Tuple<int, int>>> legalCase = new Dictionary<int, IList<Tuple<int, int>>>()
-            {
-                [storeId] = new List<Tuple<int, int>>() { new Tuple<int, int>(iphoneProductId, iphoneProductAmount) }
-            };
+           
             // A user purchases all iphones in the store
             buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
             buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, iphoneProductAmount);
@@ -331,7 +322,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<ServicePurchase> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id);
 
-            Assert.IsTrue(!secondUserResponse.ErrorOccured() );
+            Assert.IsTrue(secondUserResponse.ErrorOccured() );
         }
         /*
         // r.2.5

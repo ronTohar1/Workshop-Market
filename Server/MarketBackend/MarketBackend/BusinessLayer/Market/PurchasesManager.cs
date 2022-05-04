@@ -75,9 +75,9 @@ public class PurchasesManager
             double purchaseTotal = storesTotal.Values.Sum(x => x);
 
             if (!externalServicesController.makePayment())
-                throw new Exception("Could not make payment");
+                throw new MarketException("Could not make payment");
             if (!externalServicesController.makeDelivery())
-                throw new Exception("Could not make delivery");
+                throw new MarketException("Could not make delivery");
 
             IDictionary<int, string> receipts = GetReceipt(shoppingBags);
 
@@ -194,9 +194,11 @@ public class PurchasesManager
             {
                 string cantBuy = GetCantPurchaseString(buyerId, shoppingBag);
                 if (cantBuy != null)
+                {
                     if (cantPurhcaseDesc == null)
                         cantPurhcaseDesc = $"Cant buy the following products in {store.name}:\n";
-                cantPurhcaseDesc += cantBuy;
+                    cantPurhcaseDesc += cantBuy;
+                }
             }
         }
         return cantPurhcaseDesc;

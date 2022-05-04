@@ -11,7 +11,7 @@ namespace MarketBackend.BusinessLayer.Buyers
     {
         private IDictionary<int, ShoppingBag> shoppingBags { get; }
 
-        internal IDictionary<int, ShoppingBag> ShoppingBags { get { return shoppingBags; } }
+        public virtual IDictionary<int, ShoppingBag> ShoppingBags { get { return shoppingBags; } }
 
         public Cart(IDictionary<int, ShoppingBag> shoppingBags) =>
             this.shoppingBags = shoppingBags;

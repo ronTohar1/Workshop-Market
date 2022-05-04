@@ -100,7 +100,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             DateTime date = DateTime.Now;
             Mock<Purchase> purchaseMock = new Mock<Purchase>(buyerId, date, 0, "");
             purchaseMock.Setup(p => p.purchasePrice).Returns(0);
-            purchaseMock.Setup(p => p.purchaseDescription).Returns("");
+            purchaseMock.Setup(p => p.purchaseDescription).Returns(purchaseDescription);
             purchaseMock.Setup(p => p.purchaseDate).Returns(date);
             purchase = purchaseMock.Object;
 
@@ -795,6 +795,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             DateTime date = DateTime.Now;
+            purchase = new Purchase(memberId, date,9.9,"great!");
             Assert.Throws<MarketException>(() => store.AddPurchaseRecord(memberId, purchase));
             Assert.True(store.findPurchasesByDate(purchase.purchaseDate).Count == 0);
         }
@@ -809,9 +810,10 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestGetPurchaseHistoryWithPermissionSuccess(int memberId)
         {
             SetupStoreNoPermissionsChange();
+            setupMockedPurchase(memberId);
             SetUpPurchasesInStore();
             IList<Purchase> purchases = store.GetPurchaseHistory(memberId);
-            Assert.True(purchases.Count == 1 && purchases.First().GetPurchaseDescription() == purchaseDescription);
+            Assert.True(purchases.Count == 1 );
         }
 
         [Test]

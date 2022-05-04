@@ -8,8 +8,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public string name { get; }
         public Member founder { get; }
         public Hierarchy<int> appointmentsHierarchy { get; }
-        public StorePolicy policy { get; }
-        public IDictionary<int,Product> products { get; }
+        public virtual StorePolicy policy { get; }
+        public virtual IDictionary<int,Product> products { get; }
         
         private IList<Purchase> purchaseHistory;
         private IDictionary<int, IList<Permission>> managersPermissions;

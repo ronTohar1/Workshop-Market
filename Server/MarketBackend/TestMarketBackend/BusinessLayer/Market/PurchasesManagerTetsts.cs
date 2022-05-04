@@ -376,7 +376,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         [TestCase(new int[] { productId1 })]
         [TestCase(new int[] { productId1, productId2 })]
         [TestCase(new int[] { productId1, productId2, productId3 })]
-        public void TestPurchaseFromTwoStores1Success(int[] productInBagId)
+        public void TestPurchaseFromTwoStoresSuccess(int[] productInBagId)
         {
             setUpPurchase(productInBagId);
             Assert.IsNotNull(purchasesManager.PurchaseCartContent(buyerId1));
@@ -433,6 +433,116 @@ namespace TestMarketBackend.BusinessLayer.Market
             Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
             Assert.AreEqual(counter, 0);
         }
-      
+        private Store MockStoreThatCanFail(string result, int[] productsId,bool outOfStock, bool policyFail)
+        {
+            Mock<Security> securityMock = new Mock<Security>();
+            
+            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object) ;// todo: check if okay
+            Member founder = founderMock.Object;
+
+            Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null) { CallBase = true };
+            Mock<Product> productMock = new Mock<Product>("cheese", 5.90, "dairy");
+
+            Mock<StorePolicy> storePolicyMock = new Mock<StorePolicy>();
+
+            if(outOfStock)
+                productMock.Setup(product => product.amountInInventory).Returns(0);
+            else
+                productMock.Setup(product => product.amountInInventory).Returns(amount1);
+
+            storeMock.Setup(store =>
+                    store.DecreaseProductAmountFromInventory(It.IsAny<int>(), It.Is<int>(id => productsId.Contains(id)), It.IsAny<int>())).
+                        Callback(() => counter++);
+            storeMock.Setup(store =>
+                   store.SearchProductByProductId(It.Is<int>(id => productsId.Contains(id)))).
+                       Returns(productMock.Object);
+            storeMock.Setup(store =>
+                   store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<Purchase>()));
+            storeMock.Setup(store =>
+                   store.GetTotalBagCost(It.IsAny<IDictionary<int, int>>())).Returns(totalPrice);
+
+            storeMock.Setup(store =>
+                    store.products).
+                        Returns(productsId.ToDictionary(pid => pid, pid => productMock.Object));
+
+            if (policyFail)
+                storePolicyMock.Setup(storePolicy=> storePolicy.GetMinAmountPerProduct(It.IsAny<int>())).Returns(1000);
+            else
+                storePolicyMock.Setup(storePolicy => storePolicy.GetMinAmountPerProduct(It.IsAny<int>())).Returns(1);
+
+            storeMock.Setup(store =>
+                    store.policy).
+                        Returns(storePolicyMock.Object);
+
+            return storeMock.Object;
+        }
+
+        private void StoreControllerSetupStoreCouldFail(int[] productsId, bool outOfStock, bool policyFail)
+        {
+            storeControllerMock = new Mock<StoreController>(null); // sending null MembersController
+
+            Store mockedYesStore1 = MockStoreThatCanFail(null, productsId, outOfStock, policyFail);
+    
+            storeControllerMock.Setup(storeController =>
+                    storeController.GetOpenStore(It.Is<int>(id => id == storeYesId1))).
+                        Returns(mockedYesStore1);
+        
+
+            storeController = storeControllerMock.Object;
+        }
+        private void setUpStoreServicesFail(int[] cartProductsId, int[] storeProductsId, bool outOfStock, bool policyFail) {
+            removeFromStoreFromCart = Enumerable.Repeat(false, 3).ToArray();
+            counter = 0;
+            BuyersControllerSetup2(cartProductsId);
+            StoreControllerSetupStoreCouldFail(storeProductsId, outOfStock, policyFail);
+            ExternalServicesControllerSetup();
+            purchasesManager = new PurchasesManager(storeController, buyersController, externalServicesController);
+        }
+        [Test]
+        [TestCase(new int[] { productId1 }, new int[] { productId2 })]
+        [TestCase(new int[] { productId1 }, new int[] { productId2, productId3 })]
+        [TestCase(new int[] { productId1, productId2 }, new int[] { productId2 })]
+        [TestCase(new int[] { productId2, productId3 }, new int[] { productId1 })]
+        public void TestPurchaseProductIsInCartIsntInStoreFail(int[] cartProductsId, int[] storeProductsId) {
+            setUpStoreServicesFail(cartProductsId, storeProductsId, false, false);
+            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
+            Assert.AreEqual(counter, 0);//check that the inventory is the same
+        }
+
+        [Test]
+        [TestCase(new int[] { productId1 }, new int[] { productId1 })]
+        [TestCase(new int[] { productId1 }, new int[] { productId1, productId2 })]
+        [TestCase(new int[] { productId1, productId2, }, new int[] { productId1, productId2, productId3 })]
+        public void TestPurchaseProductIsInCartAndStoreGreatSuccess(int[] cartProductsId, int[] storeProductsId)
+        {
+            setUpStoreServicesFail(cartProductsId, storeProductsId, false, false);
+            Assert.IsNotNull(purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.True(Array.TrueForAll(cartProductsId, (index) => removeFromStoreFromCart[index]));
+            Assert.AreEqual(counter, cartProductsId.Length);//check that the inventory is the same
+        }
+
+        [Test]
+        [TestCase(new int[] { productId1 }, new int[] { productId1 })]
+        [TestCase(new int[] { productId1 }, new int[] { productId1, productId2})]
+        [TestCase(new int[] { productId1, productId2, }, new int[] { productId1, productId2, productId3 })]
+        public void TestPurchaseProductIsInCartProductOutOfStockFail(int[] cartProductsId, int[] storeProductsId)
+        {
+            setUpStoreServicesFail(cartProductsId, storeProductsId, true, false);
+            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
+            Assert.AreEqual(counter, 0);//check that the inventory is the same
+        }
+        [Test]
+        [TestCase(new int[] { productId1 }, new int[] { productId1 })]
+        [TestCase(new int[] { productId1 }, new int[] { productId1, productId2 })]
+        [TestCase(new int[] { productId1, productId2, }, new int[] { productId1, productId2, productId3 })]
+        public void TestPurchaseProductIsInCartAndMoreThanMinAmountPolicyFail(int[] cartProductsId, int[] storeProductsId)
+        {
+            setUpStoreServicesFail(cartProductsId, storeProductsId, false, true);
+            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
+            Assert.AreEqual(counter, 0);//check that the inventory is the same
+        }
     }
 }

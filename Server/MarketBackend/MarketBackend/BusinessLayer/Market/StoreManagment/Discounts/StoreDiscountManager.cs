@@ -5,12 +5,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpres
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalOperators;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.NumericExpressions;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
@@ -55,6 +50,22 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 
 
         //-------------------------------- builders -----------------------------------------
+
+        //-----Final expressions---------
+        public IExpression NewConditionalDiscount(IPredicateExpression pred, IDiscountExpression then)
+        {
+            IExpression newExp = new ConditionDiscount(pred, then);
+            return newExp;
+        }
+
+        public IExpression NewIfDiscount(IPredicateExpression test, IDiscountExpression thenDis, IDiscountExpression elseDis)
+        {
+            IExpression newExp = new IfDiscount(test, thenDis, elseDis);
+            return newExp;
+        }
+        //-----Final expressions---------
+
+        //-------------logical------------
         public IPredicateExpression NewAndExpression(IPredicateExpression ex1, IPredicateExpression ex2)
         {
             IPredicateExpression newExp = new AndExpression(ex1, ex2);
@@ -72,8 +83,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             IPredicateExpression newExp = new OrExpression(ex1, ex2);
             return newExp;
         }
+        //-------------logical------------
 
-        public IDiscountExpression NewBasicDiscount(int id, int discount)
+        //------------Discounts-----------
+        public IDiscountExpression NewProductDiscount(int id, int discount)
         {
             IDiscountExpression newExp = new OneProductDiscount(id, discount);
             return newExp;
@@ -85,6 +98,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             return newExp;
         }
 
+        public IDiscountExpression NewDateDiscount(DateTime date, int discount)
+        {
+            IDiscountExpression newExp = new DateDiscount(date, discount);
+            return newExp;
+        }
+        //------------Discounts-----------
+
+        //------------Predicates----------
         public IPredicateExpression NewBagValuePredicate(int worth)
         {
             IPredicateExpression newExp = new BagValuePredicate(worth);
@@ -96,12 +117,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             IPredicateExpression newExp = new ProductAmountPredicate(pid, quantity);
             return newExp;
         }
+        //------------Predicates----------
 
+        //-------Discount compound operations------
         public IDiscountExpression NewMaxExpression()
         {
             IDiscountExpression newExp = new MaxExpression();
             return newExp;
         }
+        //-------Discount compound operations------
 
         //-------------------------------- builders -----------------------------------------
 

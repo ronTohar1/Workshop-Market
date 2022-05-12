@@ -296,7 +296,8 @@ namespace TestMarketBackend.Acceptance
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
             ServiceCart cart = cartResponse.Value;
 
-            Assert.IsTrue(!response.ErrorOccured() && cart.IsEmpty());
+            Assert.IsTrue(cart.IsEmpty());
+            Assert.IsTrue(!response.ErrorOccured());
         }
 
         //r.2.5

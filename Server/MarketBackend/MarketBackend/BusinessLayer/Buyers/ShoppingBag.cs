@@ -11,6 +11,13 @@
         {   
             this.StoreId = storeId;
             this.productsAmounts = productsAmounts;
+            foreach (var prod in productsAmounts)
+            {
+                if (prod.Key.StoreId != storeId)
+                {
+                    throw new Exception("How is a product is in a shopping bag with a different store?");
+                }
+            }
         }
 
         public ShoppingBag(int storeId)
@@ -27,6 +34,8 @@
         {
             if (product == null)
                 throw new ArgumentNullException("product");
+            if (product.StoreId != this.StoreId)
+                throw new Exception("Product id in bag cannot be different from the store id of the bag");
             if (amount < 0)
                 throw new ArgumentOutOfRangeException(nameof(amount));
 

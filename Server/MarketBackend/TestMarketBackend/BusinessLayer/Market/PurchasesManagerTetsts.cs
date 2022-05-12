@@ -266,7 +266,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             cartMock.Setup(cart =>
                     cart.RemoveProductFromCart(It.Is<ProductInBag>(p => p != null && productsId.Contains(p.ProductId)))).
                         Callback<ProductInBag>((p) => removeFromStoreFromCart[p.ProductId] = true);
-            Mock<ShoppingBag> shoppingBagMock = new Mock<ShoppingBag>(productsId.Select(index => (new Mock<ProductInBag>(index, storeYesId1)).Object).ToDictionary(p => p, P => amount1));
+            Mock<ShoppingBag> shoppingBagMock = new Mock<ShoppingBag>(storeYesId1, productsId.Select(index => (new Mock<ProductInBag>(index, storeYesId1)).Object).ToDictionary(p => p, P => amount1));
             
             shoppingBagMock.Setup(shoppingBag => shoppingBag.StoreId).Returns(storeYesId1);
             cartMock.Setup(cart =>

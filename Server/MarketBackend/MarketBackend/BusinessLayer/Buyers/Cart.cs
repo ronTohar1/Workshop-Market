@@ -23,7 +23,7 @@ namespace MarketBackend.BusinessLayer.Buyers
         {
             int storeId = product.StoreId;
             if (!shoppingBags.ContainsKey(storeId))         // creating new bag for first product from store
-                shoppingBags[storeId] = new ShoppingBag();
+                shoppingBags[storeId] = new ShoppingBag(storeId);
 
             shoppingBags[storeId].AddProductToBag(product, amount);
         }

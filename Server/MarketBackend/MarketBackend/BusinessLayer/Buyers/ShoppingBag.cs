@@ -7,13 +7,15 @@
 
         internal IDictionary<ProductInBag, int> ProductsAmounts { get { return productsAmounts; } }
 
-        public ShoppingBag(IDictionary<ProductInBag, int> productsAmounts)
-        {
+        public ShoppingBag(int storeId,IDictionary<ProductInBag, int> productsAmounts)
+        {   
+            this.StoreId = storeId;
             this.productsAmounts = productsAmounts;
         }
 
-        public ShoppingBag()
+        public ShoppingBag(int storeId)
         {
+            this.StoreId = storeId;
             productsAmounts = new Dictionary<ProductInBag, int>();
         }
 

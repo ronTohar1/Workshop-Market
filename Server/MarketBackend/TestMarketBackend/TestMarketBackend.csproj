@@ -8,7 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Examples\**" />
+    <EmbeddedResource Remove="Examples\**" />
+    <None Remove="Examples\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extras.Moq" Version="6.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="Moq" Version="4.17.2" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
     <PackageReference Include="coverlet.collector" Version="3.1.0" />
@@ -16,6 +24,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MarketBackend\MarketBackend.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="BusinessLayer\Buyers\Members\" />
+    <Folder Include="BusinessLayer\Market\StoreManagment\" />
   </ItemGroup>
 
 </Project>

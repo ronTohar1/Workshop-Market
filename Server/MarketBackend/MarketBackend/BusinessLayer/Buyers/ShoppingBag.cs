@@ -3,16 +3,26 @@
     public class ShoppingBag
     {
         private IDictionary<ProductInBag, int> productsAmounts;
+        public virtual int StoreId { get; private set; }
 
         internal IDictionary<ProductInBag, int> ProductsAmounts { get { return productsAmounts; } }
 
-        public ShoppingBag(IDictionary<ProductInBag, int> productsAmounts)
-        {
+        public ShoppingBag(int storeId,IDictionary<ProductInBag, int> productsAmounts)
+        {   
+            this.StoreId = storeId;
             this.productsAmounts = productsAmounts;
+            foreach (var prod in productsAmounts)
+            {
+                if (prod.Key.StoreId != storeId)
+                {
+                    throw new Exception("How is a product is in a shopping bag with a different store?");
+                }
+            }
         }
 
-        public ShoppingBag()
+        public ShoppingBag(int storeId)
         {
+            this.StoreId = storeId;
             productsAmounts = new Dictionary<ProductInBag, int>();
         }
 
@@ -24,6 +34,8 @@
         {
             if (product == null)
                 throw new ArgumentNullException("product");
+            if (product.StoreId != this.StoreId)
+                throw new Exception("Product id in bag cannot be different from the store id of the bag");
             if (amount < 0)
                 throw new ArgumentOutOfRangeException(nameof(amount));
 

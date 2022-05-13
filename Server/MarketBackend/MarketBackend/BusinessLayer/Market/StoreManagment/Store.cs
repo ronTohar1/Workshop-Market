@@ -8,8 +8,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public string name { get; }
         public Member founder { get; }
         public Hierarchy<int> appointmentsHierarchy { get; }
-        public StorePolicy policy { get; }
-        public IDictionary<int,Product> products { get; }
+        public virtual StorePolicy policy { get; }
+        public virtual IDictionary<int,Product> products { get; }
         
         private IList<Purchase> purchaseHistory;
         private IDictionary<int, IList<Permission>> managersPermissions;
@@ -168,10 +168,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             products[productId].AddProductReview(membersGetter(memberId).Username,review);
         }
         // 6.4, 4.13
-        public virtual void AddPurchaseRecord(int memberId, DateTime purchaseDate,double totalPrice, string purchaseDescription) 
+        public virtual void AddPurchaseRecord(int memberId, Purchase purchase) 
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
-            purchaseHistory.Add(new Purchase(purchaseDate, totalPrice, purchaseDescription));
+            purchaseHistory.Add(purchase);
         }
 
         // TODO: amit and david should disscus it
@@ -211,12 +211,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 if (productsAmounts[productId] < amountPerProduct)
                     throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay:  {products[productId].name} can be bought only in a set of {amountPerProduct} or more"));
             }
-            double productsTotalPrices = productsAmounts.Keys.Select(productId => productsAmounts[productId]*products[productId].getUnitPriceWithDiscount()).ToList().Sum();
+            double productsTotalPrices = productsAmounts.Keys.Select(productId => productsAmounts[productId]*products[productId].GetPrice()).ToList().Sum();
             double amountDiscount = policy.GetDiscountForAmount(productsAmounts.Values.Sum());
             return productsTotalPrices * (1 - amountDiscount);
         }
 
-        public virtual string CanBuyProduct(int buyerId, int productId, int amount)
+        public virtual string? CanBuyProduct(int buyerId, int productId, int amount)
         {
             if (!products.ContainsKey(productId))
                 return $"The product can't be bought in the {name} store, there isn't such a product with id: {productId}";

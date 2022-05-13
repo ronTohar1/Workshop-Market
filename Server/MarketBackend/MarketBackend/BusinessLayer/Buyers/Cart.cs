@@ -9,9 +9,9 @@ namespace MarketBackend.BusinessLayer.Buyers
 {
     public class Cart
     {
-        private IDictionary<int, ShoppingBag> shoppingBags;
+        private IDictionary<int, ShoppingBag> shoppingBags { get; }
 
-        internal IDictionary<int, ShoppingBag> ShoppingBags { get { return shoppingBags; } }
+        public virtual IDictionary<int, ShoppingBag> ShoppingBags { get { return shoppingBags; } }
 
         public Cart(IDictionary<int, ShoppingBag> shoppingBags) =>
             this.shoppingBags = shoppingBags;
@@ -23,7 +23,7 @@ namespace MarketBackend.BusinessLayer.Buyers
         {
             int storeId = product.StoreId;
             if (!shoppingBags.ContainsKey(storeId))         // creating new bag for first product from store
-                shoppingBags[storeId] = new ShoppingBag();
+                shoppingBags[storeId] = new ShoppingBag(storeId);
 
             shoppingBags[storeId].AddProductToBag(product, amount);
         }

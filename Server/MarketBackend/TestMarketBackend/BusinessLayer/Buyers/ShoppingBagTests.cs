@@ -14,7 +14,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
     {
         private ShoppingBag bag;
         private static ProductInBag pInBag_1 = new ProductInBag(1, 1);
-        private static ProductInBag pInBag_2 = new ProductInBag(2, 2);
+        private static ProductInBag pInBag_2 = new ProductInBag(2, 1);
         private static ProductInBag pNotInBag_3 = new ProductInBag(3, 3);
 
         // ----------- Setup helping functions -----------------------------
@@ -27,7 +27,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             var products = new Dictionary<ProductInBag, int>();
             products.Add(pInBag_1, 1);
             products.Add(pInBag_2, 2);
-            bag = new ShoppingBag(products);
+            bag = new ShoppingBag(1, products);
         }
 
         // -------------------- Add product --------------------
@@ -39,15 +39,14 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
                 yield return new TestCaseData(pInBag_1, 5, 6);
                 yield return new TestCaseData(pInBag_2, 1, 3);
                 yield return new TestCaseData(pInBag_2, 0, 2);
-                yield return new TestCaseData(pNotInBag_3, 1, 1);
             }
         }
         [Test]
         [TestCaseSource("Data_TestAddProductToBag_Pass")]
         public void TestAddProductToBag_Pass(ProductInBag product, int amount, int expectedAmount)
         {
-            bag.AddProductToBag(product, amount);
-
+            Assert.DoesNotThrow(() => bag.AddProductToBag(product, amount));
+            Assert.True(bag.ProductsAmounts.ContainsKey(product));
             Assert.AreEqual(bag.ProductsAmounts[product], expectedAmount);  
         }
 

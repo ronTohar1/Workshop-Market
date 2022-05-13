@@ -6,7 +6,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 	{
 		public int id { get; private set; }
 		public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
-		public int amountInInventory { get; set; }
+		public virtual int amountInInventory { get; set; }
 		public IList<PurchaseOption> purchaseOptions { get; }
 		public IList<string> reviews; //mapping between member name and 
 		public double pricePerUnit { get; set; }
@@ -138,7 +138,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public bool ContainsPurchasePolicy(PurchaseOption purchaseOption)
 			=> purchaseOptions.Contains(purchaseOption);
 
-		public double getUnitPriceWithDiscount()
+		public double GetPrice()
 			=> pricePerUnit * (1 - productdicount);
 
 	}

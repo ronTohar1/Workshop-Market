@@ -140,23 +140,23 @@ namespace MarketBackend.ServiceLayer
         }
 
         //TODO
-        public Response<ServicePurchaseAttempt> PurchaseCartContent(int userId, IDictionary<int, IList<Tuple<int, int>>> producstToBuyByStoresIds)
+        public Response<ServicePurchase> PurchaseCartContent(int userId)
         {
             try
             {
-                ServicePurchaseAttempt canBuy = new ServicePurchaseAttempt(purchasesManager.PurchaseCartContent(userId, producstToBuyByStoresIds));
-                logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
-                return new Response<ServicePurchaseAttempt>(canBuy);
+                ServicePurchase canBuy = new ServicePurchase(purchasesManager.PurchaseCartContent(userId));
+                logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}]");
+                return new Response<ServicePurchase>(canBuy);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: , parameters: [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
-                return new Response<ServicePurchaseAttempt>(mex.Message);
+                logger.Error(mex, $"method: PurchaseCartContent, parameters: [userId = {userId}, market exception: {mex.Message}]");
+                return new Response<ServicePurchase>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: , parameters: [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
-                return new Response<ServicePurchaseAttempt>("Sorry, an unexpected error occured. Please try again");
+                logger.Error(ex, $"method: PurchaseCartContent, parameters: [userId = {userId}, Exception: {ex.Message}");
+                return new Response<ServicePurchase>("Sorry, an unexpected error occured. Please try again");
             }
         }
 

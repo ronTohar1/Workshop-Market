@@ -836,8 +836,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetUpProductsIdInStore();
             Assert.True(store.GetProductReviews(productId1).Count == 0);
             store.AddProductReview(memberId, productId1, reviewMessage);
-            IList<string> reviews = store.GetProductReviews(productId1);
-            Assert.True(reviews.Count == 1 && reviews.First().Contains(reviewMessage));
+            IDictionary<Member, IList<string>> reviews = store.GetProductReviews(productId1);
+            Assert.True(reviews.Count == 1);
         }
         [Test]
         [TestCase(memberId1, reviewMessage1)]

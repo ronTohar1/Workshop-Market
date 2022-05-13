@@ -141,5 +141,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public double GetPrice()
 			=> pricePerUnit * (1 - productdicount);
 
-	}
+        public override int GetHashCode()
+        {
+            return this.id.GetHashCode();
+        }
+
+    }
 }

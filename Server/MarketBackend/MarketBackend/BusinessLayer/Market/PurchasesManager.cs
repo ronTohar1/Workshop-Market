@@ -9,7 +9,6 @@ public class PurchasesManager
     private StoreController storeController;
     private BuyersController buyersController;
     private ExternalServicesController externalServicesController;
-    private Mutex purchaseLock;
 
     // r and cc relevant generally to this class:
     // cc 7, cc 8
@@ -19,7 +18,6 @@ public class PurchasesManager
         this.storeController = storeController;
         this.buyersController = buyersController;
         this.externalServicesController = externalServicesController;
-        purchaseLock = new Mutex();
     }
 
     // r 2.3
@@ -59,36 +57,44 @@ public class PurchasesManager
     {
         Buyer buyer = this.GetBuyerOrThrowException(buyerId);
         Cart cart = buyer.Cart;
-        lock (purchaseLock)
+        ICollection<ShoppingBag> shoppingBags = cart.ShoppingBags.Values;
+
+        // Check if can buy all products in cart: __________________
+        VerifyNotEmptyCart(cart);
+        IDictionary<int, int> storesTransactions;
+        string? cantBuy = ReserveProducts(buyerId, shoppingBags, out storesTransactions);
+        if (cantBuy != null)
         {
-            ICollection<ShoppingBag> shoppingBags = cart.ShoppingBags.Values;
-
-            // Check if can buy all products in cart: __________________
-            VerifyNotEmptyCart(cart);
-            string? cantBuy = GetCantPurchaseString(buyerId, shoppingBags);
-            if (cantBuy != null)
-                throw new MarketException(cantBuy);
-            // ---------------------------------------------------------
-
-            // Try buying products
-            IDictionary<int, double> storesTotal = GetPurchaseTotal(shoppingBags);
-            double purchaseTotal = storesTotal.Values.Sum(x => x);
-
-            if (!externalServicesController.makePayment())
-                throw new MarketException("Could not make payment");
-            if (!externalServicesController.makeDelivery())
-                throw new MarketException("Could not make delivery");
-
-            IDictionary<int, string> receipts = GetReceipt(shoppingBags);
-
-            UpdateBuyerAndStore(buyer, shoppingBags);
-            AddRecord(buyer, shoppingBags, storesTotal, receipts);
-
-            string finalReceipt = String.Join("", receipts.Values);
-            return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
-
-
+            TryRollback(storesTransactions);
+            throw new MarketException(cantBuy);
         }
+        // ---------------------------------------------------------
+
+        // Try buying products
+        IDictionary<int, double> storesTotal = GetPurchaseTotal(shoppingBags);
+        double purchaseTotal = storesTotal.Values.Sum(x => x); // Sum prices of all products
+
+        if (!externalServicesController.makePayment())
+        {
+            TryRollback(storesTransactions);
+            throw new MarketException("Could not make payment");
+        }
+        if (!externalServicesController.makeDelivery())
+        {
+            externalServicesController.CancelPayment();
+            TryRollback(storesTransactions);
+            throw new MarketException("Could not send a delivery");
+        }
+
+        IDictionary<int, string> receipts = GetReceipt(storesTransactions, shoppingBags);
+
+        UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
+        AddRecord(buyer, shoppingBags, storesTotal, receipts);
+
+        string finalReceipt = String.Join("", receipts.Values);
+        return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
+
+
 
 
     }
@@ -108,19 +114,19 @@ public class PurchasesManager
         }
     }
 
-    private void UpdateBuyerAndStore(Buyer buyer, ICollection<ShoppingBag> shoppingBags)
+    private void UpdateBuyerAndStore(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, int> storesTransactions)
     {
         foreach (ShoppingBag shoppingBag in shoppingBags)
         {
-            Store store = storeController.GetStore(shoppingBag.StoreId);
+            int storeId = shoppingBag.StoreId;
+
+            Store store = storeController.GetStore(storeId);
+            store.CommitTransaction(storesTransactions[storeId]);
 
             foreach (var prod in shoppingBag.ProductsAmounts)
             {
                 ProductInBag productInBag = prod.Key;
                 int amount = prod.Value;
-
-                //Remove amount from store
-                store.DecreaseProductAmountFromInventory(store.founder.Id, productInBag.ProductId, amount);
 
                 //Remove from cart
                 buyer.Cart.RemoveProductFromCart(productInBag);
@@ -129,32 +135,38 @@ public class PurchasesManager
     }
 
 
-    private IDictionary<int, string> GetReceipt(ICollection<ShoppingBag> shoppingBags)
+    private IDictionary<int, string> GetReceipt(IDictionary<int, int> storesTransactions, ICollection<ShoppingBag> shoppingBags)
     {
         string receipt = "";
         IDictionary<int, string> storeReceipt = new Dictionary<int, string>();
-        foreach (ShoppingBag shoppingBag in shoppingBags)
+        foreach (var shoppingBag in shoppingBags)
         {
-            storeReceipt.Add(shoppingBag.StoreId, getReceipt(shoppingBag));
+            int storeId = shoppingBag.StoreId;
+            int transactionId = storesTransactions[storeId];
+            Store store = storeController.GetStore(storeId);
+            var productAmounts = shoppingBag.ProductsAmounts.ToDictionary(x => x.Key.ProductId, x => x.Value);
+            storeReceipt.Add(storeId, getReceipt(productAmounts, store, transactionId));
         }
         return storeReceipt;
     }
 
-    private string getReceipt(ShoppingBag shoppingBag)
+    private string getReceipt(IDictionary<int, int> productsAmounts, Store store, int transactionId)
     {
-        Store store = storeController.GetStore(shoppingBag.StoreId);
         string receipt = $" >> {store.name} purchase:\n";
-        IDictionary<ProductInBag, int> products = shoppingBag.ProductsAmounts;
         double totalStorePrice = 0;
 
-        foreach (var prod in products)
-        {
-            int productId = prod.Key.ProductId;
-            int amount = prod.Value;
-            Product product = store.SearchProductByProductId(productId);
+        List<Product> productsPrices = store.GetTransactionPrices(transactionId);
+        if (productsPrices == null)
+            return "Couldnt get receipt";
 
-            double price = amount * product.GetPrice();
-            receipt += $" >> >> Product: {product.name}, Quantity: {amount}, unit price: {product.GetPrice()},  total: {price} shekels \n";
+        foreach (var prod in productsPrices)
+        {
+            Product product = prod;
+            double prodPrice = prod.GetPrice();
+            int prodAmount = productsAmounts[product.id];
+
+            double price = prodAmount * prodPrice;
+            receipt += $" >> >> Product: {product.name}, Quantity: {prodAmount}, unit price: {product.GetPrice()},  total: {price} shekels \n";
 
             totalStorePrice += price;
         }
@@ -177,14 +189,40 @@ public class PurchasesManager
         return storesTotal;
     }
 
-    private string? GetCantPurchaseString(int buyerId, ICollection<ShoppingBag> shoppingBags)
+    private void TryRollback(IDictionary<int, int> transactions)
+    {
+        List<int> failedRollbacks = RollbackTransactions(transactions);
+        if (failedRollbacks.Count != 0)
+            throw new Exception("Couldn't rollback following stores:" + failedRollbacks.ToString());
+    }
+
+    private List<int> RollbackTransactions(IDictionary<int, int> transactions)
+    {
+        List<int> failedRollbacks = new();
+        foreach (var transaction in transactions)
+        {
+            int storeId = transaction.Key;
+            int transId = transaction.Value;
+            Store store = storeController.GetStore(storeId);
+            bool success = store.RollbackTransaction(transId);
+            if (!success)
+                failedRollbacks.Add(storeId);
+        }
+        return failedRollbacks;
+    }
+
+    // Reserve products at each store.
+    // If succeeded, the <storeId, TransactionID> pairs will be put in the "transactions" variable.
+    // If failed, a failure string will be returned, else null
+    private string? ReserveProducts(int buyerId, ICollection<ShoppingBag> shoppingBags, out IDictionary<int, int> transactions)
     {
         string? cantPurhcaseDesc = null;
+        IDictionary<int, int> validTransactions = new Dictionary<int, int>();
         foreach (ShoppingBag shoppingBag in shoppingBags)
         {
             int storeId = shoppingBag.StoreId;
             Store store = storeController.GetStore(storeId);
-            //Check if store is open -----
+            //Check if store is closed -----
             if (store == null)
                 throw new ArgumentException($"Store with id: {storeId} does not exist");
             if (!IsOpenStore(storeId))
@@ -192,32 +230,28 @@ public class PurchasesManager
             // ----------------------------
             else
             {
-                string cantBuy = GetCantPurchaseString(buyerId, shoppingBag);
-                if (cantBuy != null)
-                {
-                    if (cantPurhcaseDesc == null)
-                        cantPurhcaseDesc = $"Cant buy the following products in {store.name}:\n";
-                    cantPurhcaseDesc += cantBuy;
-                }
+                int transactionId;
+                string? storeCantBuy = ReserveStoreProducts(buyerId, shoppingBag, out transactionId);
+                if (storeCantBuy != null)
+                    cantPurhcaseDesc += $"Cant buy the following products in {store.name}:\n" + storeCantBuy;
+                else
+                    validTransactions.Add(storeId, transactionId);
             }
         }
+        transactions = validTransactions;
         return cantPurhcaseDesc;
     }
 
+
     // Assuming store is open and not null
-    private string? GetCantPurchaseString(int buyerId, ShoppingBag shoppingBag)
+    // Reserving the products of the shopping bag and assigns the transaction id.
+    // If failed, an informative string is returned, else null.
+    private string? ReserveStoreProducts(int buyerId, ShoppingBag shoppingBag, out int transactionId)
     {
         Store store = storeController.GetStore(shoppingBag.StoreId);
-        string? cantPurhcaseDesc = null;
-        foreach (var item in shoppingBag.ProductsAmounts)
-        {
-            ProductInBag product = item.Key;
-            int amount = item.Value;
-            string? cantBuy = store.CanBuyProduct(buyerId, product.ProductId, amount);
 
-            if (cantBuy != null)
-                cantPurhcaseDesc += cantBuy;
-        }
+        IDictionary<int, int> products = shoppingBag.ProductsAmounts.ToDictionary(x => x.Key.ProductId, y => y.Value);
+        string? cantPurhcaseDesc = store.ReserveProducts(buyerId, products, out transactionId);
         return cantPurhcaseDesc;
     }
 

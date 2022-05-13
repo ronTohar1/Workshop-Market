@@ -58,7 +58,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return true;
         }
 
-        public List<Product> GetTransactionPrices(int transactionId)
+        public List<Product> GetTransactionProducts(int transactionId)
         {
             List<Product> productsPrices = new();
             if (!transactions.ContainsKey(transactionId))
@@ -135,7 +135,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
                 try
                 {
-                    products[productId].RemoveFromInventory(amount);
+                    DecreaseProductAmountFromInventory(this.founder.Id, productId, amount);
                 }
                 catch (Exception e)
                 {

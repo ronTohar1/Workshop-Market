@@ -69,9 +69,9 @@ public class PurchasesManager
             throw new MarketException(cantBuy);
         }
         // ---------------------------------------------------------
-
         // Try buying products
-        IDictionary<int, double> storesTotal = GetPurchaseTotal(shoppingBags);
+
+        IDictionary<int, double> storesTotal = GetPurchaseTotal(storesTransactions ,shoppingBags);
         double purchaseTotal = storesTotal.Values.Sum(x => x); // Sum prices of all products
 
         if (!externalServicesController.makePayment())
@@ -139,13 +139,14 @@ public class PurchasesManager
     {
         string receipt = "";
         IDictionary<int, string> storeReceipt = new Dictionary<int, string>();
-        foreach (var shoppingBag in shoppingBags)
+        foreach (ShoppingBag shoppingBag in shoppingBags)
         {
             int storeId = shoppingBag.StoreId;
             int transactionId = storesTransactions[storeId];
             Store store = storeController.GetStore(storeId);
-            var productAmounts = shoppingBag.ProductsAmounts.ToDictionary(x => x.Key.ProductId, x => x.Value);
-            storeReceipt.Add(storeId, getReceipt(productAmounts, store, transactionId));
+
+            IDictionary<int,int> productAmount = shoppingBag.ProductsAmounts.ToDictionary(x => x.Key.ProductId, x => x.Value);
+            storeReceipt.Add(storeId, getReceipt(productAmount, store, transactionId));
         }
         return storeReceipt;
     }
@@ -155,14 +156,13 @@ public class PurchasesManager
         string receipt = $" >> {store.name} purchase:\n";
         double totalStorePrice = 0;
 
-        List<Product> productsPrices = store.GetTransactionPrices(transactionId);
+        List<Product> productsPrices = store.GetTransactionProducts(transactionId);
         if (productsPrices == null)
             return "Couldnt get receipt";
 
-        foreach (var prod in productsPrices)
+        foreach (Product product in productsPrices)
         {
-            Product product = prod;
-            double prodPrice = prod.GetPrice();
+            double prodPrice = product.GetPrice();
             int prodAmount = productsAmounts[product.id];
 
             double price = prodAmount * prodPrice;
@@ -177,14 +177,17 @@ public class PurchasesManager
     }
 
     //Assuming everything is valid
-    private IDictionary<int, double> GetPurchaseTotal(ICollection<ShoppingBag> shoppingBags)
+    private IDictionary<int, double> GetPurchaseTotal(IDictionary<int,int> storesTransactions ,ICollection<ShoppingBag> shoppingBags)
     {
+
         IDictionary<int, double> storesTotal = new Dictionary<int, double>();
         foreach (ShoppingBag shoppingBag in shoppingBags)
         {
-            Store store = storeController.GetStore(shoppingBag.StoreId);
+            int storeId = shoppingBag.StoreId;
+            Store store = storeController.GetStore(storeId);
             IDictionary<ProductInBag, int> products = shoppingBag.ProductsAmounts;
-            storesTotal.Add(shoppingBag.StoreId, store.GetTotalBagCost(products.ToDictionary(x => x.Key.ProductId, x => x.Value)));
+            int transactionId = storesTransactions[storeId];
+            storesTotal.Add(storeId, store.GetTransactionProducts(transactionId).Sum(x => x.GetPrice()));
         }
         return storesTotal;
     }
@@ -231,7 +234,7 @@ public class PurchasesManager
             else
             {
                 int transactionId;
-                string? storeCantBuy = ReserveStoreProducts(buyerId, shoppingBag, out transactionId);
+                string? storeCantBuy = ReserveStoreProducts(buyerId, store, shoppingBag, out transactionId);
                 if (storeCantBuy != null)
                     cantPurhcaseDesc += $"Cant buy the following products in {store.name}:\n" + storeCantBuy;
                 else
@@ -246,10 +249,8 @@ public class PurchasesManager
     // Assuming store is open and not null
     // Reserving the products of the shopping bag and assigns the transaction id.
     // If failed, an informative string is returned, else null.
-    private string? ReserveStoreProducts(int buyerId, ShoppingBag shoppingBag, out int transactionId)
+    private string? ReserveStoreProducts(int buyerId, Store store, ShoppingBag shoppingBag, out int transactionId)
     {
-        Store store = storeController.GetStore(shoppingBag.StoreId);
-
         IDictionary<int, int> products = shoppingBag.ProductsAmounts.ToDictionary(x => x.Key.ProductId, y => y.Value);
         string? cantPurhcaseDesc = store.ReserveProducts(buyerId, products, out transactionId);
         return cantPurhcaseDesc;

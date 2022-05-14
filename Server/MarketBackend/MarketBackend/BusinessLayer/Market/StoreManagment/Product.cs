@@ -4,7 +4,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
 	public class Product
 	{
-		public int id { get; private set; }
+		public virtual int id { get; private set; }
 		public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
 		public virtual int amountInInventory { get; set; }
 		public IList<PurchaseOption> purchaseOptions { get; }

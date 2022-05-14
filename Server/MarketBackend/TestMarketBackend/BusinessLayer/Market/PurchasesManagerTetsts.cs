@@ -308,26 +308,43 @@ namespace TestMarketBackend.BusinessLayer.Market
             buyersController = buyersControllerMock.Object;
         }
 
+        private IDictionary<int, Product> createMocksProducts(int[] productsId, bool outOfStock)
+        {
+            IDictionary<int, Product> idsToProducts = new ConcurrentDictionary<int, Product>();
+
+            foreach (int idx in productsId)
+            {
+                Mock<Product> productMock = new Mock<Product>("cheese", 5.90, "dairy");
+                if (outOfStock)
+                    productMock.Setup(product => product.amountInInventory).Returns(0);
+                else
+                    productMock.Setup(product => product.amountInInventory).Returns(amount1);
+                productMock.Setup(product => product.id).Returns(idx);
+                productMock.Setup(product => product.AddToInventory(It.IsAny<int>())).Callback(()=>counter--);
+                productMock.Setup(product => product.RemoveFromInventory(It.IsAny<int>())).Callback(() => counter++);
+                
+                idsToProducts[idx] = productMock.Object;
+            }
+            return idsToProducts;
+        }
+
         private Store MockStoreThatReturns2(string result, int[] productsId)
         {
             Mock<Security> securityMock = new Mock<Security>();
             Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object); // todo: check if okay
             Member founder = founderMock.Object;
 
-            Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null);
+            Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null) { CallBase = true };
 
-            Mock<Product> productMock = new Mock<Product>("cheese", 5.90, "dairy");
+           
 
-            storeMock.Setup(store =>
-                    store.DecreaseProductAmountFromInventory(It.IsAny<int>(), It.Is<int>(id => productsId.Contains(id)), It.IsAny<int>())).
-                        Callback(() => counter++);
 
             storeMock.Setup(store =>
                     store.CanBuyProduct(It.IsAny<int>(), It.Is<int>(id => productsId.Contains(id)), It.IsAny<int>())).
                         Returns(result);
             storeMock.Setup(store =>
-                   store.SearchProductByProductId(It.Is<int>(id => productsId.Contains(id)))).
-                       Returns(productMock.Object);
+                    store.products).
+                        Returns(createMocksProducts(productsId, false));
             storeMock.Setup(store =>
                    store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<Purchase>()));
             storeMock.Setup(store =>
@@ -356,6 +373,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeControllerMock.Setup(storeController =>
                     storeController.GetOpenStore(It.Is<int>(id => id == notAStoreId1))).
                         Returns((Store)null);
+
 
 
 
@@ -434,15 +452,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
             Assert.AreEqual(counter, 0);
         }
-        private Product createNewMockProduct(bool outOfStock, int index) {
-            Mock<Product> productMock = new Mock<Product>("cheese", 5.90, "dairy");
-            if (outOfStock)
-                productMock.Setup(product => product.amountInInventory).Returns(0);
-            else
-                productMock.Setup(product => product.amountInInventory).Returns(amount1);
-            productMock.Setup(product => product.id).Returns(index);
-            return productMock.Object;
-        }
+      
         private Store MockStoreThatCanFail(string result, int[] productsId,bool outOfStock, bool policyFail)
         {
             Mock<Security> securityMock = new Mock<Security>();
@@ -455,14 +465,13 @@ namespace TestMarketBackend.BusinessLayer.Market
             Mock<StorePolicy> storePolicyMock = new Mock<StorePolicy>();
 
             
-
             storeMock.Setup(store =>
                     store.DecreaseProductAmountFromInventory(It.IsAny<int>(), It.Is<int>(id => productsId.Contains(id)), It.IsAny<int>())).
                         Callback(() => counter++);
-            IDictionary<int, Product> idsToProducts = new ConcurrentDictionary<int, Product>();
-            foreach (int idx in productsId) {
-                idsToProducts[idx] = createNewMockProduct(outOfStock, idx);
-            }
+            storeMock.Setup(store =>
+                   store.AddProductToInventory(It.IsAny<int>(), It.Is<int>(id => productsId.Contains(id)), It.IsAny<int>())).
+                       Callback(() => counter++);
+
             storeMock.Setup(store =>
                    store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<Purchase>()));
             storeMock.Setup(store =>
@@ -470,7 +479,9 @@ namespace TestMarketBackend.BusinessLayer.Market
 
             storeMock.Setup(store =>
                     store.products).
-                        Returns(idsToProducts);
+                        Returns(createMocksProducts(productsId, outOfStock));
+           
+
 
             if (policyFail)
                 storePolicyMock.Setup(storePolicy=> storePolicy.GetMinAmountPerProduct(It.IsAny<int>())).Returns(1000);

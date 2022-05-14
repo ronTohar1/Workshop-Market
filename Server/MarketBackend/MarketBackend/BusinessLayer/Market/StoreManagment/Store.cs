@@ -111,7 +111,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                         transaction = -1;
                     }
                 }
-                else if (transaction != -1) {
+                else  {
                     Product productObj = this.SearchProductByProductId(prodId);
                     if (productObj == null)
                         throw new Exception($"A shopping bag contained a product that is not in the store!\nProductId: {prodId}, Store name: {this.name}");
@@ -191,7 +191,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return newProduct.id;
         }
         // r.4.1
-        public void AddProductToInventory(int memberId, int productId, int amount) {
+        public virtual void AddProductToInventory(int memberId, int productId, int amount) {
             // we allow this only to coOwners
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add to inventory: ");
             if (!products.ContainsKey(productId))

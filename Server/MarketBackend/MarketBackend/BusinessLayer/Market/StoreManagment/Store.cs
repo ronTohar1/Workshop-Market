@@ -98,24 +98,29 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
             foreach (KeyValuePair<int, int> product in sortedProducts)
             {
-                int prodId = product.Key;
-                int amount = product.Value;
-                string? canBuyProduct = ReserveSingleProduct(buyerId, prodId, amount);
-                if (canBuyProduct != null)
+                if (transaction != -1)
                 {
-                    canBuy += canBuyProduct;
-
-                    if (transaction != -1)
+                    int prodId = product.Key;
+                    int amount = product.Value;
+                
+                    string? canBuyProduct = ReserveSingleProduct(buyerId, prodId, amount);
+                    if (canBuyProduct != null)
                     {
-                        transactions.Remove(transaction);
-                        transaction = -1;
+                        canBuy += canBuyProduct;
+
+                        if (transaction != -1)
+                        {
+                            transactions.Remove(transaction);
+                            transaction = -1;
+                        }
                     }
-                }
-                else  {
-                    Product productObj = this.SearchProductByProductId(prodId);
-                    if (productObj == null)
-                        throw new Exception($"A shopping bag contained a product that is not in the store!\nProductId: {prodId}, Store name: {this.name}");
-                    transactions[transaction].Add(productObj, amount);
+                    else
+                    {
+                        Product productObj = this.SearchProductByProductId(prodId);
+                        if (productObj == null)
+                            throw new Exception($"A shopping bag contained a product that is not in the store!\nProductId: {prodId}, Store name: {this.name}");
+                        transactions[transaction].Add(productObj, amount);
+                    }
                 }
             }
             transactionId = transaction;

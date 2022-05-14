@@ -23,6 +23,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		private Mutex categoryMutex;
 		private Mutex productDiscountMutex;
 
+		public Mutex storeMutex { get; private set; }
+
 		public Product(string product_name, double pricePerUnit, string category, double productdicount = 0.0)
 		{
 			this.id = GenerateProductId();
@@ -40,6 +42,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			pricePerUnitMutex = new Mutex();
 			categoryMutex = new Mutex();
 			productDiscountMutex = new Mutex();
+
+			storeMutex = new Mutex();
 
 		}
 

@@ -62,6 +62,8 @@ public class PurchasesManager
         // Check if can buy all products in cart: __________________
         VerifyNotEmptyCart(cart);
         IDictionary<int, int> storesTransactions;
+
+        VerifyStoresAndProducts(shoppingBags); //Verifying all stores are open and contain all products requested.
         string? cantBuy = ReserveProducts(buyerId, shoppingBags, out storesTransactions);
         if (cantBuy != null)
         {
@@ -71,7 +73,7 @@ public class PurchasesManager
         // ---------------------------------------------------------
         // Try buying products
 
-        IDictionary<int, double> storesTotal = GetPurchaseTotal(storesTransactions ,shoppingBags);
+        IDictionary<int, double> storesTotal = GetPurchaseTotal(storesTransactions, shoppingBags);
         double purchaseTotal = storesTotal.Values.Sum(x => x); // Sum prices of all products
 
         if (!externalServicesController.makePayment())
@@ -97,6 +99,37 @@ public class PurchasesManager
 
 
 
+    }
+
+    // Verifying all stores are open and the items in the shopping bag exist in the store.
+    // Throwing an exception if needed.
+    private void VerifyStoresAndProducts(ICollection<ShoppingBag> shoppingBags)
+    {
+        string exceptions = null;
+        string marketExceptions = null;
+        foreach (ShoppingBag shoppingBag in shoppingBags)
+        {
+            int storeId = shoppingBag.StoreId;
+            Store store = storeController.GetStore(storeId);
+            //Check if store is closed -----
+            if (store == null)
+                exceptions += $"Store with id: {storeId} does not exist\n";
+            if (!IsOpenStore(storeId))
+            {
+                marketExceptions += $"Sorry, but {store.name} is closed for shopping!\n";
+
+                foreach (var productAmount in shoppingBag.ProductsAmounts)
+                {
+                    int productId = productAmount.Key.ProductId;
+                    if (store.SearchProductByProductId(productId) == null)
+                        exceptions += $"Product id {productId} does not exist in store: {store.name} (store id: {storeId})\n";
+                }
+            }
+        }
+        if (exceptions != null)
+            throw new Exception(exceptions);
+        if (marketExceptions != null)
+            throw new MarketException(marketExceptions);
     }
 
     //Adding record of purchase for buyer and store
@@ -145,7 +178,7 @@ public class PurchasesManager
             int transactionId = storesTransactions[storeId];
             Store store = storeController.GetStore(storeId);
 
-            IDictionary<int,int> productAmount = shoppingBag.ProductsAmounts.ToDictionary(x => x.Key.ProductId, x => x.Value);
+            IDictionary<int, int> productAmount = shoppingBag.ProductsAmounts.ToDictionary(x => x.Key.ProductId, x => x.Value);
             storeReceipt.Add(storeId, getReceipt(productAmount, store, transactionId));
         }
         return storeReceipt;
@@ -177,7 +210,7 @@ public class PurchasesManager
     }
 
     //Assuming everything is valid
-    private IDictionary<int, double> GetPurchaseTotal(IDictionary<int,int> storesTransactions ,ICollection<ShoppingBag> shoppingBags)
+    private IDictionary<int, double> GetPurchaseTotal(IDictionary<int, int> storesTransactions, ICollection<ShoppingBag> shoppingBags)
     {
 
         IDictionary<int, double> storesTotal = new Dictionary<int, double>();

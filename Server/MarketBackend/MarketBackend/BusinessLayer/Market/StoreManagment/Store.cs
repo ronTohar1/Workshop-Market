@@ -23,7 +23,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private ReaderWriterLock rolesAndPermissionsLock;
 
         private IDictionary<int, IDictionary<Product,int>> transactions;
-        private Mutex productsMutex;
+        private ConcurrentDictionary<int,Mutex> productsMutex;
         private Mutex transactionIdMutex;
 
         // cc 5
@@ -42,7 +42,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
             //Transactions
             this.transactions = new Dictionary<int, IDictionary<Product, int>>();
-            this.productsMutex = new Mutex();
+            this.productsMutex = new();
             this.transactionIdMutex = new Mutex();
 
 
@@ -131,7 +131,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // Removing the amount from the prodcut in the inventory 
         private string? ReserveSingleProduct(int buyerId, int productId, int amount)
         {
-            lock (productsMutex)
+            if (!products.ContainsKey(productId))
+                return $"Product with id {productId} doesn't exist in store {this.name}";
+            lock (products[productId].storeMutex)
             {
                 string? canBuy = CanBuyProduct(buyerId, productId, amount);
 

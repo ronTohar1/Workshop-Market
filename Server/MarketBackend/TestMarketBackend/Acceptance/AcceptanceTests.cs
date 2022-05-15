@@ -24,6 +24,8 @@ namespace TestMarketBackend.Acceptance
         // facades
         protected BuyerFacade buyerFacade;
         protected StoreManagementFacade storeManagementFacade;
+        protected AdminFacade adminFacade;
+        protected ExternalSystemFacade externalSystemFacade;
 
         // users
         protected static int guest1Id;
@@ -46,6 +48,7 @@ namespace TestMarketBackend.Acceptance
         //Admin
         protected const string adminUsername = "admin";
         protected const string adminPassword = "admin";
+        protected static int adminId;
 
         // stores
         protected static int storeOwnerId;
@@ -132,11 +135,15 @@ namespace TestMarketBackend.Acceptance
         public void SetUp()
         {
             systemOperator = new SystemOperator();
-            Response<bool> response = systemOperator.OpenMarket(adminUsername,adminPassword);
+            Response<int> response = systemOperator.OpenMarket(adminUsername,adminPassword);
             if (response.ErrorOccured())
                 throw new Exception("Unexpected exception in acceptance setup");
+            adminId = response.Value;
+
             buyerFacade = systemOperator.GetBuyerFacade().Value;
             storeManagementFacade = systemOperator.GetStoreManagementFacade().Value;
+            adminFacade = systemOperator.GetAdminFacade().Value;
+            externalSystemFacade = systemOperator.GetExternalSystemFacade().Value;
 
             SetUpUsers();
 

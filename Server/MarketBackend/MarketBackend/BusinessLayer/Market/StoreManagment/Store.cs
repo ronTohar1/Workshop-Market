@@ -20,6 +20,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private const int timeoutMilis = 2000; // time for wating for the rw lock in the next line, after which it throws an exception
         private ReaderWriterLock rolesAndPermissionsLock;
 
+        private IDictionary<int, IDictionary<Product,int>> transactions;
+        private Mutex productsMutex;
+        private Mutex transactionIdMutex;
+
         // cc 5
         // cc 6
         public Store(string storeName, Member founder, Func<int, Member> membersGetter)
@@ -34,7 +38,118 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             initializeRolesInStore();
             this.membersGetter = membersGetter;
 
+            //Transactions
+            this.transactions = new Dictionary<int, IDictionary<Product, int>>();
+            this.productsMutex = new Mutex();
+            this.transactionIdMutex = new Mutex();
+
+
             this.rolesAndPermissionsLock = new ReaderWriterLock(); // no need to acquire it here (probably) because constructor is of one thread
+        }
+
+        public bool CommitTransaction(int transactionId)
+        {
+            if (transactions.ContainsKey(transactionId))
+                transactions.Remove(transactionId);
+            else
+                return false;
+            return true;
+        }
+
+        public List<Product> GetTransactionProducts(int transactionId)
+        {
+            List<Product> productsPrices = new();
+            if (!transactions.ContainsKey(transactionId))
+                return null;
+
+            foreach (Product prod in transactions[transactionId].Keys)
+                productsPrices.Add(prod);
+            return productsPrices;
+        }
+
+        public bool RollbackTransaction(int transactionId)
+        {
+            if (transactions.ContainsKey(transactionId))
+            {
+                foreach (var prod in transactions[transactionId])
+                {
+                    Product product = prod.Key;
+                    int amount = prod.Value;
+                    product.AddToInventory(amount);
+                }
+                transactions.Remove(transactionId);
+            }
+            else
+                return false;
+            return true;
+            
+        }
+        
+        // Reserving products.
+        // If successful then assigning the transactionId, else returns informative string why failed.
+        public string? ReserveProducts(int buyerId,IDictionary<int,int> productsAmounts,out int transactionId)
+        {
+            //Sorting by product id so there will be no mismatches when trying to decrease amount in different purchases
+            SortedDictionary<int, int> sortedProducts = new(productsAmounts);
+            string? canBuy = null;
+            int transaction = CreateNewTransaction();
+
+            foreach (KeyValuePair<int, int> product in sortedProducts)
+            {
+                int prodId = product.Key;
+                int amount = product.Value;
+                string? canBuyProduct = ReserveSingleProduct(buyerId, prodId, amount);
+                if (canBuyProduct != null)
+                {
+                    canBuy += canBuyProduct;
+
+                    if (transaction != -1)
+                    {
+                        transactions.Remove(transaction);
+                        transaction = -1;
+                    }
+                }
+                else if (transaction != -1) {
+                    Product productObj = this.SearchProductByProductId(prodId);
+                    if (productObj == null)
+                        throw new Exception($"A shopping bag contained a product that is not in the store!\nProductId: {prodId}, Store name: {this.name}");
+                    transactions[transaction].Add(productObj, amount);
+                }
+            }
+            transactionId = transaction;
+            return canBuy;
+
+        }
+
+        // Removing the amount from the prodcut in the inventory 
+        private string? ReserveSingleProduct(int buyerId, int productId, int amount)
+        {
+            lock (productsMutex)
+            {
+                string? canBuy = CanBuyProduct(buyerId, productId, amount);
+
+                if (canBuy != null)
+                    return canBuy;
+
+                try
+                {
+                    DecreaseProductAmountFromInventory(this.founder.Id, productId, amount);
+                }
+                catch (Exception e)
+                {
+                    return "Could not buy product: " + products[productId].name + ". An unexpected error has occurd : "+e.Message;
+                }
+            }
+            return null;
+        }
+
+        private int CreateNewTransaction()
+        {
+            lock (transactionIdMutex) {
+                int maxId = transactions.Count == 0 ? 0: transactions.Keys.Max();
+                transactions.Add(maxId + 1, new Dictionary<Product, int>());
+                return maxId + 1;
+            }
         }
 
         private void initializeRolesInStore()

@@ -17,10 +17,17 @@ public class ExternalServicesController
     {
 		return paymentsSystem.makePayment();
     }
+	
+	public virtual bool CancelPayment()
+    {
+		return paymentsSystem.CancelPayment();
+    }
 
 	public virtual bool makeDelivery()
     {
 		return supplySystem.supplyDelivery();
 	}
+
+	
 
 }

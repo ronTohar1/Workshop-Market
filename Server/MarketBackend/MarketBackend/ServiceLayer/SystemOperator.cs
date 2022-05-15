@@ -33,11 +33,11 @@ namespace MarketBackend.ServiceLayer
 
         }
 
-        public Response<bool> OpenMarket(string username, string password)
+        public Response<int> OpenMarket(string username, string password)
         {
 
             if (!VerifyAdmin(username, password))
-                return new(false, $"User with username: {username} does not have permission to open the market!");
+                return new($"User with username: {username} does not have permission to open the market!");
 
             //Init controllers
             MembersController membersController = new();
@@ -53,7 +53,7 @@ namespace MarketBackend.ServiceLayer
             InitFacades(membersController, guestsController, storeController, buyersController, adminManager, purchasesManager);
 
             marketOpen = true;
-            return new(true);
+            return new(-1);
 
         }
 

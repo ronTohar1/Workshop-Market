@@ -20,10 +20,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             this.then = then;
         }
 
-        public int EvaluateDiscount(ShoppingBag bag)
+        // if [] then []
+        public double EvaluateDiscount(ShoppingBag bag, Store store)
         {
-            if (pred.EvaluatePredicate(bag))
-                return then.EvaluateDiscount(bag);
+            if (pred.EvaluatePredicate(bag, store))
+                return then.EvaluateDiscount(bag, store);
             return 0;
         }
 

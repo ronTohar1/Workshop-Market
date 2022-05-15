@@ -37,13 +37,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             discounts.Add(id, new Discount(id, description, dis));
         }
 
-        public int EvaluateDiscountForBag(ShoppingBag bag)
+        public double EvaluateDiscountForBag(ShoppingBag bag, Store store)
         {
-            int sum = 0;
+            double sum = 0;
             foreach (Discount dis in discounts.Values)
             {
                 IExpression exp = dis.discountExpression;
-                sum += exp.EvaluateDiscount(bag);
+                sum += exp.EvaluateDiscount(bag, store);
             }
             return sum;
         }
@@ -98,9 +98,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             return newExp;
         }
 
-        public IDiscountExpression NewDateDiscount(DateTime date, int discount)
+        public IDiscountExpression NewDateDiscount(int discount, int year = -1, int month = -1, int day = -1)
         {
-            IDiscountExpression newExp = new DateDiscount(date, discount);
+            IDiscountExpression newExp = new DateDiscount(discount, year, month, day);
             return newExp;
         }
         //------------Discounts-----------

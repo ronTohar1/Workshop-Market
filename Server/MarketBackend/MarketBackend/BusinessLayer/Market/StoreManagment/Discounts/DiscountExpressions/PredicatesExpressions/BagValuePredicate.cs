@@ -13,9 +13,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         }
 
         //check of the bag worth more than worth
-        public bool EvaluatePredicate(ShoppingBag bag)
+        public bool EvaluatePredicate(ShoppingBag bag, Store store)
         {
-            throw new NotImplementedException();
+            double sum = 0;
+            IDictionary<int, Product> prods = store.products;
+            foreach (Product product in prods.Values)
+            {
+                sum += product.GetPrice();
+            }
+            return sum >= worth;
         }
     }
 }

@@ -15,9 +15,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
 
         }
 
-        public override bool EvaluatePredicate(ShoppingBag bag)
+        //if [] and [] then yes
+        public override bool EvaluatePredicate(ShoppingBag bag, Store store)
         {
-            return firstExpression.EvaluatePredicate(bag) && secondExpression.EvaluatePredicate(bag);
+            return firstExpression.EvaluatePredicate(bag, store) && secondExpression.EvaluatePredicate(bag, store);
         }
     }
 }

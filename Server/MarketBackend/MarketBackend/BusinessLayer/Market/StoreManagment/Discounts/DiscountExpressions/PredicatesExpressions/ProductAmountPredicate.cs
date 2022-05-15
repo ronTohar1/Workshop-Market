@@ -16,9 +16,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         }
 
         // check if there is atleast quantity of pid 
-        public bool EvaluatePredicate(ShoppingBag bag)
+        public bool EvaluatePredicate(ShoppingBag bag, Store store)
         {
-            throw new NotImplementedException();
+            foreach (ProductInBag pib in bag.ProductsAmounts.Keys)
+            {
+                if (pib.ProductId == pid)
+                    return bag.ProductsAmounts[pib] >= quantity;
+            }
+            return false;
         }
     }
 }

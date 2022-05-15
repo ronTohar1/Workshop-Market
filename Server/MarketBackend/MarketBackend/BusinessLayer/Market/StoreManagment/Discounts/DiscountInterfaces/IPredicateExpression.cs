@@ -9,6 +9,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountIn
 {
     internal interface IPredicateExpression
     {
-        public bool EvaluatePredicate(ShoppingBag bag);
+        public bool EvaluatePredicate(ShoppingBag bag, Store store);
     }
 }

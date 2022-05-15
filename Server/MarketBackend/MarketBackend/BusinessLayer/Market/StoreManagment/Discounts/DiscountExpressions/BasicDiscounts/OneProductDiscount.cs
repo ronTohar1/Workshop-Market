@@ -18,9 +18,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         }
 
         //check the price of the certain product id in the bag and return the discount percent of it
-        public override int EvaluateDiscount(ShoppingBag bag)
+        public override double EvaluateDiscount(ShoppingBag bag, Store store)
         {
-            throw new NotImplementedException();
+            foreach (ProductInBag pib in bag.ProductsAmounts.Keys)
+            {
+                if (pib.ProductId == productId)
+                {
+                    return ((bag.ProductsAmounts[pib] * store.products[productId].GetPrice())*discount)/100;
+                }
+            }
+            return 0;
         }
 
     }

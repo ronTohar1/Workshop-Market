@@ -21,11 +21,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             this.elseDis = elseDis;
         }
 
-        public int EvaluateDiscount(ShoppingBag bag)
+        //if [] then [] else []
+        public double EvaluateDiscount(ShoppingBag bag, Store store)
         {
-            if (test.EvaluatePredicate(bag))
-                return thenDis.EvaluateDiscount(bag);
-            return elseDis.EvaluateDiscount(bag);
+            if (test.EvaluatePredicate(bag, store))
+                return thenDis.EvaluateDiscount(bag, store);
+            return elseDis.EvaluateDiscount(bag, store);
         }
     }
 }

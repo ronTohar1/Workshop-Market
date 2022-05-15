@@ -9,6 +9,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
     internal interface IExpression
     {
-        public int EvaluateDiscount(ShoppingBag bag);
+        public double EvaluateDiscount(ShoppingBag bag, Store store);
     }
 }

@@ -20,12 +20,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             discounts.Add(discount);
         }
 
-        public int EvaluateDiscount(ShoppingBag bag)
+        public double EvaluateDiscount(ShoppingBag bag, Store store)
         {
-            int maxDis = 0;
+            double maxDis = 0;
             for (int i = 0; i < discounts.Count; i++)
             {
-                int newDis = discounts[i].EvaluateDiscount(bag);
+                double newDis = discounts[i].EvaluateDiscount(bag, store);
                 if (newDis > maxDis)
                 {
                     maxDis = newDis;

@@ -9,17 +9,28 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
 {
     internal class DateDiscount : StoreDiscount
     {
-        public DateTime date { get; set; }
+        public int year { get; set; }
+        public int month { get; set; }
+        public int day { get; set; }
 
-        public DateDiscount(DateTime date, int discount) : base(discount)
+        public DateDiscount(int discount, int year, int month, int day) : base(discount)
         {
-            this.date = date;
+            this.year = year;
+            this.month = month;
+            this.day = day;
         }
 
-        //check if its the right date
-        public override int EvaluateDiscount(ShoppingBag bag)
+
+        // if date then discount applies
+        public override double EvaluateDiscount(ShoppingBag bag, Store store)
         {
-            throw new NotImplementedException();
+
+            DateTime date = DateTime.Now;
+            if (year == -1 || year == date.Year)
+                if (month == -1 || month == date.Month)
+                    if (day == -1 || day == date.Day)
+                        return (sumOfCart(bag, store) * discount) / 100;
+            return 0;
         }
     }
 }

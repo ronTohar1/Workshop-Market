@@ -17,9 +17,19 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         }
 
         //calculate the sum of the bag and return discount percent of it
-        public virtual int EvaluateDiscount(ShoppingBag bag)
+        public virtual double EvaluateDiscount(ShoppingBag bag, Store store)
         {
             throw new NotImplementedException();
+        }
+
+        public double sumOfCart(ShoppingBag bag, Store store)
+        {
+            double sum = 0;
+            foreach (ProductInBag pib in bag.ProductsAmounts.Keys)
+            {
+                sum += bag.ProductsAmounts[pib] * store.products[pib.ProductId].GetPrice();
+            }
+            return sum;
         }
     }
 }

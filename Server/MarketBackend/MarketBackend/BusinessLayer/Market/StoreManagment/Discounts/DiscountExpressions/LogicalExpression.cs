@@ -14,7 +14,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             this.secondExpression = secondExpression;
         }
 
-        public virtual bool EvaluatePredicate(ShoppingBag bag)
+        //should be overrided
+        public virtual bool EvaluatePredicate(ShoppingBag bag, Store store)
         {
             throw new NotSupportedException();
         }

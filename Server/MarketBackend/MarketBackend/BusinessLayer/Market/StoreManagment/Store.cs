@@ -9,15 +9,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public Member founder { get; }
         public Hierarchy<int> appointmentsHierarchy { get; }
         public virtual StorePolicy policy { get; }
-        public virtual IDictionary<int,Product> products { get; }
-        
+        public virtual IDictionary<int, Product> products { get; }
+
         private IList<Purchase> purchaseHistory;
         private IDictionary<int, IList<Permission>> managersPermissions;
         private IDictionary<Role, IList<int>> rolesInStore;
         private Func<int, Member> membersGetter;
 
-        private static int productIdCounter = 0; // the next store id
-        private static Mutex productIdCounterMutex = new Mutex();
 
         private const int timeoutMilis = 2000; // time for wating for the rw lock in the next line, after which it throws an exception
         private ReaderWriterLock rolesAndPermissionsLock;
@@ -29,13 +27,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // cc 5
         // cc 6
         public Store(string storeName, Member founder, Func<int, Member> membersGetter)
-	    {
+        {
             this.name = storeName;
             this.founder = founder;
             this.appointmentsHierarchy = new Hierarchy<int>(founder.Id);
             this.purchaseHistory = new SynchronizedCollection<Purchase>();
             this.policy = new StorePolicy();
-            this.products = new ConcurrentDictionary<int,Product>();
+            this.products = new ConcurrentDictionary<int, Product>();
             this.managersPermissions = new ConcurrentDictionary<int, IList<Permission>>();
             initializeRolesInStore();
             this.membersGetter = membersGetter;
@@ -47,7 +45,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 
             this.rolesAndPermissionsLock = new ReaderWriterLock(); // no need to acquire it here (probably) because constructor is of one thread
-	    }
+        }
 
         public bool CommitTransaction(int transactionId)
         {
@@ -159,7 +157,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             // need to be called from constructor or with acquiring the lock 
             // saving founder as a coOnwer as well
             if (founder == null)
-                throw new ArgumentNullException("Initializing roles in stores should happen after founder is initialized"); 
+                throw new ArgumentNullException("Initializing roles in stores should happen after founder is initialized");
             this.rolesInStore = new ConcurrentDictionary<Role, IList<int>>();
             foreach (Role role in Enum.GetValues(typeof(Role)))
             {
@@ -215,21 +213,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             try {
                 products[productId].RemoveFromInventory(amount);
             }
-            catch(MarketException mEx) {
+            catch (MarketException mEx) {
                 throw new MarketException(StoreErrorMessage($"Could not take from inventory: {mEx.Message}"));
             }
         }
 
         public IList<Product> SerachProducts(ProductsSearchFilter filter)
-        => products.Values.Where(p=>filter.FilterProduct(p)).ToList();
+        => products.Values.Where(p => filter.FilterProduct(p)).ToList();
 
         // r.4.2
         public void AddPurchaseOption(int memberId, PurchaseOption purchaseOption)//Add to store
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option: ");
-            policy.AddPurchaseOption(purchaseOption); 
+            policy.AddPurchaseOption(purchaseOption);
         }
-       
+
         // r.4.2
         public void AddProductPurchaseOption(int memberId, int productId, PurchaseOption purchaseOption)//Add to product in the store 
         {
@@ -276,14 +274,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r.3.3
         public void AddProductReview(int memberId, int productId, string review) {
             string permissionError = CheckAtLeastMemberPermission(memberId);
-            if (permissionError !=null)
-                throw new MarketException("Could not add review: "+permissionError);
+            if (permissionError != null)
+                throw new MarketException("Could not add review: " + permissionError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not add review: there isn't such a product with product id: {productId}"));
-            products[productId].AddProductReview(membersGetter(memberId).Username,review);
+            products[productId].AddProductReview(memberId, review);
         }
         // 6.4, 4.13
-        public virtual void AddPurchaseRecord(int memberId, Purchase purchase) 
+        public virtual void AddPurchaseRecord(int memberId, Purchase purchase)
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
             purchaseHistory.Add(purchase);
@@ -302,11 +300,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return purchaseHistory;
         }
         // r.3.3
-        public IList<string> GetProductReviews(int productId)
+        public IDictionary<Member, IList<string>> GetProductReviews(int productId)
         {
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not get reviews: there isn't such a product with product id: {productId}"));
-            return products[productId].reviews;
+            IDictionary <int,IList<string>> memberIdToReviews=  products[productId].reviews;
+            return memberIdToReviews.Keys.ToDictionary(id => membersGetter(id), id => memberIdToReviews[id]);
         }
         // r.3.3
         public void AddDiscountForAmountPolicy(int memeberId, int amount, double discount)
@@ -624,7 +623,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return errorMessage + " in the store: " + name; 
         }
-       
+
         public bool ContainProductInStock(int productId)
         => products.ContainsKey(productId);
         public virtual Product SearchProductByProductId(int productId)

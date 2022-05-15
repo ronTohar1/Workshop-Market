@@ -144,7 +144,8 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                ServicePurchase canBuy = new ServicePurchase(purchasesManager.PurchaseCartContent(userId));
+                Purchase purchase = purchasesManager.PurchaseCartContent(userId); 
+                ServicePurchase canBuy = new ServicePurchase(purchase.purchaseDate, purchase.purchasePrice, purchase.purchaseDescription);
                 logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}]");
                 return new Response<ServicePurchase>(canBuy);
             }

@@ -8,8 +8,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public string name { get; }
         public Member founder { get; }
         public Hierarchy<int> appointmentsHierarchy { get; }
-        public StorePolicy policy { get; }
-        public IDictionary<int,Product> products { get; }
+        public virtual StorePolicy policy { get; }
+        public virtual IDictionary<int,Product> products { get; }
         
         private IList<Purchase> purchaseHistory;
         private IDictionary<int, IList<Permission>> managersPermissions;
@@ -21,6 +21,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         private const int timeoutMilis = 2000; // time for wating for the rw lock in the next line, after which it throws an exception
         private ReaderWriterLock rolesAndPermissionsLock;
+
+        private IDictionary<int, IDictionary<Product,int>> transactions;
+        private ConcurrentDictionary<int,Mutex> productsMutex;
+        private Mutex transactionIdMutex;
 
         // cc 5
         // cc 6
@@ -36,8 +40,126 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             initializeRolesInStore();
             this.membersGetter = membersGetter;
 
+            //Transactions
+            this.transactions = new Dictionary<int, IDictionary<Product, int>>();
+            this.productsMutex = new();
+            this.transactionIdMutex = new Mutex();
+
+
             this.rolesAndPermissionsLock = new ReaderWriterLock(); // no need to acquire it here (probably) because constructor is of one thread
 	    }
+
+        public bool CommitTransaction(int transactionId)
+        {
+            if (transactions.ContainsKey(transactionId))
+                transactions.Remove(transactionId);
+            else
+                return false;
+            return true;
+        }
+
+        public List<Product> GetTransactionProducts(int transactionId)
+        {
+            List<Product> productsPrices = new();
+            if (!transactions.ContainsKey(transactionId))
+                return null;
+
+            foreach (Product prod in transactions[transactionId].Keys)
+                productsPrices.Add(prod);
+            return productsPrices;
+        }
+
+        public bool RollbackTransaction(int transactionId)
+        {
+            if (transactions.ContainsKey(transactionId))
+            {
+                foreach (var prod in transactions[transactionId])
+                {
+                    Product product = prod.Key;
+                    int amount = prod.Value;
+                    product.AddToInventory(amount);
+                }
+                transactions.Remove(transactionId);
+            }
+            else
+                return false;
+            return true;
+            
+        }
+        
+        // Reserving products.
+        // If successful then assigning the transactionId, else returns informative string why failed.
+        public string? ReserveProducts(int buyerId,IDictionary<int,int> productsAmounts,out int transactionId)
+        {
+            //Sorting by product id so there will be no mismatches when trying to decrease amount in different purchases
+            SortedDictionary<int, int> sortedProducts = new(productsAmounts);
+            string? canBuy = null;
+            int transaction = CreateNewTransaction();
+
+            foreach (KeyValuePair<int, int> product in sortedProducts)
+            {
+                if (transaction != -1)
+                {
+                    int prodId = product.Key;
+                    int amount = product.Value;
+                
+                    string? canBuyProduct = ReserveSingleProduct(buyerId, prodId, amount);
+                    if (canBuyProduct != null)
+                    {
+                        canBuy += canBuyProduct;
+
+                        if (transaction != -1)
+                        {
+                            transactions.Remove(transaction);
+                            transaction = -1;
+                        }
+                    }
+                    else
+                    {
+                        Product productObj = this.SearchProductByProductId(prodId);
+                        if (productObj == null)
+                            throw new Exception($"A shopping bag contained a product that is not in the store!\nProductId: {prodId}, Store name: {this.name}");
+                        transactions[transaction].Add(productObj, amount);
+                    }
+                }
+            }
+            transactionId = transaction;
+            return canBuy;
+
+        }
+
+        // Removing the amount from the prodcut in the inventory 
+        private string? ReserveSingleProduct(int buyerId, int productId, int amount)
+        {
+            if (!products.ContainsKey(productId))
+                return $"Product with id {productId} doesn't exist in store {this.name}";
+            lock (products[productId].storeMutex)
+            {
+                string? canBuy = CanBuyProduct(buyerId, productId, amount);
+
+                if (canBuy != null)
+                    return canBuy;
+
+                try
+                {
+                    DecreaseProductAmountFromInventory(this.founder.Id, productId, amount);
+                }
+                catch (Exception e)
+                {
+                    return "Could not buy product: " + products[productId].name + ". An unexpected error has occurd : "+e.Message;
+                }
+            }
+            return null;
+        }
+
+        private int CreateNewTransaction()
+        {
+            lock (transactionIdMutex) {
+                int maxId = transactions.Count == 0 ? 0: transactions.Keys.Max();
+                transactions.Add(maxId + 1, new Dictionary<Product, int>());
+                return maxId + 1;
+            }
+        }
 
         private void initializeRolesInStore()
         {
@@ -76,7 +198,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return newProduct.id;
         }
         // r.4.1
-        public void AddProductToInventory(int memberId, int productId, int amount) {
+        public virtual void AddProductToInventory(int memberId, int productId, int amount) {
             // we allow this only to coOwners
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add to inventory: ");
             if (!products.ContainsKey(productId))
@@ -168,10 +290,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             products[productId].AddProductReview(membersGetter(memberId).Username,review);
         }
         // 6.4, 4.13
-        public virtual void AddPurchaseRecord(int memberId, DateTime purchaseDate,double totalPrice, string purchaseDescription) 
+        public virtual void AddPurchaseRecord(int memberId, Purchase purchase) 
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
-            purchaseHistory.Add(new Purchase(purchaseDate, totalPrice, purchaseDescription));
+            purchaseHistory.Add(purchase);
         }
 
         // TODO: amit and david should disscus it
@@ -211,12 +333,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 if (productsAmounts[productId] < amountPerProduct)
                     throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay:  {products[productId].name} can be bought only in a set of {amountPerProduct} or more"));
             }
-            double productsTotalPrices = productsAmounts.Keys.Select(productId => productsAmounts[productId]*products[productId].getUnitPriceWithDiscount()).ToList().Sum();
+            double productsTotalPrices = productsAmounts.Keys.Select(productId => productsAmounts[productId]*products[productId].GetPrice()).ToList().Sum();
             double amountDiscount = policy.GetDiscountForAmount(productsAmounts.Values.Sum());
             return productsTotalPrices * (1 - amountDiscount);
         }
 
-        public virtual string CanBuyProduct(int buyerId, int productId, int amount)
+        public virtual string? CanBuyProduct(int buyerId, int productId, int amount)
         {
             if (!products.ContainsKey(productId))
                 return $"The product can't be bought in the {name} store, there isn't such a product with id: {productId}";

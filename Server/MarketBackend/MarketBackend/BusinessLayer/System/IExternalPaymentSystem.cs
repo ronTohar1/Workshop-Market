@@ -3,4 +3,5 @@
 public interface IExternalPaymentSystem
 {
     public bool makePayment();
+    public bool CancelPayment();
 }

@@ -140,23 +140,24 @@ namespace MarketBackend.ServiceLayer
         }
 
         //TODO
-        public Response<ServicePurchaseAttempt> PurchaseCartContent(int userId, IDictionary<int, IList<Tuple<int, int>>> producstToBuyByStoresIds)
+        public Response<ServicePurchase> PurchaseCartContent(int userId)
         {
             try
             {
-                ServicePurchaseAttempt canBuy = new ServicePurchaseAttempt(purchasesManager.PurchaseCartContent(userId, producstToBuyByStoresIds));
-                logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
-                return new Response<ServicePurchaseAttempt>(canBuy);
+                Purchase purchase = purchasesManager.PurchaseCartContent(userId); 
+                ServicePurchase canBuy = new ServicePurchase(purchase.purchaseDate, purchase.purchasePrice, purchase.purchaseDescription);
+                logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}]");
+                return new Response<ServicePurchase>(canBuy);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: , parameters: [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
-                return new Response<ServicePurchaseAttempt>(mex.Message);
+                logger.Error(mex, $"method: PurchaseCartContent, parameters: [userId = {userId}, market exception: {mex.Message}]");
+                return new Response<ServicePurchase>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: , parameters: [userId = {userId}, producstToBuyByStoresIds = {producstToBuyByStoresIds}]");
-                return new Response<ServicePurchaseAttempt>("Sorry, an unexpected error occured. Please try again");
+                logger.Error(ex, $"method: PurchaseCartContent, parameters: [userId = {userId}, Exception: {ex.Message}");
+                return new Response<ServicePurchase>("Sorry, an unexpected error occured. Please try again");
             }
         }
 
@@ -211,7 +212,7 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<ServiceStore>($"No store with id {storeId}");
                 logger.Info($"GetStoreInfo was called with parameters [storeId = {storeId}]");
-                return new Response<ServiceStore>(CreateServiceStore(s));
+                return new Response<ServiceStore>(CreateServiceStore(s, storeId));
             }
             catch (MarketException mex)
             {
@@ -225,13 +226,13 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        private ServiceStore CreateServiceStore(Store store)
+        private ServiceStore CreateServiceStore(Store store, int storeId)
         {
             // try and catch is in calling functions 
 
             IList<int> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => product.id).ToList();
 
-            return new ServiceStore(store.GetName(), productsIds);
+            return new ServiceStore(storeId, store.GetName(), productsIds);
         }
 
         //done
@@ -239,11 +240,12 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.GetStore(storeController.GetStoreIdByName(storeName));
+                int storeId = storeController.GetStoreIdByName(storeName); 
+                Store s = storeController.GetStore(storeId);
                 if (s == null) // never
                     return new Response<ServiceStore>($"No store with name {storeName}");
                 logger.Info($"GetStoreInfo was called with parameters [storeName = {storeName}]");
-                return new Response<ServiceStore>(CreateServiceStore(s));
+                return new Response<ServiceStore>(CreateServiceStore(s, storeId));
             }
             catch (MarketException mex)
             {

@@ -4,9 +4,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
 	public class Product
 	{
-		public int id { get; private set; }
+		public virtual int id { get; private set; }
 		public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
-		public int amountInInventory { get; set; }
+		public virtual int amountInInventory { get; set; }
 		public IList<PurchaseOption> purchaseOptions { get; }
 		public IList<string> reviews; //mapping between member name and 
 		public double pricePerUnit { get; set; }
@@ -22,6 +22,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		private Mutex pricePerUnitMutex;
 		private Mutex categoryMutex;
 		private Mutex productDiscountMutex;
+
+		public Mutex storeMutex { get; private set; }
 
 		public Product(string product_name, double pricePerUnit, string category, double productdicount = 0.0)
 		{
@@ -41,12 +43,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			categoryMutex = new Mutex();
 			productDiscountMutex = new Mutex();
 
+			storeMutex = new Mutex();
+
 		}
 
 		public Product(string product_name, double pricePerUnit, string category) : this(product_name, pricePerUnit, category, 0.0) { }
 
 		// r.4.1
-		public void AddToInventory(int amountToAdd)
+		public virtual void AddToInventory(int amountToAdd)
 		{
 			amountInInventoryMutex.WaitOne();
 			amountInInventory = amountInInventory + amountToAdd;
@@ -54,7 +58,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		}
 		// cc 9
 		// r.4.1
-		public void RemoveFromInventory(int amountToRemove)
+		public virtual void RemoveFromInventory(int amountToRemove)
 		{
 			amountInInventoryMutex.WaitOne();
 			if (amountInInventory < amountToRemove)
@@ -138,8 +142,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public bool ContainsPurchasePolicy(PurchaseOption purchaseOption)
 			=> purchaseOptions.Contains(purchaseOption);
 
-		public double getUnitPriceWithDiscount()
+		public double GetPrice()
 			=> pricePerUnit * (1 - productdicount);
 
-	}
+        public override int GetHashCode()
+        {
+            return this.id.GetHashCode();
+        }
+
+    }
 }

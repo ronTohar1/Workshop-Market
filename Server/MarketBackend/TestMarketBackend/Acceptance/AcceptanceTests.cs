@@ -54,6 +54,11 @@ namespace TestMarketBackend.Acceptance
         protected static int storeOwnerId;
         protected static int storeId;
         protected const string storeName = "TheStore";
+        protected static int store2OwnerId;
+        protected static int store2Id;
+        protected const string store2Name = "TheSecondStore";
+
+        protected static int[] storesIds; 
 
         // products
         protected const string iphoneProductName = "Iphone13";
@@ -107,8 +112,16 @@ namespace TestMarketBackend.Acceptance
             // the owner(member2) appoints member3 as a store owner
             Response<bool> response = storeManagementFacade.MakeCoOwner(member2Id, member3Id, storeId);
 
-            // the owner(member2) appoints member4 as a store owner
+            // the owner(member2) appoints member4 as a store manager
             response = storeManagementFacade.MakeCoManager(member2Id, member4Id, storeId);
+
+            // Opening a store whose owner is member2
+            store2OwnerId = member2Id; 
+            serviceStoreIdResponse = storeManagementFacade.OpenStore(store2OwnerId, store2Name);
+            store2Id = serviceStoreIdResponse.Value;
+
+            // notice that member2 is a store owner in all stores
+            storesIds = new int[] { storeId, store2Id }; 
         }
 
         public void SetUpStoresInventories()

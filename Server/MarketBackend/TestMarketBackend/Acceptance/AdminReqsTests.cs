@@ -113,7 +113,7 @@ namespace TestMarketBackend.Acceptance
             }
         }
 
-        // r 6.2, r 4.5 // todo: move r 4.5 to the succesful tests functions
+        // r 6.2, r 4.5
         // cc 2, cc 5
         [Test]
         [TestCaseSource("DataFailedRemoveMember")]
@@ -142,6 +142,44 @@ namespace TestMarketBackend.Acceptance
                     Assert.AreEqual(rolesInStoresBefore[storeId], rolesInStores[storeId]); 
                 }
             }
+            // todo: maybe add a check that it should be an admin if it was before  
+        }
+
+        public static IEnumerable<TestCaseData> DataSuccessfulRemoveMember
+        {
+            get
+            {
+                // removing member that has no roles
+                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member1Id));
+                // removing store owner
+                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member4Id));
+                // removing a store owner that appointed others
+                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member2Id));
+                // removing admin
+                // todo: implement (there needs to be added another admin so it won't be the last)
+                // removing manager
+                // todo: implement (there needs to be a manager in the setup) 
+            }
+        }
+
+        // r 6.2, r 4.5
+        [Test]
+        [TestCaseSource("DataSuccessfulRemoveMember")]
+        public void SuccessfulRemoveMember(Func<int> requestingId, Func<int> memberToRemoveId)
+        {
+            Response<bool> response = adminFacade.RemoveMember(requestingId(), memberToRemoveId());
+
+            Assert.IsTrue(!response.ErrorOccured());
+
+            // checking that member does not exist
+            Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
+            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+            Assert.IsTrue(!memberExistsResponse.Value);
+
+            // checking that member does not have roles in stores 
+            IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId());
+            Assert.IsEmpty(rolesInStores.Keys); 
+            // todo: maybe add a check that is not an admin 
         }
 
         private int GetStoreIdByName(string storeName)

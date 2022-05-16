@@ -8,5 +8,15 @@ namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
     internal class ServiceIf : IServicePredicate
     {
+        public IServicePredicate test { get; set; }
+        public IServiceDiscount thenDis { get; set; }
+        public IServiceDiscount elseDis { get; set; }
+
+        public ServiceIf(IServicePredicate test, IServiceDiscount thenDis, IServiceDiscount elseDis)
+        {
+            this.test = test;
+            this.thenDis = thenDis;
+            this.elseDis = elseDis;
+        }
     }
 }

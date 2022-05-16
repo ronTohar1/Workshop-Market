@@ -8,5 +8,11 @@ namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
     internal class ServiceBagValue : IServicePredicate
     {
+        public int worth { get; set; }
+
+        public ServiceBagValue(int worth)
+        {
+            this.worth = worth;
+        }
     }
 }

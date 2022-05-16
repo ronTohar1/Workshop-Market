@@ -8,5 +8,13 @@ namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
     internal class ServiceProductAmount : IServicePredicate
     {
+        public int pid { get; set; }
+        public int quantity { get; set; }
+
+        public ServiceProductAmount(int pid, int quantity)
+        {
+            this.pid = pid;
+            this.quantity = quantity;
+        }
     }
 }

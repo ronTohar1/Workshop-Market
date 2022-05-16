@@ -1,7 +1,7 @@
 ﻿
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
-    internal class Discount
+    public class Discount
     {
         public int id { get; set; }
         public string description { get; set; }

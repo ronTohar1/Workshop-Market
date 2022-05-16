@@ -9,7 +9,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
 {
     public class MaxExpression : IDiscountExpression
     {
-        IList<IDiscountExpression> discounts;
+        public IList<IDiscountExpression> discounts { get; set; }
         public MaxExpression()
         {
             discounts = new List<IDiscountExpression>();

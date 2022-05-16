@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
     //this whole class and related classes implement r II.4.2
-    internal class StoreDiscountManager
+    public class StoreDiscountManager
     {
         private static Mutex idMutex = new Mutex(false);
         private static int discountId = 0;
@@ -32,10 +32,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             return res;
         }
 
-        public void AddDiscount(string description ,IExpression dis)
+        public int AddDiscount(string description ,IExpression dis)
         {
             int id = getId();
             discounts.Add(id, new Discount(id, description, dis));
+            return id;
         }
 
         public void RemoveDiscount(int did)
@@ -94,9 +95,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
         //-------------logical------------
 
         //------------Discounts-----------
-        public IDiscountExpression NewProductDiscount(int id, int discount)
+        public IDiscountExpression NewProductDiscount(int pid, int discount)
         {
-            IDiscountExpression newExp = new OneProductDiscount(id, discount);
+            IDiscountExpression newExp = new OneProductDiscount(pid, discount);
             return newExp;
         }
 
@@ -131,6 +132,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
         public IDiscountExpression NewMaxExpression()
         {
             IDiscountExpression newExp = new MaxExpression();
+            return newExp;
+        }
+
+        public IDiscountExpression NewMaxExpression(IList<IDiscountExpression> l)
+        {
+            MaxExpression newExp = new MaxExpression();
+            newExp.discounts = l;
             return newExp;
         }
         //-------Discount compound operations------

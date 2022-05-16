@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
 using System;
 using System.Collections.Concurrent;
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
@@ -26,10 +27,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private ConcurrentDictionary<int,Mutex> productsMutex;
         private Mutex transactionIdMutex;
 
+        public StoreDiscountManager discountManager { get; }
+
         // cc 5
         // cc 6
         public Store(string storeName, Member founder, Func<int, Member> membersGetter)
 	    {
+            discountManager = new StoreDiscountManager();
+
             this.name = storeName;
             this.founder = founder;
             this.appointmentsHierarchy = new Hierarchy<int>(founder.Id);
@@ -577,6 +582,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             bool result = IsManager(memberId) && HasPermission(memberId, permission);
             return result;
+        }
+        // ----------------------------- Discounts -----------------------------
+
+        public int AddDiscount(IExpression exp, string descrption, int memberId)
+        {
+            //TODO check if permission alows to add discount
+
+            int id = discountManager.AddDiscount(descrption, exp);
+            return id;
         }
 
         // ------------------------------ General ------------------------------

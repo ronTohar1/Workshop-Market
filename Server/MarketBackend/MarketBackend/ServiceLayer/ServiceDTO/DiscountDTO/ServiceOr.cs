@@ -8,5 +8,9 @@ namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
     internal class ServiceOr : ServiceLogical
     {
+        public ServiceOr(IServicePredicate firstExpression, IServicePredicate secondExpression) : base(firstExpression, secondExpression)
+        {
+
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal interface IServiceConditional
+    internal interface IServiceConditional : IServiceExpression
     {
     }
 }

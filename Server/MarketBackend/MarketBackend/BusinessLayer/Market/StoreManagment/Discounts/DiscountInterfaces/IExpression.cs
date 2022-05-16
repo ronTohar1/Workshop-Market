@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
-    internal interface IExpression
+    public interface IExpression
     {
         public double EvaluateDiscount(ShoppingBag bag, Store store);
     }

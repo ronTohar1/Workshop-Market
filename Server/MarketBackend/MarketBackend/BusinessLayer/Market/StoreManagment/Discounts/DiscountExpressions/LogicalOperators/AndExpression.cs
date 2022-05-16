@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalOperators
 {
-    internal class AndExpression : LogicalExpression
+    public class AndExpression : LogicalExpression
     {
         public AndExpression(IPredicateExpression firstExpression, IPredicateExpression secondExpression) : base(firstExpression, secondExpression)
         {

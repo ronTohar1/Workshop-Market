@@ -1,4 +1,5 @@
-﻿using MarketBackend.BusinessLayer.Buyers;
+﻿
+using MarketBackend.BusinessLayer.Buyers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces
 {
-    internal interface IPredicateExpression
+ 
+    public interface IPredicateExpression
     {
         public bool EvaluatePredicate(ShoppingBag bag, Store store);
     }

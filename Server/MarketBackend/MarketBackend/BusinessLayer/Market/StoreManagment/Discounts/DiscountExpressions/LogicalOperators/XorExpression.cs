@@ -4,7 +4,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterf
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalOperators
 {
-    internal class XorExpression : LogicalExpression
+    public class XorExpression : LogicalExpression
     {
         public XorExpression(IPredicateExpression firstExpression, IPredicateExpression secondExpression) : base(firstExpression, secondExpression)
         {

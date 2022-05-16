@@ -3,7 +3,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterf
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts
 {
-    internal class BagValuePredicate : IPredicateExpression
+    public class BagValuePredicate : IPredicateExpression
     {
         private int worth;
         
@@ -13,13 +13,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         }
 
         //check of the bag worth more than worth
-        public bool EvaluatePredicate(ShoppingBag bag, Store store)
+        public virtual bool EvaluatePredicate(ShoppingBag bag, Store store)
         {
             double sum = 0;
             IDictionary<int, Product> prods = store.products;
-            foreach (Product product in prods.Values)
+            foreach (ProductInBag pib in bag.ProductsAmounts.Keys)
             {
-                sum += product.GetPrice();
+                sum += bag.ProductsAmounts[pib] * store.products[pib.ProductId].GetPrice();
             }
             return sum >= worth;
         }

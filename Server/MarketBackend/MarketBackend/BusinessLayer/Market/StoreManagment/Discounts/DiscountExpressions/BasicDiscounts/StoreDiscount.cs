@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.BasicDiscounts
 {
-    internal class StoreDiscount : IDiscountExpression
+    public class StoreDiscount : IDiscountExpression
     {
         public int discount { get; set; }
 
@@ -19,10 +19,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         //calculate the sum of the bag and return discount percent of it
         public virtual double EvaluateDiscount(ShoppingBag bag, Store store)
         {
-            throw new NotImplementedException();
+            return (sumOfCart(bag, store) * discount)/100;
         }
 
-        public double sumOfCart(ShoppingBag bag, Store store)
+        public virtual double sumOfCart(ShoppingBag bag, Store store)
         {
             double sum = 0;
             foreach (ProductInBag pib in bag.ProductsAmounts.Keys)

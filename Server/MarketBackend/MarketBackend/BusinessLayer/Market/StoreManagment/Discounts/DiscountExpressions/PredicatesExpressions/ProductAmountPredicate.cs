@@ -4,7 +4,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterf
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts
 {
-    internal class ProductAmountPredicate : IPredicateExpression
+    public class ProductAmountPredicate : IPredicateExpression
     {
         public int pid { get; set; }
         public int quantity { get; set; }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.BasicDiscounts
 {
-    internal class DateDiscount : StoreDiscount
+    public class DateDiscount : StoreDiscount
     {
         public int year { get; set; }
         public int month { get; set; }
@@ -26,11 +26,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         {
 
             DateTime date = DateTime.Now;
-            if (year == -1 || year == date.Year)
-                if (month == -1 || month == date.Month)
-                    if (day == -1 || day == date.Day)
-                        return (sumOfCart(bag, store) * discount) / 100;
+            if (IsAllowedDiscount(date.Year, date.Month, date.Day))
+                return (GetSum(bag, store) * discount) / 100;
             return 0;
+        }
+
+        private bool IsAllowedDiscount(int year, int month, int day)
+        {
+            if (this.year == -1 || this.year == year)
+                if (this.month == -1 || this.month == month)
+                    if (this.day == -1 || this.day == day)
+                        return true;
+            return false;
+        }
+
+        public virtual double GetSum(ShoppingBag bag, Store store)
+        {
+            return (sumOfCart(bag, store) * discount) / 100;
         }
     }
 }

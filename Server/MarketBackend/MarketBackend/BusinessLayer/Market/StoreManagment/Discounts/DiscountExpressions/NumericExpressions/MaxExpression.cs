@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.NumericExpressions
 {
-    internal class MaxExpression : IDiscountExpression
+    public class MaxExpression : IDiscountExpression
     {
         IList<IDiscountExpression> discounts;
         public MaxExpression()

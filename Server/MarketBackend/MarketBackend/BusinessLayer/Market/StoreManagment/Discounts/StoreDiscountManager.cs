@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
+    //this whole class and related classes implement r II.4.2
     internal class StoreDiscountManager
     {
         private static Mutex idMutex = new Mutex(false);
@@ -37,6 +38,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             discounts.Add(id, new Discount(id, description, dis));
         }
 
+        public void RemoveDiscount(int did)
+        {
+            if (discounts.ContainsKey(did))
+                discounts.Remove(did);
+            else
+                throw new MarketException($"No Discount with id: {did}");
+        }
         public double EvaluateDiscountForBag(ShoppingBag bag, Store store)
         {
             double sum = 0;

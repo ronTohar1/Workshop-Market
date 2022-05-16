@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions
 {
-    internal class IfDiscount : IConditionalExpression
+    public class IfDiscount : IConditionalExpression
     {
         private IPredicateExpression test;
         private IDiscountExpression thenDis;

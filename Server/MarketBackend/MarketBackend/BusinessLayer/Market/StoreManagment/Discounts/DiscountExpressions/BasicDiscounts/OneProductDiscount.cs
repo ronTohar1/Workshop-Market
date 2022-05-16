@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions
 {
-    internal class OneProductDiscount : StoreDiscount
+    public class OneProductDiscount : StoreDiscount
     {
         public int productId { get; set; }
 

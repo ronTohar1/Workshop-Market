@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions
 {
-    internal class ConditionDiscount : IConditionalExpression
+    public class ConditionDiscount : IConditionalExpression
     {
         private IPredicateExpression pred;
         private IDiscountExpression then;

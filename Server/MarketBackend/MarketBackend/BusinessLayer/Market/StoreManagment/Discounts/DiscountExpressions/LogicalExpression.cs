@@ -3,7 +3,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterf
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions
 {
-    internal abstract class LogicalExpression : IPredicateExpression
+    public abstract class LogicalExpression : IPredicateExpression
     {
         public IPredicateExpression firstExpression { get; set; }
         public IPredicateExpression secondExpression { get; set; }

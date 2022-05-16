@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
-    internal interface IConditionalExpression : IExpression
+    public interface IConditionalExpression : IExpression
     {
 
     }

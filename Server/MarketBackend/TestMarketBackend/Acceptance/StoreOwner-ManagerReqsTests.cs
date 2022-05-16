@@ -165,6 +165,35 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
         }
 
+        // r 4.4
+        // r S 5
+        [Test]
+        [TestCase(2)]
+        [TestCase(10)]
+        [TestCase(50)]
+        public void ConcurrentStoreOwnerAppointment(int threadsNumber)
+        {
+            // todo: maybe add more test cases on other things such as different members, different stores etc. 
+            Response<IList<int>> ownersBefore =
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+            // Appointing the same member by many threads 
+            Func<Response<bool>>[] jobs =
+                Enumerable.Repeat(() => storeManagementFacade.MakeCoOwner(storeOwnerId, member1Id, storeId), threadsNumber).ToArray();
+
+            Response<bool>[] responses = GetResponsesFromThreads(jobs);
+
+            Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+
+            Response<IList<int>> ownersAfter =
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+            IList<int> expectedOwnersAfter = ownersBefore.Value;
+            expectedOwnersAfter.Add(member1Id);
+
+            Assert.IsTrue(SameElements(expectedOwnersAfter, ownersAfter.Value));
+        }
+
         // r.4.6
         [Test]
         public void SuccessfulStoreManagerAppointment()

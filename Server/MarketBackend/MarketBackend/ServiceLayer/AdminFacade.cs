@@ -22,43 +22,45 @@ namespace MarketBackend.ServiceLayer
             this.logger = logger;
         }
 
-        public Response<IReadOnlyCollection<Purchase>> GetBuyerPurchaseHistory(int currUserId, int buyerId)
+        public Response<IReadOnlyCollection<ServicePurchase>> GetBuyerPurchaseHistory(int currUserId, int buyerId)
         {
             try
             {
                 IReadOnlyCollection<Purchase> l = adminManager.GetUserHistory(currUserId, buyerId);
+                IReadOnlyCollection<ServicePurchase> servicePurchases = purchasesToServicePurchases(l);
                 logger.Info($"GetBuyerPurchaseHistory was called with parameters [currUserId = {currUserId}, buyerId = {buyerId}]");
-                return new Response<IReadOnlyCollection<Purchase>>(l);
+                return new Response<IReadOnlyCollection<ServicePurchase>>(servicePurchases);
             }
             catch (MarketException mex)
             {
                 logger.Error(mex, $"method: GetBuyerPurchaseHistory, parameters: [currUserId = {currUserId}, buyerId = {buyerId}]");
-                return new Response<IReadOnlyCollection<Purchase>>(mex.Message);
+                return new Response<IReadOnlyCollection<ServicePurchase>>(mex.Message);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"method: GetBuyerPurchaseHistory, parameters: [currUserId = {currUserId}, buyerId = {buyerId}]");
-                return new Response<IReadOnlyCollection<Purchase>>("Sorry, an unexpected error occured. Please try again");
+                return new Response<IReadOnlyCollection<ServicePurchase>>("Sorry, an unexpected error occured. Please try again");
             }
         }
 
-        public Response<IList<Purchase>> GetStorePurchaseHistory(int currUserId, int storeId)
+        public Response<IReadOnlyCollection<ServicePurchase>> GetStorePurchaseHistory(int currUserId, int storeId)
         {
             try
             {
                 IList<Purchase> l = adminManager.GetStoreHistory(currUserId, storeId);
+                IReadOnlyCollection<ServicePurchase> servicePurchases = purchasesToServicePurchases(l);
                 logger.Info($"GetStorePurchaseHistory was called with parameters [currUserId = {currUserId}, storeId = {storeId}]");
-                return new Response<IList<Purchase>>(l);
+                return new Response<IReadOnlyCollection<ServicePurchase>>(servicePurchases);
             }
             catch (MarketException mex)
             {
                 logger.Error(mex, $"method: GetStorePurchaseHistory, parameters: [currUserId = {currUserId}, storeId = {storeId}]");
-                return new Response<IList<Purchase>>(mex.Message);
+                return new Response<IReadOnlyCollection<ServicePurchase>>(mex.Message);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"method: GetStorePurchaseHistory, parameters: [currUserId = {currUserId}, storeId = {storeId}]");
-                return new Response<IList<Purchase>>("Sorry, an unexpected error occured. Please try again");
+                return new Response<IReadOnlyCollection<ServicePurchase>>("Sorry, an unexpected error occured. Please try again");
             }
         }
 
@@ -82,6 +84,17 @@ namespace MarketBackend.ServiceLayer
             //}
             //return new Response<IList<Purchase>>();
         //}
+
+        private IReadOnlyCollection<ServicePurchase> purchasesToServicePurchases(IEnumerable<Purchase> purchases)
+        {
+            List<ServicePurchase> result = new List<ServicePurchase>();
+            foreach (Purchase purchase in purchases)
+            {
+                result.Add(new ServicePurchase(purchase.purchaseDate, purchase.purchasePrice, purchase.purchaseDescription));
+            }
+
+            return result;
+        }
 
     }
 }

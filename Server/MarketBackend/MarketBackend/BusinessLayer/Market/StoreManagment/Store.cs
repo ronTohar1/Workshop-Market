@@ -21,7 +21,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private ReaderWriterLock rolesAndPermissionsLock;
 
         private IDictionary<int, IDictionary<Product,int>> transactions;
-        private Mutex productsMutex;
+        private ConcurrentDictionary<int,Mutex> productsMutex;
         private Mutex transactionIdMutex;
 
         // cc 5
@@ -40,7 +40,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
             //Transactions
             this.transactions = new Dictionary<int, IDictionary<Product, int>>();
-            this.productsMutex = new Mutex();
+            this.productsMutex = new();
             this.transactionIdMutex = new Mutex();
 
 
@@ -96,24 +96,29 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
             foreach (KeyValuePair<int, int> product in sortedProducts)
             {
-                int prodId = product.Key;
-                int amount = product.Value;
-                string? canBuyProduct = ReserveSingleProduct(buyerId, prodId, amount);
-                if (canBuyProduct != null)
+                if (transaction != -1)
                 {
-                    canBuy += canBuyProduct;
-
-                    if (transaction != -1)
+                    int prodId = product.Key;
+                    int amount = product.Value;
+                
+                    string? canBuyProduct = ReserveSingleProduct(buyerId, prodId, amount);
+                    if (canBuyProduct != null)
                     {
-                        transactions.Remove(transaction);
-                        transaction = -1;
+                        canBuy += canBuyProduct;
+
+                        if (transaction != -1)
+                        {
+                            transactions.Remove(transaction);
+                            transaction = -1;
+                        }
                     }
-                }
-                else if (transaction != -1) {
-                    Product productObj = this.SearchProductByProductId(prodId);
-                    if (productObj == null)
-                        throw new Exception($"A shopping bag contained a product that is not in the store!\nProductId: {prodId}, Store name: {this.name}");
-                    transactions[transaction].Add(productObj, amount);
+                    else
+                    {
+                        Product productObj = this.SearchProductByProductId(prodId);
+                        if (productObj == null)
+                            throw new Exception($"A shopping bag contained a product that is not in the store!\nProductId: {prodId}, Store name: {this.name}");
+                        transactions[transaction].Add(productObj, amount);
+                    }
                 }
             }
             transactionId = transaction;
@@ -124,7 +129,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // Removing the amount from the prodcut in the inventory 
         private string? ReserveSingleProduct(int buyerId, int productId, int amount)
         {
-            lock (productsMutex)
+            if (!products.ContainsKey(productId))
+                return $"Product with id {productId} doesn't exist in store {this.name}";
+            lock (products[productId].storeMutex)
             {
                 string? canBuy = CanBuyProduct(buyerId, productId, amount);
 
@@ -189,7 +196,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return newProduct.id;
         }
         // r.4.1
-        public void AddProductToInventory(int memberId, int productId, int amount) {
+        public virtual void AddProductToInventory(int memberId, int productId, int amount) {
             // we allow this only to coOwners
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add to inventory: ");
             if (!products.ContainsKey(productId))

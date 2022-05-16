@@ -112,7 +112,7 @@ namespace TestMarketBackend.Acceptance
             // the owner(member2) appoints member3 as a store owner
             Response<bool> response = storeManagementFacade.MakeCoOwner(member2Id, member3Id, storeId);
 
-            // the owner(member2) appoints member4 as a store owner
+            // the owner(member2) appoints member4 as a store manager
             response = storeManagementFacade.MakeCoManager(member2Id, member4Id, storeId);
 
             // Opening a store whose owner is member2

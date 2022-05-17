@@ -219,7 +219,6 @@ public class PurchasesManager
             int storeId = shoppingBag.StoreId;
             Store store = storeController.GetStore(storeId);
             IDictionary<ProductInBag, int> products = shoppingBag.ProductsAmounts;
-            int transactionId = storesTransactions[storeId];
 
             (double total ,double discount) = store.GetTotalBagCost(shoppingBag);
             storesTotal.Add(storeId, total-discount);

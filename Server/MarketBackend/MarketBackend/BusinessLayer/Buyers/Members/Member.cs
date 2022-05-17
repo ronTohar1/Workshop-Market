@@ -11,11 +11,12 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         public string Username { get; private set; }
         private int password;
         private bool _loggedIn;
-        private IList<string> notifications;
+        public IList<string> pendingNotifications { get; private set; }
         private Security security; // Responsible for securing the member's details.
-        /*private Notifier notifier;*/
+        private Notifier notifier;
 
         private Mutex mutex;
+        private Mutex notificationMutex;
         private ReaderWriterLock loggedInLock;
         private const int lockTime = 2000;
 
@@ -41,6 +42,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         {
             //Init locks first
             this.mutex = new Mutex();
+            this.notificationMutex = new Mutex();
             this.loggedInLock = new ReaderWriterLock();
 
             //Init fields
@@ -48,32 +50,24 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             this.Username = username;
             this.password = security.HashPassword(password);
             this._loggedIn = false;
-            this.notifications = new SynchronizedCollection<string>();
-
+            this.pendingNotifications = new SynchronizedCollection<string>();
         }
 
 
-        /* Login with notifications
-         * public bool Login(string password,Notifier notifier)
-        {
-            lock (mutex)
-            {
-                if (LoggedIn)
-                    throw new MarketException("Cannot login to a user that is logged in!");
-                LoggedIn = true;
-                this.notifier = notifier;
-                return this.password == password.GetHashCode();
-            }
-        }*/
-
-        public bool Login(string password)
+        public bool Login(string password, Func<string[], bool> notifyFunc)
         {
             lock (mutex)
             {
                 if (LoggedIn)
                     throw new MarketException("This user is already logged in!");
                 if (this.password == security.HashPassword(password))
+                {
+                    lock (notificationMutex) {
+                        this.notifier = new Notifier(notifyFunc);
+                    }
                     LoggedIn = true;
+                    SendPending();
+                }
                 return LoggedIn;
             }
         }
@@ -88,6 +82,26 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             }
         }
 
+        public void Notify(string[] notifications) {
+            lock (notificationMutex)
+            {
+                if (!LoggedIn || !notifier.tryToNotify(notifications))
+                {
+                    foreach (string notification in notifications)
+                        pendingNotifications.Add(notification);
+                }
+            }
+        }
 
+        public void Notify(string notification)
+       => Notify(new string[] { notification });
+
+        private void SendPending() {
+            lock (notificationMutex)
+            {// assumes that the member after log in
+                if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
+                    pendingNotifications.Clear();
+            }
+        }
     }
 }

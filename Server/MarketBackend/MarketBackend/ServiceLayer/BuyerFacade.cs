@@ -334,7 +334,7 @@ namespace MarketBackend.ServiceLayer
                 Member? m = membersController.GetMember(userName);
                 if (m == null)
                     return new Response<int>($"No member with userName {userName}");
-                bool logged = m.Login(password);
+                bool logged = m.Login(password, produceNotifierFunc());// the member could have connected from another computer 
                 if (logged == false)
                     return new Response<int>("Incorrect password");
                 int id = m.Id;
@@ -351,6 +351,23 @@ namespace MarketBackend.ServiceLayer
                 logger.Error(ex, $"method: Login, parameters: [userName = {userName}, password undisclosed]");
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
             }
+        }
+
+        private Func<string[], bool> produceNotifierFunc()
+        {
+            //this function will recieve the communication means and will return
+            //a closure, that given string[] to transfer will attempt to send to 
+            //the client the array - David on it, waiting for communication means tho
+
+            Func<string[], bool> tryToSend = (string[] messages) =>
+            {
+                //bool succeddded = Socket.send(messages);
+                //return succeddded;
+                throw new NotImplementedException();
+            };
+
+            return tryToSend;
+
         }
 
         //done

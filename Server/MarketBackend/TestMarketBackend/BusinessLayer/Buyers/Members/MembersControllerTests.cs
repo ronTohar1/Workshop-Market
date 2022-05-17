@@ -17,6 +17,7 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Members
 
         private readonly string validUsername = "Ron";
         private readonly string validPassword = "pass";
+        
 
         [SetUp]
         public void SetUp()

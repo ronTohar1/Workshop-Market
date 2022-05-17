@@ -8,16 +8,17 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
 {
     public class Notifier
     {
-        private Action<string[]> notifyFunc;
+        private Func<string[],bool> notifyFunc;
          
-        public Notifier(Action<string[]> notifyFunc)
+        public Notifier(Func<string[], bool> notifyFunc)
         {
             this.notifyFunc = notifyFunc;
         }
 
-        public void notify(string[] notifications)
+
+        public bool tryToNotify(string[] notifications)
         {
-            this.notifyFunc(notifications);
+            return this.notifyFunc(notifications);
         }
     }
 }

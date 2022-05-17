@@ -290,7 +290,7 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        private IPredicateExpression ServicePredicateToPredicate(IServicePredicate spred, StoreDiscountManager manager)
+        private IPredicateExpression ServicePredicateToPredicate(IServicePredicate spred, StoreDiscountPolicyManager manager)
         {
             if (spred is ServiceLogical)
             {
@@ -325,7 +325,7 @@ namespace MarketBackend.ServiceLayer
 
             }
         } 
-        private IDiscountExpression ServiceDiscountToDiscount(IServiceDiscount discount, StoreDiscountManager manager)
+        private IDiscountExpression ServiceDiscountToDiscount(IServiceDiscount discount, StoreDiscountPolicyManager manager)
         {
             if (discount is ServiceDateDiscount)
             {
@@ -354,7 +354,7 @@ namespace MarketBackend.ServiceLayer
                 return manager.NewStoreDiscount(dis.discount);
             }
         }
-        private IExpression ServiceExpressionToExpression(IServiceExpression sexp, StoreDiscountManager manager)
+        private IExpression ServiceExpressionToExpression(IServiceExpression sexp, StoreDiscountPolicyManager manager)
         {
             if (sexp is IServiceDiscount)
             {
@@ -383,7 +383,7 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<int>($"There isn't a store with an id {storeId}");
                 IExpression exp = ServiceExpressionToExpression(expression, s.discountManager);
-                int id = s.AddDiscount(exp, description, memberId); 
+                int id = s.AddDiscountPolicy(exp, description, memberId); 
                 logger.Info($"AddDiscount was called with parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<int>(id);
             }
@@ -406,7 +406,7 @@ namespace MarketBackend.ServiceLayer
                 Store? s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
-                s.RemoveDiscount(disId, memberId);
+                s.RemoveDiscountPolicy(disId, memberId);
                 logger.Info($"RemoveDiscount was called with parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<bool>(true);
             }

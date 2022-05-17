@@ -10,14 +10,14 @@ using System.Collections.Concurrent;
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 {
     //this whole class and related classes implement r II.4.2
-    public class StoreDiscountManager
+    public class StoreDiscountPolicyManager
     {
         private static Mutex idMutex = new Mutex(false);
         private static int discountId = 0;
 
         private IDictionary<int, Discount> discounts;
 
-        public StoreDiscountManager()
+        public StoreDiscountPolicyManager()
         {
             this.discounts = new ConcurrentDictionary<int, Discount>();
         }

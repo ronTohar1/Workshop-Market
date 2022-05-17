@@ -3,6 +3,9 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
 using System;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
     public class Store
@@ -28,14 +31,17 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private ConcurrentDictionary<int,Mutex> productsMutex;
         private Mutex transactionIdMutex;
 
-        public StoreDiscountManager discountManager { get; }
+        public StoreDiscountPolicyManager discountManager { get; }
+        public StorePurchasePolicyManager purchaseManager { get; }
 
 
         // cc 5
         // cc 6
         public Store(string storeName, Member founder, Func<int, Member> membersGetter)
 	    {
-            discountManager = new StoreDiscountManager();
+            discountManager = new StoreDiscountPolicyManager();
+            purchaseManager = new StorePurchasePolicyManager();
+
             this.name = storeName;
             this.founder = founder;
             this.isOpen = true;
@@ -651,9 +657,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             bool result = IsManager(memberId) && HasPermission(memberId, permission);
             return result;
         }
-        // ----------------------------- Discounts -----------------------------
+        // ----------------------------- Discounts policy -----------------------------
 
-        public int AddDiscount(IExpression exp, string descrption, int memberId)
+        public int AddDiscountPolicy(IExpression exp, string descrption, int memberId)
         {
             //TODO check if permission alows to handle discounts
 
@@ -661,11 +667,28 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return id;
         }
 
-        public void RemoveDiscount(int disId, int memberId)
+        public void RemoveDiscountPolicy(int disId, int memberId)
         {
             //TODO check if permission alows to handle discounts
 
             discountManager.RemoveDiscount(disId);
+        }
+
+        // ----------------------------- Purchases policy -----------------------------
+
+        public int AddPurchasePolicy(IPurchasePolicy exp, string descrption, int memberId)
+        {
+            //TODO check if permission alows to handle discounts
+
+            int id = purchaseManager.AddPurchasePolicy(descrption, exp);
+            return id;
+        }
+
+        public void RemovePurchasePolicy(int policyId, int memberId)
+        {
+            //TODO check if permission alows to handle discounts
+
+            purchaseManager.RemovePurchasePolicy(policyId);
         }
 
         // ------------------------------ General ------------------------------

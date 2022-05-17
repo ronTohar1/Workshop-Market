@@ -113,7 +113,7 @@ namespace TestMarketBackend.Acceptance
             }
         }
 
-        // r 6.2, r 4.5
+        // r 6.2
         // cc 2, cc 5
         [Test]
         [TestCaseSource("DataFailedRemoveMember")]
@@ -162,7 +162,7 @@ namespace TestMarketBackend.Acceptance
             }
         }
 
-        // r 6.2, r 4.5
+        // r 6.2
         [Test]
         [TestCaseSource("DataSuccessfulRemoveMember")]
         public void SuccessfulRemoveMember(Func<int> requestingId, Func<int> memberToRemoveId)
@@ -180,6 +180,38 @@ namespace TestMarketBackend.Acceptance
             IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId());
             Assert.IsEmpty(rolesInStores.Keys); 
             // todo: maybe add a check that is not an admin 
+        }
+
+        // r 6.2, r 4.5
+        [Test]
+        public void SuccessfulRemoveMemberThatAppointedStoreOwners()
+        {
+            int requestingId = adminId;
+            int memberToRemoveId = member2Id;
+            int storeId = AcceptanceTests.storeId;
+            int[] appointedStoreOwnersIds = { member3Id, member4Id }; 
+
+            Response<bool> response = adminFacade.RemoveMember(requestingId, memberToRemoveId);
+
+            Assert.IsTrue(!response.ErrorOccured());
+
+            // checking that member does not exist
+            Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
+            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+            Assert.IsTrue(!memberExistsResponse.Value);
+
+            // checking that member does not have roles in stores 
+            IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId);
+            Assert.IsEmpty(rolesInStores.Keys);
+            // todo: maybe add a check that is not an admin
+
+            // checking that the appointed store owners were removed from store: 
+            Response<IList<int>> respones = storeManagementFacade.GetMembersInRole(storeId, adminId, Role.Owner); // the admin id because request needs permissions 
+            Assert.IsTrue(!respones.ErrorOccured());
+            foreach (int appointedStoreOwnerId in appointedStoreOwnersIds)
+            {
+                Assert.IsTrue(!respones.Value.Contains(appointedStoreOwnerId)); 
+            }
         }
 
         // r 6.2

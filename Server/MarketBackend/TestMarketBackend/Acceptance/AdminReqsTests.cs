@@ -184,12 +184,12 @@ namespace TestMarketBackend.Acceptance
 
         // r 6.2, r 4.5
         [Test]
-        public void SuccessfulRemoveMemberThatAppointedStoreOwners()
+        public void SuccessfulRemoveMemberThatAppointedOthers()
         {
             int requestingId = adminId;
             int memberToRemoveId = member2Id;
             int storeId = AcceptanceTests.storeId;
-            int[] appointedStoreOwnersIds = { member3Id, member4Id }; 
+            int[] appointedIds = { member3Id, member4Id }; 
 
             Response<bool> response = adminFacade.RemoveMember(requestingId, memberToRemoveId);
 
@@ -206,11 +206,14 @@ namespace TestMarketBackend.Acceptance
             // todo: maybe add a check that is not an admin
 
             // checking that the appointed store owners were removed from store: 
-            Response<IList<int>> respones = storeManagementFacade.GetMembersInRole(storeId, adminId, Role.Owner); // the admin id because request needs permissions 
-            Assert.IsTrue(!respones.ErrorOccured());
-            foreach (int appointedStoreOwnerId in appointedStoreOwnersIds)
+            Response<IList<int>> coOwnersRespone = storeManagementFacade.GetMembersInRole(storeId, adminId, Role.Owner); // the admin id because request needs permissions 
+            Assert.IsTrue(!coOwnersRespone.ErrorOccured());
+            Response<IList<int>> managersRespone = storeManagementFacade.GetMembersInRole(storeId, adminId, Role.Owner); // the admin id because request needs permissions 
+            Assert.IsTrue(!managersRespone.ErrorOccured());
+            foreach (int appointedId in appointedIds)
             {
-                Assert.IsTrue(!respones.Value.Contains(appointedStoreOwnerId)); 
+                Assert.IsTrue(!coOwnersRespone.Value.Contains(appointedId));
+                Assert.IsTrue(!managersRespone.Value.Contains(appointedId));
             }
         }
 

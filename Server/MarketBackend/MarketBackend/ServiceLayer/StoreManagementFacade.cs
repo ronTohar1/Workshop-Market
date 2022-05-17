@@ -170,6 +170,12 @@ namespace MarketBackend.ServiceLayer
             return new Response<bool>();
         }
 
+        // r 4.5
+        public Response<bool> RemoveCoOwnerAppointment(int requestingMemberId, int storeId, int coOwnerToRemoveId)
+        {
+            return new Response<bool>("Not implemented yet"); 
+        }
+
         //TODO
         //public Response<bool> RemoveDiscountPolicy(string discountCode, int userId, int storeId, int productId, double discount)
         //{

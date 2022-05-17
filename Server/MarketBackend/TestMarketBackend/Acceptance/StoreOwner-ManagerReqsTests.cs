@@ -194,6 +194,111 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(SameElements(expectedOwnersAfter, ownersAfter.Value));
         }
 
+        // succesful, need to check:
+
+        //      the store owner removed is removed
+        //      the store owners it appointed are removed 
+        //      the store managers it appointed are removed
+
+        // concurrent tests for removing the store owner 
+
+        public static IEnumerable<TestCaseData> DataFailedRemoveCoOwnerAppointment
+        {
+            get
+            {
+                // remove not a buyer
+                yield return new TestCaseData(() => member2Id, () => storeId, () => -1);
+                // remove a guest
+                yield return new TestCaseData(() => member2Id, () => storeId, () => guest1Id);
+                // remove a member
+                yield return new TestCaseData(() => member2Id, () => storeId, () => member1Id);
+                // remove a manager (appointed by the requesting  co owner) 
+                yield return new TestCaseData(() => member2Id, () => storeId, () => member4Id);
+                // remove a store owner that it not appointed by the requsting co owner 
+                yield return new TestCaseData(() => member3Id, () => storeId, () => member2Id);
+                // not a storeId
+                // nice to have to do sometime maybe, not doing this at the moment so we can check the roles in the store before and after the test
+                // by not a buyer
+                yield return new TestCaseData(() => -1, () => storeId, () => member2Id);
+                // by a guest
+                yield return new TestCaseData(() => guest1Id, () => storeId, () => member2Id);
+                // by a member (that is not a co owner or manager in the store)
+                yield return new TestCaseData(() => member1Id, () => storeId, () => member2Id);
+                // by a manager
+                yield return new TestCaseData(() => member4Id, () => storeId, () => member2Id);
+            }
+        }
+
+        // r 4.5
+        [Test]
+        [TestCaseSource("DataFailedRemoveCoOwnerAppointment")]
+        public void FailedRemoveCoOwnerAppointment(Func<int> requestingId, Func<int> storeId, Func<int> coOwnerToRemoveId)
+        {
+            // getting roles before to check the roles after the action 
+            IDictionary<Role, IList<int>> rolesBefore = GetRolesInStore(storeId()); 
+
+            Response<bool> response = storeManagementFacade.RemoveCoOwnerAppointment(requestingId(), storeId(), coOwnerToRemoveId());
+
+            Assert.IsTrue(response.ErrorOccured());
+
+            // check that roles in the store remained as before 
+            IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId());
+
+            Assert.IsTrue(SameDictionariesWithLists(rolesBefore, roles)); 
+        }
+
+        // r 4.5
+        [Test]
+        public void SuccessfulRemoveCoOwnerAppointment()
+        {
+            int requestingId = member2Id;
+            // using storeId
+            int coOwnerToRemoveId = member5Id; // appointed by 2, and appointed 6 and 7
+
+            // getting roles before to check the roles after the action 
+            IDictionary<Role, IList<int>> expectedRoles = GetRolesInStore(storeId);
+            expectedRoles[Role.Owner].Remove(coOwnerToRemoveId);
+            expectedRoles[Role.Owner].Remove(member6Id);
+            expectedRoles[Role.Manager].Remove(member7Id);
+
+            Response<bool> response = storeManagementFacade.RemoveCoOwnerAppointment(requestingId, storeId, coOwnerToRemoveId);
+            Assert.IsTrue(!response.ErrorOccured());
+
+            // check that roles in the store where changed as needed 
+            IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId);
+
+            Assert.IsTrue(SameDictionariesWithLists(expectedRoles, roles));
+        }
+
+        // r 4.5
+        // r S 5
+        [Test]
+        [TestCase(2)]
+        [TestCase(10)]
+        [TestCase(50)]
+        public void ConcurrentRemoveCoOwnerAppointment(int threadsNumber)
+        {
+            int requestingId = member2Id;
+            // using storeId
+            int coOwnerToRemoveId = member5Id; // appointed by 2, and appointed 6 and 7
+
+            // getting roles before to check the roles after the action 
+            IDictionary<Role, IList<int>> expectedRoles = GetRolesInStore(storeId);
+            expectedRoles[Role.Owner].Remove(coOwnerToRemoveId);
+            expectedRoles[Role.Owner].Remove(member6Id);
+            expectedRoles[Role.Manager].Remove(member7Id);
+
+            Func<Response<bool>>[] jobs =
+                Enumerable.Repeat(() => storeManagementFacade.RemoveCoOwnerAppointment(requestingId, storeId, coOwnerToRemoveId), threadsNumber).ToArray();
+            Response<bool>[] responses = GetResponsesFromThreads(jobs);
+            Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+
+            // check that roles in the store where changed as needed 
+            IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId);
+
+            Assert.IsTrue(SameDictionariesWithLists(expectedRoles, roles));
+        }
+
         // r.4.6
         [Test]
         public void SuccessfulStoreManagerAppointment()
@@ -286,13 +391,13 @@ namespace TestMarketBackend.Acceptance
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             Assert.IsTrue(!managers.ErrorOccured());
-            Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id }));
+            Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id , member7Id}));
 
             Response<IList<int>> owners =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
             Assert.IsTrue(!owners.ErrorOccured());
-            Assert.IsTrue(SameElements(owners.Value, new List<int>() { storeOwnerId, member3Id }));
+            Assert.IsTrue(SameElements(owners.Value, new List<int>() { storeOwnerId, member3Id, member5Id, member6Id }));
         }
 
         [Test]
@@ -304,5 +409,18 @@ namespace TestMarketBackend.Acceptance
 
             Assert.IsTrue(!purchaseHistory.ErrorOccured());
         }
+
+        private IDictionary<Role, IList<int>> GetRolesInStore(int storeId)
+        {
+            IDictionary<Role, IList<int>> roles = new Dictionary<Role, IList<int>>();
+            foreach (Role role in Enum.GetValues(typeof(Role)))
+            {
+                Response<IList<int>> membersInRoleResponse = storeManagementFacade.GetMembersInRole(storeId, member2Id, role); // notice member2 is co owner in all stores 
+                Assert.IsTrue(!membersInRoleResponse.ErrorOccured());
+                roles[role] = membersInRoleResponse.Value;
+            }
+            return roles;
+        }
+
     }
 }

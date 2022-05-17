@@ -8,7 +8,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
 		public virtual int amountInInventory { get; set; }
 		public IList<PurchaseOption> purchaseOptions { get; }
-		public IList<string> reviews; //mapping between member name and 
+		public IDictionary<int,IList<string>> reviews; //mapping between member id and his reviews
 		public double pricePerUnit { get; set; }
 		public virtual string category { get; private set; }
 		public double productdicount { get; set; }
@@ -18,7 +18,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 		private Mutex amountInInventoryMutex;
 		private Mutex purchaseOptionsMutex;
-		private Mutex reviewMutex;
 		private Mutex pricePerUnitMutex;
 		private Mutex categoryMutex;
 		private Mutex productDiscountMutex;
@@ -31,14 +30,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			this.name = product_name;
 			this.amountInInventory = 0;
 			this.purchaseOptions = new SynchronizedCollection<PurchaseOption>();
-			this.reviews = new SynchronizedCollection<string>(); // 
+			this.reviews = new ConcurrentDictionary<int, IList<string>>(); // 
 			this.pricePerUnit = pricePerUnit;
 			this.category = category;
 			this.productdicount = productdicount;
 
 			amountInInventoryMutex = new Mutex();
 			purchaseOptionsMutex = new Mutex();
-			reviewMutex = new Mutex();
 			pricePerUnitMutex = new Mutex();
 			categoryMutex = new Mutex();
 			productDiscountMutex = new Mutex();
@@ -95,16 +93,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		}
 
 		// r.4.2
-		public void AddProductReview(string memberRevierName, string review)
+		public void AddProductReview(int memberId, string review)
 		{
-			reviewMutex.WaitOne();
-			reviews.Add(memberRevierName + ": " + review);
-			if (String.IsNullOrWhiteSpace(review)) {
-				reviewMutex.ReleaseMutex();
+			if (String.IsNullOrWhiteSpace(review))
 				throw new MarketException($"can't recieve an empty comment");
-			}
-
-			reviewMutex.ReleaseMutex();
+			
+			if (!reviews.ContainsKey(memberId))
+				reviews[memberId] = new SynchronizedCollection<string>();
+			reviews[memberId].Add(review);
 		}
 		// r.4.2
 		public void SetProductCategory(string newCategory)

@@ -100,7 +100,6 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        //done
         public Response<bool> MakeCoOwner(int userId, int targetUserId, int storeId)
         {
             try
@@ -123,6 +122,7 @@ namespace MarketBackend.ServiceLayer
                 return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }
+
 
         //done
         public Response<bool> MakeCoManager(int userId, int targetUserId, int storeId)

@@ -164,6 +164,7 @@ public class PurchasesManager
                 //Remove from cart
                 buyer.Cart.RemoveProductFromCart(productInBag);
             }
+            store.notifyAllStoreOwners($"The buyer with the id:${buyer.Id} has purchased at the store: {store.name}");
         }
     }
 

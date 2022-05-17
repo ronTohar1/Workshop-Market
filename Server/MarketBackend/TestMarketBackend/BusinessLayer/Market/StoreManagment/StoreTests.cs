@@ -9,6 +9,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market;
 using MarketBackend.BusinessLayer;
+using MarketBackend.BusinessLayer.Buyers;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -904,32 +905,33 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
                 correctTotal = correctTotal * (1 - (discountPercentage3 / 100));
 
         }
-        [Test]
-        [TestCase(productIdAmount1, productIdAmount2, productIdAmount3)]//once with amount discount
-        [TestCase(productIdAmount1, productIdAmount1, productIdAmount1)]//once without amount discount
-        public void TestGetTotalBagCostSuccess(int productIdAmount1, int productIdAmount2, int productIdAmount3)
-        {
-            SetupStoreNoPermissionsChange();
-            SetUpProductsIdInStore();
-            SetupDiscountPercentages(productIdAmount1, productIdAmount2, productIdAmount3);
-            Assert.True(store.GetTotalBagCost(productsAmount) == correctTotal);
-        }
-        [Test]
-        public void TestGetTotalBagCostMinProductAmountPolicyFail()
-        {
-            SetupStoreNoPermissionsChange();
-            SetUpProductsIdInStore();
-            SetupDiscountPercentages(productIdAmount1, productIdAmount2, productIdAmount3);
-            store.policy.SetMinAmountPerProduct(productId1, productIdAmount1 + productIdAmount1);
-            Assert.Throws<MarketException>(() => store.GetTotalBagCost(productsAmount));
-        }
 
-        [Test]
-        public void TestGetTotalBagCostWithoutProductIdFail()
-        {
-            SetupStoreNoPermissionsChange();
-            Assert.Throws<MarketException>(() => store.GetTotalBagCost(productsAmount));
-        }
+        //[Test]
+        //[TestCase(productIdAmount1, productIdAmount2, productIdAmount3)]//once with amount discount
+        //[TestCase(productIdAmount1, productIdAmount1, productIdAmount1)]//once without amount discount
+        //public void TestGetTotalBagCostSuccess(int productIdAmount1, int productIdAmount2, int productIdAmount3)
+        //{
+        //    SetupStoreNoPermissionsChange();
+        //    SetUpProductsIdInStore();
+        //    SetupDiscountPercentages(productIdAmount1, productIdAmount2, productIdAmount3);
+        //    Assert.True(store.GetTotalBagCost(productsAmount) == correctTotal);
+        //}
+        //[Test]
+        //public void TestGetTotalBagCostMinProductAmountPolicyFail()
+        //{
+        //    SetupStoreNoPermissionsChange();
+        //    SetUpProductsIdInStore();
+        //    SetupDiscountPercentages(productIdAmount1, productIdAmount2, productIdAmount3);
+        //    store.policy.SetMinAmountPerProduct(productId1, productIdAmount1 + productIdAmount1);
+        //    Assert.Throws<MarketException>(() => store.GetTotalBagCost(productsAmount));
+        //}
+
+        //[Test]
+        //public void TestGetTotalBagCostWithoutProductIdFail()
+        //{
+        //    SetupStoreNoPermissionsChange();
+        //    Assert.Throws<MarketException>(() => store.GetTotalBagCost(productsAmount));
+        //}
 
         [Test]
         [TestCase(productName1)]

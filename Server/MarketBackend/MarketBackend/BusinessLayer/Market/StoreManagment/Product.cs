@@ -8,7 +8,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
 		public virtual int amountInInventory { get; set; }
 		public IList<PurchaseOption> purchaseOptions { get; }
-		public IList<string> reviews; //mapping between member name and 
+		public IDictionary<int,IList<string>> reviews; //mapping between member id and his reviews
 		public double pricePerUnit { get; set; }
 		public virtual string category { get; private set; }
 		public double productdicount { get; set; }
@@ -31,7 +31,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			this.name = product_name;
 			this.amountInInventory = 0;
 			this.purchaseOptions = new SynchronizedCollection<PurchaseOption>();
-			this.reviews = new SynchronizedCollection<string>(); // 
+			this.reviews = new ConcurrentDictionary<int, IList<string>>(); // 
 			this.pricePerUnit = pricePerUnit;
 			this.category = category;
 			this.productdicount = productdicount;
@@ -95,15 +95,17 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		}
 
 		// r.4.2
-		public void AddProductReview(string memberRevierName, string review)
+		public void AddProductReview(int memberId, string review)
 		{
 			reviewMutex.WaitOne();
-			reviews.Add(memberRevierName + ": " + review);
-			if (String.IsNullOrWhiteSpace(review)) {
+			if (String.IsNullOrWhiteSpace(review))
+			{
 				reviewMutex.ReleaseMutex();
 				throw new MarketException($"can't recieve an empty comment");
 			}
-
+			if (!reviews.ContainsKey(memberId))
+				reviews[memberId] = new SynchronizedCollection<string>();
+			reviews[memberId].Add(review);
 			reviewMutex.ReleaseMutex();
 		}
 		// r.4.2

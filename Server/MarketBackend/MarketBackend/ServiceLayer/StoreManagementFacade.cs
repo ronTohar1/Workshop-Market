@@ -218,6 +218,7 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
+
         //done
         public Response<bool> MakeCoManager(int userId, int targetUserId, int storeId)
         {

@@ -18,7 +18,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 		private Mutex amountInInventoryMutex;
 		private Mutex purchaseOptionsMutex;
-		private Mutex reviewMutex;
 		private Mutex pricePerUnitMutex;
 		private Mutex categoryMutex;
 		private Mutex productDiscountMutex;
@@ -38,7 +37,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 			amountInInventoryMutex = new Mutex();
 			purchaseOptionsMutex = new Mutex();
-			reviewMutex = new Mutex();
 			pricePerUnitMutex = new Mutex();
 			categoryMutex = new Mutex();
 			productDiscountMutex = new Mutex();
@@ -97,16 +95,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		// r.4.2
 		public void AddProductReview(int memberId, string review)
 		{
-			reviewMutex.WaitOne();
 			if (String.IsNullOrWhiteSpace(review))
-			{
-				reviewMutex.ReleaseMutex();
 				throw new MarketException($"can't recieve an empty comment");
-			}
+			
 			if (!reviews.ContainsKey(memberId))
 				reviews[memberId] = new SynchronizedCollection<string>();
 			reviews[memberId].Add(review);
-			reviewMutex.ReleaseMutex();
 		}
 		// r.4.2
 		public void SetProductCategory(string newCategory)

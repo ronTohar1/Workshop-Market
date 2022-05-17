@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Buyers.Members
 {
+    // 1.5, 1.6
     public class Notifier
     {
         private Func<string[],bool> notifyFunc;

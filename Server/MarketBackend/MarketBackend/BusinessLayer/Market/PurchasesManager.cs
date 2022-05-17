@@ -73,7 +73,7 @@ public class PurchasesManager
         // ---------------------------------------------------------
         // Try buying products
 
-        IDictionary<int, double> storesTotal = GetPurchaseTotal(storesTransactions, shoppingBags);
+        IDictionary<int, double> storesTotal = GetPurchaseTotal(shoppingBags);
         double purchaseTotal = storesTotal.Values.Sum(x => x); // Sum prices of all products
 
         if (!externalServicesController.makePayment())
@@ -88,7 +88,7 @@ public class PurchasesManager
             throw new MarketException("Could not send a delivery");
         }
 
-        IDictionary<int, string> receipts = GetReceipt(storesTransactions, shoppingBags);
+        IDictionary<int, string> receipts = GetReceipt(storesTransactions,shoppingBags);
 
         UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
         AddRecord(buyer, shoppingBags, storesTotal, receipts);
@@ -178,39 +178,39 @@ public class PurchasesManager
             int transactionId = storesTransactions[storeId];
             Store store = storeController.GetStore(storeId);
 
-            IDictionary<int, int> productAmount = shoppingBag.ProductsAmounts.ToDictionary(x => x.Key.ProductId, x => x.Value);
-            storeReceipt.Add(storeId, getReceipt(productAmount, store, transactionId));
+            storeReceipt.Add(storeId, getReceipt(shoppingBag, store, transactionId));
         }
         return storeReceipt;
     }
 
-    private string getReceipt(IDictionary<int, int> productsAmounts, Store store, int transactionId)
+    private string getReceipt(ShoppingBag shoppingBag, Store store, int transactionId)
     {
         string receipt = $" >> {store.name} purchase:\n";
-        double totalStorePrice = 0;
 
-        List<Product> productsPrices = store.GetTransactionProducts(transactionId);
-        if (productsPrices == null)
+        List<Product> products = store.GetTransactionProducts(transactionId);
+        if (products == null)
             return "Couldnt get receipt";
 
-        foreach (Product product in productsPrices)
+        // Calculating product -> amount dictionary
+        IDictionary<int, int> productsAmounts = shoppingBag.ProductsAmounts.ToDictionary(x => x.Key.ProductId, x => x.Value);
+
+        foreach (Product product in products)
         {
             double prodPrice = product.GetPrice();
             int prodAmount = productsAmounts[product.id];
 
             double price = prodAmount * prodPrice;
             receipt += $" >> >> Product: {product.name}, Quantity: {prodAmount}, unit price: {product.GetPrice()},  total: {price} shekels \n";
-
-            totalStorePrice += price;
         }
 
-        receipt += $" >> >> {store.name} Total: {totalStorePrice}\n";
+        (double total, double discount) = store.GetTotalBagCost(shoppingBag);
+        receipt += $" >> >> {store.name} Total Before Discount: { total}, Total after discount: {total - discount}\n";
         return receipt;
 
     }
 
     //Assuming everything is valid
-    private IDictionary<int, double> GetPurchaseTotal(IDictionary<int, int> storesTransactions, ICollection<ShoppingBag> shoppingBags)
+    private IDictionary<int, double> GetPurchaseTotal(ICollection<ShoppingBag> shoppingBags)
     {
 
         IDictionary<int, double> storesTotal = new Dictionary<int, double>();
@@ -219,8 +219,9 @@ public class PurchasesManager
             int storeId = shoppingBag.StoreId;
             Store store = storeController.GetStore(storeId);
             IDictionary<ProductInBag, int> products = shoppingBag.ProductsAmounts;
-            int transactionId = storesTransactions[storeId];
-            storesTotal.Add(storeId, store.GetTransactionProducts(transactionId).Sum(x => x.GetPrice()));
+
+            (double total ,double discount) = store.GetTotalBagCost(shoppingBag);
+            storesTotal.Add(storeId, total-discount);
         }
         return storesTotal;
     }

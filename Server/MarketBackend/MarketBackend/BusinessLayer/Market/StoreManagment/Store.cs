@@ -2,6 +2,7 @@
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
 using System;
 using System.Collections.Concurrent;
+using MarketBackend.BusinessLayer.Buyers;
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
     public class Store
@@ -327,20 +328,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             policy.AddDiscountAmountPolicy(amount, discount);
         }
         // r.3.3
-        //recieves <productId, productAmount> and calculates the total to pay, consideroing all the restroctions
-        public virtual double GetTotalBagCost(IDictionary<int,int> productsAmounts) 
+        //recieves shopping bag and calculates the total to pay, consideroing all the restroctions
+        public virtual Tuple<double,double> GetTotalBagCost(ShoppingBag shoppingBag) 
         {
-            foreach (int productId in productsAmounts.Keys)
-            {
+            foreach (var product in shoppingBag.ProductsAmounts)
+            {   
+                int productId = product.Key.ProductId;
+                int productAmount = product.Value;
+
                 if (!products.ContainsKey(productId))
-                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay: there isn't such a product with product id: {productId}"));
+                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay: there isn't such a product"));
                 int amountPerProduct = policy.GetMinAmountPerProduct(productId);
-                if (productsAmounts[productId] < amountPerProduct)
+                if (productAmount < amountPerProduct)
                     throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay:  {products[productId].name} can be bought only in a set of {amountPerProduct} or more"));
             }
-            double productsTotalPrices = productsAmounts.Keys.Select(productId => productsAmounts[productId]*products[productId].GetPrice()).ToList().Sum();
-            double amountDiscount = policy.GetDiscountForAmount(productsAmounts.Values.Sum());
-            return productsTotalPrices * (1 - amountDiscount);
+            double productsTotalPrices = shoppingBag.ProductsAmounts.Keys.Sum(prodInBag => products[prodInBag.ProductId].GetPrice());
+            double amountDiscount = discountManager.EvaluateDiscountForBag(shoppingBag,this);
+            return new(productsTotalPrices ,amountDiscount);
         }
 
         public virtual string? CanBuyProduct(int buyerId, int productId, int amount)

@@ -348,7 +348,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeMock.Setup(store =>
                    store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<Purchase>()));
             storeMock.Setup(store =>
-                   store.GetTotalBagCost(It.IsAny<IDictionary<int, int>>())).Returns(totalPrice);
+                   store.GetTotalBagCost(It.IsAny<ShoppingBag>())).Returns(new Tuple<double,double>(totalPrice,0));
 
             return storeMock.Object;
         }
@@ -453,6 +453,8 @@ namespace TestMarketBackend.BusinessLayer.Market
             Assert.AreEqual(counter, 0);
         }
       
+
+        //TODO
         private Store MockStoreThatCanFail(string result, int[] productsId,bool outOfStock, bool policyFail)
         {
             Mock<Security> securityMock = new Mock<Security>();
@@ -475,7 +477,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeMock.Setup(store =>
                    store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<Purchase>()));
             storeMock.Setup(store =>
-                   store.GetTotalBagCost(It.IsAny<IDictionary<int, int>>())).Returns(totalPrice);
+                   store.GetTotalBagCost(It.IsAny<ShoppingBag>())).Returns(new Tuple<double, double>(totalPrice,0)); // TODO
 
             storeMock.Setup(store =>
                     store.products).

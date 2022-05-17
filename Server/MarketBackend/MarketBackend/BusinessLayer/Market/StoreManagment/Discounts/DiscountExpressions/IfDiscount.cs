@@ -30,3 +30,5 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         }
     }
 }
+
+//if ((A or B) and (C or D)) then discount else discount 

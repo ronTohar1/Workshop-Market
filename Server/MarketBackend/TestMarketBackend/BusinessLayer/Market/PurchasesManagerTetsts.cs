@@ -348,7 +348,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeMock.Setup(store =>
                    store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<Purchase>()));
             storeMock.Setup(store =>
-                   store.GetTotalBagCost(It.IsAny<IDictionary<int, int>>())).Returns(totalPrice);
+                   store.GetTotalBagCost(It.IsAny<ShoppingBag>())).Returns(new Tuple<double,double>(totalPrice,0));
 
             return storeMock.Object;
         }

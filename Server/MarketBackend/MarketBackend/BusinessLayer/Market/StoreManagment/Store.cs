@@ -587,10 +587,17 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         public int AddDiscount(IExpression exp, string descrption, int memberId)
         {
-            //TODO check if permission alows to add discount
+            //TODO check if permission alows to handle discounts
 
             int id = discountManager.AddDiscount(descrption, exp);
             return id;
+        }
+
+        public void RemoveDiscount(int disId, int memberId)
+        {
+            //TODO check if permission alows to handle discounts
+
+            discountManager.RemoveDiscount(disId);
         }
 
         // ------------------------------ General ------------------------------

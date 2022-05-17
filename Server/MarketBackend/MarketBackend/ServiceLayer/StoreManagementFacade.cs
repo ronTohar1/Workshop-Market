@@ -101,104 +101,6 @@ namespace MarketBackend.ServiceLayer
         }
 
         //done
-        public Response<bool> AddPurchasePolicy(PurchaseOption type, int userId, int storeId)
-        {
-            try
-            {
-                Store s = storeController.GetStore(storeId);
-                if (s == null)
-                    return new Response<bool>($"There isn't a store with an id {storeId}");
-                s.AddPurchaseOption(userId, type);
-                logger.Info($"AddPurchasePolicy was called with parameters: [type = {type}, userId = {userId}, storeId = {storeId}]");
-                return new Response<bool>(true);
-            }
-            catch (MarketException mex)
-            {
-                logger.Error(mex, $"method: AddPurchasePolicy, parameters: [type = {type}, userId = {userId}, storeId = {storeId}]");
-                return new Response<bool>(mex.Message);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, $"method: AddPurchasePolicy, parameters: [type = {type}, userId = {userId}, storeId = {storeId}]");
-                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
-            }
-        }
-
-        //TODO
-        public Response<bool> RemovePurchasePolicy(PurchaseOption type, int userId, int storeId)
-        {
-            //try
-            //{
-            //    Store s = storeController.getStore(storeId);
-            //    if (s == null)
-            //        return new Response<bool>($"There isn't a store with an id {storeId}");
-
-            //    logger.Info($"RemovePurchasePolicy was called with parameters: [type = {type}, userId = {userId}, storeId = {storeId}]");
-            //    return new Response<bool>("default");
-            //}
-            //catch (MarketException mex)
-            //{
-            //    logger.Error(mex, $"method: RemovePurchasePolicy, parameters: [type = {type}, userId = {userId}, storeId = {storeId}]");
-            //    return new Response<bool>(mex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex, $"method: RemovePurchasePolicy, parameters: [type = {type}, userId = {userId}, storeId = {storeId}]");
-            //    return new Response<bool>("Sorry, an unexpected error occured. Please try again");
-            //}
-            return new Response<bool>();
-        }
-
-        //TODO
-        public Response<bool> AddDiscountPolicy(string discountCode, int userId, int storeId, int productId, double discount)
-        {
-            //try
-            //{
-            //    Store s = storeController.getStore(storeId);
-            //    if (s == null)
-            //        return new Response<bool>($"There isn't a store with an id {storeId}");
-
-            //    logger.Info($"AddDiscountPolicy was called with parameters: [discountCode = {discountCode}, userId = {userId}, storeId = {storeId}, productId={productId}, discount={discount}]");
-            //    return new Response<bool>("default");
-            //}
-            //catch (MarketException mex)
-            //{
-            //    logger.Error(mex, $"method: AddDiscountPolicy, parameters: [discountCode = {discountCode}, userId = {userId}, storeId = {storeId}, productId={productId}, discount={discount}]");
-            //    return new Response<bool>(mex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex, $"method: AddDiscountPolicy, parameters: [discountCode = {discountCode}, userId = {userId}, storeId = {storeId}, productId={productId}, discount={discount}]");
-            //    return new Response<bool>("Sorry, an unexpected error occured. Please try again");
-            //}
-            return new Response<bool>();
-        }
-
-        //TODO
-        //public Response<bool> RemoveDiscountPolicy(string discountCode, int userId, int storeId, int productId, double discount)
-        //{
-        //    try
-        //    {
-        //        Store s = storeController.getStore(storeId);
-        //        if (s == null)
-        //            return new Response<bool>($"There isn't a store with an id {storeId}");
-
-        //        logger.Info($"RemoveDiscountPolicy was called with parameters: [discountCode = {discountCode}, userId = {userId}, storeId = {storeId}, productId={productId}, discount={discount}]");
-        //        return new Response<bool>("default");
-        //    }
-        //    catch (MarketException mex)
-        //    {
-        //        logger.Error(mex, $"method: RemoveDiscountPolicy, parameters: [discountCode = {discountCode}, userId = {userId}, storeId = {storeId}, productId={productId}, discount={discount}]");
-        //        return new Response<bool>(mex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.Error(ex, $"method: RemoveDiscountPolicy, parameters: [discountCode = {discountCode}, userId = {userId}, storeId = {storeId}, productId={productId}, discount={discount}]");
-        //        return new Response<bool>("Sorry, an unexpected error occured. Please try again");
-        //    }
-        //}
-
-        //done
         public Response<bool> MakeCoOwner(int userId, int targetUserId, int storeId)
         {
             try
@@ -471,7 +373,6 @@ namespace MarketBackend.ServiceLayer
                     return manager.NewIfDiscount(ServicePredicateToPredicate(dis.test, manager), ServiceDiscountToDiscount(dis.thenDis, manager), ServiceDiscountToDiscount(dis.elseDis, manager));
                 }
             }
-
         }
 
         public Response<int> AddDiscount(IServiceExpression expression, string description, int storeId, int memberId)
@@ -493,8 +394,31 @@ namespace MarketBackend.ServiceLayer
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: GetPurchaseHistory, parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
+                logger.Error(ex, $"method: AddDiscount, parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+        public Response<bool> RemoveDiscount(int disId, int storeId, int memberId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.RemoveDiscount(disId, memberId);
+                logger.Info($"RemoveDiscount was called with parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: RemoveDiscount, parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: RemoveDiscount, parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }
 

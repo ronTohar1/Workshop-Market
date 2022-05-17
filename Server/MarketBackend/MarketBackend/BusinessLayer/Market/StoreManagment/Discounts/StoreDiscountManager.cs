@@ -46,6 +46,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             else
                 throw new MarketException($"No Discount with id: {did}");
         }
+
         public double EvaluateDiscountForBag(ShoppingBag bag, Store store)
         {
             double sum = 0;

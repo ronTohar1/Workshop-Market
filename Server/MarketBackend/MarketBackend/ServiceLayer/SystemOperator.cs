@@ -10,6 +10,7 @@ using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Buyers.Guests;
 using MarketBackend.BusinessLayer.Buyers;
 using SystemLog;
+using MarketBackend.BusinessLayer;
 using NLog;
 using MarketBackend.BusinessLayer.System.ExternalServices;
 namespace MarketBackend.ServiceLayer
@@ -18,11 +19,11 @@ namespace MarketBackend.ServiceLayer
     {
 
         private bool marketOpen;
+        private BusiessSystemOperator bso;
         private AdminFacade adminFacade;
         private BuyerFacade buyerFacade;
         private ExternalSystemFacade externalSystemFacade;
         private StoreManagementFacade storeManagementFacade;
-        private Logger logger;
 
         private const string facadeErrorMsg = "Cannot give any facade when market is closed!";
 
@@ -30,40 +31,51 @@ namespace MarketBackend.ServiceLayer
         public SystemOperator()
         {
             marketOpen = false;
-
+            bso = new BusiessSystemOperator();
         }
 
         public Response<int> OpenMarket(string username, string password)
         {
-
-            if (!VerifyAdmin(username, password))
-                return new($"User with username: {username} does not have permission to open the market!");
-
-            //Init controllers
-            MembersController membersController = new();
-            GuestsController guestsController = new();
-            StoreController storeController = new(membersController);
-            BuyersController buyersController = new(new List<IBuyersController> { guestsController, membersController });
-            ExternalServicesController externalServicesController = new(new ExternalPaymentSystem(), new ExternalSupplySystem());
-
-            PurchasesManager purchasesManager = new(storeController, buyersController, externalServicesController);
-
-            AdminManager adminManager = new(storeController, buyersController);
-            InitLogger();
-            InitFacades(membersController, guestsController, storeController, buyersController, adminManager, purchasesManager);
-
-            marketOpen = true;
-            return new(-1);
-
+            try { 
+                bso.OpenMarket(username, password);
+                InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
+                marketOpen = true;
+                bso.logger.Info($"OpenMarket with parameters: [username = {username}, can not reveal password]");
+                return new(-1);
+            }
+            catch (MarketException mex)
+            {
+                bso.logger.Error(mex, $"method: OpenMarket, parameters: [username = {username}, can not reveal password]");
+                return new Response<int>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                bso.logger.Error(ex, $"method: OpenMarket, parameters: [username = {username}, can not reveal password]");
+                return new Response<int>("Sorry, an unexpected error occured. Please try again");
+            }
         }
 
         public Response<bool> CloseMarket()
         {
-            if (!marketOpen)
-                return new(false, "Market already closed!");
-            marketOpen = false;
-            RemoveFacades();
-            return new(true);
+            try
+            {
+                bso.CloseMarket();
+                InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
+                bso.logger.Info("method CloseMarket was called");
+                marketOpen = false;
+                RemoveFacades();
+                return new(true);
+            }
+            catch (MarketException mex)
+            {
+                bso.logger.Error(mex, "method CloseMarket was called");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                bso.logger.Error(ex, "method CloseMarket was called");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
         }
 
         public Response<AdminFacade> GetAdminFacade()
@@ -96,11 +108,6 @@ namespace MarketBackend.ServiceLayer
         }
 
 
-        private void InitLogger()
-        {
-            logger = SystemLogger.getLogger();
-        }
-
         private void RemoveFacades()
         {
             adminFacade = null;
@@ -111,17 +118,13 @@ namespace MarketBackend.ServiceLayer
 
         private void InitFacades(MembersController mc, GuestsController gc, StoreController sc, BuyersController bc, AdminManager am, PurchasesManager pm)
         {
-            adminFacade = new AdminFacade(am, logger);
-            buyerFacade = new BuyerFacade(sc, bc, mc, gc, pm, logger);
+            adminFacade = new AdminFacade(am, bso.logger);
+            buyerFacade = new BuyerFacade(sc, bc, mc, gc, pm, bso.logger);
             externalSystemFacade = new();
-            storeManagementFacade = new(sc, logger);
+            storeManagementFacade = new(sc, bso.logger);
 
         }
 
-        private bool VerifyAdmin(string username, string password)
-        {
-            return true;
-        }
 
     }
 }

@@ -229,15 +229,22 @@ namespace TestMarketBackend.Acceptance
             }
         }
 
-        // r 4.5
+        // r 4.5, r I 5
         [Test]
         [TestCaseSource("DataFailedRemoveCoOwnerAppointment")]
         public void FailedRemoveCoOwnerAppointment(Func<int> requestingId, Func<int> storeId, Func<int> coOwnerToRemoveId)
         {
             // getting roles before to check the roles after the action 
-            IDictionary<Role, IList<int>> rolesBefore = GetRolesInStore(storeId()); 
+            IDictionary<Role, IList<int>> rolesBefore = GetRolesInStore(storeId());
 
-            Response<bool> response = storeManagementFacade.RemoveCoOwnerAppointment(requestingId(), storeId(), coOwnerToRemoveId());
+            // in some test cases the action is removing member2, checking that in this case member2 does not receive new notifications
+            IList<string> notificationsBefore = null; 
+            if (coOwnerToRemoveId() == member2Id)
+            {
+                notificationsBefore = notificationsBefore = member2Notifications.ToList();
+            }
+
+            Response<bool> response = storeManagementFacade.RemoveCoOwner(requestingId(), coOwnerToRemoveId(), storeId());
 
             Assert.IsTrue(response.ErrorOccured());
 
@@ -245,6 +252,11 @@ namespace TestMarketBackend.Acceptance
             IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId());
 
             Assert.IsTrue(SameDictionariesWithLists(rolesBefore, roles)); 
+
+            if (notificationsBefore != null)
+            {
+                Assert.IsTrue(SameElements(notificationsBefore, member2Notifications.ToList())); 
+            }
         }
 
         // r 4.5
@@ -261,7 +273,7 @@ namespace TestMarketBackend.Acceptance
             expectedRoles[Role.Owner].Remove(member6Id);
             expectedRoles[Role.Manager].Remove(member7Id);
 
-            Response<bool> response = storeManagementFacade.RemoveCoOwnerAppointment(requestingId, storeId, coOwnerToRemoveId);
+            Response<bool> response = storeManagementFacade.RemoveCoOwner(requestingId, coOwnerToRemoveId, storeId);
             Assert.IsTrue(!response.ErrorOccured());
 
             // check that roles in the store where changed as needed 
@@ -289,7 +301,7 @@ namespace TestMarketBackend.Acceptance
             expectedRoles[Role.Manager].Remove(member7Id);
 
             Func<Response<bool>>[] jobs =
-                Enumerable.Repeat(() => storeManagementFacade.RemoveCoOwnerAppointment(requestingId, storeId, coOwnerToRemoveId), threadsNumber).ToArray();
+                Enumerable.Repeat(() => storeManagementFacade.RemoveCoOwner(requestingId, coOwnerToRemoveId, storeId), threadsNumber).ToArray();
             Response<bool>[] responses = GetResponsesFromThreads(jobs);
             Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
 
@@ -372,6 +384,7 @@ namespace TestMarketBackend.Acceptance
         // r.4.9
         public void FailedClosedStoreClosing()
         {
+            // todo: add check that the user did not receive notifications for the failed action 
             Response<bool> response = storeManagementFacade.CloseStore(storeOwnerId, storeId);
 
             Assert.IsTrue(!response.ErrorOccured());

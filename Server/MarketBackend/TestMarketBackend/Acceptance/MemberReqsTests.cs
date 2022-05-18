@@ -101,5 +101,86 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(!firstResponse.ErrorOccured() && !secondResponse.ErrorOccured());
         }
 
+        // testing member notifications 
+
+        public static IEnumerable<TestCaseData> DataSuccessfulNotifications
+        {
+            get
+            {
+                // these are events that after which member5 should be notified 
+
+                // purchase in the store of the store owner 
+                yield return new TestCaseData((MemberReqsTests testsObject) =>
+                {
+                    testsObject.SetUpShoppingCarts();
+                    Response<ServicePurchase> response = testsObject.buyerFacade.PurchaseCartContent(member3Id);
+                    Assert.IsTrue(!response.ErrorOccured());
+                });
+                // shop of the store owner is closed 
+                yield return new TestCaseData((MemberReqsTests testsObject) =>
+                {
+                    Response<bool> response = testsObject.storeManagementFacade.CloseStore(member2Id, storeId);
+                    Assert.IsTrue(!response.ErrorOccured());
+                });
+                // store owner is removed from the store 
+                yield return new TestCaseData((MemberReqsTests testsObject) =>
+                {
+                    Response<bool> response = testsObject.storeManagementFacade.RemoveCoOwner(member2Id, member5Id, storeId);
+                    Assert.IsTrue(!response.ErrorOccured());
+                });
+                // a member writes a review on a product in the store of the store owner 
+                yield return new TestCaseData((MemberReqsTests testsObject) =>
+                {
+                    Response<bool> response = testsObject.buyerFacade.AddProductReview(member1Id, storeId, calculatorProductId, "The product is great");
+                    Assert.IsTrue(!response.ErrorOccured());
+                });
+            }
+        }
+
+        // r I 5
+        [Test]
+        [TestCaseSource("DataSuccessfulNotifications")]
+        public void SuccessfulNotidicationsLoggedIn(Action<MemberReqsTests> action)
+        {
+            // getting notifications before
+            IList<string> notificationsBefore = member5Notifications.ToList();
+
+            action(this); // performing an action for which member5 should be notified 
+
+            IList<string> notificationsAfter = member5Notifications.ToList();
+
+            // checking the new notifications with the the notifications that were before:
+            IList<string> notificationsIntersection = notificationsBefore.Intersect(notificationsAfter).ToList();
+            Assert.AreEqual(notificationsBefore.Count, notificationsIntersection.Count);
+            Assert.IsTrue(notificationsBefore.Count < notificationsAfter.Count);
+        }
+
+        // tests on failed actions that should not be followed by notifications 
+        // are in the tests of the different actions 
+
+        // r I 6
+        [Test]
+        [TestCaseSource("DataSuccessfulNotifications")]
+        public void SuccessfulNotidicationsNotLoggedIn(Action<MemberReqsTests> action)
+        {
+            // logging out so we can use the same data as in the SuccessfulNotidicationsLoggedIn tests 
+            Response<bool> response = buyerFacade.Logout(member5Id);
+            Assert.IsTrue(!response.ErrorOccured()); 
+
+            // getting notifications before
+            IList<string> notificationsBefore = member5Notifications.ToList();
+
+            action(this); // performing an action for which member5 should be notified 
+
+            // first checking that there is not a notification when not logged in 
+            IList<string> notificationsAfter = member5Notifications.ToList();
+            SameElements(notificationsBefore, notificationsAfter);
+
+            // second checking there is a notification after loggin in
+            bool notificationArrived = false;
+            buyerFacade.Login(userName5, password5, notification => { notificationArrived = true; return true; });
+            // checking the new notifications with the the notifications that were before:
+            Assert.IsTrue(notificationArrived); 
+        }
     }
 }

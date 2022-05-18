@@ -300,30 +300,36 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(!response.ErrorOccured());
         }
 
-        //r.2.5
+        //r.2.5, r I 5
         [Test]
         public void FailedPurchaseEmptyCart()
         {
-          
-            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
+            IList<string> notificationsBefore = member2Notifications.ToList(); 
 
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
             Assert.IsTrue(response.ErrorOccured());
+
+            // member2 is logged in, checking that there wasn't a notification
+            Assert.IsTrue(SameElements(notificationsBefore, member2Notifications.ToList()));
         }
 
-        //r.2.5
+        // r.2.5, r I 5
         [Test]
         public void FailedPurchaseProductsOutOfStock()
         {
-           
             // A user purchases all iphones in the store
             buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
             buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, iphoneProductAmount);
             Response<ServicePurchase> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id);
             Assert.True(!firstUserResponse.ErrorOccured());
 
+            IList<string> notificationsBefore = member3Notifications.ToList();
             Response<ServicePurchase> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id);
 
             Assert.IsTrue(secondUserResponse.ErrorOccured() );
+
+            // member3 is logged in, checking that there wasn't a notification
+            Assert.IsTrue(SameElements(notificationsBefore, member3Notifications.ToList()));
         }
         /*
         // r.2.5
@@ -354,6 +360,9 @@ namespace TestMarketBackend.Acceptance
 
         }
         */
+
+        // todo: when writing tests to failed adding product review, check that a
+        // store owner did not receive notifications for the action 
 
     }
 }

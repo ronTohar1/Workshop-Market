@@ -95,5 +95,8 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
                 pendingNotifications.Clear();
         }
+        public bool matchingPasswords(string password)
+        => this.password == security.HashPassword(password);
+            
     }
 }

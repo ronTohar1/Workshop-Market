@@ -311,30 +311,30 @@ namespace MarketBackend.ServiceLayer
             try
             {
                 int id = membersController.Register(userName, password);
-                logger.Info($"Register was called with parameters [userName = {userName}, password = {password}]");
+                logger.Info($"Register was called with parameters [userName = {userName}, password undisclosed]");
                 return new Response<int>(id);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: Register, parameters: [userName = {userName}, password = {password}]");
+                logger.Error(mex, $"method: Register, parameters: [userName = {userName}, password undisclosed]");
                 return new Response<int>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: Register, parameters: [userName = {userName}, password = {password}]");
+                logger.Error(ex, $"method: Register, parameters: [userName = {userName}, password undisclosed]");
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
             }
         }
 
         //done
-        public Response<int> Login(string userName, string password, Func<string[], bool> notifierFunc)
+        public Response<int> Login(string userName, string password, Func<string[], bool> notifier)
         {
             try
             {
                 Member? m = membersController.GetMember(userName);
                 if (m == null)
                     return new Response<int>($"No member with userName {userName}");
-                bool logged = m.Login(password, notifierFunc);// the member could have connected from another computer 
+                bool logged = m.Login(password, notifier);// the member could have connected from another computer 
                 if (logged == false)
                     return new Response<int>("Incorrect password");
                 int id = m.Id;

@@ -477,19 +477,20 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             }
 
             Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId);
-            RemovedBranchUpdate(removedBrance, Role.Owner, $"We regeret to inform you that you're no longer an owner of {this.name}");
+            RemovedByOwnerBranchUpdate(removedBrance, $"We regeret to inform you that you've lost your position at {this.name}");
 
             rolesAndPermissionsLock.ReleaseWriterLock();
             
         }
-        private void RemovedBranchUpdate(Hierarchy<int> removedBranch, Role removedRole, string notification) {
+        private void RemovedByOwnerBranchUpdate(Hierarchy<int> removedBranch, string notification) {
             if (removedBranch == null)
                 return;
             int memberId = removedBranch.value;
-            rolesInStore[removedRole].Remove(memberId);
+            rolesInStore[Role.Owner].Remove(memberId);//doesn't do anything if not in collection
+            rolesInStore[Role.Manager].Remove(memberId);
             membersGetter(memberId).Notify(notification);
             foreach (Hierarchy<int> child in removedBranch.children) {
-                RemovedBranchUpdate(child, removedRole, notification);
+                RemovedByOwnerBranchUpdate(child, notification);
             }
         }
 

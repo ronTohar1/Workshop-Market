@@ -3551,6 +3551,7 @@ The product can't be bought:
 2022-05-19 02:10:18.3420|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = -1, memberToRemoveId = 171]
 2022-05-19 02:10:18.3420|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = -1, memberToRemoveId = 184]
 2022-05-19 02:10:18.3583|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = -1, memberToRemoveId = 203]
+<<<<<<< HEAD
 >>>>>>> 1050a37fea87dec6366f7f0ee4d9da2a071f917a
 2022-05-19 02:15:26.4643|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 45, memberToRemoveId = 47]
 2022-05-19 02:15:26.5119|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 60, memberToRemoveId = 62]
@@ -4955,3 +4956,12 @@ The product can't be bought:
 2022-05-19 02:30:21.0661|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1752, targetUserId = 1748, storeId = 224]
 2022-05-19 02:30:21.1208|ERROR|SystemLog.SystemLogger|method: MakeCoManager, parameters: [userId = 1763, targetUserId = 1767, storeId = 226]
 2022-05-19 02:30:21.1682|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1778, targetUserId = 1780, storeId = 228]
+=======
+2022-05-19 02:40:23.3421|ERROR|SystemLog.SystemLogger|method: GetStorePurchaseHistory, parameters: [currUserId = -1, storeId = 107]
+2022-05-19 02:40:23.3730|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = -1, memberId = 122]
+2022-05-19 02:40:23.3892|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = -1, memberId = 139]
+2022-05-19 02:40:23.4200|ERROR|SystemLog.SystemLogger|method: GetStorePurchaseHistory, parameters: [currUserId = -1, storeId = 20]
+2022-05-19 02:40:23.4511|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = -1, memberToRemoveId = 171]
+2022-05-19 02:40:23.4674|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = -1, memberToRemoveId = 184]
+2022-05-19 02:40:23.4836|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = -1, memberToRemoveId = 203]
+>>>>>>> 8f60ec5811b32e796fc5a3bbd09ec996206d0b32

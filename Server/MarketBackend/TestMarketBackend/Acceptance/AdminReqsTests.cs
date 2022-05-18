@@ -43,7 +43,11 @@ namespace TestMarketBackend.Acceptance
             Assert.IsEmpty(response.Value);
 
             // now check that after purchase that it is returned
+
             SetUpShoppingCarts();
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id);
+            Assert.IsTrue(!purchaseResponse.ErrorOccured());
+
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.ErrorOccured());
             Assert.AreEqual(1, response.Value.Count); 
@@ -79,14 +83,18 @@ namespace TestMarketBackend.Acceptance
         {
 
             // first check that current purchase history is empty
-            Response<IReadOnlyCollection<ServicePurchase>> response = adminFacade.GetStorePurchaseHistory(adminId, member1Id);
+            Response<IReadOnlyCollection<ServicePurchase>> response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
 
             Assert.IsTrue(!response.ErrorOccured());
             Assert.IsEmpty(response.Value);
 
             // now check that after purchase that it is returned
+
             SetUpShoppingCarts();
-            response = adminFacade.GetStorePurchaseHistory(adminId, member1Id);
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id);
+            Assert.IsTrue(!purchaseResponse.ErrorOccured()); 
+
+            response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.ErrorOccured());
             Assert.AreEqual(1, response.Value.Count);
             ServicePurchase purchaseResult = response.Value.First();
@@ -96,155 +104,157 @@ namespace TestMarketBackend.Acceptance
             Assert.AreEqual(8500, purchaseResult.purchasePrice);
         }
 
-        public static IEnumerable<TestCaseData> DataFailedRemoveMember
-        {
-            get
-            {
-                // requesting is not an admin (and target is a storeOwner) 
-                yield return new TestCaseData(new Func<int>(() => member3Id), new Func<int>(() => storeOwnerId));
-                // target is not a member but is a guest
-                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => guest1Id));
-                // target is not a member
-                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => -1));
-                // target is the last admin in the system 
-                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => adminId));
-                // target is the last storeOwner in a store
-                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => store2OwnerId)); 
-            }
-        }
+        // the next commented tests are becuase these are tests for requierments that 
+        // will only be in next versions 
+        //public static IEnumerable<TestCaseData> DataFailedRemoveMember
+        //{
+        //    get
+        //    {
+        //        // requesting is not an admin (and target is a storeOwner) 
+        //        yield return new TestCaseData(new Func<int>(() => member3Id), new Func<int>(() => storeOwnerId));
+        //        // target is not a member but is a guest
+        //        yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => guest1Id));
+        //        // target is not a member
+        //        yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => -1));
+        //        // target is the last admin in the system 
+        //        yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => adminId));
+        //        // target is the last storeOwner in a store
+        //        yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => store2OwnerId)); 
+        //    }
+        //}
 
-        // r 6.2
-        // cc 2, cc 5
-        [Test]
-        [TestCaseSource("DataFailedRemoveMember")]
-        public void FailedRemoveMember(Func<int> requestingId, Func<int> memberToRemoveId)
-        {
-            Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
-            bool memberExsited = memberExistsResponse.Value;
-            IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemoveId()); 
+        //// r 6.2
+        //// cc 2, cc 5
+        //[Test]
+        //[TestCaseSource("DataFailedRemoveMember")]
+        //public void FailedRemoveMember(Func<int> requestingId, Func<int> memberToRemoveId)
+        //{
+        //    Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
+        //    Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+        //    bool memberExsited = memberExistsResponse.Value;
+        //    IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemoveId()); 
 
-            Response<bool> response = adminFacade.RemoveMember(requestingId(), memberToRemoveId()); 
+        //    Response<bool> response = adminFacade.RemoveMember(requestingId(), memberToRemoveId()); 
 
-            Assert.IsTrue(response.ErrorOccured());
+        //    Assert.IsTrue(response.ErrorOccured());
 
-            // checking that member still exists if existed before
-            memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
-            Assert.AreEqual(memberExsited, memberExistsResponse.Value);
-            // checking that member still has the same roles
-            IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId());
-            foreach (int storeId in storesIds)
-            {
-                Assert.AreEqual(rolesInStoresBefore.ContainsKey(storeId), rolesInStores.ContainsKey(storeId));
-                if (rolesInStoresBefore.ContainsKey(storeId))
-                {
-                    Assert.AreEqual(rolesInStoresBefore[storeId], rolesInStores[storeId]); 
-                }
-            }
-            // todo: maybe add a check that it should be an admin if it was before  
-        }
+        //    // checking that member still exists if existed before
+        //    memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
+        //    Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+        //    Assert.AreEqual(memberExsited, memberExistsResponse.Value);
+        //    // checking that member still has the same roles
+        //    IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId());
+        //    foreach (int storeId in storesIds)
+        //    {
+        //        Assert.AreEqual(rolesInStoresBefore.ContainsKey(storeId), rolesInStores.ContainsKey(storeId));
+        //        if (rolesInStoresBefore.ContainsKey(storeId))
+        //        {
+        //            Assert.AreEqual(rolesInStoresBefore[storeId], rolesInStores[storeId]); 
+        //        }
+        //    }
+        //    // todo: maybe add a check that it should be an admin if it was before  
+        //}
 
-        public static IEnumerable<TestCaseData> DataSuccessfulRemoveMember
-        {
-            get
-            {
-                // removing member that has no roles
-                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member1Id));
-                // removing store owner
-                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member3Id));
-                // removing a store owner that appointed others
-                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member2Id));
-                // removing manager
-                yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member4Id));
-                // removing admin
-                // todo: implement (there needs to be added another admin so it won't be the last)
-            }
-        }
+        //public static IEnumerable<TestCaseData> DataSuccessfulRemoveMember
+        //{
+        //    get
+        //    {
+        //        // removing member that has no roles
+        //        yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member1Id));
+        //        // removing store owner
+        //        yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member3Id));
+        //        // removing a store owner that appointed others
+        //        yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member2Id));
+        //        // removing manager
+        //        yield return new TestCaseData(new Func<int>(() => adminId), new Func<int>(() => member4Id));
+        //        // removing admin
+        //        // todo: implement (there needs to be added another admin so it won't be the last)
+        //    }
+        //}
 
-        // r 6.2
-        [Test]
-        [TestCaseSource("DataSuccessfulRemoveMember")]
-        public void SuccessfulRemoveMember(Func<int> requestingId, Func<int> memberToRemoveId)
-        {
-            Response<bool> response = adminFacade.RemoveMember(requestingId(), memberToRemoveId());
+        //// r 6.2
+        //[Test]
+        //[TestCaseSource("DataSuccessfulRemoveMember")]
+        //public void SuccessfulRemoveMember(Func<int> requestingId, Func<int> memberToRemoveId)
+        //{
+        //    Response<bool> response = adminFacade.RemoveMember(requestingId(), memberToRemoveId());
 
-            Assert.IsTrue(!response.ErrorOccured());
+        //    Assert.IsTrue(!response.ErrorOccured());
 
-            // checking that member does not exist
-            Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
-            Assert.IsTrue(!memberExistsResponse.Value);
+        //    // checking that member does not exist
+        //    Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
+        //    Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+        //    Assert.IsTrue(!memberExistsResponse.Value);
 
-            // checking that member does not have roles in stores 
-            IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId());
-            Assert.IsEmpty(rolesInStores.Keys); 
-            // todo: maybe add a check that is not an admin 
-        }
+        //    // checking that member does not have roles in stores 
+        //    IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId());
+        //    Assert.IsEmpty(rolesInStores.Keys); 
+        //    // todo: maybe add a check that is not an admin 
+        //}
 
-        // r 6.2, r 4.5
-        [Test]
-        public void SuccessfulRemoveMemberThatAppointedOthers()
-        {
-            int requestingId = adminId;
-            int memberToRemoveId = member2Id;
-            int storeId = AcceptanceTests.storeId;
-            int[] appointedIds = { member3Id, member4Id }; 
+        //// r 6.2, r 4.5
+        //[Test]
+        //public void SuccessfulRemoveMemberThatAppointedOthers()
+        //{
+        //    int requestingId = adminId;
+        //    int memberToRemoveId = member2Id;
+        //    int storeId = AcceptanceTests.storeId;
+        //    int[] appointedIds = { member3Id, member4Id }; 
 
-            Response<bool> response = adminFacade.RemoveMember(requestingId, memberToRemoveId);
+        //    Response<bool> response = adminFacade.RemoveMember(requestingId, memberToRemoveId);
 
-            Assert.IsTrue(!response.ErrorOccured());
+        //    Assert.IsTrue(!response.ErrorOccured());
 
-            // checking that member does not exist
-            Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
-            Assert.IsTrue(!memberExistsResponse.Value);
+        //    // checking that member does not exist
+        //    Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
+        //    Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+        //    Assert.IsTrue(!memberExistsResponse.Value);
 
-            // checking that member does not have roles in stores 
-            IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId);
-            Assert.IsEmpty(rolesInStores.Keys);
-            // todo: maybe add a check that is not an admin
+        //    // checking that member does not have roles in stores 
+        //    IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId);
+        //    Assert.IsEmpty(rolesInStores.Keys);
+        //    // todo: maybe add a check that is not an admin
 
-            // checking that the appointed store owners were removed from store: 
-            Response<IList<int>> coOwnersRespone = storeManagementFacade.GetMembersInRole(storeId, adminId, Role.Owner); // the admin id because request needs permissions 
-            Assert.IsTrue(!coOwnersRespone.ErrorOccured());
-            Response<IList<int>> managersRespone = storeManagementFacade.GetMembersInRole(storeId, adminId, Role.Owner); // the admin id because request needs permissions 
-            Assert.IsTrue(!managersRespone.ErrorOccured());
-            foreach (int appointedId in appointedIds)
-            {
-                Assert.IsTrue(!coOwnersRespone.Value.Contains(appointedId));
-                Assert.IsTrue(!managersRespone.Value.Contains(appointedId));
-            }
-        }
+        //    // checking that the appointed store owners were removed from store: 
+        //    Response<IList<int>> coOwnersRespone = storeManagementFacade.GetMembersInRole(storeId, adminId, Role.Owner); // the admin id because request needs permissions 
+        //    Assert.IsTrue(!coOwnersRespone.ErrorOccured());
+        //    Response<IList<int>> managersRespone = storeManagementFacade.GetMembersInRole(storeId, adminId, Role.Owner); // the admin id because request needs permissions 
+        //    Assert.IsTrue(!managersRespone.ErrorOccured());
+        //    foreach (int appointedId in appointedIds)
+        //    {
+        //        Assert.IsTrue(!coOwnersRespone.Value.Contains(appointedId));
+        //        Assert.IsTrue(!managersRespone.Value.Contains(appointedId));
+        //    }
+        //}
 
-        // r 6.2
-        // r S 5
-        [Test]
-        [TestCase(2)]
-        [TestCase(10)]
-        [TestCase(50)]
-        public void ConcurrentfulRemoveMember(int threadsNumber)
-        {
-            int requestingId = adminId;
-            int memberToRemoveId = member2Id; // member2 is a store owner in multipule stores, and appointed some other store owners
+        //// r 6.2
+        //// r S 5
+        //[Test]
+        //[TestCase(2)]
+        //[TestCase(10)]
+        //[TestCase(50)]
+        //public void ConcurrentfulRemoveMember(int threadsNumber)
+        //{
+        //    int requestingId = adminId;
+        //    int memberToRemoveId = member2Id; // member2 is a store owner in multipule stores, and appointed some other store owners
 
-            Func<Response<bool>>[] jobs =
-                Enumerable.Repeat(() => adminFacade.RemoveMember(requestingId, memberToRemoveId), threadsNumber).ToArray();
+        //    Func<Response<bool>>[] jobs =
+        //        Enumerable.Repeat(() => adminFacade.RemoveMember(requestingId, memberToRemoveId), threadsNumber).ToArray();
 
-            Response<bool>[] responses = GetResponsesFromThreads(jobs);
+        //    Response<bool>[] responses = GetResponsesFromThreads(jobs);
 
-            Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+        //    Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
 
-            // checking that member does not exist
-            Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
-            Assert.IsTrue(!memberExistsResponse.Value);
+        //    // checking that member does not exist
+        //    Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
+        //    Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+        //    Assert.IsTrue(!memberExistsResponse.Value);
 
-            // checking that member does not have roles in stores 
-            IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId);
-            Assert.IsEmpty(rolesInStores.Keys);
-            // todo: maybe add a check that is not an admin 
-        }
+        //    // checking that member does not have roles in stores 
+        //    IDictionary<int, Role> rolesInStores = GetRolesInStores(memberToRemoveId);
+        //    Assert.IsEmpty(rolesInStores.Keys);
+        //    // todo: maybe add a check that is not an admin 
+        //}
 
         private int GetStoreIdByName(string storeName)
         {
@@ -410,9 +420,9 @@ namespace TestMarketBackend.Acceptance
         // r 6 c
         [Test]
         [TestCaseSource("DataFailedGetLoggedInMembers")]
-        public void FailedGetLoggedInMembers(int requestingId)
+        public void FailedGetLoggedInMembers(Func<int> requestingId)
         {
-            Response<IList<int>> response = adminFacade.GetLoggedInMembers(requestingId); 
+            Response<IList<int>> response = adminFacade.GetLoggedInMembers(requestingId()); 
             
             Assert.IsTrue(response.ErrorOccured());
         }
@@ -472,7 +482,7 @@ namespace TestMarketBackend.Acceptance
 
             Assert.IsTrue(!response.ErrorOccured());
 
-            Assert.AreEqual(expectedMember, response.Value); 
+            Assert.AreEqual(expectedMember(), response.Value); 
         }
     }
 }

@@ -370,7 +370,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 if (productAmount < amountPerProduct)
                     throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay:  {products[productId].name} can be bought only in a set of {amountPerProduct} or more"));
             }
-            double productsTotalPrices = shoppingBag.ProductsAmounts.Keys.Sum(prodInBag => products[prodInBag.ProductId].GetPrice());
+            double productsTotalPrices = shoppingBag.ProductsAmounts.Keys.Sum(prodInBag => products[prodInBag.ProductId].GetPrice() * shoppingBag.ProductsAmounts[prodInBag]);
             double amountDiscount = discountManager.EvaluateDiscountForBag(shoppingBag,this);
             return new(productsTotalPrices ,amountDiscount);
         }

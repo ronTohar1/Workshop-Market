@@ -604,72 +604,72 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.AreEqual(amountBefore, amountAfter);
         }
 
-        [Test]
-        [TestCase(coOwnerId1, PurchaseOption.Bid)]
-        [TestCase(coOwnerId2, PurchaseOption.Raffle)]
-        [TestCase(founderMemberId, PurchaseOption.Immediate)]
-        public void TestAddPurchaseOptionWithPermissionsSuccess(int memberId, PurchaseOption purchaseOptionToAdd)
-        {
-            SetupStoreNoPermissionsChange();
-            Assert.False(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
-            store.AddPurchaseOption(memberId, purchaseOptionToAdd);
-            Assert.True(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
-        }
+        //[Test]
+        //[TestCase(coOwnerId1, PurchaseOption.Bid)]
+        //[TestCase(coOwnerId2, PurchaseOption.Raffle)]
+        //[TestCase(founderMemberId, PurchaseOption.Immediate)]
+        //public void TestAddPurchaseOptionWithPermissionsSuccess(int memberId, PurchaseOption purchaseOptionToAdd)
+        //{
+        //    SetupStoreNoPermissionsChange();
+        //    Assert.False(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
+        //    store.AddPurchaseOption(memberId, purchaseOptionToAdd);
+        //    Assert.True(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
+        //}
 
-        [Test]
-        [TestCase(notAMemberId1, PurchaseOption.Public)]
-        [TestCase(coOwnerId2, PurchaseOption.Raffle)]
-        public void TestAddPurchaseOptionWithoutPermissionsFail(int memberId, PurchaseOption purchaseOptionToAdd)
-        {
-            SetupStoreNoRoles();
-            Assert.False(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
-            Assert.Throws<MarketException>(() => store.AddPurchaseOption(memberId, purchaseOptionToAdd));
-            Assert.False(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
-        }
+        //[Test]
+        //[TestCase(notAMemberId1, PurchaseOption.Public)]
+        //[TestCase(coOwnerId2, PurchaseOption.Raffle)]
+        //public void TestAddPurchaseOptionWithoutPermissionsFail(int memberId, PurchaseOption purchaseOptionToAdd)
+        //{
+        //    SetupStoreNoRoles();
+        //    Assert.False(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
+        //    Assert.Throws<MarketException>(() => store.AddPurchaseOption(memberId, purchaseOptionToAdd));
+        //    Assert.False(store.policy.ContainsPurchaseOption(purchaseOptionToAdd));
+        //}
 
-        private void SetUpStoreWithPurchaseOption()
-        {
-            SetUpProductsIdInStore();
-            store.AddPurchaseOption(founderMemberId, PurchaseOption.Public);
-            store.AddPurchaseOption(founderMemberId, PurchaseOption.Immediate);
-        }
+        //private void SetUpStoreWithPurchaseOption()
+        //{
+        //    SetUpProductsIdInStore();
+        //    store.AddPurchaseOption(founderMemberId, PurchaseOption.Public);
+        //    store.AddPurchaseOption(founderMemberId, PurchaseOption.Immediate);
+        //}
 
-        [Test]
-        [TestCase(coOwnerId1, PurchaseOption.Public)]
-        [TestCase(coOwnerId2, PurchaseOption.Immediate)]
-        [TestCase(founderMemberId, PurchaseOption.Immediate)]
-        public void TestAddProductPurchaseOptionWithPermissionsSuccess(int memberId, PurchaseOption purchaseOptionToAdd)
-        {
-            SetupStoreNoPermissionsChange();
-            SetUpStoreWithPurchaseOption();
-            Assert.False(store.SearchProductByProductId(productId1).ContainsPurchasePolicy(purchaseOptionToAdd));
-            store.AddProductPurchaseOption(memberId, productId1, purchaseOptionToAdd);
-            Assert.True(store.SearchProductByProductId(productId1).ContainsPurchasePolicy(purchaseOptionToAdd));
-        }
+        //[Test]
+        //[TestCase(coOwnerId1, PurchaseOption.Public)]
+        //[TestCase(coOwnerId2, PurchaseOption.Immediate)]
+        //[TestCase(founderMemberId, PurchaseOption.Immediate)]
+        //public void TestAddProductPurchaseOptionWithPermissionsSuccess(int memberId, PurchaseOption purchaseOptionToAdd)
+        //{
+        //    SetupStoreNoPermissionsChange();
+        //    SetUpStoreWithPurchaseOption();
+        //    Assert.False(store.SearchProductByProductId(productId1).ContainsPurchasePolicy(purchaseOptionToAdd));
+        //    store.AddProductPurchaseOption(memberId, productId1, purchaseOptionToAdd);
+        //    Assert.True(store.SearchProductByProductId(productId1).ContainsPurchasePolicy(purchaseOptionToAdd));
+        //}
 
-        [Test]
-        [TestCase(notAMemberId1, PurchaseOption.Public)]
-        [TestCase(coOwnerId2, PurchaseOption.Immediate)]
-        public void TestAddProductPurchaseOptionWithPermissionsFail(int memberId, PurchaseOption purchaseOptionToAdd)
-        {
-            SetupStoreNoRoles();
-            SetUpStoreWithPurchaseOption();
-            Assert.False(store.SearchProductByProductId(productId2).ContainsPurchasePolicy(purchaseOptionToAdd));
-            Assert.Throws<MarketException>(() => store.AddProductPurchaseOption(memberId, productId2, purchaseOptionToAdd));
-            Assert.False(store.SearchProductByProductId(productId2).ContainsPurchasePolicy(purchaseOptionToAdd));
-        }
+        //[Test]
+        //[TestCase(notAMemberId1, PurchaseOption.Public)]
+        //[TestCase(coOwnerId2, PurchaseOption.Immediate)]
+        //public void TestAddProductPurchaseOptionWithPermissionsFail(int memberId, PurchaseOption purchaseOptionToAdd)
+        //{
+        //    SetupStoreNoRoles();
+        //    SetUpStoreWithPurchaseOption();
+        //    Assert.False(store.SearchProductByProductId(productId2).ContainsPurchasePolicy(purchaseOptionToAdd));
+        //    Assert.Throws<MarketException>(() => store.AddProductPurchaseOption(memberId, productId2, purchaseOptionToAdd));
+        //    Assert.False(store.SearchProductByProductId(productId2).ContainsPurchasePolicy(purchaseOptionToAdd));
+        //}
 
-        [Test]
-        [TestCase(coOwnerId2, PurchaseOption.Bid)]
-        [TestCase(founderMemberId, PurchaseOption.Raffle)]
-        public void TestAddProductPurchaseThatStoreDoesNotHaveFail(int memberId, PurchaseOption purchaseOptionToAdd)
-        {
-            SetupStoreNoPermissionsChange();
-            SetUpStoreWithPurchaseOption();
-            Assert.False(store.SearchProductByProductId(productId3).ContainsPurchasePolicy(purchaseOptionToAdd));
-            Assert.Throws<MarketException>(() => store.AddProductPurchaseOption(memberId, productId3, purchaseOptionToAdd));
-            Assert.False(store.SearchProductByProductId(productId3).ContainsPurchasePolicy(purchaseOptionToAdd));
-        }
+        //[Test]
+        //[TestCase(coOwnerId2, PurchaseOption.Bid)]
+        //[TestCase(founderMemberId, PurchaseOption.Raffle)]
+        //public void TestAddProductPurchaseThatStoreDoesNotHaveFail(int memberId, PurchaseOption purchaseOptionToAdd)
+        //{
+        //    SetupStoreNoPermissionsChange();
+        //    SetUpStoreWithPurchaseOption();
+        //    Assert.False(store.SearchProductByProductId(productId3).ContainsPurchasePolicy(purchaseOptionToAdd));
+        //    Assert.Throws<MarketException>(() => store.AddProductPurchaseOption(memberId, productId3, purchaseOptionToAdd));
+        //    Assert.False(store.SearchProductByProductId(productId3).ContainsPurchasePolicy(purchaseOptionToAdd));
+        //}
 
         [Test]
         [TestCase(coOwnerId1, productPrice2)]
@@ -696,37 +696,37 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.False(store.SearchProductByProductId(productId1).pricePerUnit == price);
         }
 
-        [Test]
-        [TestCase(coOwnerId1, amount2)]
-        [TestCase(founderMemberId, amount3)]
-        public void TestSetMinAmountPerProductWithPermissionsSuccess(int memberId, int newAmount)
-        {
-            SetupStoreNoPermissionsChange();
-            SetUpProductsIdInStore();
-            Assert.True(store.policy.GetMinAmountPerProduct(productId1) == 0);
-            store.SetMinAmountPerProduct(memberId, productId1, newAmount);
-            Assert.True(store.policy.GetMinAmountPerProduct(productId1) == newAmount);
-        }
+        //[Test]
+        //[TestCase(coOwnerId1, amount2)]
+        //[TestCase(founderMemberId, amount3)]
+        //public void TestSetMinAmountPerProductWithPermissionsSuccess(int memberId, int newAmount)
+        //{
+        //    SetupStoreNoPermissionsChange();
+        //    SetUpProductsIdInStore();
+        //    Assert.True(store.policy.GetMinAmountPerProduct(productId1) == 0);
+        //    store.SetMinAmountPerProduct(memberId, productId1, newAmount);
+        //    Assert.True(store.policy.GetMinAmountPerProduct(productId1) == newAmount);
+        //}
 
-        [Test]
-        [TestCase(notAMemberId1, amount2)]
-        [TestCase(notAMemberId2, amount3)]
-        public void TestSetMinAmountPerProductWithoutPermissionsFail(int memberId, int newAmount)
-        {
-            SetupStoreNoRoles();
-            SetUpProductsIdInStore();
-            Assert.True(store.policy.GetMinAmountPerProduct(productId1) == 0);
-            Assert.Throws<MarketException>(() => store.SetMinAmountPerProduct(memberId, productId1, newAmount));
-            Assert.True(store.policy.GetMinAmountPerProduct(productId1) == 0);
-        }
-        [Test]
-        [TestCase(coOwnerId1, amount2)]
-        [TestCase(founderMemberId, amount3)]
-        public void TestSetMinAmountPerProductDoesNotExistFail(int memberId, int newAmount)
-        {
-            SetupStoreNoPermissionsChange();
-            Assert.Throws<MarketException>(() => store.SetMinAmountPerProduct(memberId, productId1, newAmount));
-        }
+        //[Test]
+        //[TestCase(notAMemberId1, amount2)]
+        //[TestCase(notAMemberId2, amount3)]
+        //public void TestSetMinAmountPerProductWithoutPermissionsFail(int memberId, int newAmount)
+        //{
+        //    SetupStoreNoRoles();
+        //    SetUpProductsIdInStore();
+        //    Assert.True(store.policy.GetMinAmountPerProduct(productId1) == 0);
+        //    Assert.Throws<MarketException>(() => store.SetMinAmountPerProduct(memberId, productId1, newAmount));
+        //    Assert.True(store.policy.GetMinAmountPerProduct(productId1) == 0);
+        //}
+        //[Test]
+        //[TestCase(coOwnerId1, amount2)]
+        //[TestCase(founderMemberId, amount3)]
+        //public void TestSetMinAmountPerProductDoesNotExistFail(int memberId, int newAmount)
+        //{
+        //    SetupStoreNoPermissionsChange();
+        //    Assert.Throws<MarketException>(() => store.SetMinAmountPerProduct(memberId, productId1, newAmount));
+        //}
 
         [Test]
         [TestCase(coOwnerId1, discountPercentage1)]
@@ -862,49 +862,49 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.True(store.GetProductReviews(productId1).Count == 0);
         }
 
-        [Test]
-        [TestCase(coOwnerId1, amount1, discountPercentage1)]
-        [TestCase(coOwnerId2, amount2, discountPercentage2)]
-        [TestCase(founderMemberId, amount3, discountPercentage3)]
-        public void TestAddDiscountForAmountPolicySuccess(int memeberId, int amount, double discount)
-        {
-            SetupStoreNoPermissionsChange();
-            Assert.True(store.policy.amountDiscount.Count == 0);
-            store.AddDiscountForAmountPolicy(memeberId, amount, discount);
-            Assert.True(store.policy.amountDiscount.Count == 1 && store.policy.amountDiscount[amount] == discount / 100);
-        }
-        [Test]
-        [TestCase(notAMemberId1, amount1, discountPercentage1)]
-        [TestCase(notAMemberId2, amount2, discountPercentage2)]
-        public void TestAddDiscountForAmountPolicyFail(int memeberId, int amount, double discount)
-        {
-            SetupStoreNoRoles();
-            Assert.True(store.policy.amountDiscount.Count == 0);
-            Assert.Throws<MarketException>(() => store.AddDiscountForAmountPolicy(memeberId, amount, discount));
-            Assert.True(store.policy.amountDiscount.Count == 0);
-        }
+        //[Test]
+        //[TestCase(coOwnerId1, amount1, discountPercentage1)]
+        //[TestCase(coOwnerId2, amount2, discountPercentage2)]
+        //[TestCase(founderMemberId, amount3, discountPercentage3)]
+        //public void TestAddDiscountForAmountPolicySuccess(int memeberId, int amount, double discount)
+        //{
+        //    SetupStoreNoPermissionsChange();
+        //    Assert.True(store.policy.amountDiscount.Count == 0);
+        //    store.AddDiscountForAmountPolicy(memeberId, amount, discount);
+        //    Assert.True(store.policy.amountDiscount.Count == 1 && store.policy.amountDiscount[amount] == discount / 100);
+        //}
+        //[Test]
+        //[TestCase(notAMemberId1, amount1, discountPercentage1)]
+        //[TestCase(notAMemberId2, amount2, discountPercentage2)]
+        //public void TestAddDiscountForAmountPolicyFail(int memeberId, int amount, double discount)
+        //{
+        //    SetupStoreNoRoles();
+        //    Assert.True(store.policy.amountDiscount.Count == 0);
+        //    Assert.Throws<MarketException>(() => store.AddDiscountForAmountPolicy(memeberId, amount, discount));
+        //    Assert.True(store.policy.amountDiscount.Count == 0);
+        //}
 
-        private void SetupDiscountPercentages(int productIdAmount1, int productIdAmount2, int productIdAmount3)
-        {
-            store.SetProductDiscountPercentage(founderMemberId, productId1, discountPercentage1);
-            store.SetProductDiscountPercentage(founderMemberId, productId2, discountPercentage2);
+        //private void SetupDiscountPercentages(int productIdAmount1, int productIdAmount2, int productIdAmount3)
+        //{
+        //    store.SetProductDiscountPercentage(founderMemberId, productId1, discountPercentage1);
+        //    store.SetProductDiscountPercentage(founderMemberId, productId2, discountPercentage2);
 
-            store.AddDiscountForAmountPolicy(founderMemberId, amount1, discountPercentage3);
+        //    store.AddDiscountForAmountPolicy(founderMemberId, amount1, discountPercentage3);
 
-            store.policy.SetMinAmountPerProduct(productId1, productIdAmount1);
-            productsAmount = new Dictionary<int, int>()
-            {
-                [productId1] = productIdAmount1,
-                [productId2] = productIdAmount2,
-                [productId3] = productIdAmount3
-            };
-            correctTotal = productIdAmount1 * productPrice1 * (1 - (discountPercentage1 / 100)) +
-                            productIdAmount2 * productPrice2 * (1 - (discountPercentage2 / 100)) +
-                                productIdAmount3 * productPrice3;
-            if (productIdAmount1 + productIdAmount2 + productIdAmount3 >= amount1)
-                correctTotal = correctTotal * (1 - (discountPercentage3 / 100));
+        //    store.policy.SetMinAmountPerProduct(productId1, productIdAmount1);
+        //    productsAmount = new Dictionary<int, int>()
+        //    {
+        //        [productId1] = productIdAmount1,
+        //        [productId2] = productIdAmount2,
+        //        [productId3] = productIdAmount3
+        //    };
+        //    correctTotal = productIdAmount1 * productPrice1 * (1 - (discountPercentage1 / 100)) +
+        //                    productIdAmount2 * productPrice2 * (1 - (discountPercentage2 / 100)) +
+        //                        productIdAmount3 * productPrice3;
+        //    if (productIdAmount1 + productIdAmount2 + productIdAmount3 >= amount1)
+        //        correctTotal = correctTotal * (1 - (discountPercentage3 / 100));
 
-        }
+        //}
 
         //[Test]
         //[TestCase(productIdAmount1, productIdAmount2, productIdAmount3)]//once with amount discount

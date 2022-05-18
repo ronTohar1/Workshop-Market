@@ -1,4 +1,5 @@
-﻿using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.logicalOperators;
+﻿using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.logicalOperators;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.LogicalOperators;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PredicatePolicies;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
@@ -48,6 +49,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
             purchases.Remove(policyId);
         }
 
+        public void CanBuy(ShoppingBag bag)
+        {
+            foreach(PurchasePolicy purchasePolicy in purchases.Values)
+            {
+                bool flag = purchasePolicy.CanBuy(bag);
+                if (!flag)
+                    throw new MarketException($"The Cart does not satisfy the following purchase policy: {purchasePolicy.description}");
+            }
+        }
+
         //------------------------ builders ----------------------------
 
 
@@ -91,9 +102,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
         {
             return new OrExpression(first, second);
         }
-        public IPurchasePolicy NewImpliesExpression(IPredicateExpression first, IPredicateExpression second)
+        public IPurchasePolicy NewImpliesExpression(IPredicateExpression condition, IPredicateExpression allowing)
         {
-            return new ImpliesExpression(first, second);
+            return new ImpliesExpression(condition, allowing);
         }
 
         // ---- predicates ----

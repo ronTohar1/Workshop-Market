@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces
 {
-    public interface IPredicateExpression : IPurchasePolicy
+    public interface IPredicateExpression
     {
-
+        public bool IsSatisfied(ShoppingBag bag);
     }
 }

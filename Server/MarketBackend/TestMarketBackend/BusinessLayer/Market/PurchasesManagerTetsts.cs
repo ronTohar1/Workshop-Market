@@ -463,9 +463,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             Member founder = founderMock.Object;
 
             Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null) { CallBase = true };
-           
-            Mock<StorePolicy> storePolicyMock = new Mock<StorePolicy>();
-
+          
             
             storeMock.Setup(store =>
                     store.DecreaseProductAmountFromInventory(It.IsAny<int>(), It.Is<int>(id => productsId.Contains(id)), It.IsAny<int>())).
@@ -482,17 +480,6 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeMock.Setup(store =>
                     store.products).
                         Returns(createMocksProducts(productsId, outOfStock));
-           
-
-
-            if (policyFail)
-                storePolicyMock.Setup(storePolicy=> storePolicy.GetMinAmountPerProduct(It.IsAny<int>())).Returns(1000);
-            else
-                storePolicyMock.Setup(storePolicy => storePolicy.GetMinAmountPerProduct(It.IsAny<int>())).Returns(1);
-
-            storeMock.Setup(store =>
-                    store.policy).
-                        Returns(storePolicyMock.Object);
 
             return storeMock.Object;
         }

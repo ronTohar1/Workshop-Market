@@ -13,6 +13,11 @@ using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions;
+using MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.RestrictionPolicies;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PredicatePolicies;
 
 namespace MarketBackend.ServiceLayer
 {
@@ -290,18 +295,18 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        private IPredicateExpression ServicePredicateToPredicate(IServicePredicate spred, StoreDiscountPolicyManager manager)
+        private BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces.IPredicateExpression ServicePredicateToPredicate(ServiceDTO.DiscountDTO.IServicePredicate spred, StoreDiscountPolicyManager manager)
         {
             if (spred is ServiceLogical)
             {
-                if (spred is ServiceAnd)
+                if (spred is ServiceDTO.DiscountDTO.ServiceAnd)
                 {
-                    ServiceAnd pred = (ServiceAnd)spred;
+                    ServiceDTO.DiscountDTO.ServiceAnd pred = (ServiceDTO.DiscountDTO.ServiceAnd)spred;
                     return manager.NewAndExpression(ServicePredicateToPredicate(pred.firstExpression, manager), ServicePredicateToPredicate(pred.secondExpression, manager));
                 }
-                else if (spred is ServiceOr)
+                else if (spred is ServiceDTO.DiscountDTO.ServiceOr)
                 {
-                    ServiceOr pred = (ServiceOr)spred;
+                    ServiceDTO.DiscountDTO.ServiceOr pred = (ServiceDTO.DiscountDTO.ServiceOr)spred;
                     return manager.NewOrExpression(ServicePredicateToPredicate(pred.firstExpression, manager), ServicePredicateToPredicate(pred.secondExpression, manager));
                 }
                 else // Xor
@@ -375,7 +380,7 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<int> AddDiscount(IServiceExpression expression, string description, int storeId, int memberId)
+        public Response<int> AddDiscountPolicy(IServiceExpression expression, string description, int storeId, int memberId)
         {
             try
             {
@@ -384,22 +389,22 @@ namespace MarketBackend.ServiceLayer
                     return new Response<int>($"There isn't a store with an id {storeId}");
                 IExpression exp = ServiceExpressionToExpression(expression, s.discountManager);
                 int id = s.AddDiscountPolicy(exp, description, memberId); 
-                logger.Info($"AddDiscount was called with parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
+                logger.Info($"AddDiscountPolicy was called with parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<int>(id);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: AddDiscount, parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
+                logger.Error(mex, $"method: AddDiscountPolicy, parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<int>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: AddDiscount, parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
+                logger.Error(ex, $"method: AddDiscountPolicy, parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
             }
         }
 
-        public Response<bool> RemoveDiscount(int disId, int storeId, int memberId)
+        public Response<bool> RemoveDiscountPolicy(int disId, int storeId, int memberId)
         {
             try
             {
@@ -407,17 +412,146 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
                 s.RemoveDiscountPolicy(disId, memberId);
-                logger.Info($"RemoveDiscount was called with parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
+                logger.Info($"RemoveDiscountPolicy was called with parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<bool>(true);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: RemoveDiscount, parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
+                logger.Error(mex, $"method: RemoveDiscountPolicy, parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<bool>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: RemoveDiscount, parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
+                logger.Error(ex, $"method: RemoveDiscountPolicy, parameters: [disId {disId}, storeId = {storeId}, memberId = {memberId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+
+        private BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces.IPredicateExpression ServicePurchasePredicateToPurchasePredicate(ServiceDTO.PurchaseDTOs.IServicePredicate pred, StorePurchasePolicyManager manager)
+        {
+            if (pred is CheckProductMoreEqualsPredicate)
+            {
+                CheckProductMoreEqualsPredicate exp = (CheckProductMoreEqualsPredicate)pred;
+                return manager.NewCheckProductMorePredicate(exp.productId, exp.amount);
+            }
+            else // product less
+            {
+                CheckProductLessPredicate exp = (CheckProductLessPredicate)pred;
+                return manager.NewCheckProductLessPredicate(exp.productId, exp.amount);
+            }
+        }
+        private IRestrictionExpression ServiceRestrictionToRestriction(IServiceRestriction expression, StorePurchasePolicyManager manager)
+        {
+            if (expression is ServiceAfterHourProduct)
+            {
+                ServiceAfterHourProduct exp = (ServiceAfterHourProduct)expression;
+                return manager.NewAfterHourProductRestriction(exp.hour, exp.productId, exp.amount);
+            }
+            else if (expression is ServiceBeforeHourProduct)
+            {
+                ServiceBeforeHourProduct exp = (ServiceBeforeHourProduct)expression;
+                return manager.NewBeforeHourProductRestriction(exp.hour, exp.productId, exp.amount);
+            }
+            else if (expression is ServiceBeforeHour)
+            {
+                ServiceBeforeHour exp = (ServiceBeforeHour)expression;
+                return manager.NewBeforeHourRestriction(exp.hour);
+            }
+            else if (expression is ServiceAfterHour)
+            {
+                ServiceAfterHour exp = (ServiceAfterHour)expression;
+                return manager.NewAfterHourRestriction(exp.hour);
+            }
+            else if (expression is ServiceAtMostAmount)
+            {
+                ServiceAtMostAmount exp = (ServiceAtMostAmount)expression;
+                return manager.NewAtmostAmountRestriction(exp.productId, exp.amount);
+            }
+            else if (expression is ServiceAtlestAmount)
+            {
+                ServiceAtlestAmount exp = (ServiceAtlestAmount)expression;
+                return manager.NewAtleastAmountRestriction(exp.productId, exp.amount);
+            }
+            else // date restriction
+            {
+                ServiceDateRestriction exp = (ServiceDateRestriction)expression;
+                return manager.NewDateRestriction(exp.year, exp.month, exp.day);
+            }
+
+
+        }
+
+        private IPurchasePolicy ServicePurchasePolicyToPurcahsePolicy(IServicePurchase expression, StorePurchasePolicyManager manager)
+        {
+            if (expression is IServiceRestriction)
+            {
+                return ServiceRestrictionToRestriction((IServiceRestriction)expression, manager);
+            }
+            else // logical 
+            {
+                if (expression is ServiceDTO.PurchaseDTOs.ServiceAnd)
+                {
+                    ServiceDTO.PurchaseDTOs.ServiceAnd exp = (ServiceDTO.PurchaseDTOs.ServiceAnd)expression;
+                    return manager.NewAndExpression(ServiceRestrictionToRestriction(exp.firstPred, manager), ServiceRestrictionToRestriction(exp.secondPred, manager));
+                }
+                else if (expression is ServiceDTO.PurchaseDTOs.ServiceOr)
+                {
+                    ServiceDTO.PurchaseDTOs.ServiceOr exp = (ServiceDTO.PurchaseDTOs.ServiceOr)expression;
+                    return manager.NewOrExpression(ServiceRestrictionToRestriction(exp.firstPred, manager), ServiceRestrictionToRestriction(exp.secondPred, manager));
+                }
+                else // implies
+                {
+                    ServiceImplies exp = (ServiceImplies)expression;
+                    return manager.NewImpliesExpression(ServicePurchasePredicateToPurchasePredicate(exp.condition, manager), ServicePurchasePredicateToPurchasePredicate(exp.allowing, manager));
+                }
+            }
+
+        }
+
+        public Response<int> AddPurchasePolicy(IServicePurchase expression, string description, int storeId, int memberId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<int>($"There isn't a store with an id {storeId}");
+                IPurchasePolicy exp = ServicePurchasePolicyToPurcahsePolicy(expression, s.purchaseManager);
+                int id = s.AddPurchasePolicy(exp, description, memberId);
+                logger.Info($"AddPurchasePolicy was called with parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
+                return new Response<int>(id);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: AddPurchasePolicy, parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
+                return new Response<int>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: AddPurchasePolicy, parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
+                return new Response<int>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+        public Response<bool> RemovePurchasePolicy(int policyId, int storeId, int memberId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.RemovePurchasePolicy(policyId, memberId);
+                logger.Info($"RemovePurchasePolicy was called with parameters: [policyId {policyId}, storeId = {storeId}, memberId = {memberId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: RemovePurchasePolicy, parameters: [policyId {policyId}, storeId = {storeId}, memberId = {memberId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: RemovePurchasePolicy, parameters: [policyId {policyId}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Buyers.Guests;
 using MarketBackend.BusinessLayer.System.ExternalServices;
+using System.Collections.Concurrent;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -56,6 +57,19 @@ namespace TestMarketBackend.Acceptance
         protected const string password6 = "password6";
         protected const string userName7 = "userName7";
         protected const string password7 = "password7";
+
+        protected static ConcurrentQueue<string> member1Notifications = new ConcurrentQueue<string>();
+        protected static ConcurrentQueue<string> member2Notifications = new ConcurrentQueue<string>();
+        protected static ConcurrentQueue<string> member3Notifications = new ConcurrentQueue<string>();
+        protected static ConcurrentQueue<string> member4Notifications = new ConcurrentQueue<string>();
+        protected static ConcurrentQueue<string> member5Notifications = new ConcurrentQueue<string>();
+        protected static ConcurrentQueue<string> member6Notifications = new ConcurrentQueue<string>();
+        protected static ConcurrentQueue<string> member7Notifications = new ConcurrentQueue<string>();
+
+        protected static ConcurrentQueue<string>[] membersNotifications = new ConcurrentQueue<string>[]
+        {
+            member1Notifications, member2Notifications, member3Notifications, member4Notifications, member5Notifications, member6Notifications, member7Notifications
+        };
 
         //Admin
         protected const string adminUsername = "admin";
@@ -125,8 +139,21 @@ namespace TestMarketBackend.Acceptance
             Response<int> member7IdResponse = buyerFacade.Register(userName7, password7);
             member7Id = member7IdResponse.Value;
 
-            buyerFacade.Login(userName2, password2);
-            buyerFacade.Login(userName3, password3);
+            buyerFacade.Login(userName2, password2, GetNotificationsFunction(member2Notifications));
+            buyerFacade.Login(userName3, password3, GetNotificationsFunction(member3Notifications));
+            buyerFacade.Login(userName5, password5, GetNotificationsFunction(member5Notifications));
+        }
+
+        protected Func<string[], bool> GetNotificationsFunction(ConcurrentQueue<string> currentNotifications)
+        {
+            return newNotifications =>
+            {
+                foreach (string notification in newNotifications)
+                {
+                    currentNotifications.Enqueue(notification);
+                }
+                return true;
+            };
         }
 
         public void SetUpStores()
@@ -174,10 +201,22 @@ namespace TestMarketBackend.Acceptance
 
         }
 
-        public void SetUpShoppingCarts()
+        protected void SetUpShoppingCarts()
         {
             buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, 2);
             buyerFacade.AddProdcutToCart(member3Id, storeId, calculatorProductId, 5);
+        }
+
+        // removing the current notifications that could have occured becuase of the setup or in other tests
+        public void SetUpNotificationQueues()
+        {
+            member1Notifications.Clear();
+            member2Notifications.Clear();
+            member3Notifications.Clear();
+            member4Notifications.Clear();
+            member5Notifications.Clear();
+            member6Notifications.Clear();
+            member7Notifications.Clear();
         }
 
         [SetUp]
@@ -199,6 +238,8 @@ namespace TestMarketBackend.Acceptance
             SetUpStores();
 
             SetUpStoresInventories();
+
+            SetUpNotificationQueues(); 
 
         }
 
@@ -228,7 +269,7 @@ namespace TestMarketBackend.Acceptance
             {
                 Response<int> enterResponse = buyerFacade.Enter();
                 Response<int> registerResponse = buyerFacade.Register($"Name_{i}", $"Pass_{i}");
-                Response<int> loginResponse = buyerFacade.Login($"Name_{i}", $"Pass_{i}");
+                Response<int> loginResponse = buyerFacade.Login($"Name_{i}", $"Pass_{i}", newNotifications => true);
 
                 if (enterResponse.ErrorOccured() || registerResponse.ErrorOccured() || loginResponse.ErrorOccured())
                     throw new Exception("Unexpected erorr occured: 'GetFreshMembersIds'");

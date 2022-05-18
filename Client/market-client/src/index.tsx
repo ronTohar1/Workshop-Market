@@ -5,6 +5,7 @@ import App from './App';
 import Register from './Authentication/Register';
 import Home from './Home'
 import Login from './Authentication/Login';
+import Navbar from './Navbar';
 import {
   BrowserRouter,
   Routes,
@@ -13,6 +14,8 @@ import {
 import {
   pathRegister,
   pathLogin,
+  pathNavbar,
+  pathHome
 } from "./Paths";
 
 
@@ -24,6 +27,7 @@ root.render(
     <Routes>
       <Route index element={<Home />} />
       <Route path={pathRegister} element={<Register />} />
+      <Route path={pathNavbar} element={<Navbar />} />
       <Route path={pathLogin} element={<Login />}>
       </Route>
     </Routes>

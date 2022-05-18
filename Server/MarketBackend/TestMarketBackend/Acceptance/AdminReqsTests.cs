@@ -293,7 +293,7 @@ namespace TestMarketBackend.Acceptance
             }
         }
 
-        // r 6.2.2
+        // r 6 d
         [Test]
         [TestCaseSource("DataFailedRemoveMemberIfWithNoRoles")]
         public void FailedRemoveMemberIfWithNoRoles(Func<int> requestingId, Func<int> memberToRemoveId)
@@ -312,7 +312,7 @@ namespace TestMarketBackend.Acceptance
             Assert.AreEqual(memberExsited, memberExistsResponse.Value); 
         }
 
-        // r 6.2.2
+        // r 6 d
         [Test]
         public void SuccessfulRemoveIfWithNoRolesDoesNotHaveRoles()
         {
@@ -344,7 +344,7 @@ namespace TestMarketBackend.Acceptance
             }
         }
 
-        // r 6.2.2
+        // r 6 d
         [Test]
         [TestCaseSource("DataSuccessfulRemoveIfWithNoRolesHasRoles")]
         public void SuccessfulRemoveIfWithNoRolesHasRoles(Func<int> requestingId, Func<int> memberToRemoveId)
@@ -373,7 +373,7 @@ namespace TestMarketBackend.Acceptance
             // todo: maybe add a check that it should be an admin if it was before
         }
 
-        // r 6.2.2
+        // r 6 d
         // r S 5
         [Test]
         [TestCase(2)]
@@ -394,6 +394,85 @@ namespace TestMarketBackend.Acceptance
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
             Assert.IsTrue(!memberExistsResponse.ErrorOccured());
             Assert.IsTrue(!memberExistsResponse.Value);
+        }
+
+        public static IEnumerable<TestCaseData> DataFailedGetLoggedInMembers
+        {
+            get
+            {
+                yield return new TestCaseData(() => -1);
+                yield return new TestCaseData(() => guest1Id);
+                yield return new TestCaseData(() => member1Id);
+                yield return new TestCaseData(() => member2Id);
+            }
+        }
+
+        // r 6 c
+        [Test]
+        [TestCaseSource("DataFailedGetLoggedInMembers")]
+        public void FailedGetLoggedInMembers(int requestingId)
+        {
+            Response<IList<int>> response = adminFacade.GetLoggedInMembers(requestingId); 
+            
+            Assert.IsTrue(response.ErrorOccured());
+        }
+
+        // r 6 c
+        [Test]
+        public void SuccessfulGetLoggedInMembers()
+        {
+            List<int> loggedInMembers = new List<int> { member2Id, member3Id, member5Id };
+
+            Response<IList<int>> response = adminFacade.GetLoggedInMembers(adminId);
+            Assert.IsTrue(!response.ErrorOccured());
+
+            Assert.IsTrue(SameElements(loggedInMembers, response.Value));
+        }
+
+        public static IEnumerable<TestCaseData> DataFailedGetMemberInfo
+        {
+            get
+            {
+                // requesting is not an admin
+                yield return new TestCaseData(() => -1, () => member1Id);
+                yield return new TestCaseData(() => guest1Id, () => member1Id);
+                yield return new TestCaseData(() => member1Id, () => member1Id);
+                yield return new TestCaseData(() => member2Id, () => member1Id);
+                // member does not exist
+                yield return new TestCaseData(() => adminId, () => -1);
+                yield return new TestCaseData(() => adminId, () => guest1Id);
+            }
+        }
+
+        // r 6 c
+        [Test]
+        [TestCaseSource("DataFailedGetMemberInfo")]
+        public void FailedGetMemberInfo(Func<int> requestingId, Func<int> memberId)
+        {
+            Response<ServiceMember> response = adminFacade.GetMemberInfo(requestingId(), memberId());
+
+            Assert.IsTrue(response.ErrorOccured()); 
+        }
+
+        public static IEnumerable<TestCaseData> DataSuccessfulGetMemberInfo
+        {
+            get
+            {
+                yield return new TestCaseData(() => adminId, () => member1Id, () => new ServiceMember(userName1, false));
+                yield return new TestCaseData(() => adminId, () => member2Id, () => new ServiceMember(userName2, true)); 
+            }
+        }
+
+        // r 6 c
+        [Test]
+        [TestCaseSource("DataSuccessfulGetMemberInfo")]
+        public void SuccessfulGetMemberInfo(Func<int> requestingId, Func<int> memberId, Func<ServiceMember> expectedMember)
+        {
+            Response<ServiceMember> response = adminFacade.GetMemberInfo(requestingId(), memberId());
+
+            Assert.IsTrue(!response.ErrorOccured());
+
+            Assert.AreEqual(expectedMember, response.Value); 
         }
     }
 }

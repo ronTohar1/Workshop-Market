@@ -69,10 +69,16 @@ public class MembersController : IBuyersController
     }
 
     public void RemoveMember(int memberId) {
-        if (!members.Keys.Contains(memberId))
-            throw new MarketException($"Failed to remove, there isn't such member with id: {memberId}");
-        members.Remove(memberId);
+        lock (mutex)
+        {
+            if (!members.Keys.Contains(memberId))
+                throw new MarketException($"Failed to remove, there isn't such member with id: {memberId}");
+            members.Remove(memberId);
+        }
     }
+    public IList<int> GetLoggedInMembers()
+       => members.Where(member =>member.Value.LoggedIn).Select(member=>member.Key).ToList();
+    
     private Member createNewMember(string username,string password)
     {
         return new Member(username,password,new Security());

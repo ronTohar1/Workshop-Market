@@ -103,6 +103,13 @@ namespace MarketBackend.ServiceLayer
             return new Response<bool>("Not implemented yet"); 
         }
 
+        // r 6.2.2
+        public Response<bool> RemoveMemberIfHasNoRoles(int requestingId, int memberToRemoveId)
+        {
+            // todo: implement
+            return new Response<bool>("Not implemented yet");
+        }
+
         public Response<bool> MemberExists(int memberId)
         {
             return new Response<bool>("Not implemented yet"); 

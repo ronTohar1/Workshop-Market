@@ -10,7 +10,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment;
 
 namespace MarketBackend.BusinessLayer.Admins
 {
-    internal class AdminManager
+    public class AdminManager
     {
         private ICollection<int> admins;
         private StoreController storeController;
@@ -41,6 +41,9 @@ namespace MarketBackend.BusinessLayer.Admins
             admins.Add(id);
             return true;
         }
+        public bool ContainAdmin(int id)
+        => admins.Contains(id);
+        
 
         /// <summary>
         /// Removes the given admin from collection and return if deleted

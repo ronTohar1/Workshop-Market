@@ -73,16 +73,13 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Members
         }
 
 
-
-        /*[Test]
-        public void TestRegisterUnvalidUsername()
-        {
-        }
-
         [Test]
-        public void TestRegisterUnvalidPassword()
-        {
-        }*/
+        public void TestRemove() {
+            int x = membersController.Register(validUsername, validPassword);
+            Assert.NotNull(membersController.GetMember(x));
+            membersController.RemoveMember(x);
+            Assert.Null(membersController.GetMember(x));
+        }
 
 
 

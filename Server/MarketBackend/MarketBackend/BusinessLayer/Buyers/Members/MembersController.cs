@@ -10,7 +10,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members;
 
 public class MembersController : IBuyersController
 {
-    private readonly ConcurrentDictionary<int, Member> members;
+    private readonly IDictionary<int, Member> members;
     private Mutex mutex;
 
     public MembersController()
@@ -68,6 +68,11 @@ public class MembersController : IBuyersController
         return null;
     }
 
+    public void RemoveMember(int memberId) {
+        if (!members.Keys.Contains(memberId))
+            throw new MarketException($"Failed to remove, there isn't such member with id: {memberId}");
+        members.Remove(memberId);
+    }
     private Member createNewMember(string username,string password)
     {
         return new Member(username,password,new Security());

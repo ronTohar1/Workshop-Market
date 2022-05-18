@@ -340,7 +340,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                     throw new MarketException($"Could not recieve purchase history: {this.name} is closed");
 
                 IDictionary<int, IList<string>> memberIdToReviews = products[productId].reviews;
-                return memberIdToReviews.Keys.ToDictionary(id => membersGetter(id), id => memberIdToReviews[id]);
+                IDictionary< Member, IList<string>> membersToReviews = new Dictionary<Member, IList<string>>();
+                foreach (int memberId in memberIdToReviews.Keys) {
+                    Member? m = membersGetter(memberId);
+                    if (m != null)
+                        membersToReviews[m] = memberIdToReviews[memberId];
+                }
+                return membersToReviews;
             }
         }
         // r.3.3

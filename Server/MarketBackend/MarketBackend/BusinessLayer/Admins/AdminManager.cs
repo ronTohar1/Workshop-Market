@@ -29,7 +29,7 @@ namespace MarketBackend.BusinessLayer.Admins
 
         private void VerifyAdmin(int adminId)
         {
-            if (!admins.Contains(adminId) && adminId != -1)
+            if (!admins.Contains(adminId))
                 throw new MarketException("Permission error - user is not system admin");
         }
 
@@ -81,13 +81,14 @@ namespace MarketBackend.BusinessLayer.Admins
         public IList<Purchase> GetStoreHistory(int adminId, string storeName) =>
             GetStoreHistory(adminId, storeController.GetStoreIdByName(storeName));
 
-        public void RemoveMember(int adminId, int memberToRemoveId)
+        public bool RemoveMember(int adminId, int memberToRemoveId)
         {
             VerifyAdmin(adminId);
             if (storeController.HasRolesInMarket(memberToRemoveId))
-                throw new MarketException($"member with id={memberToRemoveId} can't be removed since he has roles at the store");
+                return false;
             //from this point it's legal to ask the removal of a member from the memberController
             membersController.RemoveMember(memberToRemoveId);
+            return true;
         }
         public IList<int> GetLoggedInMembers(int requestingId)
         {

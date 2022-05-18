@@ -108,9 +108,9 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                adminManager.RemoveMember(requestingId, memberToRemoveId);
+                bool res = adminManager.RemoveMember(requestingId, memberToRemoveId);
                 logger.Info($"RemoveMember was called with parameters [requestingId = {requestingId}, memberToRemoveId = {memberToRemoveId}]");
-                return new Response<bool>(true);
+                return new Response<bool>(res);
             }
             catch (MarketException mex)
             {

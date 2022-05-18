@@ -21259,3 +21259,566 @@
 2022-05-19 02:10:18.4193|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 274, storeId = 36, productId = 36, amount = 50]
 2022-05-19 02:10:18.4193|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 274, storeId = 36, productName = 991ES Calculator, price = 100, category = Office]
 2022-05-19 02:10:18.4193|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 274, storeId = 36, productId = 37, amount = 200]
+2022-05-19 02:40:23.0795|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.1012|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.1012|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.1012|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.1094|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.1235|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.1235|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.1235|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.1425|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 4, storeName = TheStore]
+2022-05-19 02:40:23.1425|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 4, targetUserId = 6, storeId = 0]
+2022-05-19 02:40:23.1613|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 4, targetUserId = 8, storeId = 0]
+2022-05-19 02:40:23.1613|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 4, targetUserId = 10, storeId = 0]
+2022-05-19 02:40:23.1613|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 10, targetUserId = 12, storeId = 0]
+2022-05-19 02:40:23.1613|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 10, targetUserId = 14, storeId = 0]
+2022-05-19 02:40:23.1613|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 4, storeName = TheSecondStore]
+2022-05-19 02:40:23.1613|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 4, storeId = 0, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.1711|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 4, storeId = 0, productId = 0, amount = 50]
+2022-05-19 02:40:23.1711|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 4, storeId = 0, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.1711|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 4, storeId = 0, productId = 1, amount = 200]
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.2274|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 19, storeName = TheStore]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 19, targetUserId = 21, storeId = 2]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 19, targetUserId = 23, storeId = 2]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 19, targetUserId = 25, storeId = 2]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 25, targetUserId = 27, storeId = 2]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 25, targetUserId = 29, storeId = 2]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 19, storeName = TheSecondStore]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 19, storeId = 2, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 19, storeId = 2, productId = 2, amount = 50]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 19, storeId = 2, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 19, storeId = 2, productId = 3, amount = 200]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.2323|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 34, storeName = TheStore]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 34, targetUserId = 36, storeId = 4]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 34, targetUserId = 38, storeId = 4]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 34, targetUserId = 40, storeId = 4]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 40, targetUserId = 42, storeId = 4]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 40, targetUserId = 44, storeId = 4]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 34, storeName = TheSecondStore]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 34, storeId = 4, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 34, storeId = 4, productId = 4, amount = 50]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 34, storeId = 4, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.2480|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 34, storeId = 4, productId = 5, amount = 200]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 49, storeName = TheStore]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 49, targetUserId = 51, storeId = 6]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 49, targetUserId = 53, storeId = 6]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 49, targetUserId = 55, storeId = 6]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 55, targetUserId = 57, storeId = 6]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 55, targetUserId = 59, storeId = 6]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 49, storeName = TheSecondStore]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 49, storeId = 6, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 49, storeId = 6, productId = 6, amount = 50]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 49, storeId = 6, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 49, storeId = 6, productId = 7, amount = 200]
+2022-05-19 02:40:23.2790|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 64, storeName = TheStore]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 64, targetUserId = 66, storeId = 8]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 64, targetUserId = 68, storeId = 8]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 64, targetUserId = 70, storeId = 8]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 70, targetUserId = 72, storeId = 8]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 70, targetUserId = 74, storeId = 8]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 64, storeName = TheSecondStore]
+2022-05-19 02:40:23.2948|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 64, storeId = 8, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 64, storeId = 8, productId = 8, amount = 50]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 64, storeId = 8, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 64, storeId = 8, productId = 9, amount = 200]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 79, storeName = TheStore]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 79, targetUserId = 81, storeId = 10]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 79, targetUserId = 83, storeId = 10]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 79, targetUserId = 85, storeId = 10]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 85, targetUserId = 87, storeId = 10]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 85, targetUserId = 89, storeId = 10]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 79, storeName = TheSecondStore]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 79, storeId = 10, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 79, storeId = 10, productId = 10, amount = 50]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 79, storeId = 10, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 79, storeId = 10, productId = 11, amount = 200]
+2022-05-19 02:40:23.3108|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 94, storeName = TheStore]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 94, targetUserId = 96, storeId = 12]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 94, targetUserId = 98, storeId = 12]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 94, targetUserId = 100, storeId = 12]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 100, targetUserId = 102, storeId = 12]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 100, targetUserId = 104, storeId = 12]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 94, storeName = TheSecondStore]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 94, storeId = 12, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 94, storeId = 12, productId = 12, amount = 50]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 94, storeId = 12, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 94, storeId = 12, productId = 13, amount = 200]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.3261|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 109, storeName = TheStore]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 109, targetUserId = 111, storeId = 14]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 109, targetUserId = 113, storeId = 14]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 109, targetUserId = 115, storeId = 14]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 115, targetUserId = 117, storeId = 14]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 115, targetUserId = 119, storeId = 14]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 109, storeName = TheSecondStore]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 109, storeId = 14, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 109, storeId = 14, productId = 14, amount = 50]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 109, storeId = 14, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.3421|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 109, storeId = 14, productId = 15, amount = 200]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 124, storeName = TheStore]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 124, targetUserId = 126, storeId = 16]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 124, targetUserId = 128, storeId = 16]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 124, targetUserId = 130, storeId = 16]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 130, targetUserId = 132, storeId = 16]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 130, targetUserId = 134, storeId = 16]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 124, storeName = TheSecondStore]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 124, storeId = 16, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.3591|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 124, storeId = 16, productId = 16, amount = 50]
+2022-05-19 02:40:23.3730|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 124, storeId = 16, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.3730|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 124, storeId = 16, productId = 17, amount = 200]
+2022-05-19 02:40:23.3730|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.3730|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3730|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.3730|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3730|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3730|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3730|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 139, storeName = TheStore]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 139, targetUserId = 141, storeId = 18]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 139, targetUserId = 143, storeId = 18]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 139, targetUserId = 145, storeId = 18]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 145, targetUserId = 147, storeId = 18]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 145, targetUserId = 149, storeId = 18]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 139, storeName = TheSecondStore]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 139, storeId = 18, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 139, storeId = 18, productId = 18, amount = 50]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 139, storeId = 18, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.3892|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 139, storeId = 18, productId = 19, amount = 200]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 154, storeName = TheStore]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 154, targetUserId = 156, storeId = 20]
+2022-05-19 02:40:23.4045|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 154, targetUserId = 158, storeId = 20]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 154, targetUserId = 160, storeId = 20]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 160, targetUserId = 162, storeId = 20]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 160, targetUserId = 164, storeId = 20]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 154, storeName = TheSecondStore]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 154, storeId = 20, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 154, storeId = 20, productId = 20, amount = 50]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 154, storeId = 20, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 154, storeId = 20, productId = 21, amount = 200]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4200|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 169, storeName = TheStore]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 169, targetUserId = 171, storeId = 22]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 169, targetUserId = 173, storeId = 22]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 169, targetUserId = 175, storeId = 22]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 175, targetUserId = 177, storeId = 22]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 175, targetUserId = 179, storeId = 22]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 169, storeName = TheSecondStore]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 169, storeId = 22, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 169, storeId = 22, productId = 22, amount = 50]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 169, storeId = 22, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 169, storeId = 22, productId = 23, amount = 200]
+2022-05-19 02:40:23.4360|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 22, memberId = 169, role = Manager]
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 22, memberId = 169, role = Owner]
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 23, memberId = 169, role = Manager]
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 23, memberId = 169, role = Owner]
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4511|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 184, storeName = TheStore]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 184, targetUserId = 186, storeId = 24]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 184, targetUserId = 188, storeId = 24]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 184, targetUserId = 190, storeId = 24]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 190, targetUserId = 192, storeId = 24]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 190, targetUserId = 194, storeId = 24]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 184, storeName = TheSecondStore]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 184, storeId = 24, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 184, storeId = 24, productId = 24, amount = 50]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 184, storeId = 24, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 184, storeId = 24, productId = 25, amount = 200]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 24, memberId = 184, role = Manager]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 24, memberId = 184, role = Owner]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 25, memberId = 184, role = Manager]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 25, memberId = 184, role = Owner]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.4674|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 199, storeName = TheStore]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 199, targetUserId = 201, storeId = 26]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 199, targetUserId = 203, storeId = 26]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 199, targetUserId = 205, storeId = 26]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 205, targetUserId = 207, storeId = 26]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 205, targetUserId = 209, storeId = 26]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 199, storeName = TheSecondStore]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 199, storeId = 26, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 199, storeId = 26, productId = 26, amount = 50]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 199, storeId = 26, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 199, storeId = 26, productId = 27, amount = 200]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 26, memberId = 199, role = Manager]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 26, memberId = 199, role = Owner]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 27, memberId = 199, role = Manager]
+2022-05-19 02:40:23.4836|INFO|SystemLog.SystemLogger|GetMembersInRole was called with parameters: [storeId = 27, memberId = 199, role = Owner]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 214, storeName = TheStore]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 214, targetUserId = 216, storeId = 28]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 214, targetUserId = 218, storeId = 28]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 214, targetUserId = 220, storeId = 28]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 220, targetUserId = 222, storeId = 28]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 220, targetUserId = 224, storeId = 28]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 214, storeName = TheSecondStore]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 214, storeId = 28, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 214, storeId = 28, productId = 28, amount = 50]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 214, storeId = 28, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.4984|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 214, storeId = 28, productId = 29, amount = 200]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 229, storeName = TheStore]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 229, targetUserId = 231, storeId = 30]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 229, targetUserId = 233, storeId = 30]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 229, targetUserId = 235, storeId = 30]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 235, targetUserId = 237, storeId = 30]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 235, targetUserId = 239, storeId = 30]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 229, storeName = TheSecondStore]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 229, storeId = 30, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 229, storeId = 30, productId = 30, amount = 50]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 229, storeId = 30, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 229, storeId = 30, productId = 31, amount = 200]
+2022-05-19 02:40:23.5139|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 244, storeName = TheStore]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 244, targetUserId = 246, storeId = 32]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 244, targetUserId = 248, storeId = 32]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 244, targetUserId = 250, storeId = 32]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 250, targetUserId = 252, storeId = 32]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 250, targetUserId = 254, storeId = 32]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 244, storeName = TheSecondStore]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 244, storeId = 32, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 244, storeId = 32, productId = 32, amount = 50]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 244, storeId = 32, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 244, storeId = 32, productId = 33, amount = 200]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.5286|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 259, storeName = TheStore]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 259, targetUserId = 261, storeId = 34]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 259, targetUserId = 263, storeId = 34]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 259, targetUserId = 265, storeId = 34]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 265, targetUserId = 267, storeId = 34]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 265, targetUserId = 269, storeId = 34]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 259, storeName = TheSecondStore]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 259, storeId = 34, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 259, storeId = 34, productId = 34, amount = 50]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 259, storeId = 34, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.5445|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 259, storeId = 34, productId = 35, amount = 200]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|OpenMarket with parameters: [username = admin, can not reveal password]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName1, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName4, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName6, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Enter was called
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Register was called with parameters [userName = userName7, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName2, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName3, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|Login was called with parameters [userName = userName5, password undisclosed]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 274, storeName = TheStore]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 274, targetUserId = 276, storeId = 36]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 274, targetUserId = 278, storeId = 36]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 274, targetUserId = 280, storeId = 36]
+2022-05-19 02:40:23.5604|INFO|SystemLog.SystemLogger|MakeCoOwner was called with parameters: [userId = 280, targetUserId = 282, storeId = 36]
+2022-05-19 02:40:23.5815|INFO|SystemLog.SystemLogger|MakeCoManager was called with parameters: [userId = 280, targetUserId = 284, storeId = 36]
+2022-05-19 02:40:23.5815|INFO|SystemLog.SystemLogger|OpenStore was called with parameters: [userId = 274, storeName = TheSecondStore]
+2022-05-19 02:40:23.5815|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 274, storeId = 36, productName = Iphone13, price = 4000, category = Mobile]
+2022-05-19 02:40:23.5815|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 274, storeId = 36, productId = 36, amount = 50]
+2022-05-19 02:40:23.5815|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 274, storeId = 36, productName = 991ES Calculator, price = 100, category = Office]
+2022-05-19 02:40:23.5815|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 274, storeId = 36, productId = 37, amount = 200]

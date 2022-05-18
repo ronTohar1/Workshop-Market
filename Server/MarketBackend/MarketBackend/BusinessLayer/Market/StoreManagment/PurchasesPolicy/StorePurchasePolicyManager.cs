@@ -49,14 +49,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
             purchases.Remove(policyId);
         }
 
-        public void CanBuy(ShoppingBag bag)
+        public string? CanBuy(ShoppingBag bag, string storeName)
         {
+            string? problems = null;
             foreach(PurchasePolicy purchasePolicy in purchases.Values)
             {
                 bool flag = purchasePolicy.CanBuy(bag);
                 if (!flag)
-                    throw new MarketException($"The Cart does not satisfy the following purchase policy: {purchasePolicy.description}");
+                    problems += $"{storeName}, the policy is violated: {purchasePolicy.description}\n";
             }
+            return problems;
         }
 
         //------------------------ builders ----------------------------

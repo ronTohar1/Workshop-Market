@@ -862,17 +862,17 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.True(store.GetProductReviews(productId1).Count == 0);
         }
 
-        //[Test]
-        //[TestCase(coOwnerId1, amount1, discountPercentage1)]
-        //[TestCase(coOwnerId2, amount2, discountPercentage2)]
-        //[TestCase(founderMemberId, amount3, discountPercentage3)]
-        //public void TestAddDiscountForAmountPolicySuccess(int memeberId, int amount, double discount)
-        //{
-        //    SetupStoreNoPermissionsChange();
-        //    Assert.True(store.policy.amountDiscount.Count == 0);
-        //    store.AddDiscountForAmountPolicy(memeberId, amount, discount);
-        //    Assert.True(store.policy.amountDiscount.Count == 1 && store.policy.amountDiscount[amount] == discount / 100);
-        //}
+        [Test]
+        [TestCase(coOwnerId1, amount1, discountPercentage1)]
+        [TestCase(coOwnerId2, amount2, discountPercentage2)]
+        [TestCase(founderMemberId, amount3, discountPercentage3)]
+        public void TestAddDiscountForAmountPolicySuccess(int memeberId, int amount, double discount)
+        {
+            SetupStoreNoPermissionsChange();
+            Assert.True(store.policy.amountDiscount.Count == 0);
+            store.AddDiscountForAmountPolicy(memeberId, amount, discount);
+            Assert.True(store.policy.amountDiscount.Count == 1 && store.policy.amountDiscount[amount] == discount / 100);
+        }
         //[Test]
         //[TestCase(notAMemberId1, amount1, discountPercentage1)]
         //[TestCase(notAMemberId2, amount2, discountPercentage2)]

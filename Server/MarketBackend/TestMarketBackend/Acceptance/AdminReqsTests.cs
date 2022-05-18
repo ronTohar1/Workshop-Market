@@ -43,7 +43,11 @@ namespace TestMarketBackend.Acceptance
             Assert.IsEmpty(response.Value);
 
             // now check that after purchase that it is returned
+
             SetUpShoppingCarts();
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id);
+            Assert.IsTrue(!purchaseResponse.ErrorOccured());
+
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.ErrorOccured());
             Assert.AreEqual(1, response.Value.Count); 
@@ -79,14 +83,18 @@ namespace TestMarketBackend.Acceptance
         {
 
             // first check that current purchase history is empty
-            Response<IReadOnlyCollection<ServicePurchase>> response = adminFacade.GetStorePurchaseHistory(adminId, member1Id);
+            Response<IReadOnlyCollection<ServicePurchase>> response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
 
             Assert.IsTrue(!response.ErrorOccured());
             Assert.IsEmpty(response.Value);
 
             // now check that after purchase that it is returned
+
             SetUpShoppingCarts();
-            response = adminFacade.GetStorePurchaseHistory(adminId, member1Id);
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id);
+            Assert.IsTrue(!purchaseResponse.ErrorOccured()); 
+
+            response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.ErrorOccured());
             Assert.AreEqual(1, response.Value.Count);
             ServicePurchase purchaseResult = response.Value.First();
@@ -410,9 +418,9 @@ namespace TestMarketBackend.Acceptance
         // r 6 c
         [Test]
         [TestCaseSource("DataFailedGetLoggedInMembers")]
-        public void FailedGetLoggedInMembers(int requestingId)
+        public void FailedGetLoggedInMembers(Func<int> requestingId)
         {
-            Response<IList<int>> response = adminFacade.GetLoggedInMembers(requestingId); 
+            Response<IList<int>> response = adminFacade.GetLoggedInMembers(requestingId()); 
             
             Assert.IsTrue(response.ErrorOccured());
         }

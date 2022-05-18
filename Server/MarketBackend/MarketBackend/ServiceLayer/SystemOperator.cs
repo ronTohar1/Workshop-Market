@@ -41,11 +41,11 @@ namespace MarketBackend.ServiceLayer
         public Response<int> OpenMarket(string username, string password)
         {
             try { 
-                bso.OpenMarket(username, password);// will initialize the controllers if it's the first boot
+                int adminId = bso.OpenMarket(username, password);// will initialize the controllers if it's the first boot
                 InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
                 marketOpen = true;
                 bso.logger.Info($"OpenMarket with parameters: [username = {username}, can not reveal password]");
-                return new(-1);
+                return new(adminId);
             }
             catch (MarketException mex)
             {

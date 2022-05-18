@@ -237,7 +237,7 @@ namespace TestMarketBackend.Acceptance
             // getting roles before to check the roles after the action 
             IDictionary<Role, IList<int>> rolesBefore = GetRolesInStore(storeId()); 
 
-            Response<bool> response = storeManagementFacade.RemoveCoOwnerAppointment(requestingId(), storeId(), coOwnerToRemoveId());
+            Response<bool> response = storeManagementFacade.RemoveCoOwner(requestingId(), storeId(), coOwnerToRemoveId());
 
             Assert.IsTrue(response.ErrorOccured());
 
@@ -261,7 +261,7 @@ namespace TestMarketBackend.Acceptance
             expectedRoles[Role.Owner].Remove(member6Id);
             expectedRoles[Role.Manager].Remove(member7Id);
 
-            Response<bool> response = storeManagementFacade.RemoveCoOwnerAppointment(requestingId, storeId, coOwnerToRemoveId);
+            Response<bool> response = storeManagementFacade.RemoveCoOwner(requestingId, storeId, coOwnerToRemoveId);
             Assert.IsTrue(!response.ErrorOccured());
 
             // check that roles in the store where changed as needed 
@@ -289,7 +289,7 @@ namespace TestMarketBackend.Acceptance
             expectedRoles[Role.Manager].Remove(member7Id);
 
             Func<Response<bool>>[] jobs =
-                Enumerable.Repeat(() => storeManagementFacade.RemoveCoOwnerAppointment(requestingId, storeId, coOwnerToRemoveId), threadsNumber).ToArray();
+                Enumerable.Repeat(() => storeManagementFacade.RemoveCoOwner(requestingId, storeId, coOwnerToRemoveId), threadsNumber).ToArray();
             Response<bool>[] responses = GetResponsesFromThreads(jobs);
             Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
 

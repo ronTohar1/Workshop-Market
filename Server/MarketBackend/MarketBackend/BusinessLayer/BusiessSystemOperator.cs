@@ -40,9 +40,21 @@ namespace MarketBackend.BusinessLayer
 
             if (!VerifyAdmin(username, password))
                 throw new MarketException($"User with username: {username} does not have permission to open the market!");
-
-            //Init controllers
+            if (marketOpen)
+                throw new MarketException("the market is allready opened");
+            
+            InitLogger();
+            int adminId;
+            
             this.membersController = new();
+            try {
+                adminId = membersController.Register(username,password);
+            }
+            catch (Exception e) {         
+                membersController = null;//close market
+                throw e; 
+            }
+            //Init controllers
             this.guestsController = new();
             this.storeController = new(membersController);
             this.buyersController = new(new List<IBuyersController> { guestsController, membersController });
@@ -51,10 +63,9 @@ namespace MarketBackend.BusinessLayer
             this.purchasesManager = new(storeController, buyersController, externalServicesController);
 
             this.adminManager = new(storeController, buyersController);
-            InitLogger();
-      
+            
             marketOpen = true;
-            return -1;
+            return adminId;
 
         }
 

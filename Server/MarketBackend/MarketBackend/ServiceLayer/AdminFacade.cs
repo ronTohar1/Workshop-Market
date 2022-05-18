@@ -103,7 +103,7 @@ namespace MarketBackend.ServiceLayer
             return new Response<bool>("Not implemented yet"); 
         }
 
-        // r 6.2.2
+        // r 6 d
         public Response<bool> RemoveMemberIfHasNoRoles(int requestingId, int memberToRemoveId)
         {
             // todo: implement
@@ -115,5 +115,14 @@ namespace MarketBackend.ServiceLayer
             return new Response<bool>("Not implemented yet"); 
         }
 
+        public Response<IList<int>> GetLoggedInMembers(int requestingId)
+        {
+            return new Response<IList<int>>("Not implemented yet"); 
+        }
+
+        public Response<ServiceMember> GetMemberInfo(int requestingId, int memberId)
+        {
+            return new Response<ServiceMember>("Not implemented yet"); 
+        }
     }
 }

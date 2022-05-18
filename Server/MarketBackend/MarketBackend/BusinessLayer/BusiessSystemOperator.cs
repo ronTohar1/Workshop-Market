@@ -55,7 +55,7 @@ namespace MarketBackend.BusinessLayer
 
                 this.purchasesManager = new(storeController, buyersController, externalServicesController);
 
-                this.adminManager = new(storeController, buyersController);
+                this.adminManager = new(storeController, buyersController, membersController);
                 this.adminManager.AddAdmin(adminId);
                 marketOpen = true;
                 return adminId;

@@ -11,10 +11,15 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
+import ScreenSearchDesktopTwoToneIcon from '@mui/icons-material/ScreenSearchDesktopTwoTone';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Button from '@mui/material/Button';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -98,65 +103,70 @@ export default function Navbar() {
         </Menu>
     );
 
+    const theme = createTheme();
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        sx={{ display: { xs: 'none', sm: 'block' } }}
-                    >
-                        Workshop Market
-                    </Typography>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <Box justifySelf='left' sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
-                        <Search onClick={() => alert("hellohelloo")}>
-                            <SearchIconWrapper >
-                                <SearchIcon />
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder="Search Products..."
-                                inputProps={{ 'aria-label': 'search' }}
-                            />
-                        </Search>
-                    </Box>
-                    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show new mails"
-                            color="inherit"
-                            onClick={handleNotifications}>
-                            <Badge badgeContent={10} color="error">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            aria-label="show new notifications"
-                            color="inherit"
-                            onClick={handleNotifications}
+        <ThemeProvider theme={theme}>
+            <Box sx={{ flexGrow: 1 }}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="div"
+                            sx={{ display: { xs: 'none', sm: 'block' } }}
                         >
-                            <Badge badgeContent={17} color="error">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
-                    </Box>
-                </Toolbar>
-            </AppBar>
-            {renderMenu}
-        </Box>
+                            Workshop Market
+                        </Typography>
+                        <Box sx={{ flexGrow: 1 }} />
+                        <div>
+                            <Box>
+
+                                <Button variant="outlined" color="secondary" startIcon={<SearchIcon />}>
+                                    Search
+                                </Button>
+                            </Box>
+                        </div>
+                        <Box sx={{ flexGrow: 1, width: 200 }}>
+                            <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
+                                <Search sx={{ flexGrow: 1 }} >
+                                    <SearchIconWrapper >
+                                        <SearchIcon />
+                                    </SearchIconWrapper>
+                                    <StyledInputBase
+                                        sx={{ flexGrow: 1 }}
+                                        placeholder="Search Products..."
+                                        inputProps={{ 'aria-label': 'search', width: 'auto' }}
+                                    />
+                                </Search>
+                            </Box>
+                        </Box>
+                        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                            <IconButton
+                                size="large"
+                                aria-label="show new notifications"
+                                color="inherit"
+                                onClick={handleNotifications}
+                            >
+                                <Badge badgeContent={17} color="error">
+                                    <NotificationsIcon />
+                                </Badge>
+                            </IconButton>
+                            <IconButton
+                                size="large"
+                                edge="end"
+                                aria-label="account of current user"
+                                aria-controls={menuId}
+                                aria-haspopup="true"
+                                onClick={handleProfileMenuOpen}
+                                color="inherit"
+                            >
+                                <AccountCircle />
+                            </IconButton>
+                        </Box>
+                    </Toolbar>
+                </AppBar>
+                {renderMenu}
+            </Box >
+        </ThemeProvider>
     );
 }

@@ -4,23 +4,23 @@ import AppBar from '@mui/material/AppBar';
 import Grid from '@mui/material/Grid';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
-import { styled,createTheme, ThemeProvider } from '@mui/material/styles';
+import {createTheme, ThemeProvider } from '@mui/material/styles';
 import Navbar from './Navbar';
-import  ArrowForward  from '@mui/icons-material';
+import {pathLogin, pathRegister} from './Paths'
+
 
 
 const cards = [1, 2, 3];
 
 const theme = createTheme();
 
-const clickFunc = () => {alert("Button!")};
-const createButton = (name: string, clickFunc: any) => {
-  return <Button startIcon={ArrowForward} key="name" size='large' onClick={clickFunc}>{name}</Button> 
+const createButton = (name: string, path: string) => {
+  return <Button href={path} fullWidth sx={{ mt: 3, mb: 2 }} key="name" size='large' color='primary' >{name}</Button> 
 };
 const buttons = [
-  createButton("Continue To Website", clickFunc),
-  createButton("Create An Account", clickFunc),
-  createButton("Log In To Your Account", clickFunc)
+  createButton("Continue To Website", pathLogin),
+  createButton("Create An Account", pathRegister),
+  createButton("Log In To Your Account",pathLogin)
 ];
 
 export default function Home() {

@@ -32,12 +32,16 @@ namespace MarketBackend.ServiceLayer
         {
             marketOpen = false;
             bso = new BusiessSystemOperator();
+            adminFacade = null;
+            buyerFacade = null;
+            externalSystemFacade = null;
+            storeManagementFacade = null;
         }
 
         public Response<int> OpenMarket(string username, string password)
         {
             try { 
-                bso.OpenMarket(username, password);
+                bso.OpenMarket(username, password);// will initialize the controllers if it's the first boot
                 InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
                 marketOpen = true;
                 bso.logger.Info($"OpenMarket with parameters: [username = {username}, can not reveal password]");

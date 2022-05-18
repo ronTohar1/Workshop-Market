@@ -38,35 +38,30 @@ namespace MarketBackend.BusinessLayer
         public int OpenMarket(string username, string password)
         {
 
-            if (!VerifyAdmin(username, password))
+            if (adminManager != null && !VerifyAdmin(username, password))// if adminManager isn't initialized, it's the first boot of the system 
                 throw new MarketException($"User with username: {username} does not have permission to open the market!");
             if (marketOpen)
                 throw new MarketException("the market is allready opened");
-            
-            InitLogger();
-            int adminId;
-            
-            this.membersController = new();
-            try {
-                adminId = membersController.Register(username,password);
-            }
-            catch (Exception e) {         
-                membersController = null;//close market
-                throw e; 
-            }
-            //Init controllers
-            this.guestsController = new();
-            this.storeController = new(membersController);
-            this.buyersController = new(new List<IBuyersController> { guestsController, membersController });
-            this.externalServicesController = new(new ExternalPaymentSystem(), new ExternalSupplySystem());
+            if (adminManager == null)//meaning first 
+            {
+                InitLogger();
+                this.membersController = new();
+                int adminId = membersController.Register(username, password);
+                //Init controllers
+                this.guestsController = new();
+                this.storeController = new(membersController);
+                this.buyersController = new(new List<IBuyersController> { guestsController, membersController });
+                this.externalServicesController = new(new ExternalPaymentSystem(), new ExternalSupplySystem());
 
-            this.purchasesManager = new(storeController, buyersController, externalServicesController);
+                this.purchasesManager = new(storeController, buyersController, externalServicesController);
 
-            this.adminManager = new(storeController, buyersController);
-            
+                this.adminManager = new(storeController, buyersController);
+                this.adminManager.AddAdmin(adminId);
+                marketOpen = true;
+                return adminId;
+            }
             marketOpen = true;
-            return adminId;
-
+            return -1;
         }
 
         public void CloseMarket()
@@ -83,7 +78,16 @@ namespace MarketBackend.BusinessLayer
 
         private bool VerifyAdmin(string username, string password)
         {
-            return true;
+            try
+            {
+                Member member = membersController.GetMember(username);
+                if (!member.matchingPasswords(password))
+                    return false;
+                return adminManager.ContainAdmin(member.Id);
+            }
+            catch (Exception exception) { 
+                return false;
+            }
         }
 
     }

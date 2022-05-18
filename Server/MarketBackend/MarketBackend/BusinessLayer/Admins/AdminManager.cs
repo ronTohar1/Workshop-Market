@@ -41,6 +41,9 @@ namespace MarketBackend.BusinessLayer.Admins
             admins.Add(id);
             return true;
         }
+        public bool ContainAdmin(int id)
+        => admins.Contains(id);
+        
 
         /// <summary>
         /// Removes the given admin from collection and return if deleted

@@ -198,4 +198,13 @@ public class StoreController
 		return openStores.Where(pair => filter.FilterStore(pair.Value)).Select(pair => pair.Key).ToList();
 	}
 
+	public bool HasRolesInMarket(int userId) {
+		foreach (Store store in openStores.Values.Concat(closedStores.Values)) 
+			if (PlaysRoleAtStore(store, userId))
+				return true;
+		return false;
+	}
+	private bool PlaysRoleAtStore(Store store, int memeberId)
+		=> store.IsManager(memeberId) || store.IsCoOwner(memeberId) || store.IsFounder(memeberId);
+
 }

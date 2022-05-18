@@ -1211,8 +1211,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             store.MakeCoOwner(founderMemberId, coOwnerId1);
             store.MakeCoOwner(coOwnerId1, coOwnerId2);
 
-            SetupMemberToManager(managerId1);
-            SetupMemberToManager(managerId2);
+            store.MakeManager(founderMemberId, managerId1);
+            store.MakeManager(coOwnerId2, managerId2);
         }
 
         [Test]
@@ -1226,7 +1226,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.False(store.IsCoOwner(coOwnerToRemoveMemberId));
             foreach (int memberId in wasNotified.Keys)
             {
-                if (memberId == coOwnerId2)
+                if (memberId == coOwnerId2 || memberId == managerId2)
                     Assert.True(wasNotified[memberId]);
                 else
                     Assert.False(wasNotified[memberId]);
@@ -1241,7 +1241,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.False(store.IsCoOwner(coOwnerId1) || store.IsCoOwner(coOwnerId2));
             foreach (int memberId in wasNotified.Keys)
             {
-                if (memberId == coOwnerId1 || memberId == coOwnerId2)
+                if (memberId == coOwnerId1 || memberId == coOwnerId2 || memberId == managerId2)
                     Assert.True(wasNotified[memberId]);
                 else
                     Assert.False(wasNotified[memberId]);

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using MarketBackend.BusinessLayer.Market;
+using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 
@@ -15,13 +16,15 @@ namespace MarketBackend.BusinessLayer.Admins
         private ICollection<int> admins;
         private StoreController storeController;
         private BuyersController buyersController;
+        private MembersController membersController;
         
 
-        public AdminManager(StoreController storeController, BuyersController buyersController)
+        public AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController)
         {
             admins = new SynchronizedCollection<int>();
             this.storeController = storeController;
             this.buyersController = buyersController;
+            this.membersController = membersController;
         }
 
         private void VerifyAdmin(int adminId)
@@ -77,5 +80,16 @@ namespace MarketBackend.BusinessLayer.Admins
 
         public IList<Purchase> GetStoreHistory(int adminId, string storeName) =>
             GetStoreHistory(adminId, storeController.GetStoreIdByName(storeName));
+
+        public void RemoveMember(int adminId, int memberToRemoveId)
+        {
+            VerifyAdmin(adminId);
+            if (storeController.HasRolesInMarket(memberToRemoveId))
+                throw new MarketException($"member with id={memberToRemoveId} can't be removed since he has roles at the store");
+            //from this point it's legal to ask the removal of a member from the memberController
+            membersController.RemoveMember(adminId);
+        }
+        public bool MemberExists(int memberId)
+            => membersController.GetMember(memberId) != null;
     }
 }

@@ -99,8 +99,22 @@ namespace MarketBackend.ServiceLayer
         // r 6.2
         public Response<bool> RemoveMember(int requestingId, int memberToRemoveId)
         {
-            // todo: implement
-            return new Response<bool>("Not implemented yet"); 
+            try
+            {
+                adminManager.RemoveMember(requestingId, memberToRemoveId);
+                logger.Info($"RemoveMember was called with parameters [requestingId = {requestingId}, memberToRemoveId = {memberToRemoveId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: RemoveMember, parameters: [requestingId = {requestingId}, memberToRemoveId = {memberToRemoveId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: RemoveMember, parameters: [requestingId = {requestingId}, memberToRemoveId = {memberToRemoveId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
         }
 
         // r 6 d
@@ -112,7 +126,22 @@ namespace MarketBackend.ServiceLayer
 
         public Response<bool> MemberExists(int memberId)
         {
-            return new Response<bool>("Not implemented yet"); 
+            try
+            {
+                bool res = adminManager.MemberExists(memberId);
+                logger.Info($"RemoveMember was called with parameters [memberId = {memberId}]");
+                return new Response<bool>(res);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: RemoveMember, parameters: [memberId = {memberId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: RemoveMember, parameters: [memberId = {memberId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
         }
 
         public Response<IList<int>> GetLoggedInMembers(int requestingId)

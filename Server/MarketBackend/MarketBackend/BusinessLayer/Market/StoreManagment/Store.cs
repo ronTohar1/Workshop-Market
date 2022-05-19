@@ -3,6 +3,9 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
 using System;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
     public class Store
@@ -11,7 +14,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public Member founder { get; }
         public bool isOpen { get; private set; }
         public Hierarchy<int> appointmentsHierarchy { get; }
-        public virtual StorePolicy policy { get; }
         public virtual IDictionary<int, Product> products { get; }
 
         private IList<Purchase> purchaseHistory;
@@ -28,20 +30,22 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private ConcurrentDictionary<int,Mutex> productsMutex;
         private Mutex transactionIdMutex;
 
-        public StoreDiscountManager discountManager { get; }
+        public StoreDiscountPolicyManager discountManager { get; }
+        public virtual StorePurchasePolicyManager purchaseManager { get; }
 
 
         // cc 5
         // cc 6
         public Store(string storeName, Member founder, Func<int, Member> membersGetter)
 	    {
-            discountManager = new StoreDiscountManager();
+            discountManager = new StoreDiscountPolicyManager();
+            purchaseManager = new StorePurchasePolicyManager();
+
             this.name = storeName;
             this.founder = founder;
             this.isOpen = true;
             this.appointmentsHierarchy = new Hierarchy<int>(founder.Id);
             this.purchaseHistory = new SynchronizedCollection<Purchase>();
-            this.policy = new StorePolicy();
             this.products = new ConcurrentDictionary<int, Product>();
             this.managersPermissions = new ConcurrentDictionary<int, IList<Permission>>();
             initializeRolesInStore();
@@ -238,31 +242,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public IList<Product> SerachProducts(ProductsSearchFilter filter)
         => products.Values.Where(p => filter.FilterProduct(p)).ToList();
 
-        // r.4.2
-        public void AddPurchaseOption(int memberId, PurchaseOption purchaseOption)//Add to store
-        {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option: ");
-            policy.AddPurchaseOption(purchaseOption);
-        }
-
-        // r.4.2
-        public void AddProductPurchaseOption(int memberId, int productId, PurchaseOption purchaseOption)//Add to product in the store 
-        {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
-            if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not add purchase option for the product: there isn't such a product with product id: {productId}"));
-            if (!policy.ContainsPurchaseOption(purchaseOption))
-                throw new MarketException(StoreErrorMessage($"Could not add purchase option for the product: the store itself does not support such purchase options"));
-            products[productId].AddPurchaseOption(purchaseOption);
-        }
-        // r.4.2
-        public void SetMinAmountPerProduct(int memberId, int productId, int newMinAmount)//Add to store
-        {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not set minimum amount for product: ");
-            if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not set minimum amount for product: there isn't such a product with product id: {productId}"));
-            policy.SetMinAmountPerProduct(productId, newMinAmount);
-        }
 
         // r.4.1
         public void SetProductPrice(int memberId, int productId, double productPrice)
@@ -349,12 +328,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 return membersToReviews;
             }
         }
-        // r.3.3
-        public void AddDiscountForAmountPolicy(int memeberId, int amount, double discount)
-        {
-            EnforceAtLeastCoOwnerPermission(memeberId, "Could not add store discount for a certain amount: ");
-            policy.AddDiscountAmountPolicy(amount, discount);
-        }
+
         // r.3.3
         //recieves shopping bag and calculates the total to pay, consideroing all the restroctions
         public virtual Tuple<double,double> GetTotalBagCost(ShoppingBag shoppingBag) 
@@ -366,9 +340,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
                 if (!products.ContainsKey(productId))
                     throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay: there isn't such a product"));
-                int amountPerProduct = policy.GetMinAmountPerProduct(productId);
-                if (productAmount < amountPerProduct)
-                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay:  {products[productId].name} can be bought only in a set of {amountPerProduct} or more"));
             }
             double productsTotalPrices = shoppingBag.ProductsAmounts.Keys.Sum(prodInBag => products[prodInBag.ProductId].GetPrice() * shoppingBag.ProductsAmounts[prodInBag]);
             double amountDiscount = discountManager.EvaluateDiscountForBag(shoppingBag,this);
@@ -381,12 +352,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 return $"The product can't be bought in the {name} store, there isn't such a product with id: {productId}";
             string productPurchaseFailMessage = "The product can't be bought: ";
             bool productCanBePurchased = true;
-            int minAmount = policy.GetMinAmountPerProduct(productId);
-            if (minAmount > amount)
-            {
-                productPurchaseFailMessage = productPurchaseFailMessage + $"\n     { products[productId].name} can be bought only in a set of { minAmount} or more";
-                productCanBePurchased = false;
-            }
             if (products[productId].amountInInventory == 0)
             {
                 productPurchaseFailMessage = productPurchaseFailMessage + $"\n     there arn't any {products[productId].name} currently at the inventory";
@@ -652,27 +617,58 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return result; 
         }
 
+       
         private bool IsManagerWithPermission(int memberId, Permission permission)
         {
             rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             bool result = IsManager(memberId) && HasPermission(memberId, permission);
             return result;
         }
-        // ----------------------------- Discounts -----------------------------
+     
+        // ----------------------------- Discounts policy -----------------------------
 
-        public int AddDiscount(IExpression exp, string descrption, int memberId)
+        public int AddDiscountPolicy(IExpression exp, string descrption, int memberId)
         {
             //TODO check if permission alows to handle discounts
-
+            string permissionError = CheckAtLeastManagerWithPermission(memberId,Permission.DiscountPolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not add discount policy: " + permissionError);
+            
             int id = discountManager.AddDiscount(descrption, exp);
             return id;
         }
 
-        public void RemoveDiscount(int disId, int memberId)
+        public void RemoveDiscountPolicy(int disId, int memberId)
         {
             //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.DiscountPolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not remove discount policy: " + permissionError);
 
             discountManager.RemoveDiscount(disId);
+        }
+
+        // ----------------------------- Purchases policy -----------------------------
+
+        public int AddPurchasePolicy(IPurchasePolicy exp, string descrption, int memberId)
+        {
+            //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.purchasePolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not add purchase policy: " + permissionError);
+
+            int id = purchaseManager.AddPurchasePolicy(descrption, exp);
+            return id;
+        }
+
+        public void RemovePurchasePolicy(int policyId, int memberId)
+        {
+            //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.purchasePolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not add purchase policy: " + permissionError);
+
+            purchaseManager.RemovePurchasePolicy(policyId);
         }
 
         // ------------------------------ General ------------------------------
@@ -696,7 +692,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 
         // 1.5, 1.6
-        public void notifyAllStoreOwners(string notificationMessage) 
+        public virtual void notifyAllStoreOwners(string notificationMessage) 
             =>notifyAllMembersWithRole(notificationMessage, Role.Owner);
         public void notifyAllStoreManagers(string notificationMessage)
             => notifyAllMembersWithRole(notificationMessage, Role.Manager);

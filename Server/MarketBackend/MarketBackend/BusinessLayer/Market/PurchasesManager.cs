@@ -111,21 +111,24 @@ public class PurchasesManager
         foreach (ShoppingBag shoppingBag in shoppingBags)
         {
             int storeId = shoppingBag.StoreId;
-            Store store = storeController.GetStore(storeId);
+            Store? store = storeController.GetStore(storeId);
             //Check if store is closed -----
             if (store == null)
                 exceptions += $"Store with id: {storeId} does not exist\n";
             if (!IsOpenStore(storeId))
             {
                 marketExceptions += $"Sorry, but {store.name} is closed for shopping!\n";
-
-                foreach (var productAmount in shoppingBag.ProductsAmounts)
-                {
-                    int productId = productAmount.Key.ProductId;
-                    if (store.SearchProductByProductId(productId) == null)
-                        exceptions += $"Product id {productId} does not exist in store: {store.name} (store id: {storeId})\n";
-                }
             }
+            foreach (var productAmount in shoppingBag.ProductsAmounts)
+            {
+                int productId = productAmount.Key.ProductId;
+                if (store.SearchProductByProductId(productId) == null)
+                    exceptions += $"Product id {productId} does not exist in store: {store.name} (store id: {storeId})\n";
+            }
+            string? issue = store.purchaseManager.CanBuy(shoppingBag, store.GetName());
+            if (issue != null)
+                marketExceptions += issue;
+
         }
         if (exceptions != null)
             throw new Exception(exceptions);

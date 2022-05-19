@@ -90,8 +90,9 @@ public class PurchasesManager
 
         IDictionary<int, string> receipts = GetReceipt(storesTransactions,shoppingBags);
 
+        ICollection<ShoppingBag> shoppingBagsInPurchase = new List<ShoppingBag>(shoppingBags); 
         UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
-        AddRecord(buyer, shoppingBags, storesTotal, receipts);
+        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts);
 
         string finalReceipt = String.Join("", receipts.Values);
         return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);

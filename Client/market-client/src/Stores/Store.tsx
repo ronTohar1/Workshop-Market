@@ -21,7 +21,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
-import { Fab } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
+import { Fab, makeStyles } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import AppBar from '@mui/material/AppBar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -30,44 +31,38 @@ import Navbar from '../Navbar';
 
 
 interface Data {
-    calories: number;
-    carbs: number;
-    fat: number;
-    name: string;
-    protein: number;
+    Id: number,
+    Name: string,
+    Price: number,
+    Available_Quantity: number
 }
 
 function createData(
-    name: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number,
+    Id: number,
+    Name: string,
+    Price: number,
+    Available_Quantity: number
 ): Data {
     return {
-        name,
-        calories,
-        fat,
-        carbs,
-        protein,
+        Id,
+        Name,
+        Price,
+        Available_Quantity
     };
 }
 
 const rows = [
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Donut', 452, 25.0, 51, 4.9),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Honeycomb', 408, 3.2, 87, 6.5),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Jelly Bean', 375, 0.0, 94, 0.0),
-    createData('KitKat', 518, 26.0, 65, 7.0),
-    createData('Lollipop', 392, 0.2, 98, 0.0),
-    createData('Marshmallow', 318, 0, 81, 2.0),
-    createData('Nougat', 360, 19.0, 9, 37.0),
-    createData('Oreo', 437, 18.0, 63, 4.0),
-];
+    createData(1,'Cupcake', 305, 3),
+    createData(2,'Hamburger', 30, 33),
+    createData(3,'Salad', 340, 3000),
+    createData(4,'Cheese', 130, 232),
+    createData(5,'Banana', 35, 22),
+    createData(6,'Cooler', 3051, 22),
+    createData(7,'Sunglasses', 3035, 223),
+    createData(8,'Elephant', 10, 32),
+    createData(9,'Zebra', 3, 21),
+    createData(10,'Hot Dog', 100, 222),
+]
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -116,34 +111,22 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
-        id: 'name',
+        id: 'Name',
         numeric: false,
         disablePadding: true,
-        label: 'Dessert (100g serving)',
+        label: 'All Products',
     },
     {
-        id: 'calories',
+        id: 'Price',
         numeric: true,
         disablePadding: false,
-        label: 'Calories',
+        label: 'Price (NIS)',
     },
     {
-        id: 'fat',
+        id: 'Available_Quantity',
         numeric: true,
         disablePadding: false,
-        label: 'Fat (g)',
-    },
-    {
-        id: 'carbs',
-        numeric: true,
-        disablePadding: false,
-        label: 'Carbs (g)',
-    },
-    {
-        id: 'protein',
-        numeric: true,
-        disablePadding: false,
-        label: 'Protein (g)',
+        label: 'Available Quantity',
     },
 ];
 
@@ -210,6 +193,11 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const { numSelected } = props;
+    // const isSelected = (name: string) => selected.indexOf(name) !== -1;
+    
+    const handleAddToCart = () => {rows.forEach((row) =>{
+        console.log("is row "+row.Name+" selected? ")
+    })};
 
     return (
         <Toolbar
@@ -243,16 +231,19 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             )}
             {numSelected > 0 ? (
                 <Tooltip title="Add To Cart">
-                    <Fab size="medium" color="primary" aria-label="add">
+                    <Fab size="medium" color="primary" aria-label="add" onClick={handleAddToCart}>
                         <AddShoppingCartIcon />
                     </Fab>
                 </Tooltip>
             ) : (
-                <Tooltip title="Filter list">
-                    <IconButton>
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
+                <Stack direction="row">
+                    <TextField id="outlined-basic" size="small" label="Filter By Name" variant="outlined" />
+                    <Tooltip title="Filter list">
+                        <IconButton onClick={() => alert("hola")}>
+                            <FilterListIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
             )}
         </Toolbar>
     );
@@ -260,7 +251,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
 export default function EnhancedTable() {
     const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('calories');
+    const [orderBy, setOrderBy] = React.useState<keyof Data>('Name');
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -275,9 +266,11 @@ export default function EnhancedTable() {
         setOrderBy(property);
     };
 
+
+
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
+            const newSelecteds = rows.map((n) => n.Name);
             setSelected(newSelecteds);
             return;
         }
@@ -323,7 +316,17 @@ export default function EnhancedTable() {
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-    const theme = createTheme();
+    const theme = createTheme({
+        typography: {
+            fontFamily: [
+                "Nunito",
+                "Roboto",
+                "Helvetica Neue",
+                "Arial",
+                "sans-serif"
+            ].join(",")
+        }
+    });
 
     return (
         <ThemeProvider theme={theme}>
@@ -332,7 +335,7 @@ export default function EnhancedTable() {
             </AppBar>
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
-                    <EnhancedTableToolbar numSelected={selected.length} />
+                    <EnhancedTableToolbar numSelected={selected.length}/>
                     <TableContainer>
                         <Table
                             sx={{ minWidth: 750 }}
@@ -353,17 +356,17 @@ export default function EnhancedTable() {
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                        const isItemSelected = isSelected(row.name);
+                                        const isItemSelected = isSelected(row.Name);
                                         const labelId = `enhanced-table-checkbox-${index}`;
 
                                         return (
                                             <TableRow
                                                 hover
-                                                onClick={(event) => handleClick(event, row.name)}
+                                                onClick={(event) => handleClick(event, row.Name)}
                                                 role="checkbox"
                                                 aria-checked={isItemSelected}
                                                 tabIndex={-1}
-                                                key={row.name}
+                                                key={row.Name}
                                                 selected={isItemSelected}
                                             >
                                                 <TableCell padding="checkbox">
@@ -381,12 +384,10 @@ export default function EnhancedTable() {
                                                     scope="row"
                                                     padding="none"
                                                 >
-                                                    {row.name}
+                                                    {row.Name}
                                                 </TableCell>
-                                                <TableCell align="right">{row.calories}</TableCell>
-                                                <TableCell align="right">{row.fat}</TableCell>
-                                                <TableCell align="right">{row.carbs}</TableCell>
-                                                <TableCell align="right">{row.protein}</TableCell>
+                                                <TableCell align="right">{row.Price}</TableCell>
+                                                <TableCell align="right">{row.Available_Quantity}</TableCell>
                                             </TableRow>
                                         );
                                     })}

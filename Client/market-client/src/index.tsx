@@ -6,6 +6,7 @@ import Register from './Authentication/Register';
 import Home from './Home'
 import Login from './Authentication/Login';
 import Navbar from './Navbar';
+import Search from './Pages/Search'
 import EnhancedTableToolbar from './Stores/Store';
 import Cart from './Cart';
 import {
@@ -13,12 +14,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import {
-  pathRegister,
-  pathLogin,
-  pathStore,
-  pathCart
-} from "./Paths";
+import * as Paths from "./Paths";
 
 
 const root = ReactDOM.createRoot(
@@ -28,11 +24,11 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route index element={<Home />} />
-      <Route path={pathRegister} element={<Register />} />
-      <Route path={pathStore} element={<EnhancedTableToolbar />} />
-      <Route path={pathCart} element={<Cart />} />
-      <Route path={pathLogin} element={<Login />}>
-      </Route>
+      <Route path={Paths.pathRegister} element={<Register />} />
+      <Route path={Paths.pathStore} element={<EnhancedTableToolbar />} />
+      <Route path={Paths.pathCart} element={<Cart />} />
+      <Route path={Paths.pathLogin} element={<Login />}/>
+      <Route path={Paths.pathSearch} element={<Search />}/>
     </Routes>
   </BrowserRouter>
 );

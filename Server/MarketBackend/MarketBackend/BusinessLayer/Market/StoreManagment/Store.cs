@@ -31,7 +31,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private Mutex transactionIdMutex;
 
         public StoreDiscountPolicyManager discountManager { get; }
-        public StorePurchasePolicyManager purchaseManager { get; }
+        public virtual StorePurchasePolicyManager purchaseManager { get; }
 
 
         // cc 5
@@ -692,7 +692,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 
         // 1.5, 1.6
-        public void notifyAllStoreOwners(string notificationMessage) 
+        public virtual void notifyAllStoreOwners(string notificationMessage) 
             =>notifyAllMembersWithRole(notificationMessage, Role.Owner);
         public void notifyAllStoreManagers(string notificationMessage)
             => notifyAllMembersWithRole(notificationMessage, Role.Manager);

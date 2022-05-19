@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MarketBackend.BusinessLayer;
 using MarketBackend.BusinessLayer.System.ExternalServices;
 using System.Collections.Concurrent;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
 namespace TestMarketBackend.BusinessLayer.Market
 {
     public class PurchasesManagerTetsts
@@ -50,25 +51,7 @@ namespace TestMarketBackend.BusinessLayer.Market
 
         private int counter;
         private bool[] removeFromStoreFromCart = { false, false, false };
-        private bool[] removeFromStore = { false, false, false };
-
-        private IDictionary<int, IList<Tuple<int, int>>> case1legal = new Dictionary<int, IList<Tuple<int, int>>>()
-        {
-            [storeYesId1] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount2) }
-        };
-        private IDictionary<int, IList<Tuple<int, int>>> case2legal = new Dictionary<int, IList<Tuple<int, int>>>()
-        {
-            [storeYesId1] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount2), new Tuple<int, int>(productId2, amount3) },
-        };
-        private IDictionary<int, IList<Tuple<int, int>>> case3illegal = new Dictionary<int, IList<Tuple<int, int>>>()
-        {
-            [storeYesId1] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount1), new Tuple<int, int>(productId2, amount1) },
-            [storeNoId1] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount2), new Tuple<int, int>(productId2, amount3) },
-        };
-        private IDictionary<int, IList<Tuple<int, int>>> case4illegal = new Dictionary<int, IList<Tuple<int, int>>>()
-        {
-            [notAStoreId1] = new List<Tuple<int, int>>() { new Tuple<int, int>(productId1, amount1), new Tuple<int, int>(productId2, amount1) }
-        };
+        private bool notifiedOwners;
 
 
 
@@ -128,7 +111,9 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeMock.Setup(store =>
                     store.CanBuyProduct(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).
                         Returns(result);
-
+            storeMock.Setup(store =>
+                    store.notifyAllStoreOwners(It.IsAny<string>())).
+                        Callback(() => notifiedOwners = true);
             return storeMock.Object;
         }
 
@@ -267,7 +252,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             cartMock.Setup(cart =>
                     cart.RemoveProductFromCart(It.Is<ProductInBag>(p => p != null && productsId.Contains(p.ProductId)))).
                         Callback<ProductInBag>((p) => removeFromStoreFromCart[p.ProductId] = true);
-            Mock<ShoppingBag> shoppingBagMock = new Mock<ShoppingBag>(storeYesId1, productsId.Select(index => (new Mock<ProductInBag>(index, storeYesId1)).Object).ToDictionary(p => p, P => amount1));
+            Mock<ShoppingBag> shoppingBagMock = new Mock<ShoppingBag>(storeYesId1, productsId.Select(index => (new Mock<ProductInBag>(index, storeYesId1)).Object).ToDictionary(p => p, P => amount1)) { CallBase = true };
             
             shoppingBagMock.Setup(shoppingBag => shoppingBag.StoreId).Returns(storeYesId1);
             cartMock.Setup(cart =>
@@ -349,7 +334,9 @@ namespace TestMarketBackend.BusinessLayer.Market
                    store.AddPurchaseRecord(It.IsAny<int>(), It.IsAny<Purchase>()));
             storeMock.Setup(store =>
                    store.GetTotalBagCost(It.IsAny<ShoppingBag>())).Returns(new Tuple<double,double>(totalPrice,0));
-
+            storeMock.Setup(store =>
+                    store.notifyAllStoreOwners(It.IsAny<string>())).
+                        Callback(() => notifiedOwners = true);
             return storeMock.Object;
         }
 
@@ -481,6 +468,19 @@ namespace TestMarketBackend.BusinessLayer.Market
                     store.products).
                         Returns(createMocksProducts(productsId, outOfStock));
 
+            storeMock.Setup(store =>
+                    store.notifyAllStoreOwners(It.IsAny<string>())).
+                        Callback(()=>notifiedOwners=true);
+
+            Mock<StorePurchasePolicyManager> storePurchasePolicyManagerMock = new Mock<StorePurchasePolicyManager>();
+            if (!policyFail)
+                storePurchasePolicyManagerMock.Setup(storePurchasePolicy => storePurchasePolicy.CanBuy(It.IsAny<ShoppingBag>(), It.IsAny<string>())).Returns((string?)null);
+            else
+                storePurchasePolicyManagerMock.Setup(storePurchasePolicy => storePurchasePolicy.CanBuy(It.IsAny<ShoppingBag>(), It.IsAny<string>())).Returns("can't buy ):");
+            storeMock.Setup(store =>
+                   store.purchaseManager).
+                       Returns(storePurchasePolicyManagerMock.Object);
+
             return storeMock.Object;
         }
 
@@ -498,6 +498,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeController = storeControllerMock.Object;
         }
         private void setUpStoreServicesFail(int[] cartProductsId, int[] storeProductsId, bool outOfStock, bool policyFail) {
+            notifiedOwners = false;
             removeFromStoreFromCart = Enumerable.Repeat(false, 3).ToArray();
             counter = 0;
             BuyersControllerSetup2(cartProductsId);
@@ -544,12 +545,13 @@ namespace TestMarketBackend.BusinessLayer.Market
         [TestCase(new int[] { productId1 }, new int[] { productId1 })]
         [TestCase(new int[] { productId1 }, new int[] { productId1, productId2 })]
         [TestCase(new int[] { productId1, productId2, }, new int[] { productId1, productId2, productId3 })]
-        public void TestPurchaseProductIsInCartAndMoreThanMinAmountPolicyFail(int[] cartProductsId, int[] storeProductsId)
+        public void TestPurchaseProductIsInCartAndPolicyFail(int[] cartProductsId, int[] storeProductsId)
         {
             setUpStoreServicesFail(cartProductsId, storeProductsId, false, true);
             Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1));
             Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
             Assert.AreEqual(counter, 0);//check that the inventory is the same
+            Assert.False(notifiedOwners);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
             purchases.Remove(policyId);
         }
 
-        public string? CanBuy(ShoppingBag bag, string storeName)
+        public virtual string? CanBuy(ShoppingBag bag, string storeName)
         {
             string? problems = null;
             foreach(PurchasePolicy purchasePolicy in purchases.Values)

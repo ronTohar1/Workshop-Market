@@ -15,7 +15,8 @@ const cards = [1, 2, 3];
 const theme = createTheme();
 
 const createButton = (name: string, path: string) => {
-  return <Button href={path} fullWidth sx={{ mt: 3, mb: 2 }} key="name" size='large' color='primary' >{name}</Button> 
+  return <Button href={path} style={{height: 100, width: 500}}                  
+                  key="name" size='large' color='primary' >{name}</Button> 
 };
 const buttons = [
   createButton("Continue To Website", pathLogin),
@@ -30,20 +31,29 @@ export default function Home() {
       <AppBar position="relative">
       </AppBar>
       <main>
+        <Grid container
+              spacing={0}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              style={{ minHeight: '100vh' }}
+          >
           <Box sx={{
-              marginTop: 8,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}>
-            <ButtonGroup
-              orientation="vertical"
-              aria-label="vertical contained button group"
-              variant="text"
-            >
-              {buttons}
-            </ButtonGroup>
-          </Box>
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+              <ButtonGroup 
+                orientation="vertical"
+                aria-label="vertical contained button group"
+                variant="text"
+              >
+                {buttons}
+              </ButtonGroup>
+            </Box>
+        </Grid>
+          
 
         {/* <Box
           sx={{

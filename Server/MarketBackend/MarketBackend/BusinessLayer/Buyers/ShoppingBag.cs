@@ -2,7 +2,7 @@
 {
     public class ShoppingBag
     {
-        private IDictionary<ProductInBag, int> productsAmounts;
+        public virtual IDictionary<ProductInBag, int> productsAmounts { get; private set; }
         public virtual int StoreId { get; private set; }
 
         internal IDictionary<ProductInBag, int> ProductsAmounts { get { return productsAmounts; } }
@@ -23,6 +23,11 @@
         public ShoppingBag(int storeId)
         {
             this.StoreId = storeId;
+            productsAmounts = new Dictionary<ProductInBag, int>();
+        }
+        public ShoppingBag()
+        {//for testing
+            this.StoreId = -1;
             productsAmounts = new Dictionary<ProductInBag, int>();
         }
 

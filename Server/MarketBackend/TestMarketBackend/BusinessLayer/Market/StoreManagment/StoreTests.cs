@@ -81,6 +81,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private const int productIdAmount2 = 4;
         private const int productIdAmount3 = 5;
 
+        private IDictionary<int, bool> wasNotified;
+
         private ProductsSearchFilter filter;
         
         private IExpression expression1 = (new Mock<IExpression>()).Object;
@@ -100,6 +102,10 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
                 member.Id).
                     Returns(memberId);
 
+            memberMock.Setup(member =>
+               member.Notify(It.IsAny<string[]>())).
+                   Callback(() => wasNotified[memberId] = true);
+
             return memberMock.Object;
         }
 
@@ -117,10 +123,11 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private Member[] setupMembers(int[] membersIds)
         {
             Member[] members = new Member[membersIds.Length];
-
+            wasNotified = new Dictionary<int, bool>();
             for (int i = 0; i < membersIds.Length; i++)
             {
                 members[i] = setupMcokedMember(membersIds[i]);
+                wasNotified[i] = false;
             }
 
             return members;
@@ -803,7 +810,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             DateTime date = DateTime.Now;
-            purchase = new Purchase(memberId, date,9.9,"great!");
+            purchase = new Purchase(memberId, date, 9.9, "great!");
             Assert.Throws<MarketException>(() => store.AddPurchaseRecord(memberId, purchase));
             Assert.True(store.findPurchasesByDate(purchase.purchaseDate).Count == 0);
         }
@@ -821,7 +828,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             setupMockedPurchase(memberId);
             SetUpPurchasesInStore();
             IList<Purchase> purchases = store.GetPurchaseHistory(memberId);
-            Assert.True(purchases.Count == 1 );
+            Assert.True(purchases.Count == 1);
         }
 
         [Test]
@@ -1121,6 +1128,158 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
                 return false;
             return list1.All(element => list2.Contains(element));
 
+        }
+
+        // --------------- notification tests - from v2 -------------------
+        [Test]
+        [TestCase(reviewMessage1)]
+        [TestCase(reviewMessage2)]
+        [TestCase(reviewMessage3)]
+        public void TestNotifyCoOwners(string notifications)
+        {
+            SetupStoreNoPermissionsChange();
+            store.notifyAllStoreOwners(notifications);
+            foreach (int memberId in wasNotified.Keys)
+            {
+                if (memberId == coOwnerId1 || memberId == coOwnerId2 || memberId == founder.Id)
+                    Assert.True(wasNotified[memberId]);
+                else
+                    Assert.False(wasNotified[memberId]);
+            }
+        }
+
+        [Test]
+        [TestCase(reviewMessage1)]
+        [TestCase(reviewMessage2)]
+        [TestCase(reviewMessage3)]
+        public void TestNotifyCoManagers(string notifications)
+        {
+            SetupStoreNoPermissionsChange();
+            store.notifyAllStoreManagers(notifications);
+            foreach (int memberId in wasNotified.Keys)
+            {
+                if (memberId == managerId1 || memberId == managerId2)
+                    Assert.True(wasNotified[memberId]);
+                else
+                    Assert.False(wasNotified[memberId]);
+            }
+        }
+        [Test]
+        public void TestCloseStoreSuccess()
+        {
+            SetupStoreNoPermissionsChange();
+            store.CloseStore(founder.Id);
+            foreach (int memberId in wasNotified.Keys)
+            {
+                if (memberId == managerId1 || memberId == managerId2 || memberId == coOwnerId1 || memberId == coOwnerId2 || memberId == founder.Id)
+                    Assert.True(wasNotified[memberId]);
+                else
+                    Assert.False(wasNotified[memberId]);
+            }
+            Assert.False(store.isOpen);
+        }
+        [Test]
+        public void TestCloseStoreTwiceFail()
+        {
+            SetupStoreNoPermissionsChange();
+            store.CloseStore(founder.Id);
+
+            foreach (int memberId in wasNotified.Keys)//clean the notifications 
+                wasNotified[memberId] = false;
+            Assert.Throws<MarketException>(() => store.CloseStore(founder.Id));
+            foreach (int memberId in wasNotified.Keys)//check that no one was notified
+                Assert.False(wasNotified[memberId]);
+            Assert.False(store.isOpen);
+        }
+        [Test]
+        [TestCase(coOwnerId1)]
+        [TestCase(managerId1)]
+        [TestCase(memberId3)]
+        [TestCase(notAMemberId1)]
+        public void TestCloseStoreByNonFounder(int id)
+        {
+            SetupStoreNoPermissionsChange();
+            Assert.Throws<MarketException>(() => store.CloseStore(id));
+            foreach (int memberId in wasNotified.Keys)//check that no one was notified
+                Assert.False(wasNotified[memberId]);
+            Assert.True(store.isOpen);
+        }
+        [Test]
+        public void TestGetInformationAfterStoreClosed()
+        {
+            SetupStoreNoPermissionsChange();
+            store.CloseStore(founder.Id);
+            Assert.Throws<MarketException>(() => store.GetMembersInRole(founder.Id, Role.Owner));
+            Assert.Throws<MarketException>(() => store.GetManagerPermissions(founder.Id, managerId1));
+        }
+
+        private void SetupStoreCoOwnerChain()
+        {
+            SetupStoreNoRoles();
+
+            store.MakeCoOwner(founderMemberId, coOwnerId1);
+            store.MakeCoOwner(coOwnerId1, coOwnerId2);
+
+            store.MakeManager(founderMemberId, managerId1);
+            store.MakeManager(coOwnerId2, managerId2);
+        }
+
+        [Test]
+        [TestCase(founderMemberId, coOwnerId2)]
+        [TestCase(coOwnerId1, coOwnerId2)]
+        public void TestRemoveCoOwnerFromStoreSimpleCaseSuccess(int requestingMemberId, int coOwnerToRemoveMemberId)
+        {
+            SetupStoreCoOwnerChain();
+            Assert.True(store.IsCoOwner(coOwnerToRemoveMemberId));
+            store.RemoveCoOwner(requestingMemberId, coOwnerToRemoveMemberId);
+            Assert.False(store.IsCoOwner(coOwnerToRemoveMemberId));
+            foreach (int memberId in wasNotified.Keys)
+            {
+                if (memberId == coOwnerId2 || memberId == managerId2)
+                    Assert.True(wasNotified[memberId]);
+                else
+                    Assert.False(wasNotified[memberId]);
+            }
+        }
+        [Test]
+        public void TestRemoveCoOwnerFromStoreComplexCaseSuccess()
+        {
+            SetupStoreCoOwnerChain();
+            Assert.True(store.IsCoOwner(coOwnerId1) && store.IsCoOwner(coOwnerId2));
+            store.RemoveCoOwner(founder.Id, coOwnerId1);
+            Assert.False(store.IsCoOwner(coOwnerId1) || store.IsCoOwner(coOwnerId2));
+            foreach (int memberId in wasNotified.Keys)
+            {
+                if (memberId == coOwnerId1 || memberId == coOwnerId2 || memberId == managerId2)
+                    Assert.True(wasNotified[memberId]);
+                else
+                    Assert.False(wasNotified[memberId]);
+            }
+        }
+        [Test]
+        [TestCase(founderMemberId, managerId1)]
+        [TestCase(coOwnerId1, memberId2)]
+        [TestCase(managerId1, coOwnerId1)]
+        [TestCase(memberId2, coOwnerId2)]
+        public void TestRemoveCoOwnerFromStoreNotOwner(int requestingMemberId, int coOwnerToRemoveMemberId)
+        {
+            SetupStoreCoOwnerChain();
+
+            Assert.Throws<MarketException>(() => store.RemoveCoOwner(requestingMemberId, coOwnerToRemoveMemberId));
+            foreach (int memberId in wasNotified.Keys)
+                Assert.False(wasNotified[memberId]);
+        }
+        [Test]
+        [TestCase(coOwnerId2, coOwnerId1)]
+        [TestCase(coOwnerId2, founderMemberId)]
+        [TestCase(coOwnerId1, founderMemberId)]
+        public void TestRemoveCoOwnerFromStoreIllegalHieirarchyRequest(int requestingMemberId, int coOwnerToRemoveMemberId)
+        {
+            SetupStoreCoOwnerChain();
+
+            Assert.Throws<MarketException>(() => store.RemoveCoOwner(requestingMemberId, coOwnerToRemoveMemberId));
+            foreach (int memberId in wasNotified.Keys)
+                Assert.False(wasNotified[memberId]);
         }
 
     }

@@ -319,7 +319,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                     throw new MarketException($"Could not recieve purchase history: {this.name} is closed");
 
                 IDictionary<int, IList<string>> memberIdToReviews = products[productId].reviews;
-                return memberIdToReviews.Keys.ToDictionary(id => membersGetter(id), id => memberIdToReviews[id]);
+                IDictionary< Member, IList<string>> membersToReviews = new Dictionary<Member, IList<string>>();
+                foreach (int memberId in memberIdToReviews.Keys) {
+                    Member? m = membersGetter(memberId);
+                    if (m != null)
+                        membersToReviews[m] = memberIdToReviews[memberId];
+                }
+                return membersToReviews;
             }
         }
 
@@ -335,7 +341,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 if (!products.ContainsKey(productId))
                     throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay: there isn't such a product"));
             }
-            double productsTotalPrices = shoppingBag.ProductsAmounts.Keys.Sum(prodInBag => products[prodInBag.ProductId].GetPrice());
+            double productsTotalPrices = shoppingBag.ProductsAmounts.Keys.Sum(prodInBag => products[prodInBag.ProductId].GetPrice() * shoppingBag.ProductsAmounts[prodInBag]);
             double amountDiscount = discountManager.EvaluateDiscountForBag(shoppingBag,this);
             return new(productsTotalPrices ,amountDiscount);
         }
@@ -442,19 +448,20 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             }
 
             Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId);
-            RemovedBranchUpdate(removedBrance, Role.Owner, $"We regeret to inform you that you're no longer an owner of {this.name}");
+            RemovedByOwnerBranchUpdate(removedBrance, $"We regeret to inform you that you've lost your position at {this.name}");
 
             rolesAndPermissionsLock.ReleaseWriterLock();
             
         }
-        private void RemovedBranchUpdate(Hierarchy<int> removedBranch, Role removedRole, string notification) {
+        private void RemovedByOwnerBranchUpdate(Hierarchy<int> removedBranch, string notification) {
             if (removedBranch == null)
                 return;
             int memberId = removedBranch.value;
-            rolesInStore[removedRole].Remove(memberId);
+            rolesInStore[Role.Owner].Remove(memberId);//doesn't do anything if not in collection
+            rolesInStore[Role.Manager].Remove(memberId);
             membersGetter(memberId).Notify(notification);
             foreach (Hierarchy<int> child in removedBranch.children) {
-                RemovedBranchUpdate(child, removedRole, notification);
+                RemovedByOwnerBranchUpdate(child, notification);
             }
         }
 

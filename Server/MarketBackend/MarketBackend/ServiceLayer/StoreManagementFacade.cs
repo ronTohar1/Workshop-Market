@@ -127,7 +127,28 @@ namespace MarketBackend.ServiceLayer
                 return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }
-
+        public Response<bool> RemoveCoOwner(int userId, int targetUserId, int storeId)
+        {
+            try
+            {
+                Store s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.RemoveCoOwner(userId, targetUserId);
+                logger.Info($"RemoveCoOwner was called with parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: RemoveCoOwner, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: RemoveCoOwner, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
 
         //done
         public Response<bool> MakeCoManager(int userId, int targetUserId, int storeId)
@@ -292,6 +313,25 @@ namespace MarketBackend.ServiceLayer
             {
                 logger.Error(ex, $"method: OpenStore, parameters: [userId = {userId}, storeName = {storeName}]");
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> CloseStore(int userId, int storeId)
+        {
+            try
+            {
+                storeController.CloseStore(userId, storeId);
+                logger.Info($"CloseStore was called with parameters: [userId = {userId}, storeId = {storeId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: CloseStore, parameters: [userId = {userId}, storeId = {storeId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: CloseStore, parameters: [userId = {userId}, storeId = {storeId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }
 

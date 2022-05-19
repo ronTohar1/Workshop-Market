@@ -16,7 +16,6 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         private Notifier notifier;
 
         private Mutex mutex;
-        private Mutex notificationMutex;
         private ReaderWriterLock loggedInLock;
         private const int lockTime = 2000;
 
@@ -42,7 +41,6 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         {
             //Init locks first
             this.mutex = new Mutex();
-            this.notificationMutex = new Mutex();
             this.loggedInLock = new ReaderWriterLock();
 
             //Init fields
@@ -62,9 +60,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
                     throw new MarketException("This user is already logged in!");
                 if (this.password == security.HashPassword(password))
                 {
-                    lock (notificationMutex) {
-                        this.notifier = new Notifier(notifyFunc);
-                    }
+                    this.notifier = new Notifier(notifyFunc);
                     LoggedIn = true;
                     SendPending();
                 }
@@ -82,26 +78,25 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             }
         }
 
-        public void Notify(string[] notifications) {
-            lock (notificationMutex)
+        public virtual void Notify(string[] notifications) {
+            
+            if (!LoggedIn || !notifier.tryToNotify(notifications))
             {
-                if (!LoggedIn || !notifier.tryToNotify(notifications))
-                {
-                    foreach (string notification in notifications)
-                        pendingNotifications.Add(notification);
-                }
+                foreach (string notification in notifications)
+                    pendingNotifications.Add(notification);
             }
+            
         }
 
         public void Notify(string notification)
        => Notify(new string[] { notification });
 
         private void SendPending() {
-            lock (notificationMutex)
-            {// assumes that the member after log in
-                if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
-                    pendingNotifications.Clear();
-            }
+            if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
+                pendingNotifications.Clear();
         }
+        public bool matchingPasswords(string password)
+        => this.password == security.HashPassword(password);
+            
     }
 }

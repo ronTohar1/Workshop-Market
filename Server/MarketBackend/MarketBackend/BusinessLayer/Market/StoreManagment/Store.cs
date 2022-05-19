@@ -610,18 +610,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return result; 
         }
 
+       
         private bool IsManagerWithPermission(int memberId, Permission permission)
         {
             rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             bool result = IsManager(memberId) && HasPermission(memberId, permission);
             return result;
         }
+     
         // ----------------------------- Discounts policy -----------------------------
 
         public int AddDiscountPolicy(IExpression exp, string descrption, int memberId)
         {
             //TODO check if permission alows to handle discounts
-
+            string permissionError = CheckAtLeastManagerWithPermission(memberId,Permission.DiscountPolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not add discount policy: " + permissionError);
+            
             int id = discountManager.AddDiscount(descrption, exp);
             return id;
         }
@@ -629,6 +634,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public void RemoveDiscountPolicy(int disId, int memberId)
         {
             //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.DiscountPolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not remove discount policy: " + permissionError);
 
             discountManager.RemoveDiscount(disId);
         }
@@ -638,6 +646,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public int AddPurchasePolicy(IPurchasePolicy exp, string descrption, int memberId)
         {
             //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.purchasePolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not add purchase policy: " + permissionError);
 
             int id = purchaseManager.AddPurchasePolicy(descrption, exp);
             return id;
@@ -646,6 +657,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public void RemovePurchasePolicy(int policyId, int memberId)
         {
             //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.purchasePolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not add purchase policy: " + permissionError);
 
             purchaseManager.RemovePurchasePolicy(policyId);
         }

@@ -15,7 +15,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
         private static Mutex idMutex = new Mutex(false);
         private static int discountId = 0;
 
-        private IDictionary<int, Discount> discounts;
+        public IDictionary<int, Discount> discounts { get; private set; }
 
         public StoreDiscountPolicyManager()
         {

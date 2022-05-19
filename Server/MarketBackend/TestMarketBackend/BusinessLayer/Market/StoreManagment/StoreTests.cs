@@ -10,6 +10,7 @@ using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market;
 using MarketBackend.BusinessLayer;
 using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -81,6 +82,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private const int productIdAmount3 = 5;
 
         private ProductsSearchFilter filter;
+        
+        private IExpression expression1 = (new Mock<IExpression>()).Object;
+        private IExpression expression2 = (new Mock<IExpression>()).Object;
+        private IExpression expression3 = (new Mock<IExpression>()).Object;
+        private const string description_purchase = "A banana can be bought in sets of 4 or more!";
+        private const string description_discount = "A banana's discount will be given when bought in sets of 4 or more!";
 
         // ----------- Setup helping functions -----------------------------
 
@@ -862,17 +869,19 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Assert.True(store.GetProductReviews(productId1).Count == 0);
         }
 
-        [Test]
-        [TestCase(coOwnerId1, amount1, discountPercentage1)]
-        [TestCase(coOwnerId2, amount2, discountPercentage2)]
-        [TestCase(founderMemberId, amount3, discountPercentage3)]
-        public void TestAddDiscountForAmountPolicySuccess(int memeberId, int amount, double discount)
-        {
-            SetupStoreNoPermissionsChange();
-            Assert.True(store.policy.amountDiscount.Count == 0);
-            store.AddDiscountForAmountPolicy(memeberId, amount, discount);
-            Assert.True(store.policy.amountDiscount.Count == 1 && store.policy.amountDiscount[amount] == discount / 100);
-        }
+       
+        //[Test]
+        //[TestCase(coOwnerId1, description_purchase)]
+        //[TestCase(coOwnerId2, description_purchase)]
+        //[TestCase(founderMemberId, description_purchase)]
+        //public void TestAddDiscountForAmountPolicySuccess(int memeberId, string description)
+        //{
+        //    SetupStoreNoPermissionsChange();
+
+        //    Assert.True(store.purchaseManager.purchases.Count == 0);
+        //    int xid = store.AddDiscountPolicy(expression1, description, memeberId);
+        //    Assert.True(store.purchaseManager.purchases.Count == 1 && store.purchaseManager.purchases.ContainsKey(xid));
+        //}
         //[Test]
         //[TestCase(notAMemberId1, amount1, discountPercentage1)]
         //[TestCase(notAMemberId2, amount2, discountPercentage2)]

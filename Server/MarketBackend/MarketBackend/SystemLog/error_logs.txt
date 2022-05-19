@@ -1,0 +1,1 @@
+2022-05-19 12:33:22.6394|ERROR|SystemLog.SystemLogger|method: GetStorePurchaseHistory, parameters: [currUserId = -1, storeId = 47]

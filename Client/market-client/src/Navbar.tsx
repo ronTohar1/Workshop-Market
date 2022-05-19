@@ -19,6 +19,8 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { makeStyles } from '@mui/material';
+import Stack from '@mui/material/Stack';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -105,10 +107,11 @@ export default function Navbar() {
 
     const theme = createTheme();
     return (
+        
         <ThemeProvider theme={theme}>
-            <Box sx={{ flexGrow: 1 }}>
-                <AppBar position="static">
-                    <Toolbar>
+            <AppBar position="sticky">
+                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div>
                         <Typography
                             variant="h6"
                             noWrap
@@ -117,29 +120,31 @@ export default function Navbar() {
                         >
                             Workshop Market
                         </Typography>
-                        <Box sx={{ flexGrow: 1 }} />
-                        <div>
-                            <Box>
+                        <Box sx={{}} />
 
-                                <Button variant="outlined" color="secondary" startIcon={<SearchIcon />}>
-                                    Search
-                                </Button>
-                            </Box>
-                        </div>
-                        <Box sx={{ flexGrow: 1, width: 200 }}>
-                            <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
-                                <Search sx={{ flexGrow: 1 }} >
-                                    <SearchIconWrapper >
-                                        <SearchIcon />
-                                    </SearchIconWrapper>
-                                    <StyledInputBase
-                                        sx={{ flexGrow: 1 }}
-                                        placeholder="Search Products..."
-                                        inputProps={{ 'aria-label': 'search', width: 'auto' }}
-                                    />
-                                </Search>
-                            </Box>
-                        </Box>
+                    </div>
+                    <div>
+
+                        <Stack direction="row" spacing={2}>
+                            <Button variant="outlined" color="inherit" startIcon={<SearchIcon />}>
+                                Search
+                            </Button>
+                            <Search sx={{ flexGrow: 1 }} >
+                                <SearchIconWrapper >
+                                    <SearchIcon />
+                                </SearchIconWrapper>
+                                <StyledInputBase
+                                    sx={{ flexGrow: 1 }}
+                                    placeholder="Search Products..."
+                                    inputProps={{ 'aria-label': 'search', width: 'auto' }}
+                                />
+                            </Search>
+                        </Stack>
+                        {/* <Box sx={{ display: { xs: 'none', sm: 'block' }, direction: 'row' }}>
+
+                        </Box> */}
+                    </div>
+                    <div>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                             <IconButton
                                 size="large"
@@ -163,10 +168,11 @@ export default function Navbar() {
                                 <AccountCircle />
                             </IconButton>
                         </Box>
-                    </Toolbar>
-                </AppBar>
-                {renderMenu}
-            </Box >
-        </ThemeProvider>
+                    </div>
+                </Toolbar>
+            </AppBar>
+            {renderMenu}
+        </ThemeProvider >
+    
     );
 }

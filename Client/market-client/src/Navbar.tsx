@@ -20,7 +20,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { makeStyles } from '@mui/material';
+import { BadgeProps } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Stack from '@mui/material/Stack';
+import { InputAdornment } from '@mui/material';
+import { TextField } from '@mui/material';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -38,6 +42,16 @@ const Search = styled('div')(({ theme }) => ({
         width: 'auto',
     },
 }));
+
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+    '& .MuiBadge-badge': {
+        right: -3,
+        top: 13,
+        border: `2px solid ${theme.palette.background.paper}`,
+        padding: '0 4px',
+    },
+}));
+
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
     padding: theme.spacing(0, 2),
@@ -105,9 +119,14 @@ export default function Navbar() {
         </Menu>
     );
 
+    const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        alert("username is " + data.get("searchProducts"));
+    }
     const theme = createTheme();
     return (
-        
+
         <ThemeProvider theme={theme}>
             <AppBar position="sticky">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -124,22 +143,46 @@ export default function Navbar() {
 
                     </div>
                     <div>
+                        <Box component="form" noValidate onSubmit={handleSearch}  >
+                            <Stack direction="row" spacing={2}>
+                                
 
-                        <Stack direction="row" spacing={2}>
-                            <Button variant="outlined" color="inherit" startIcon={<SearchIcon />}>
-                                Search
-                            </Button>
-                            <Search sx={{ flexGrow: 1 }} >
-                                <SearchIconWrapper >
-                                    <SearchIcon />
-                                </SearchIconWrapper>
-                                <StyledInputBase
-                                    sx={{ flexGrow: 1 }}
-                                    placeholder="Search Products..."
-                                    inputProps={{ 'aria-label': 'search', width: 'auto' }}
-                                />
-                            </Search>
-                        </Stack>
+                                {/* <TextField
+                                    id="searchProducts"
+                                    name="searchProducts"
+                                    label="Search Products"
+                                    size="small"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon sx={{ color: 'inherit' }} />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    variant="filled"
+                                /> */}
+                                <Search sx={{ flexGrow: 1 }} >
+                                    <SearchIconWrapper >
+                                        <SearchIcon />
+                                    </SearchIconWrapper>
+                                    <StyledInputBase
+                                        id="searchProducts"
+                                        name="searchProducts"
+                                        sx={{ flexGrow: 1 }}
+                                        placeholder="Search Products..."
+                                        inputProps={{ 'aria-label': 'search', width: 'auto' }}
+                                    />
+                                </Search>
+                                <Button
+                                    variant="outlined"
+                                    color="inherit"
+                                    startIcon={<SearchIcon />}
+                                    type="submit"
+                                >
+                                    Search
+                                </Button>
+                            </Stack>
+                        </Box>
                         {/* <Box sx={{ display: { xs: 'none', sm: 'block' }, direction: 'row' }}>
 
                         </Box> */}
@@ -152,9 +195,18 @@ export default function Navbar() {
                                 color="inherit"
                                 onClick={handleNotifications}
                             >
-                                <Badge badgeContent={17} color="error">
+                                <Badge badgeContent={109} color="error">
                                     <NotificationsIcon />
                                 </Badge>
+                            </IconButton>
+                            <IconButton
+                                aria-label="cart"
+                                size="large"
+                                color='inherit'
+                            >
+                                <StyledBadge badgeContent={44} color="secondary">
+                                    <ShoppingCartIcon />
+                                </StyledBadge>
                             </IconButton>
                             <IconButton
                                 size="large"
@@ -167,12 +219,13 @@ export default function Navbar() {
                             >
                                 <AccountCircle />
                             </IconButton>
+
                         </Box>
                     </div>
                 </Toolbar>
             </AppBar>
             {renderMenu}
         </ThemeProvider >
-    
+
     );
 }

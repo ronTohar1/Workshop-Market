@@ -7,6 +7,7 @@ import Home from './Home'
 import Login from './Authentication/Login';
 import Navbar from './Navbar';
 import EnhancedTableToolbar from './Stores/Store';
+import Cart from './Cart';
 import {
   BrowserRouter,
   Routes,
@@ -15,7 +16,8 @@ import {
 import {
   pathRegister,
   pathLogin,
-  pathStore
+  pathStore,
+  pathCart
 } from "./Paths";
 
 
@@ -28,6 +30,7 @@ root.render(
       <Route index element={<Home />} />
       <Route path={pathRegister} element={<Register />} />
       <Route path={pathStore} element={<EnhancedTableToolbar />} />
+      <Route path={pathCart} element={<Cart />} />
       <Route path={pathLogin} element={<Login />}>
       </Route>
     </Routes>

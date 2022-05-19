@@ -28,42 +28,23 @@ import AppBar from '@mui/material/AppBar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Navbar from '../Navbar';
 import Autocomplete from '@mui/material/Autocomplete';
+import {Product, createProduct} from '../Utils';
 
 const storeName = "store 1";
 
-interface Data {
-    Id: number,
-    Name: string,
-    Price: number,
-    Available_Quantity: number,
-}
 
-
-function createData(
-    Id: number,
-    Name: string,
-    Price: number,
-    Available_Quantity: number
-): Data {
-    return {
-        Id: Id,
-        Name: Name,
-        Price: Price,
-        Available_Quantity: Available_Quantity,
-    };
-}
 
 const rows = [
-    createData(1, 'Cupcake', 305, 3),
-    createData(2, 'Hamburger', 30, 33),
-    createData(3, 'Salad', 340, 3000),
-    createData(4, 'Cheese', 130, 232),
-    createData(5, 'Banana', 35, 22),
-    createData(6, 'Cooler', 3051, 22),
-    createData(7, 'Sunglasses', 3035, 223),
-    createData(8, 'Elephant', 10, 32),
-    createData(9, 'Zebra', 3, 21),
-    createData(10, 'Hot Dog', 100, 222),
+    createProduct(1, 'Cupcake', 305, 3),
+    createProduct(2, 'Hamburger', 30, 33),
+    createProduct(3, 'Salad', 340, 3000),
+    createProduct(4, 'Cheese', 130, 232),
+    createProduct(5, 'Banana', 35, 22),
+    createProduct(6, 'Cooler', 3051, 22),
+    createProduct(7, 'Sunglasses', 3035, 223),
+    createProduct(8, 'Elephant', 10, 32),
+    createProduct(9, 'Zebra', 3, 21),
+    createProduct(10, 'Hot Dog', 100, 222),
 ]
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -106,7 +87,7 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
 
 interface HeadCell {
     disablePadding: boolean;
-    id: keyof Data;
+    id: keyof Product;
     label: string;
     numeric: boolean;
 }
@@ -134,7 +115,7 @@ const headCells: readonly HeadCell[] = [
 
 interface EnhancedTableProps {
     numSelected: number;
-    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
+    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Product) => void;
     onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
     order: Order;
     orderBy: string;
@@ -145,7 +126,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
         props;
     const createSortHandler =
-        (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+        (property: keyof Product) => (event: React.MouseEvent<unknown>) => {
             onRequestSort(event, property);
         };
 
@@ -266,7 +247,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
 export default function EnhancedTable() {
     const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('Name');
+    const [orderBy, setOrderBy] = React.useState<keyof Product>('Name');
     const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -274,7 +255,7 @@ export default function EnhancedTable() {
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
-        property: keyof Data,
+        property: keyof Product,
     ) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');

@@ -107,6 +107,7 @@ export default function Navbar() {
 
     const theme = createTheme();
     return (
+        
         <ThemeProvider theme={theme}>
             <AppBar position="sticky">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -172,5 +173,6 @@ export default function Navbar() {
             </AppBar>
             {renderMenu}
         </ThemeProvider >
+    
     );
 }

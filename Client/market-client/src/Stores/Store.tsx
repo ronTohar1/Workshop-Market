@@ -27,15 +27,17 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import AppBar from '@mui/material/AppBar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Navbar from '../Navbar';
+import Autocomplete from '@mui/material/Autocomplete';
 
-
+const storeName = "store 1";
 
 interface Data {
     Id: number,
     Name: string,
     Price: number,
-    Available_Quantity: number
+    Available_Quantity: number,
 }
+
 
 function createData(
     Id: number,
@@ -44,24 +46,24 @@ function createData(
     Available_Quantity: number
 ): Data {
     return {
-        Id,
-        Name,
-        Price,
-        Available_Quantity
+        Id: Id,
+        Name: Name,
+        Price: Price,
+        Available_Quantity: Available_Quantity,
     };
 }
 
 const rows = [
-    createData(1,'Cupcake', 305, 3),
-    createData(2,'Hamburger', 30, 33),
-    createData(3,'Salad', 340, 3000),
-    createData(4,'Cheese', 130, 232),
-    createData(5,'Banana', 35, 22),
-    createData(6,'Cooler', 3051, 22),
-    createData(7,'Sunglasses', 3035, 223),
-    createData(8,'Elephant', 10, 32),
-    createData(9,'Zebra', 3, 21),
-    createData(10,'Hot Dog', 100, 222),
+    createData(1, 'Cupcake', 305, 3),
+    createData(2, 'Hamburger', 30, 33),
+    createData(3, 'Salad', 340, 3000),
+    createData(4, 'Cheese', 130, 232),
+    createData(5, 'Banana', 35, 22),
+    createData(6, 'Cooler', 3051, 22),
+    createData(7, 'Sunglasses', 3035, 223),
+    createData(8, 'Elephant', 10, 32),
+    createData(9, 'Zebra', 3, 21),
+    createData(10, 'Hot Dog', 100, 222),
 ]
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -193,16 +195,19 @@ interface EnhancedTableToolbarProps {
 }
 
 
+
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-    const { numSelected, selected } = props;
+    const { numSelected, selected}= props;
 
     const isSelected = (Id: number) => selected.indexOf(Id) !== -1;
-    
-    const handleAddToCart = () => {rows.forEach((row) =>{
-        if (isSelected(row.Id))
-            alert(row.Name+" is selected");
-    })};
 
+    const handleAddToCart = () => {
+        rows.forEach((row) => {
+            if (isSelected(row.Id))
+                alert(row.Name + " is selected");
+        })
+    };
+  
     return (
         <Toolbar
             sx={{
@@ -230,7 +235,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     id="tableTitle"
                     component="div"
                 >
-                    Nutrition
+                    {storeName}
                 </Typography>
             )}
             {numSelected > 0 ? (
@@ -240,10 +245,16 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     </Fab>
                 </Tooltip>
             ) : (
-                <Stack direction="row">
-                    <TextField id="outlined-basic" size="small" label="Filter By Name" variant="outlined" />
+                <Stack direction="row" spacing={2} sx={{width:300}}>
+                    <Autocomplete
+                        id="auto-comp-prod"
+                        freeSolo
+                        fullWidth={true}
+                        options={rows.map((row) => row.Name)}
+                        renderInput={(params) => <TextField {...params} label="Find Store Products" />}
+                    />
                     <Tooltip title="Filter list">
-                        <IconButton onClick={() => alert("hola")}>
+                        <IconButton onClick={() => alert("p")}>
                             <FilterListIcon />
                         </IconButton>
                     </Tooltip>
@@ -273,7 +284,7 @@ export default function EnhancedTable() {
 
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
+        if (event.target.checked && selected.length == 0) {
             const newSelecteds = rows.map((n) => n.Id);
             setSelected(newSelecteds);
             return;
@@ -314,7 +325,7 @@ export default function EnhancedTable() {
         setDense(event.target.checked);
     };
 
-    const isSelected = (Id:  number) => selected.indexOf(Id) !== -1;
+    const isSelected = (Id: number) => selected.indexOf(Id) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
@@ -339,10 +350,9 @@ export default function EnhancedTable() {
             </AppBar>
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
-                    <EnhancedTableToolbar selected={selected} numSelected={selected.length}/>
-                    <TableContainer>
+                    <EnhancedTableToolbar selected={selected} numSelected={selected.length} />
+                    <TableContainer sx={{display:'flex', justifyContent:'center'}}>
                         <Table
-                            sx={{ minWidth: 750 }}
                             aria-labelledby="tableTitle"
                             size={dense ? 'small' : 'medium'}
                         >

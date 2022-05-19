@@ -189,14 +189,18 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
+    selected: readonly number[];
 }
 
+
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-    const { numSelected } = props;
-    // const isSelected = (name: string) => selected.indexOf(name) !== -1;
+    const { numSelected, selected } = props;
+
+    const isSelected = (Id: number) => selected.indexOf(Id) !== -1;
     
     const handleAddToCart = () => {rows.forEach((row) =>{
-        console.log("is row "+row.Name+" selected? ")
+        if (isSelected(row.Id))
+            alert(row.Name+" is selected");
     })};
 
     return (
@@ -252,7 +256,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 export default function EnhancedTable() {
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('Name');
-    const [selected, setSelected] = React.useState<readonly string[]>([]);
+    const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -270,19 +274,19 @@ export default function EnhancedTable() {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.Name);
+            const newSelecteds = rows.map((n) => n.Id);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected: readonly string[] = [];
+    const handleClick = (event: React.MouseEvent<unknown>, Id: number) => {
+        const selectedIndex = selected.indexOf(Id);
+        let newSelected: readonly number[] = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, Id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -310,7 +314,7 @@ export default function EnhancedTable() {
         setDense(event.target.checked);
     };
 
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;
+    const isSelected = (Id:  number) => selected.indexOf(Id) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
@@ -335,7 +339,7 @@ export default function EnhancedTable() {
             </AppBar>
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
-                    <EnhancedTableToolbar numSelected={selected.length}/>
+                    <EnhancedTableToolbar selected={selected} numSelected={selected.length}/>
                     <TableContainer>
                         <Table
                             sx={{ minWidth: 750 }}
@@ -356,17 +360,17 @@ export default function EnhancedTable() {
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                        const isItemSelected = isSelected(row.Name);
+                                        const isItemSelected = isSelected(row.Id);
                                         const labelId = `enhanced-table-checkbox-${index}`;
 
                                         return (
                                             <TableRow
                                                 hover
-                                                onClick={(event) => handleClick(event, row.Name)}
+                                                onClick={(event) => handleClick(event, row.Id)}
                                                 role="checkbox"
                                                 aria-checked={isItemSelected}
                                                 tabIndex={-1}
-                                                key={row.Name}
+                                                key={row.Id}
                                                 selected={isItemSelected}
                                             >
                                                 <TableCell padding="checkbox">

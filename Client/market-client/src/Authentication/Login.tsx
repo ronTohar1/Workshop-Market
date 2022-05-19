@@ -19,6 +19,7 @@ export default function Login() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    alert("username is "+data.get("username"));
   };
 
   return (

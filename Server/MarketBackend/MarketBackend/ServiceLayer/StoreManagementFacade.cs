@@ -21,7 +21,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Predicat
 
 namespace MarketBackend.ServiceLayer
 {
-    internal class StoreManagementFacade
+    public class StoreManagementFacade
     {
         private StoreController storeController;
         private Logger logger;

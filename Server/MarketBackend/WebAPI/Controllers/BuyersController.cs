@@ -132,7 +132,8 @@ namespace WebAPI.Controllers
         [HttpPost("Login")]
         public ActionResult<Response<bool>> Login([FromBody] AuthenticationRequest request)
         {
-            Response<int> response = buyerFacade.Login(request.UserName, request.Password);
+            Response<int> response = buyerFacade.Login(request.UserName, request.Password,
+                (msgs) => { return false; });
 
             if (response.ErrorOccured())
                 return BadRequest(response);
@@ -152,9 +153,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("ReviewProduct")]
-        public ActionResult<Response<bool>> AddProductReview([FromBody] UserRequest request)
+        public ActionResult<Response<bool>> AddProductReview([FromBody] ReviewProductRequest request)
         {
-            Response<bool> response = buyerFacade.AddProductReview(request.UserId);
+            Response<bool> response = buyerFacade.AddProductReview(request.UserId,request.StoreId, request.ProductId, request.Review);
 
             if (response.ErrorOccured())
                 return BadRequest(response);

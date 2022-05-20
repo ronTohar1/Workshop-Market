@@ -6,7 +6,7 @@ import Register from './Authentication/Register';
 import Home from './Home'
 import Login from './Authentication/Login';
 import Navbar from './Navbar';
-import Search from './Pages/Search'
+import SearchPage from './Pages/Search'
 import EnhancedTableToolbar from './Stores/Store';
 import Cart from './Cart';
 import {
@@ -28,7 +28,7 @@ root.render(
       <Route path={Paths.pathStore} element={<EnhancedTableToolbar />} />
       <Route path={Paths.pathCart} element={<Cart />} />
       <Route path={Paths.pathLogin} element={<Login />}/>
-      <Route path={Paths.pathSearch} element={<Search />}/>
+      <Route path={Paths.pathSearch} element={<SearchPage />}/>
     </Routes>
   </BrowserRouter>
 );

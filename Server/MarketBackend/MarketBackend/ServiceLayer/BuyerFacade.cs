@@ -144,7 +144,8 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                ServicePurchase canBuy = new ServicePurchase(purchasesManager.PurchaseCartContent(userId));
+                Purchase purchase = purchasesManager.PurchaseCartContent(userId); 
+                ServicePurchase canBuy = new ServicePurchase(purchase.purchaseDate, purchase.purchasePrice, purchase.purchaseDescription);
                 logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}]");
                 return new Response<ServicePurchase>(canBuy);
             }
@@ -211,7 +212,7 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<ServiceStore>($"No store with id {storeId}");
                 logger.Info($"GetStoreInfo was called with parameters [storeId = {storeId}]");
-                return new Response<ServiceStore>(CreateServiceStore(s));
+                return new Response<ServiceStore>(CreateServiceStore(s, storeId));
             }
             catch (MarketException mex)
             {
@@ -225,13 +226,13 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        private ServiceStore CreateServiceStore(Store store)
+        private ServiceStore CreateServiceStore(Store store, int storeId)
         {
             // try and catch is in calling functions 
 
             IList<int> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => product.id).ToList();
 
-            return new ServiceStore(store.GetName(), productsIds);
+            return new ServiceStore(storeId, store.GetName(), productsIds);
         }
 
         //done
@@ -239,11 +240,12 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Store s = storeController.GetStore(storeController.GetStoreIdByName(storeName));
+                int storeId = storeController.GetStoreIdByName(storeName); 
+                Store s = storeController.GetStore(storeId);
                 if (s == null) // never
                     return new Response<ServiceStore>($"No store with name {storeName}");
                 logger.Info($"GetStoreInfo was called with parameters [storeName = {storeName}]");
-                return new Response<ServiceStore>(CreateServiceStore(s));
+                return new Response<ServiceStore>(CreateServiceStore(s, storeId));
             }
             catch (MarketException mex)
             {
@@ -309,30 +311,31 @@ namespace MarketBackend.ServiceLayer
             try
             {
                 int id = membersController.Register(userName, password);
-                logger.Info($"Register was called with parameters [userName = {userName}, password = {password}]");
+                logger.Info($"Register was called with parameters [userName = {userName}, password undisclosed]");
                 return new Response<int>(id);
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: Register, parameters: [userName = {userName}, password = {password}]");
+                logger.Error(mex, $"method: Register, parameters: [userName = {userName}, password undisclosed]");
                 return new Response<int>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: Register, parameters: [userName = {userName}, password = {password}]");
+                logger.Error(ex, $"method: Register, parameters: [userName = {userName}, password undisclosed]");
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
             }
         }
 
         //done
-        public Response<int> Login(string userName, string password)
+        public Response<int> Login(string userName, string password, Func<string[], bool> notifier)
         {
             try
             {
                 Member? m = membersController.GetMember(userName);
                 if (m == null)
                     return new Response<int>($"No member with userName {userName}");
-                bool logged = m.Login(password);
+
+                bool logged = m.Login(password, notifier);// the member could have connected from another computer 
                 if (logged == false)
                     return new Response<int>("Incorrect password");
                 int id = m.Id;
@@ -350,6 +353,23 @@ namespace MarketBackend.ServiceLayer
                 return new Response<int>("Sorry, an unexpected error occured. Please try again");
             }
         }
+
+        // private Func<string[], bool> produceNotifierFunc()
+        // {
+        //     //this function will recieve the communication means and will return
+        //     //a closure, that given string[] to transfer will attempt to send to 
+        //     //the client the array - David on it, waiting for communication means tho
+
+        //     Func<string[], bool> tryToSend = (string[] messages) =>
+        //     {
+        //         //bool succeddded = Socket.send(messages);
+        //         //return succeddded;
+        //         throw new NotImplementedException();
+        //     };
+
+        //     return tryToSend;
+
+        // }
 
         //done
         public Response<bool> Logout(int memberId)

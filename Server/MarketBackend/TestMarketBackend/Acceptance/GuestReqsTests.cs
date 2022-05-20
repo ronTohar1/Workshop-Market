@@ -94,7 +94,7 @@ namespace TestMarketBackend.Acceptance
         [TestCase(userName1, password1)]
         public void SuccessfulLogin(string userName, string password)
         {
-            Response<int> reponse = buyerFacade.Login(userName, password);
+            Response<int> reponse = buyerFacade.Login(userName, password, newNotifications => true);
 
             Assert.IsTrue(!reponse.ErrorOccured());
         }
@@ -102,8 +102,8 @@ namespace TestMarketBackend.Acceptance
         [TestCase(userName1, password1)]
         public void FailureDoubleLogin(string username, string password)
         {
-            buyerFacade.Login(username, password);
-            Response<int> reponse = buyerFacade.Login(username, password);
+            buyerFacade.Login(username, password, newNotifications => true);
+            Response<int> reponse = buyerFacade.Login(username, password, newNotifications => true);
 
             Assert.IsTrue(reponse.ErrorOccured());
         }
@@ -112,7 +112,7 @@ namespace TestMarketBackend.Acceptance
         [TestCase("user_name123", "pass12345")]
         public void LoginWithNonExistentDetails(string userName, string password)
         {
-            Response<int> reponse = buyerFacade.Login(userName, password);
+            Response<int> reponse = buyerFacade.Login(userName, password, newNotifications => true);
 
             Assert.IsTrue(reponse.ErrorOccured());
         }

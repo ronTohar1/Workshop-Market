@@ -11,9 +11,9 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         public string Username { get; private set; }
         private int password;
         private bool _loggedIn;
-        private IList<string> notifications;
+        public IList<string> pendingNotifications { get; private set; }
         private Security security; // Responsible for securing the member's details.
-        /*private Notifier notifier;*/
+        private Notifier notifier;
 
         private Mutex mutex;
         private ReaderWriterLock loggedInLock;
@@ -48,32 +48,22 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             this.Username = username;
             this.password = security.HashPassword(password);
             this._loggedIn = false;
-            this.notifications = new SynchronizedCollection<string>();
-
+            this.pendingNotifications = new SynchronizedCollection<string>();
         }
 
 
-        /* Login with notifications
-         * public bool Login(string password,Notifier notifier)
-        {
-            lock (mutex)
-            {
-                if (LoggedIn)
-                    throw new MarketException("Cannot login to a user that is logged in!");
-                LoggedIn = true;
-                this.notifier = notifier;
-                return this.password == password.GetHashCode();
-            }
-        }*/
-
-        public bool Login(string password)
+        public bool Login(string password, Func<string[], bool> notifyFunc)
         {
             lock (mutex)
             {
                 if (LoggedIn)
                     throw new MarketException("This user is already logged in!");
                 if (this.password == security.HashPassword(password))
+                {
+                    this.notifier = new Notifier(notifyFunc);
                     LoggedIn = true;
+                    SendPending();
+                }
                 return LoggedIn;
             }
         }
@@ -88,6 +78,25 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             }
         }
 
+        public virtual void Notify(string[] notifications) {
+            
+            if (!LoggedIn || !notifier.tryToNotify(notifications))
+            {
+                foreach (string notification in notifications)
+                    pendingNotifications.Add(notification);
+            }
+            
+        }
 
+        public void Notify(string notification)
+       => Notify(new string[] { notification });
+
+        private void SendPending() {
+            if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
+                pendingNotifications.Clear();
+        }
+        public bool matchingPasswords(string password)
+        => this.password == security.HashPassword(password);
+            
     }
 }

@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <Folder Include="BusinessLayer\Buyers\Members\" />
-    <Folder Include="BusinessLayer\Market\StoreManagment\" />
   </ItemGroup>
 
 </Project>

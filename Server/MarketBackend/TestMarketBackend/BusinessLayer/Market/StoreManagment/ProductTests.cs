@@ -103,15 +103,14 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         // AddReview test
         [Test]
-        [TestCase("Amit", "yummy! highly recommend!")]
-        [TestCase("Idan", "yuck!")]
-        public void AddReview(string memberName, string reviewContent)
+        [TestCase(1, "yummy! highly recommend!")]
+        [TestCase(2, "yuck!")]
+        public void AddReview(int memberId, string reviewContent)
         {
             int amountOfReviewsBefore = product.reviews.Count;
-            product.AddProductReview(memberName, reviewContent);
+            product.AddProductReview(memberId, reviewContent);
             int amountOfReviewsAfter = product.reviews.Count;
             Assert.IsTrue(amountOfReviewsBefore +1 == amountOfReviewsAfter);
-            Assert.IsTrue(product.reviews.Contains(memberName+": "+ reviewContent));
         }
         // SetUpPriceByUnit test
         [Test]

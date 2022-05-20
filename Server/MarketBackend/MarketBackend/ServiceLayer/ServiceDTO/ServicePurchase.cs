@@ -11,13 +11,10 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public DateTime purchaseDate { get; }
         public double purchasePrice { get; }
         public string purchaseDescription { get; }
-        public ServicePurchase(Purchase purchase) {
-            if (purchase != null)
-            {
-                this.purchaseDate = purchase.purchaseDate;
-                this.purchasePrice = purchase.purchasePrice;
-                this.purchaseDescription = purchase.purchaseDescription;
-            }
+        public ServicePurchase(DateTime date, double price, string description) {
+            this.purchaseDate = date;
+            this.purchasePrice = price;
+            this.purchaseDescription = description;
         }
         public override bool Equals(Object obj)
         {

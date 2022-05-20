@@ -20,6 +20,12 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             LoggedIn = m.LoggedIn;
         }
 
+        public ServiceMember(string username, bool loggedIn)
+        {
+            UserName = username;
+            LoggedIn = loggedIn;
+        }
+
         public override bool Equals(object? obj)
         {
             if (obj == null || GetType() != obj.GetType())

@@ -37,12 +37,13 @@ namespace TestMarketBackend.BusinessLayer.Market
         {
             membersControllerMock = new Mock<MembersController>();
             Mock<Security> securityMock = new Mock<Security>();
-            memberMock = new Mock<Member>("user123", "12345678", securityMock.Object); // todo: is this okay
-            member = memberMock.Object;
 
             foreach (int existingMemberId in exsitingMembersIds)
             {
                 // should return a mock member for call with a right id
+                memberMock = new Mock<Member>("user123", "12345678", securityMock.Object) { CallBase = true }; // todo: is this okay
+                memberMock.Setup(member=>member.Id).Returns(existingMemberId);
+                member = memberMock.Object;
                 membersControllerMock.Setup(membersController =>
                     membersController.GetMember(It.Is<int>(id => id == existingMemberId))).
                         Returns(member);

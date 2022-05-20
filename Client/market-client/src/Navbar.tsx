@@ -26,7 +26,11 @@ import Stack from '@mui/material/Stack';
 import { InputAdornment } from '@mui/material';
 import { TextField } from '@mui/material';
 import {pathCart} from './Paths';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
+import { Navigation } from '@mui/icons-material';
+
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -121,11 +125,11 @@ export default function Navbar() {
         </Menu>
     );
 
-    const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        alert("username is " + data.get("searchProducts"));
-    }
+    const navigate = useNavigate()
+    // const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    //     event.preventDefault();
+    //     Navigation.navigate('/search', {query : "aaa"})
+    // }
     const theme = createTheme({
         typography: {
             fontFamily: [
@@ -160,7 +164,7 @@ export default function Navbar() {
 
                     </div>
                     <div>
-                        <Box component="form" noValidate onSubmit={handleSearch}  >
+                        <Box component="form" noValidate onSubmit={() => {navigate(`/search/${"param for search"}`)}}  >
                             <Stack direction="row" spacing={2}>
                                 
 

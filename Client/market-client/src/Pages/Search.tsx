@@ -437,26 +437,26 @@ interface HeadCell {
   numeric: boolean;
 }
 
-const headCells: readonly HeadCell[] = [
-  {
-    id: 'Name',
-    numeric: false,
-    disablePadding: true,
-    label: 'All Products',
-  },
-  {
-    id: 'Price',
-    numeric: true,
-    disablePadding: false,
-    label: 'Price (NIS)',
-  },
-  {
-    id: 'Available_Quantity',
-    numeric: true,
-    disablePadding: false,
-    label: 'Available Quantity',
-  },
-];
+// const headCells: readonly HeadCell[] = [
+//   {
+//     id: 'Name',
+//     numeric: false,
+//     disablePadding: true,
+//     label: 'All Products',
+//   },
+//   {
+//     id: 'Price',
+//     numeric: true,
+//     disablePadding: false,
+//     label: 'Price (NIS)',
+//   },
+//   {
+//     id: 'Available_Quantity',
+//     numeric: true,
+//     disablePadding: false,
+//     label: 'Available Quantity',
+//   },
+// ];
 
 export default function SearchPage({query} : {query: string}) {
   const { data } = useDemoData({
@@ -465,7 +465,7 @@ export default function SearchPage({query} : {query: string}) {
     maxColumns: 10,
   });
 
-  
+  // const data : Product[] = fetchProducts(query)
 
   return (
     <Box>  

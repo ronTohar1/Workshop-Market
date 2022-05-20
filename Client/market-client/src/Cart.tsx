@@ -81,7 +81,12 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 function BasicCard(product: Product, handleRemoveProduct: (product: Product) => void, handleShowDescription: (product: Product) => void, handleUpdateQuantity: (product: Product, newQuan: number) => void) {
-    const [value, setValue] = React.useState("");
+    // const [value, setValue] = React.useState("");
+    const handleQuantity = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        handleUpdateQuantity(product,Number(data.get("quantity")))
+    }
     return (
 
         <Card sx={{ ml: 2, mr: 2 }} elevation={6} component={Paper}>
@@ -107,19 +112,23 @@ function BasicCard(product: Product, handleRemoveProduct: (product: Product) => 
                         <Typography variant="body1">
                             Change Quantity
                         </Typography>
+
+                        <Box component="form" noValidate onSubmit={handleQuantity}  >
+
                         <Stack direction="row">
 
                             <TextField
-                                id="outlined-number"
+                                id="quantity"
+                                name="quantity"
                                 type="number"
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
                                 size="small"
-                                value={value}
-                                onChange={(e) => {
-                                    setValue(e.target.value);
-                                }}
+                                // value={value}
+                                // onChange={(e) => {
+                                //     setValue(e.target.value);
+                                // }}
                             />
                             <Button
                                 color="primary"
@@ -129,12 +138,13 @@ function BasicCard(product: Product, handleRemoveProduct: (product: Product) => 
                                 sx={{ ml: 1 }}
                                 startIcon={<UpdateIcon fontSize='small' />}
                                 type="submit"
-                                onClick={() => handleUpdateQuantity(product, Number(value))}
+                                // onClick={() => handleUpdateQuantity(product, Number(value))}
 
                             >
                                 Update
                             </Button>
                         </Stack>
+                        </Box>
 
                     </Stack>
                 </Box>

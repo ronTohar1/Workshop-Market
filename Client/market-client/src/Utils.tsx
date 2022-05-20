@@ -19,4 +19,22 @@ export const createProduct = (
     };
 }
 
+export interface Store {
+    Id: number,
+    Name: string,
+    Products: Product[]
+}
+
+export const createStore = (
+    Id: number,
+    Name: string,
+    Products: Product[]
+): Store => {
+    return {
+        Id: Id,
+        Name: Name,
+        Products: Products
+    };
+}
+
 export const Currency="NIS"

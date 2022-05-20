@@ -157,10 +157,10 @@ function BasicCard(product: Product, handleRemoveProduct: (product: Product) => 
             </Stack>
             <Collapse in={product.Show_Description} timeout="auto" unmountOnExit>
                 <CardContent>
-                    <Typography paragraph>Method:</Typography>
+                    <Typography paragraph>Product Description:</Typography>
                     <Typography paragraph>
-                        Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
-                        aside for 10 minutes.
+                        Thats an amazing product, I really wish I could afford it it's so expansive
+                        Please let me have one!!!
                     </Typography>
                 </CardContent>
             </Collapse>

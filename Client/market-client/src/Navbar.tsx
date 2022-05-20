@@ -25,6 +25,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Stack from '@mui/material/Stack';
 import { InputAdornment } from '@mui/material';
 import { TextField } from '@mui/material';
+import {pathCart} from './Paths';
+import { Link } from 'react-router-dom';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -124,7 +126,22 @@ export default function Navbar() {
         const data = new FormData(event.currentTarget);
         alert("username is " + data.get("searchProducts"));
     }
-    const theme = createTheme();
+    const theme = createTheme({
+        typography: {
+            fontFamily: [
+              '-apple-system',
+              'BlinkMacSystemFont',
+              '"Segoe UI"',
+              'Roboto',
+              '"Helvetica Neue"',
+              'Arial',
+              'sans-serif',
+              '"Apple Color Emoji"',
+              '"Segoe UI Emoji"',
+              '"Segoe UI Symbol"',
+            ].join(','),
+          },
+    });
     return (
 
         <ThemeProvider theme={theme}>
@@ -203,6 +220,9 @@ export default function Navbar() {
                                 aria-label="cart"
                                 size="large"
                                 color='inherit'
+                                component={Link}
+                                to={pathCart}
+
                             >
                                 <StyledBadge badgeContent={44} color="secondary">
                                     <ShoppingCartIcon />

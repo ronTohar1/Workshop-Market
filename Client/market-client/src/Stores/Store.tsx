@@ -28,13 +28,11 @@ import AppBar from '@mui/material/AppBar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Navbar from '../Navbar';
 import Autocomplete from '@mui/material/Autocomplete';
-import {Product, createProduct} from '../Utils';
+import { Product, createProduct, Store, createStore} from '../Utils';
 
 const storeName = "store 1";
 
-
-
-const rows = [
+const storeProds = [
     createProduct(1, 'Cupcake', 305, 3),
     createProduct(2, 'Hamburger', 30, 33),
     createProduct(3, 'Salad', 340, 3000),
@@ -46,6 +44,9 @@ const rows = [
     createProduct(9, 'Zebra', 3, 21),
     createProduct(10, 'Hot Dog', 100, 222),
 ]
+const store: Store = createStore(1,"Cool Store", storeProds)
+
+const ProductsRows = store.Products;
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -173,22 +174,17 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 interface EnhancedTableToolbarProps {
     numSelected: number;
     selected: readonly number[];
+    handleAddToCart: () => void
+    rows: Product[]
+    handleFilter: (s1: string) => void
 }
 
 
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-    const { numSelected, selected}= props;
+    const { numSelected, selected, handleAddToCart, rows, handleFilter } = props;
+    const [value, setValue] = React.useState("");
 
-    const isSelected = (Id: number) => selected.indexOf(Id) !== -1;
-
-    const handleAddToCart = () => {
-        rows.forEach((row) => {
-            if (isSelected(row.Id))
-                alert(row.Name + " is selected");
-        })
-    };
-  
     return (
         <Toolbar
             sx={{
@@ -226,16 +222,25 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     </Fab>
                 </Tooltip>
             ) : (
-                <Stack direction="row" spacing={2} sx={{width:300}}>
-                    <Autocomplete
-                        id="auto-comp-prod"
-                        freeSolo
-                        fullWidth={true}
-                        options={rows.map((row) => row.Name)}
-                        renderInput={(params) => <TextField {...params} label="Find Store Products" />}
+                <Stack direction="row" spacing={2} sx={{ width: 300 }}>
+                    <TextField
+                        id="contained"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        placeholder="Find Products in store"
+                        size="small"
+                        value={value}
+                        onChange={(e) => {
+                            setValue(e.target.value);
+                        }}
                     />
                     <Tooltip title="Filter list">
-                        <IconButton onClick={() => alert("p")}>
+                        <IconButton onClick={() => {
+                            handleFilter(value);
+                        }
+                        }
+                        >
                             <FilterListIcon />
                         </IconButton>
                     </Tooltip>
@@ -252,6 +257,15 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rows, setRows] = React.useState(ProductsRows);
+
+
+    const handleAddToCart = () => {
+        rows.forEach((row) => {
+            if (isSelected(row.Id))
+                alert(row.Name + " is selected");
+        })
+    };
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -261,6 +275,11 @@ export default function EnhancedTable() {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
+
+    const handleFilter = (searchString: string) => {
+        const newRows = ProductsRows.filter((prod) => prod.Name.toLowerCase().includes(searchString.toLowerCase()));
+        setRows(newRows);
+    }
 
 
 
@@ -331,8 +350,13 @@ export default function EnhancedTable() {
             </AppBar>
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
-                    <EnhancedTableToolbar selected={selected} numSelected={selected.length} />
-                    <TableContainer sx={{display:'flex', justifyContent:'center'}}>
+                    <EnhancedTableToolbar
+                        selected={selected}
+                        numSelected={selected.length}
+                        handleAddToCart={handleAddToCart}
+                        rows={rows}
+                        handleFilter={handleFilter} />
+                    <TableContainer sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Table
                             aria-labelledby="tableTitle"
                             size={dense ? 'small' : 'medium'}

@@ -124,7 +124,22 @@ export default function Navbar() {
         const data = new FormData(event.currentTarget);
         alert("username is " + data.get("searchProducts"));
     }
-    const theme = createTheme();
+    const theme = createTheme({
+        typography: {
+            fontFamily: [
+              '-apple-system',
+              'BlinkMacSystemFont',
+              '"Segoe UI"',
+              'Roboto',
+              '"Helvetica Neue"',
+              'Arial',
+              'sans-serif',
+              '"Apple Color Emoji"',
+              '"Segoe UI Emoji"',
+              '"Segoe UI Symbol"',
+            ].join(','),
+          },
+    });
     return (
 
         <ThemeProvider theme={theme}>

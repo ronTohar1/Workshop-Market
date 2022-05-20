@@ -28,12 +28,14 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
+import { fontFamily } from '@mui/system';
 
 export interface Product {
     Id: number,
     Name: string,
     Price: number,
     Chosen_Quantity: number
+    Show_Description: boolean
 }
 
 export const createProduct = (
@@ -47,6 +49,7 @@ export const createProduct = (
         Name: Name,
         Price: Price,
         Chosen_Quantity: Chosen_Quantity,
+        Show_Description: false
     };
 }
 
@@ -59,11 +62,6 @@ const bull = (
         •
     </Box>
 );
-
-const handleRemoveFromCart = (product: Product) => {
-    // products = products.filter((prod) => prod.Id != product.Id);
-    alert("removed: " + product.Name)
-}
 
 
 
@@ -82,15 +80,11 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
     }),
 }));
 
-function BasicCard(product: Product) {
-    const [expanded, setExpanded] = React.useState(false);
+function BasicCard(product: Product, handleRemoveProduct: (product: Product) => void, handleShowDescription: (product: Product) => void) {
 
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
     return (
 
-        <Card sx={{ ml: 3, mr: 3 }}>
+        <Card sx={{ ml: 2, mr: 2 }} elevation={6} component={Paper}>
             <CardContent>
                 <Typography variant="h3" component="div">
                     {product.Name}
@@ -124,8 +118,9 @@ function BasicCard(product: Product) {
                                 size="small"
                             />
                             <Button
-                                variant="outlined"
-                                color="inherit"
+                                color="primary"
+                                variant="contained"
+                                // color="inherit"
                                 size="small"
                                 sx={{ ml: 1 }}
                                 startIcon={<UpdateIcon fontSize='small' />}
@@ -138,38 +133,28 @@ function BasicCard(product: Product) {
                     </Stack>
                 </Box>
                 <CardActions>
-                    {/* <IconButton onClick={() => handleRemoveFromCart(product)}>
+                    {/* <IconButton onClick={() => handleRemoveProduct(product)}>
                         <Icon>
                             <DeleteForeverIcon fontSize="medium" sx={{ color: 'black' }} />
                         </Icon>
                     </IconButton> */}
-                    {AlertDialogSlide(product)}
+                    {AlertDialogSlide(product, handleRemoveProduct)}
                     <ExpandMore
-                        expand={expanded}
-                        onClick={handleExpandClick}
-                        aria-expanded={expanded}
+                        expand={product.Show_Description}
+                        onClick={() => handleShowDescription(product)}
+                        aria-expanded={product.Show_Description}
                         aria-label="show more"
                     >
                         <ExpandMoreIcon />
                     </ExpandMore>
                 </CardActions>
             </Stack>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <Collapse in={product.Show_Description} timeout="auto" unmountOnExit>
                 <CardContent>
                     <Typography paragraph>Method:</Typography>
                     <Typography paragraph>
                         Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
                         aside for 10 minutes.
-                    </Typography>
-                    <Typography paragraph>
-                        Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-                    </Typography>
-                    <Typography paragraph>
-                        educe heat to medium-low, add ned and rice is just tender, 5 to 7
-                        minutes more. (Discard any mussels that don&apos;t open.)
-                    </Typography>
-                    <Typography>
-                        Set aside off of the heat to let rest for 10 minutes, and then serve.
                     </Typography>
                 </CardContent>
             </Collapse>
@@ -177,7 +162,7 @@ function BasicCard(product: Product) {
     );
 }
 
-let products: Product[] = [
+let allProducts: Product[] = [
     createProduct(1, 'Cupcake', 305, 3),
     createProduct(2, 'Hamburger', 30, 33),
     createProduct(3, 'Salad', 340, 3000),
@@ -200,23 +185,209 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
-const theme = createTheme({ palette: { mode: 'light' } });
-const makeSingleProduct = (product: Product) => {
+const theme = createTheme({
+    palette: {
+        mode: 'light'
+    },
+    typography: {
+        fontFamily: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            '"Helvetica Neue"',
+            'Arial',
+            'sans-serif',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+        ].join(','),
+    },
+});
+const makeSingleProduct = (product: Product, handleRemoveProduct: (product: Product) => void, handleShowDescription: (product: Product) => void) => {
     return (
-        <Grid item xs={6} sm={4}>
-            {BasicCard(product)}
+        <Grid item xs={6} sm={4} sx={{
+            my: 2,
+            alignItems: 'center',
+        }}>
+            {BasicCard(product, handleRemoveProduct, handleShowDescription)}
         </Grid>
     );
 };
-const makeProducts = (products: Product[]) => {
+
+const makeSingleProductDetails = (product: Product, handleRemoveProduct: (product: Product) => void) => {
     return (
-        <Grid container spacing={3}>
-            {products.map((prod) => {
-                return (
-                    makeSingleProduct(prod)
-                );
-            })}
-        </Grid>
+        <Box sx={{ borderRadius: 2, boxShadow: 2 }}>
+            <Box sx={{ ml: 2, mb: 2 }}>
+
+                <Typography sx={{ mb: 1.5 }} variant="h5" >
+                    {product.Name} x {product.Chosen_Quantity}
+                </Typography>
+                <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+
+                    <Typography sx={{ mb: 1.5 }} variant="h6">
+                        Total : {product.Price * product.Chosen_Quantity}
+                    </Typography>
+                    {AlertDialogSlide(product, handleRemoveProduct,)}
+
+                </Stack>
+            </Box>
+        </Box>
+    );
+};
+
+const width = 80;
+const widthCart: string = width + "%";
+const widthDash: string = (100 - width) + "%";
+const x: number[] = []
+
+const createDialog = (product: Product, open: boolean, handleClose: (remove: boolean, product: Product) => void) => {
+    return (
+        <div>
+            <Dialog
+                open={open}
+                TransitionComponent={Transition}
+                keepMounted
+                // onClose={() => handleClose(false,product)}
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle>{product.Name + ": Confirm Remove"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        Are you sure you want to remove this item from your cart?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                     <Button onClick={() => handleClose(false,product)}>Cancel</Button>
+                    <Button onClick={() => handleClose(true,product)}>Confirm</Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    );
+}
+
+const MakeProducts = (products1: Product[]) => {
+
+    const [expanded, setExpanded] = React.useState(false);
+    const [prods, updateProducts] = React.useState(products1);
+    const [open, setOpen] = React.useState(false);
+    const [chosenProd, updateChosen] = React.useState(createProduct(-1, "", 1, 1));
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (remove: boolean, product: Product) => {
+        const newProds = remove? prods.filter((prod: Product) => prod.Id != product.Id): prods;
+        updateProducts(newProds);
+        setOpen(false);
+    };
+
+    const handleRemoveProduct = (product: Product) => {
+        updateChosen(product);
+        handleClickOpen();
+
+        // updateProducts(prods => prods.filter((prod) => prod.Id != product.Id));
+    }
+
+    const handleShowDescription = (product: Product) => {
+        updateProducts(prods => prods.map((prod) => {
+            if (product.Id == prod.Id)
+                prod.Show_Description = !prod.Show_Description;
+            return prod;
+        }));
+    }
+
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
+
+    const handlePurchase = (products: Product[]) => {
+        alert("buynig");
+    }
+
+    return (
+        <Stack direction="row">
+            <Box sx={{ width: widthCart }}>
+                <Grid container spacing={0}>
+                    {prods.map((prod) => {
+                        return (
+                            makeSingleProduct(prod, handleRemoveProduct, handleShowDescription)
+                        );
+                    })}
+                </Grid>
+            </Box>
+            <Box sx={{ width: widthDash }}>
+                <Card elevation={10} sx={{ border: 0, borderRadius: 3, mr: 2, width: 'auto', height: 'auto' }}>
+                    <Typography sx={{ ml: 1 }} variant="h3" component="div">
+                        Your Cart
+                    </Typography>
+                    <Card elevation={2} sx={{ border: 0, borderRadius: 3, m: 1.5, width: 'auto', height: 'auto' }}>
+
+                        <Box sx={{ borderBottom: 1 }}>
+
+
+                            <Typography sx={{ mb: 1.5, ml: 1 }} variant="h5">
+                                <br></br>
+                                Total
+                            </Typography>
+                            <Typography sx={{ ml: '25%' }} variant="h6">
+                                300 {Currency}
+                            </Typography>
+
+                        </Box>
+                        <Box sx={{ borderBottom: 0, mb: 3 }}>
+
+                            <Typography variant="h5" sx={{ mb: 1.5, mt: 1.5, ml: 1 }}>
+                                Total After Discount
+                            </Typography>
+                            <Typography sx={{ ml: '25%' }} variant="h6">
+                                300 {Currency}
+                            </Typography>
+                        </Box>
+                    </Card>
+
+                    <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+
+                        <div>
+                            <Button sx={{ m: 1, ml: 2 }} onClick={() => handlePurchase(prods)} variant="contained" color="success">
+                                Purchase
+                            </Button>
+                        </div>
+                        <div>
+                            <ExpandMore
+                                sx={{ m: 1, ml: 2 }}
+                                expand={expanded}
+                                onClick={handleExpandClick}
+                                aria-expanded={expanded}
+                                aria-label="show more"
+                            >
+                                <ExpandMoreIcon />
+                            </ExpandMore>
+                        </div>
+                    </Stack>
+
+
+                    <Collapse in={expanded} timeout="auto" unmountOnExit>
+                        <CardContent>
+                            <Typography paragraph>Cart Details:</Typography>
+                            {prods.map((prod) => {
+                                return (
+                                    makeSingleProductDetails(prod, handleRemoveProduct)
+                                );
+                            })}
+                        </CardContent>
+                    </Collapse>
+                </Card>
+            </Box>
+            {
+                open ?
+                    createDialog(chosenProd, open, handleClose) :
+                    <div></div>
+            }
+        </Stack >
+
+
     );
 }
 
@@ -231,7 +402,7 @@ export default function Cart() {
                 </Box>
                 <Box sx={{ mt: 5 }} >
                     <Box >
-                        {makeProducts(products)}
+                        {MakeProducts(allProducts)}
                     </Box>
                 </Box>
             </ThemeProvider>
@@ -239,6 +410,9 @@ export default function Cart() {
         </Box>
     );
 }
+
+
+
 
 
 const Transition = React.forwardRef(function Transition(
@@ -250,27 +424,26 @@ const Transition = React.forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const AlertDialogSlide = (product: Product) => {
-    const [open, setOpen] = React.useState(false);
+const AlertDialogSlide = (product: Product, handleRemoveProduct: (product: Product) => void) => {
+    // const [open, setOpen] = React.useState(false);
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+    // const handleClickOpen = () => {
+    //     setOpen(true);
+    // };
 
-    const handleClose = (remove:boolean) => {
-        setOpen(false);
-        if(remove)
-            handleRemoveFromCart(product);
-    };
+    // const handleClose = (remove: boolean) => {
+    //     handleRemoveProduct(product);
+    //     setOpen(false);
+    // };
 
     return (
         <div>
-            <IconButton onClick={() => handleClickOpen()}>
+            <IconButton onClick={() => handleRemoveProduct(product)}>
                 <Icon>
-                    <DeleteForeverIcon fontSize="medium" sx={{ color: 'black' }} />
+                    <DeleteForeverIcon fontSize="medium" sx={{ color: 'red' }} />
                 </Icon>
             </IconButton>
-            <Dialog
+            {/* <Dialog
                 open={open}
                 TransitionComponent={Transition}
                 keepMounted
@@ -284,10 +457,10 @@ const AlertDialogSlide = (product: Product) => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => handleClose(false)}>Cancel</Button>
+                     <Button onClick={() => handleClose(false)}>Cancel</Button>
                     <Button onClick={() => handleClose(true)}>Confirm</Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog> */}
         </div>
     );
 }

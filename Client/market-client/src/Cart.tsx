@@ -80,8 +80,8 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
     }),
 }));
 
-function BasicCard(product: Product, handleRemoveProduct: (product: Product) => void, handleShowDescription: (product: Product) => void) {
-
+function BasicCard(product: Product, handleRemoveProduct: (product: Product) => void, handleShowDescription: (product: Product) => void, handleUpdateQuantity: (product: Product, newQuan: number) => void) {
+    const [value, setValue] = React.useState("");
     return (
 
         <Card sx={{ ml: 2, mr: 2 }} elevation={6} component={Paper}>
@@ -116,6 +116,10 @@ function BasicCard(product: Product, handleRemoveProduct: (product: Product) => 
                                     shrink: true,
                                 }}
                                 size="small"
+                                value={value}
+                                onChange={(e) => {
+                                    setValue(e.target.value);
+                                }}
                             />
                             <Button
                                 color="primary"
@@ -125,6 +129,8 @@ function BasicCard(product: Product, handleRemoveProduct: (product: Product) => 
                                 sx={{ ml: 1 }}
                                 startIcon={<UpdateIcon fontSize='small' />}
                                 type="submit"
+                                onClick={() => handleUpdateQuantity(product, Number(value))}
+
                             >
                                 Update
                             </Button>
@@ -204,13 +210,13 @@ const theme = createTheme({
         ].join(','),
     },
 });
-const makeSingleProduct = (product: Product, handleRemoveProduct: (product: Product) => void, handleShowDescription: (product: Product) => void) => {
+const makeSingleProduct = (product: Product, handleRemoveProduct: (product: Product) => void, handleShowDescription: (product: Product) => void, handleUpdateQuantity: (product: Product, newQuan: number) => void) => {
     return (
         <Grid item xs={6} sm={4} sx={{
             my: 2,
             alignItems: 'center',
         }}>
-            {BasicCard(product, handleRemoveProduct, handleShowDescription)}
+            {BasicCard(product, handleRemoveProduct, handleShowDescription, handleUpdateQuantity)}
         </Grid>
     );
 };
@@ -258,8 +264,8 @@ const createDialog = (product: Product, open: boolean, handleClose: (remove: boo
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                     <Button onClick={() => handleClose(false,product)}>Cancel</Button>
-                    <Button onClick={() => handleClose(true,product)}>Confirm</Button>
+                    <Button onClick={() => handleClose(false, product)}>Cancel</Button>
+                    <Button onClick={() => handleClose(true, product)}>Confirm</Button>
                 </DialogActions>
             </Dialog>
         </div>
@@ -277,8 +283,19 @@ const MakeProducts = (products1: Product[]) => {
         setOpen(true);
     };
 
+    const handleUpdateQuantity = (product: Product, newQuan: number) => {
+        const validQuantity: boolean = newQuan > 0;
+        const newProds = validQuantity ? prods.map((prod: Product) => {
+            if (prod.Id == product.Id)
+                prod.Chosen_Quantity = newQuan;
+            return prod;
+        }) : prods;
+
+        updateProducts(newProds);
+    }
+
     const handleClose = (remove: boolean, product: Product) => {
-        const newProds = remove? prods.filter((prod: Product) => prod.Id != product.Id): prods;
+        const newProds = remove ? prods.filter((prod: Product) => prod.Id != product.Id) : prods;
         updateProducts(newProds);
         setOpen(false);
     };
@@ -312,7 +329,7 @@ const MakeProducts = (products1: Product[]) => {
                 <Grid container spacing={0}>
                     {prods.map((prod) => {
                         return (
-                            makeSingleProduct(prod, handleRemoveProduct, handleShowDescription)
+                            makeSingleProduct(prod, handleRemoveProduct, handleShowDescription, handleUpdateQuantity)
                         );
                     })}
                 </Grid>

@@ -25,6 +25,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Stack from '@mui/material/Stack';
 import { InputAdornment } from '@mui/material';
 import { TextField } from '@mui/material';
+import {pathCart} from './Paths';
+import { Link } from 'react-router-dom';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -218,6 +220,9 @@ export default function Navbar() {
                                 aria-label="cart"
                                 size="large"
                                 color='inherit'
+                                component={Link}
+                                to={pathCart}
+
                             >
                                 <StyledBadge badgeContent={44} color="secondary">
                                     <ShoppingCartIcon />

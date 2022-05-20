@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer
 {
-    internal class BuyerFacade
+    public class BuyerFacade
     {
         private BuyersController buyersController;
         private MembersController membersController;

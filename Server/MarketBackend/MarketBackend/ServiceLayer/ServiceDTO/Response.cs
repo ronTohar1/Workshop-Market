@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO
 {
-    internal class Response<T>
+    public class Response<T>
     {
         public T Value { get; set; }
         public string ErrorMessage { get; set; }

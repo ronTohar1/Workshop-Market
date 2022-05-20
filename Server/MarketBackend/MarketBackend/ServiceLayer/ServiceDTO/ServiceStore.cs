@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO
 {
-    internal class ServiceStore
+    public class ServiceStore
     {
         public string Name { get; }
         public IList<int> ProductsIds { get; }

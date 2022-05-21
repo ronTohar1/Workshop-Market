@@ -104,20 +104,7 @@ const toolBar = (numSelected: number, handleAddToCart: () => void) => {
           </Fab>
         </Tooltip>
       ) : (
-        <Stack direction="row" spacing={2} sx={{ width: 300 }}>
-          <TextField
-            id="contained"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            placeholder="Find Products in store"
-            size="small"
-            // value={value}
-            // onChange={(e) => {
-            //   setValue(e.target.value);
-            // }}
-          />
-        </Stack>
+        <Box></Box>
       )}
     </Toolbar>
   );

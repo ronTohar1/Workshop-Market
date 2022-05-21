@@ -17,8 +17,10 @@ import {
   pathRegister,
   pathLogin,
   pathStore,
-  pathCart
+  pathCart,
+  home2
 } from "./Paths";
+import Home2 from './Home2';
 
 
 const root = ReactDOM.createRoot(
@@ -31,7 +33,8 @@ root.render(
       <Route path={pathRegister} element={<Register />} />
       <Route path={pathStore} element={<EnhancedTableToolbar />} />
       <Route path={pathCart} element={<Cart />} />
-      <Route path={pathLogin} element={<Login />}>
+      <Route path={pathLogin} element={<Login />}/>
+      <Route path={home2} element={<Home2 />}>
       </Route>
     </Routes>
   </BrowserRouter>

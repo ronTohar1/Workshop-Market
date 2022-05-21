@@ -36,17 +36,5 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("CloseMarket")]
-        public ActionResult<Response<bool>> CloseMarket()
-        {
-            Response<bool> response = systemOperator.CloseMarket();
-
-            if (response.ErrorOccured())
-                return BadRequest(response);
-
-            return Ok(response);
-        }
-
-
     }
 }

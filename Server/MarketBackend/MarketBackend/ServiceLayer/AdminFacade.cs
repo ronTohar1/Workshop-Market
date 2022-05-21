@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Buyers.Members;
 namespace MarketBackend.ServiceLayer
 {
-    internal class AdminFacade
+    public class AdminFacade
     {
         private AdminManager adminManager;
         private Logger logger;

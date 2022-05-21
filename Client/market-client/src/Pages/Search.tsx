@@ -14,6 +14,7 @@ import Navbar from "../components/Navbar";
 import Product from "../DTOs/Product";
 import { fetchProducts } from "../services/ProductsService";
 import { useQueryParam, NumberParam, StringParam } from "use-query-params";
+import { Button, ButtonTypeMap, ExtendButtonBase } from "@mui/material";
 
 function ProductsTable() {
   return (
@@ -25,7 +26,11 @@ function ProductsTable() {
 }
 
 export default function SearchPage() {
+  const startingPageSize: number = 5;
+  const pagingOptions = [5,10,15,20]
   const [query] = useQueryParam("query", StringParam);
+  const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
+
 
   const columns: GridColDef[] = [
     { field: "name", headerName: "Product", flex: 2 },
@@ -63,11 +68,25 @@ export default function SearchPage() {
 
   return (
     <Box>
+      
       <Navbar />
       <div style={{ height: 700, width: "100%" }}>
         <DataGrid
           rows={productsRows}
           columns={columns}
+
+          // Paging:
+          pageSize={pageSize}
+          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+          rowsPerPageOptions={pagingOptions}
+          pagination
+
+           // Selection:
+           checkboxSelection
+          //  disableSelectionOnClick
+          //  onSelectionModelChange={handleNewSelection}
+
+          // Components of grid
           components={{
             Toolbar: ProductsTable,
           }}

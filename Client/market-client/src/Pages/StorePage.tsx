@@ -112,6 +112,7 @@ const toolBar = (numSelected: number, handleAddToCart: () => void) => {
 
 export default function StorePage() {
   const startingPageSize: number = 10;
+  
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
   const [numSelected, setNumSelected] = React.useState<number>(0);
   const [selectedProductsIds, setSelectedProductsIds] = React.useState<number[]>([]);

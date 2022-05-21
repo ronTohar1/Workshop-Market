@@ -25,7 +25,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Stack from "@mui/material/Stack";
 import { InputAdornment } from "@mui/material";
 import { TextField } from "@mui/material";
-import { pathCart } from "./Paths";
+import { pathCart } from "../Paths";
 import { Link, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Route, useParams } from "react-router-dom";

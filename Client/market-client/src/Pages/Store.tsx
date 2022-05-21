@@ -26,7 +26,7 @@ import { Fab, makeStyles } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import AppBar from '@mui/material/AppBar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Navbar from '../Navbar';
+import Navbar from '../components/Navbar';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Product, createProduct, Store, createStore} from '../Utils';
 

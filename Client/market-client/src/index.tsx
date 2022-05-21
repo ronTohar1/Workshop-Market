@@ -2,13 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import Register from "./Authentication/Register";
-import Home from "./Home";
-import Login from "./Authentication/Login";
-import Navbar from "./Navbar";
+import Register from "./Pages/Register";
+import Home from "./Pages/Home";
+import Login from "./Pages/Login";
+import Navbar from "./components/Navbar";
 import SearchPage from "./Pages/Search";
-import EnhancedTableToolbar from "./Stores/Store";
-import Cart from "./Cart";
+import EnhancedTableToolbar from "./Pages/Store";
+import Cart from "./Pages/Cart";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import * as Paths from "./Paths";
 import { QueryParamProvider } from "use-query-params";
@@ -18,7 +18,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <Router>
-    <QueryParamProvider >
+    <QueryParamProvider>
       <Routes>
         <Route index element={<Home />} />
         <Route path={Paths.pathRegister} element={<Register />} />

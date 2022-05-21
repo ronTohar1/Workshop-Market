@@ -40,11 +40,11 @@ import { Fab, makeStyles } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import AppBar from "@mui/material/AppBar";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Navbar from "../Navbar";
+import Navbar from "../components/Navbar";
 import Autocomplete from "@mui/material/Autocomplete";
 
 import Product from "../DTOs/Product";
-import { fetchProducts } from "../App";
+import { fetchProducts } from "../services/ProductsService";
 import DemoTreeDataValue from "@mui/x-data-grid-generator/services/tree-data-generator";
 import { useQueryParam, NumberParam, StringParam } from "use-query-params";
 
@@ -58,12 +58,13 @@ function ProductsTable() {
 }
 
 export default function SearchPage() {
-  const [query, ] = useQueryParam("query", StringParam);
-  
+  const [query] = useQueryParam("query", StringParam);
+
   const columns: GridColDef[] = [
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "price", headerName: "Price", flex: 1 /*sortComparator: {}*/ },
+    { field: "name", headerName: "Product", flex: 2 },
+    { field: "price", headerName: "Price", flex: 1 },
     { field: "category", headerName: "Category", flex: 1 },
+    { field: "store", headerName: "Store", flex: 1 },
   ];
 
   // map products to Map indexing items by id
@@ -78,6 +79,7 @@ export default function SearchPage() {
     name: string;
     price: number;
     category: string;
+    store: string;
   };
 
   let productsRows: ProductRowType[] = [];
@@ -88,6 +90,7 @@ export default function SearchPage() {
       name: p.name,
       price: p.price,
       category: p.category,
+      store: p.store,
     });
   }
 
@@ -107,25 +110,8 @@ export default function SearchPage() {
   );
 }
 
-// const SearchPage = ({ query } : {query : string}) => {
-//   return (
-//     <CustomToolbar />
-// <DataGrid
-//   rows={["rowA", "rowB"]}
-//   columns={["col1", "col2", "col3"]}
-
-// />
-//   <DataGrid
-//   {...[5]}
-//   components={{
-//     Toolbar: GridToolbar,
-//   }}
-// />
-// )
-// }
-
 SearchPage.defaultProps = {
   query: "",
 };
 
-// export default SearchPage
+// export default SearchPage;

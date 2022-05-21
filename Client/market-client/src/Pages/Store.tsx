@@ -28,23 +28,14 @@ import AppBar from '@mui/material/AppBar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Navbar from '../components/Navbar';
 import Autocomplete from '@mui/material/Autocomplete';
-import { Product, createProduct, Store, createStore} from '../Utils';
-
+import { Currency } from '../Utils';
+import {Store} from '../DTOs/Store';
+import {dummyStore1,dummyStore2} from '../services/StoreService';
+import Product from '../DTOs/Product';
 const storeName = "store 1";
 
-const storeProds = [
-    createProduct(1, 'Cupcake', 305, 3),
-    createProduct(2, 'Hamburger', 30, 33),
-    createProduct(3, 'Salad', 340, 3000),
-    createProduct(4, 'Cheese', 130, 232),
-    createProduct(5, 'Banana', 35, 22),
-    createProduct(6, 'Cooler', 3051, 22),
-    createProduct(7, 'Sunglasses', 3035, 223),
-    createProduct(8, 'Elephant', 10, 32),
-    createProduct(9, 'Zebra', 3, 21),
-    createProduct(10, 'Hot Dog', 100, 222),
-]
-const store: Store = createStore(1,"Cool Store", storeProds)
+
+const store: Store = dummyStore1
 
 const ProductsRows = store.Products;
 
@@ -95,19 +86,19 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
-        id: 'Name',
+        id: 'name',
         numeric: false,
         disablePadding: true,
         label: 'All Products',
     },
     {
-        id: 'Price',
+        id: 'price',
         numeric: true,
         disablePadding: false,
         label: 'Price (NIS)',
     },
     {
-        id: 'Available_Quantity',
+        id: 'available_quantity',
         numeric: true,
         disablePadding: false,
         label: 'Available Quantity',
@@ -252,7 +243,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
 export default function EnhancedTable() {
     const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Product>('Name');
+    const [orderBy, setOrderBy] = React.useState<keyof Product>('name');
     const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -262,8 +253,8 @@ export default function EnhancedTable() {
 
     const handleAddToCart = () => {
         rows.forEach((row) => {
-            if (isSelected(row.Id))
-                alert(row.Name + " is selected");
+            if (isSelected(row.id))
+                alert(row.name + " is selected");
         })
     };
 
@@ -277,7 +268,7 @@ export default function EnhancedTable() {
     };
 
     const handleFilter = (searchString: string) => {
-        const newRows = ProductsRows.filter((prod) => prod.Name.toLowerCase().includes(searchString.toLowerCase()));
+        const newRows = ProductsRows.filter((prod) => prod.name.toLowerCase().includes(searchString.toLowerCase()));
         setRows(newRows);
     }
 
@@ -285,7 +276,7 @@ export default function EnhancedTable() {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked && selected.length == 0) {
-            const newSelecteds = rows.map((n) => n.Id);
+            const newSelecteds = rows.map((n) => n.id);
             setSelected(newSelecteds);
             return;
         }
@@ -375,17 +366,17 @@ export default function EnhancedTable() {
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                        const isItemSelected = isSelected(row.Id);
+                                        const isItemSelected = isSelected(row.id);
                                         const labelId = `enhanced-table-checkbox-${index}`;
 
                                         return (
                                             <TableRow
                                                 hover
-                                                onClick={(event) => handleClick(event, row.Id)}
+                                                onClick={(event) => handleClick(event, row.id)}
                                                 role="checkbox"
                                                 aria-checked={isItemSelected}
                                                 tabIndex={-1}
-                                                key={row.Id}
+                                                key={row.id}
                                                 selected={isItemSelected}
                                             >
                                                 <TableCell padding="checkbox">
@@ -403,10 +394,10 @@ export default function EnhancedTable() {
                                                     scope="row"
                                                     padding="none"
                                                 >
-                                                    {row.Name}
+                                                    {row.name}
                                                 </TableCell>
-                                                <TableCell align="right">{row.Price}</TableCell>
-                                                <TableCell align="right">{row.Available_Quantity}</TableCell>
+                                                <TableCell align="right">{row.price}</TableCell>
+                                                <TableCell align="right">{row.available_quantity}</TableCell>
                                             </TableRow>
                                         );
                                     })}

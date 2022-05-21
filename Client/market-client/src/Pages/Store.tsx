@@ -21,30 +21,21 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 
-import { Stack, TextField } from "@mui/material";
-import { Fab, makeStyles } from "@mui/material";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import AppBar from "@mui/material/AppBar";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Navbar from "../components/Navbar";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Product, createProduct, Store, createStore } from "../Utils";
-
+import { Stack, TextField } from '@mui/material';
+import { Fab, makeStyles } from '@mui/material';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import AppBar from '@mui/material/AppBar';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Navbar from '../components/Navbar';
+import Autocomplete from '@mui/material/Autocomplete';
+import { Currency } from '../Utils';
+import {Store} from '../DTOs/Store';
+import {dummyStore1,dummyStore2} from '../services/StoreService';
+import Product from '../DTOs/Product';
 const storeName = "store 1";
 
-const storeProds = [
-  createProduct(1, "Cupcake", 305, 3),
-  createProduct(2, "Hamburger", 30, 33),
-  createProduct(3, "Salad", 340, 3000),
-  createProduct(4, "Cheese", 130, 232),
-  createProduct(5, "Banana", 35, 22),
-  createProduct(6, "Cooler", 3051, 22),
-  createProduct(7, "Sunglasses", 3035, 223),
-  createProduct(8, "Elephant", 10, 32),
-  createProduct(9, "Zebra", 3, 21),
-  createProduct(10, "Hot Dog", 100, 222),
-];
-const store: Store = createStore(1, "Cool Store", storeProds);
+
+const store: Store = dummyStore1
 
 const ProductsRows = store.Products;
 
@@ -97,24 +88,24 @@ interface HeadCell {
 }
 
 const headCells: readonly HeadCell[] = [
-  {
-    id: "Name",
-    numeric: false,
-    disablePadding: true,
-    label: "All Products",
-  },
-  {
-    id: "Price",
-    numeric: true,
-    disablePadding: false,
-    label: "Price (NIS)",
-  },
-  {
-    id: "Available_Quantity",
-    numeric: true,
-    disablePadding: false,
-    label: "Available Quantity",
-  },
+    {
+        id: 'name',
+        numeric: false,
+        disablePadding: true,
+        label: 'All Products',
+    },
+    {
+        id: 'price',
+        numeric: true,
+        disablePadding: false,
+        label: 'Price (NIS)',
+    },
+    {
+        id: 'available_quantity',
+        numeric: true,
+        disablePadding: false,
+        label: 'Available Quantity',
+    },
 ];
 
 interface EnhancedTableProps {
@@ -261,14 +252,14 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   );
 };
 
-function EnhancedTable() {
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Product>("Name");
-  const [selected, setSelected] = React.useState<readonly number[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [rows, setRows] = React.useState(ProductsRows);
+export default function EnhancedTable() {
+    const [order, setOrder] = React.useState<Order>('asc');
+    const [orderBy, setOrderBy] = React.useState<keyof Product>('name');
+    const [selected, setSelected] = React.useState<readonly number[]>([]);
+    const [page, setPage] = React.useState(0);
+    const [dense, setDense] = React.useState(false);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rows, setRows] = React.useState(ProductsRows);
 
   const handleAddToCart = () => {
     rows.forEach((row) => {
@@ -276,14 +267,12 @@ function EnhancedTable() {
     });
   };
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof Product
-  ) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
+    const handleAddToCart = () => {
+        rows.forEach((row) => {
+            if (isSelected(row.id))
+                alert(row.name + " is selected");
+        })
+    };
 
   const handleFilter = (searchString: string) => {
     const newRows = ProductsRows.filter((prod) =>
@@ -292,30 +281,9 @@ function EnhancedTable() {
     setRows(newRows);
   };
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked && selected.length == 0) {
-      const newSelecteds = rows.map((n) => n.Id);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event: React.MouseEvent<unknown>, Id: number) => {
-    const selectedIndex = selected.indexOf(Id);
-    let newSelected: readonly number[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, Id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+    const handleFilter = (searchString: string) => {
+        const newRows = ProductsRows.filter((prod) => prod.name.toLowerCase().includes(searchString.toLowerCase()));
+        setRows(newRows);
     }
 
     setSelected(newSelected);
@@ -325,12 +293,14 @@ function EnhancedTable() {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.checked && selected.length == 0) {
+            const newSelecteds = rows.map((n) => n.id);
+            setSelected(newSelecteds);
+            return;
+        }
+        setSelected([]);
+    };
 
   const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDense(event.target.checked);
@@ -380,79 +350,71 @@ function EnhancedTable() {
               <TableBody>
                 {/* if you don't need to support IE11, you can replace the `stableSort` call with:
               rows.slice().sort(getComparator(order, orderBy)) */}
-                {stableSort(rows, getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    const isItemSelected = isSelected(row.Id);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+                                {stableSort(rows, getComparator(order, orderBy))
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((row, index) => {
+                                        const isItemSelected = isSelected(row.id);
+                                        const labelId = `enhanced-table-checkbox-${index}`;
 
-                    return (
-                      <TableRow
-                        hover
-                        onClick={(event) => handleClick(event, row.Id)}
-                        role='checkbox'
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.Id}
-                        selected={isItemSelected}>
-                        <TableCell padding='checkbox'>
-                          <Checkbox
-                            color='primary'
-                            checked={isItemSelected}
-                            inputProps={{
-                              "aria-labelledby": labelId,
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell
-                          component='th'
-                          id={labelId}
-                          scope='row'
-                          padding='none'>
-                          {row.Name}
-                        </TableCell>
-                        <TableCell align='right'>{row.Price}</TableCell>
-                        <TableCell align='right'>
-                          {row.Available_Quantity}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: (dense ? 33 : 53) * emptyRows,
-                    }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component='div'
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-        <FormControlLabel
-          control={<Switch checked={dense} onChange={handleChangeDense} />}
-          label='Dense padding'
-        />
-      </Box>
-    </ThemeProvider>
-  );
-}
-
-export default function Store() {
-  return (
-    <div>
-      <Navbar />
-      <EnhancedTableToolbar />
-    </div>
-  );
+                                        return (
+                                            <TableRow
+                                                hover
+                                                onClick={(event) => handleClick(event, row.id)}
+                                                role="checkbox"
+                                                aria-checked={isItemSelected}
+                                                tabIndex={-1}
+                                                key={row.id}
+                                                selected={isItemSelected}
+                                            >
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox
+                                                        color="primary"
+                                                        checked={isItemSelected}
+                                                        inputProps={{
+                                                            'aria-labelledby': labelId,
+                                                        }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell
+                                                    component="th"
+                                                    id={labelId}
+                                                    scope="row"
+                                                    padding="none"
+                                                >
+                                                    {row.name}
+                                                </TableCell>
+                                                <TableCell align="right">{row.price}</TableCell>
+                                                <TableCell align="right">{row.available_quantity}</TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                {emptyRows > 0 && (
+                                    <TableRow
+                                        style={{
+                                            height: (dense ? 33 : 53) * emptyRows,
+                                        }}
+                                    >
+                                        <TableCell colSpan={6} />
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                </Paper>
+                <FormControlLabel
+                    control={<Switch checked={dense} onChange={handleChangeDense} />}
+                    label="Dense padding"
+                />
+            </Box>
+        </ThemeProvider>
+    );
 }

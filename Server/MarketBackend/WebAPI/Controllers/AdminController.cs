@@ -41,8 +41,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("RemoveMember/{request.TargetId}")]
-        public ActionResult<Response<bool>> RemoveMemberIfHasNoRoles
-            ([FromBody] AdminRequest request)
+        public ActionResult<Response<bool>> RemoveMemberIfHasNoRoles([FromBody] AdminRequest request)
         {
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(request.UserId, request.TargetId);
 
@@ -53,8 +52,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("LoggedInUsers")]
-        public ActionResult<Response<bool>> GetLoggedInMembers
-            ([FromBody] UserRequest request)
+        public ActionResult<Response<bool>> GetLoggedInMembers([FromBody] UserRequest request)
         {
             Response<IList<int>> response = adminFacade.GetLoggedInMembers(request.UserId);
 
@@ -65,8 +63,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("MemberInfo")]
-        public ActionResult<Response<bool>> GetMemberInfo
-            ([FromBody] AdminRequest request)
+        public ActionResult<Response<bool>> GetMemberInfo([FromBody] AdminRequest request)
         {
             Response<ServiceMember> response = adminFacade.GetMemberInfo(request.UserId, request.TargetId);
 

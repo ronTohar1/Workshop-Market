@@ -15,7 +15,7 @@ using NLog;
 using MarketBackend.BusinessLayer.System.ExternalServices;
 namespace MarketBackend.ServiceLayer
 {
-    internal class SystemOperator
+    public class SystemOperator
     {
 
         private bool marketOpen;

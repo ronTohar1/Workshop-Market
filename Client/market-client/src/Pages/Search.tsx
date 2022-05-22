@@ -88,7 +88,7 @@ const createRows = (products: Product[]) => {
   return productRow;
 };
 
-function storeGrid(productsRows: ProductRowType[]) {
+function storeGrid(productsRows: ProductRowType[], pageSize:number, setPageSize: any) {
   const storeName = productsRows[0].store;
   return (
     <Box
@@ -100,13 +100,19 @@ function storeGrid(productsRows: ProductRowType[]) {
       }}
     >
       <Stack justifyContent="space-evenly" alignItems="center" spacing={2}>
-        <Box sx={{m:1}}>
+        <Box sx={{ m: 1 }}>
           <Typography variant="h4">{storeName}</Typography>
         </Box>
-        <Box style={{ height: 300, width: "90%" }} sx={{ boxShadow: 3, mb: 3 }}>
+        <Box style={{ height: 400, width: "90%" }} sx={{ boxShadow: 3, mb: 3 }}>
           <DataGrid
             rows={productsRows}
             columns={columns}
+            //Paging
+            rowsPerPageOptions={[5, 10, 15]}
+            pageSize={pageSize}
+            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+            pagination
+            //Components
             components={{
               Toolbar: ProductsTable,
             }}
@@ -128,10 +134,14 @@ function storeGrid(productsRows: ProductRowType[]) {
 
 function groupByStore(products: Product[]): Product[][] {
   const groupedProductsMap: Map<number, Product[]> = new Map();
-
   // Add {storeId, Product} map
+
+  // const products: Map<number, Product> = Object.assign(
+  //   {},
+  //   ...productsLst.map((p: Product) => ({ [p.id]: p }))
+  // );
   products.forEach((prod: Product) => {
-    if (prod.store in groupedProductsMap) {
+    if (groupedProductsMap.has(prod.store)) {
       const prodArr = groupedProductsMap.get(prod.store);
       const arrToAdd: Product[] =
         prodArr === undefined ? [prod] : [...prodArr, prod];
@@ -140,12 +150,14 @@ function groupByStore(products: Product[]): Product[][] {
   });
 
   // create [Product[]]
-  let groupedProducts = Array.from(groupedProductsMap.values());
+  const groupedProducts = Array.from(groupedProductsMap.values());
+
   return groupedProducts;
 }
 
 export default function SearchPage() {
-  
+  const startingPageSize = 5
+  const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
   const [query] = useQueryParam("query", StringParam);
 
   const theme = createTheme({
@@ -176,14 +188,14 @@ export default function SearchPage() {
   console.log(productsByStore);
   return (
     <ThemeProvider theme={theme}>
-    <Box>
-      <Navbar />
-      <Stack>
-        {productsByStore.map((prodsOfStore: Product[]) => {
-          return storeGrid(createRows(prodsOfStore));
-        })}
-      </Stack>
-    </Box>
+      <Box>
+        <Navbar />
+        <Stack>
+          {productsByStore.map((prodsOfStore: Product[]) => {
+            return storeGrid(createRows(prodsOfStore),pageSize, setPageSize);
+          })}
+        </Stack>
+      </Box>
     </ThemeProvider>
   );
 }

@@ -2,27 +2,24 @@ import * as React from "react";
 import {
   DataGrid,
   GridColDef,
-  GridValueGetterParams,
-  GridSelectionModel,
 } from "@mui/x-data-grid";
 import {
   alpha,
   Box,
   createTheme,
   Fab,
-  IconButton,
   Stack,
-  TextField,
   Toolbar,
   Tooltip,
   Typography,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
-import { dummyProducts } from "../services/ProductsService";
 import { Store } from "../DTOs/Store";
 import * as storeService from "../services/StoreService";
 import Product from "../DTOs/Product";
 import { AddShoppingCart } from "@mui/icons-material";
+
+
 
 const columns: GridColDef[] = [
   {
@@ -36,6 +33,8 @@ const columns: GridColDef[] = [
     headerName: "Price",
     // type: 'number',
     flex: 1,
+    editable: true,
+
   },
   {
     field: "available_quantity",

@@ -25,11 +25,12 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Stack from "@mui/material/Stack";
 import { InputAdornment } from "@mui/material";
 import { TextField } from "@mui/material";
-import { pathCart } from "../Paths";
+import { pathCart, pathHome, pathSearch } from "../Paths";
 import { Link, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Route, useParams } from "react-router-dom";
 import { Navigation } from "@mui/icons-material";
+import { fontSize } from "@mui/system";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -86,6 +87,9 @@ export default function Navbar() {
 
   const isMenuOpen = Boolean(anchorEl);
 
+  const handleClickHome = () => {
+    navigate(`${pathHome}`);
+  }
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -149,10 +153,16 @@ export default function Navbar() {
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <div>
             <Typography
+              onClick={handleClickHome}
               variant='h6'
               noWrap
               component='div'
-              sx={{ display: { xs: "none", sm: "block" } }}>
+              sx={{ 
+                display: { xs: "none", sm: "block" },
+                "&:hover": {
+                  cursor: "pointer"
+                  }
+                }}>
               Workshop Market
             </Typography>
             <Box sx={{}} />
@@ -162,7 +172,7 @@ export default function Navbar() {
               component='form'
               noValidate
               onSubmit={(e: any) => {
-                navigate(`/search?query=${searchValue}`);
+                navigate(`${pathSearch}?query=${searchValue}`);
               }}>
               <Stack direction='row' spacing={2}>
                 <Search sx={{ flexGrow: 1 }}>

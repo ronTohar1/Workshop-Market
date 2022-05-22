@@ -101,7 +101,7 @@ const toolBar = (numSelected: number, handleAddToCart: () => void) => {
       ) : (
         <Typography
           sx={{ flex: "1 1 100%" }}
-          variant="h6"
+          variant="h4"
           id="tableTitle"
           component="div"
         >
@@ -133,9 +133,8 @@ function updateAvailableQuantity(product: Product, available_quantity: number) {
   if (available_quantity != null)
     product.available_quantity = available_quantity;
 }
-function updateCategory(product: Product, category: string){
-  if ( category != null)
-    product.category = category;
+function updateCategory(product: Product, category: string) {
+  if (category != null) product.category = category;
 }
 
 export default function StorePage() {
@@ -192,6 +191,14 @@ export default function StorePage() {
         <DataGrid
           rows={rows}
           columns={columns}
+          sx={{
+            "& .MuiDataGrid-cell:hover": {
+              ...(isManager && {
+              color: "primary.main",
+              border:1
+              })
+            },
+          }}
           // Paging:
           pageSize={pageSize}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}

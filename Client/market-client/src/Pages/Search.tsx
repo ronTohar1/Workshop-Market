@@ -122,6 +122,7 @@ function storeGrid(productsRows: ProductRowType[], pageSize:number, setPageSize:
             variant="contained"
             size="large"
             sx={{ mt: 1 }}
+            
             startIcon={<ExitToAppIcon />}
           >
             {storeName}
@@ -134,12 +135,6 @@ function storeGrid(productsRows: ProductRowType[], pageSize:number, setPageSize:
 
 function groupByStore(products: Product[]): Product[][] {
   const groupedProductsMap: Map<number, Product[]> = new Map();
-  // Add {storeId, Product} map
-
-  // const products: Map<number, Product> = Object.assign(
-  //   {},
-  //   ...productsLst.map((p: Product) => ({ [p.id]: p }))
-  // );
   products.forEach((prod: Product) => {
     if (groupedProductsMap.has(prod.store)) {
       const prodArr = groupedProductsMap.get(prod.store);

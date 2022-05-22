@@ -19,7 +19,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             IDictionary<int, Product> prods = store.products;
             foreach (ProductInBag pib in bag.ProductsAmounts.Keys)
             {
-                sum += bag.ProductsAmounts[pib] * store.products[pib.ProductId].GetPrice();
+                int amount = bag.ProductsAmounts[pib];
+                double price = prods[pib.ProductId].GetPrice();
+                sum += amount * price;
             }
             return sum >= worth;
         }

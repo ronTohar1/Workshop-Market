@@ -47,6 +47,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
                 throw new MarketException($"No Discount with id: {did}");
         }
 
+        public IDictionary<int, string> GetDescriptions()
+        {
+            IDictionary<int, string> descriptions = new Dictionary<int, string>();
+            foreach (Discount discount in discounts.Values)
+            {
+                descriptions.Add(discount.id, discount.description);
+            }
+            return descriptions;
+        }
         public double EvaluateDiscountForBag(ShoppingBag bag, Store store)
         {
             double sum = 0;

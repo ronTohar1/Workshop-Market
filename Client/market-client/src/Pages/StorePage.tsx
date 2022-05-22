@@ -22,46 +22,57 @@ import { AddShoppingCart } from "@mui/icons-material";
 
 const isManager: boolean = true;
 const store: Store = storeService.dummyStore1;
-const rows: Product[] = store.products;
+const storeProducts: Product[] = store.products;
 const theme = createTheme();
+
+const fields = {
+  name: "name",
+  price: "price",
+  available_quantity: "available_quantity",
+  category: "category",
+};
 
 const columns: GridColDef[] = [
   {
-    field: "name",
+    field: fields.name,
     headerName: "Product Name",
-    // type: 'string',
+    type: "string",
     flex: 2,
+    align: "left",
+    headerAlign: "left",
   },
   {
-    field: "price",
+    field: fields.price,
     headerName: "Price",
-    type: 'number',
+    type: "number",
     flex: 1,
     editable: isManager,
-
+    align: "left",
+    headerAlign: "left",
   },
   {
-    field: "available_quantity",
+    field: fields.available_quantity,
     headerName: "Available Quantity",
     description: "Product current quantity in store inventory",
-    type: 'number',
+    type: "number",
     flex: 1,
     editable: isManager,
-
+    align: "left",
+    headerAlign: "left",
   },
   {
-    field: "category",
+    field: fields.category,
     headerName: "Category",
     // type: 'string',
     flex: 1,
     editable: isManager,
+    align: "left",
+    headerAlign: "left",
 
     // valueGetter: (params: GridValueGetterParams) =>
     //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
   },
 ];
-
-
 
 const toolBar = (numSelected: number, handleAddToCart: () => void) => {
   return (
@@ -115,12 +126,27 @@ const toolBar = (numSelected: number, handleAddToCart: () => void) => {
   );
 };
 
+function updatePrice(product: Product, price: number) {
+  if (price != null) product.price = price;
+}
+function updateAvailableQuantity(product: Product, available_quantity: number) {
+  if (available_quantity != null)
+    product.available_quantity = available_quantity;
+}
+function updateCategory(product: Product, category: string){
+  if ( category != null)
+    product.category = category;
+}
+
 export default function StorePage() {
   const startingPageSize: number = 10;
-  
+
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
   const [numSelected, setNumSelected] = React.useState<number>(0);
-  const [selectedProductsIds, setSelectedProductsIds] = React.useState<number[]>([]);
+  const [selectedProductsIds, setSelectedProductsIds] = React.useState<
+    number[]
+  >([]);
+  const [rows, setRows] = React.useState<Product[]>(storeProducts);
 
   const handleNewSelection = (newSelectionModel: any) => {
     const chosenIds: number[] = newSelectionModel;
@@ -137,8 +163,25 @@ export default function StorePage() {
   };
 
   const handleCellEdit = (e: GridCellEditCommitParams) => {
-    alert(e.field + " Changed into "+ e.value + " id "+ e.id)
-  } 
+    const newRows = rows.map((row) => {
+      if (row.id === e.id) {
+        switch (e.field) {
+          case fields.price:
+            updatePrice(row, e.value);
+            break;
+          case fields.available_quantity:
+            updateAvailableQuantity(row, e.value);
+            break;
+          case fields.category:
+            updateCategory(row, e.value);
+            break;
+        }
+      }
+      return row;
+    });
+    setRows(newRows);
+    // alert(e.field + " Changed into "+ e.value + " id "+ e.id)
+  };
 
   return (
     <Box>
@@ -158,6 +201,7 @@ export default function StorePage() {
           checkboxSelection
           disableSelectionOnClick
           onSelectionModelChange={handleNewSelection}
+          isCellEditable={(params) => isManager}
           onCellEditCommit={handleCellEdit}
         />
       </div>

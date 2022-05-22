@@ -36,7 +36,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 
-import { Fab, makeStyles } from "@mui/material";
+import { Button, Card, Fab, makeStyles, Stack } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import AppBar from "@mui/material/AppBar";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -47,6 +47,8 @@ import Product from "../DTOs/Product";
 import { fetchProducts } from "../services/ProductsService";
 import DemoTreeDataValue from "@mui/x-data-grid-generator/services/tree-data-generator";
 import { useQueryParam, NumberParam, StringParam } from "use-query-params";
+import { getStore } from "../services/StoreService";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 function ProductsTable() {
   return (
@@ -57,56 +59,144 @@ function ProductsTable() {
   );
 }
 
-export default function SearchPage() {
-  const [query] = useQueryParam("query", StringParam);
+const columns: GridColDef[] = [
+  { field: "name", headerName: "Product", flex: 2 },
+  { field: "price", headerName: "Price", flex: 1 },
+  { field: "category", headerName: "Category", flex: 1 },
+  { field: "store", headerName: "Store", flex: 1 },
+];
 
-  const columns: GridColDef[] = [
-    { field: "name", headerName: "Product", flex: 2 },
-    { field: "price", headerName: "Price", flex: 1 },
-    { field: "category", headerName: "Category", flex: 1 },
-    { field: "store", headerName: "Store", flex: 1 },
-  ];
+type ProductRowType = {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  store: string;
+};
 
-  // map products to Map indexing items by id
-  const productsLst = fetchProducts(query || "");
-  const products: Map<number, Product> = Object.assign(
-    {},
-    ...productsLst.map((p: Product) => ({ [p.id]: p }))
-  );
-
-  type ProductRowType = {
-    id: number;
-    name: string;
-    price: number;
-    category: string;
-    store: string;
-  };
-
-  let productsRows: ProductRowType[] = [];
-
-  for (const p of productsLst) {
-    productsRows.push({
+const createRows = (products: Product[]) => {
+  let productRow: ProductRowType[] = [];
+  for (const p of products) {
+    productRow.push({
       id: p.id,
       name: p.name,
       price: p.price,
       category: p.category,
-      store: p.store,
+      store: getStore(p.store).name,
     });
   }
+  return productRow;
+};
 
+function storeGrid(productsRows: ProductRowType[], pageSize:number, setPageSize: any) {
+  const storeName = productsRows[0].store;
   return (
-    <Box>
-      <Navbar />
-      <div style={{ height: 700, width: "100%" }}>
-        <DataGrid
-          rows={productsRows}
-          columns={columns}
-          components={{
-            Toolbar: ProductsTable,
-          }}
-        />
-      </div>
+    <Box
+      sx={{
+        justifyContent: "center",
+        width: "100%",
+        mt: 3,
+        mb: 3,
+      }}
+    >
+      <Stack justifyContent="space-evenly" alignItems="center" spacing={2}>
+        <Box sx={{ m: 1 }}>
+          <Typography variant="h4">{storeName}</Typography>
+        </Box>
+        <Box style={{ height: 400, width: "90%" }} sx={{ boxShadow: 3, mb: 3 }}>
+          <DataGrid
+            rows={productsRows}
+            columns={columns}
+            //Paging
+            rowsPerPageOptions={[5, 10, 15]}
+            pageSize={pageSize}
+            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+            pagination
+            //Components
+            components={{
+              Toolbar: ProductsTable,
+            }}
+          />
+
+          <Button
+            variant="contained"
+            size="large"
+            sx={{ mt: 1 }}
+            startIcon={<ExitToAppIcon />}
+          >
+            {storeName}
+          </Button>
+        </Box>
+      </Stack>
     </Box>
+  );
+}
+
+function groupByStore(products: Product[]): Product[][] {
+  const groupedProductsMap: Map<number, Product[]> = new Map();
+  // Add {storeId, Product} map
+
+  // const products: Map<number, Product> = Object.assign(
+  //   {},
+  //   ...productsLst.map((p: Product) => ({ [p.id]: p }))
+  // );
+  products.forEach((prod: Product) => {
+    if (groupedProductsMap.has(prod.store)) {
+      const prodArr = groupedProductsMap.get(prod.store);
+      const arrToAdd: Product[] =
+        prodArr === undefined ? [prod] : [...prodArr, prod];
+      groupedProductsMap.set(prod.store, arrToAdd);
+    } else groupedProductsMap.set(prod.store, [prod]);
+  });
+
+  // create [Product[]]
+  const groupedProducts = Array.from(groupedProductsMap.values());
+
+  return groupedProducts;
+}
+
+export default function SearchPage() {
+  const startingPageSize = 5
+  const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
+  const [query] = useQueryParam("query", StringParam);
+
+  const theme = createTheme({
+    typography: {
+      fontFamily: [
+        "-apple-system",
+        "BlinkMacSystemFont",
+        '"Segoe UI"',
+        "Roboto",
+        '"Helvetica Neue"',
+        "Arial",
+        "sans-serif",
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(","),
+    },
+  });
+
+  // map products to Map indexing items by id
+  const productsLst = fetchProducts(query || "");
+  // const products: Map<number, Product> = Object.assign(
+  //   {},
+  //   ...productsLst.map((p: Product) => ({ [p.id]: p }))
+  // );
+  const productsByStore: Product[][] = groupByStore(productsLst);
+
+  console.log(productsByStore);
+  return (
+    <ThemeProvider theme={theme}>
+      <Box>
+        <Navbar />
+        <Stack>
+          {productsByStore.map((prodsOfStore: Product[]) => {
+            return storeGrid(createRows(prodsOfStore),pageSize, setPageSize);
+          })}
+        </Stack>
+      </Box>
+    </ThemeProvider>
   );
 }
 

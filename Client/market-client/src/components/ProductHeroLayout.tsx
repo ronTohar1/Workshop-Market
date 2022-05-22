@@ -28,7 +28,7 @@ const Background = styled(Box)({
   zIndex: -2,
 });
 
-function ProductHeroLayout(props: { sxBackground: any; children: any; }) {
+export function ProductHeroLayout(props: { sxBackground: any; children: any; }) {
   const { sxBackground, children } = props;
 
   return (

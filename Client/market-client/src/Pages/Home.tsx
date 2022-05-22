@@ -1,15 +1,18 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import AppBar from '@mui/material/AppBar';
-import Grid from '@mui/material/Grid';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Box from '@mui/material/Box';
-import {createTheme, ThemeProvider } from '@mui/material/styles';
+
+import * as React from "react";
 import Navbar from './Navbar';
 import {pathLogin, pathRegister} from './Paths'
 import {Typography}  from '@mui/material';
 import ProductHeroLayout from './ProductHeroLayout';
 import { styled } from '@mui/material/styles';
+import Button from "@mui/material/Button";
+import AppBar from "@mui/material/AppBar";
+import Grid from "@mui/material/Grid";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import Box from "@mui/material/Box";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Navbar from "../components/Navbar";
+import { pathLogin, pathRegister, pathSearch } from "../Paths";
 
 const cards = [1, 2, 3];
 
@@ -30,11 +33,12 @@ const createButton = (name: string, path: string) => {
                 //   href="/store"
                 //   sx={{ minWidth: 200 }}
                 // >
+
 };
 const buttons = [
-  createButton("Continue To Website", pathLogin),
+  createButton("Continue To Website", pathSearch),
   createButton("Create An Account", pathRegister),
-  createButton("Log In To Your Account",pathLogin)
+  createButton("Log In To Your Account", pathLogin),
 ];
 
 export default function Home() {
@@ -162,7 +166,6 @@ export default function Home() {
         </Container> */}
       </main>
       {/* Footer */}
-
     </ThemeProvider>
   );
 }

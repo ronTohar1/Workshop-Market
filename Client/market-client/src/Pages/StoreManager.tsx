@@ -44,7 +44,7 @@ export default function StoreManagerPage() {
     name: string;
     price: number;
     category: string;
-    store: string;
+    store: number;
   };
 
   let productsRows: ProductRowType[] = [];

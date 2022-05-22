@@ -1,9 +1,11 @@
+import {Store} from './Store'
+
 class Product {
   id: number;
   name: string;
   price: number;
   category: string;
-  store: string;
+  store: number;
   available_quantity: number;
 
   constructor(
@@ -11,7 +13,7 @@ class Product {
     name: string,
     price: number,
     category: string,
-    store: string,
+    store: number,
     available_quantity: number
 
   ) {

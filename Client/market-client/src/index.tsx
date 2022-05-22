@@ -1,3 +1,4 @@
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
@@ -14,10 +15,12 @@ import * as Paths from "./Paths";
 import { QueryParamProvider } from "use-query-params";
 import StoreManagerPage from "./Pages/StoreManager";
 
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
+
   <Router>
     <QueryParamProvider>
       <Routes>
@@ -31,4 +34,5 @@ root.render(
       </Routes>
     </QueryParamProvider>
   </Router>
+
 );

@@ -19,3 +19,20 @@ export const fetchProducts = (query: string) => {
 
   return dummyProducts.filter((p) => p.name.includes(query));
 };
+
+export function groupByStore(products: Product[]): Product[][] {
+  const groupedProductsMap: Map<number, Product[]> = new Map();
+  products.forEach((prod: Product) => {
+    if (groupedProductsMap.has(prod.store)) {
+      const prodArr = groupedProductsMap.get(prod.store);
+      const arrToAdd: Product[] =
+        prodArr === undefined ? [prod] : [...prodArr, prod];
+      groupedProductsMap.set(prod.store, arrToAdd);
+    } else groupedProductsMap.set(prod.store, [prod]);
+  });
+
+  // create [Product[]]
+  const groupedProducts = Array.from(groupedProductsMap.values());
+
+  return groupedProducts;
+}

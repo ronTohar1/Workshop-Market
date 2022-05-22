@@ -9,28 +9,23 @@ import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import ScreenSearchDesktopTwoToneIcon from "@mui/icons-material/ScreenSearchDesktopTwoTone";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { makeStyles } from "@mui/material";
-import { BadgeProps } from "@mui/material";
+import { BadgeProps, List, ListItem, ListItemText } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Stack from "@mui/material/Stack";
-import { InputAdornment } from "@mui/material";
-import { TextField } from "@mui/material";
 import { pathCart, pathHome, pathSearch } from "../Paths";
 import { Link, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Route, useParams } from "react-router-dom";
-import { Navigation } from "@mui/icons-material";
-import { fontSize } from "@mui/system";
+import { Tooltip } from "@mui/material";
+import MarketNotification from "../DTOs/MarketNotification";
+import { dummyNotificaitons } from "../services/NotificationsService";
+
+
+const currentNotifications = dummyNotificaitons;
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -81,25 +76,67 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+
+
+const notificationsMenu = (
+  open: any,
+  anchor: any,
+  handleClose: any,
+  currNotifications: MarketNotification[],
+  handleDismissNotifications: (note: MarketNotification) => void
+) => {
+  return (
+    <Menu anchorEl={anchor} open={open} onClose={handleClose} >
+      {currNotifications.map((note: MarketNotification) => (
+        <Tooltip title="Click To Dismiss">
+          <MenuItem  onClick={() => handleDismissNotifications(note)}>
+          {note.description}
+          </MenuItem>
+        </Tooltip>
+      ))}
+    </Menu>
+  );
+};
+
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [searchValue, setSearchValue] = React.useState("");
+  const [anchorElNotifications, setAnchorElNotifications] =
+    React.useState<null | HTMLElement>(null);
+  const [openNotifications, setOpenNotifications] =
+    React.useState<boolean>(false);
+  const [notifications, setNotifications] =
+    React.useState<MarketNotification[]>(currentNotifications);
 
   const isMenuOpen = Boolean(anchorEl);
 
   const handleClickHome = () => {
     navigate(`${pathHome}`);
-  }
+  };
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleNotifications = () => {
-    alert("hello");
+  const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNotifications(event.currentTarget);
+    setOpenNotifications(!openNotifications && notifications.length > 0);
+  };
+  const handleCloseNotifications = () => {
+    setOpenNotifications(false);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleDismissNotifications = (noteToDis: MarketNotification) => {
+    setNotifications(
+      notifications.filter(
+        (note: MarketNotification) => note.id != noteToDis.id
+      )
+    );
+    if(notifications.length === 0)
+        setOpenNotifications(false);
   };
 
   const handleMyAccountClick = () => {
@@ -107,7 +144,7 @@ export default function Navbar() {
   };
 
   const menuId = "primary-search-account-menu";
-  const renderMenu = (
+  const renderMenuAccount = (
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
@@ -121,16 +158,13 @@ export default function Navbar() {
         horizontal: "right",
       }}
       open={isMenuOpen}
-      onClose={handleMenuClose}>
+      onClose={handleMenuClose}
+    >
       <MenuItem onClick={handleMyAccountClick}>My account</MenuItem>
     </Menu>
   );
 
   const navigate = useNavigate();
-  // const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
-  //     event.preventDefault();
-  //     Navigation.navigate('/search', {query : "aaa"})
-  // }
   const theme = createTheme({
     typography: {
       fontFamily: [
@@ -149,50 +183,53 @@ export default function Navbar() {
   });
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position='sticky'>
+      <AppBar position="sticky">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <div>
             <Typography
               onClick={handleClickHome}
-              variant='h6'
+              variant="h6"
               noWrap
-              component='div'
-              sx={{ 
+              component="div"
+              sx={{
                 display: { xs: "none", sm: "block" },
                 "&:hover": {
-                  cursor: "pointer"
-                  }
-                }}>
+                  cursor: "pointer",
+                },
+              }}
+            >
               Workshop Market
             </Typography>
             <Box sx={{}} />
           </div>
           <div>
             <Box
-              component='form'
+              component="form"
               noValidate
               onSubmit={(e: any) => {
                 navigate(`${pathSearch}?query=${searchValue}`);
-              }}>
-              <Stack direction='row' spacing={2}>
+              }}
+            >
+              <Stack direction="row" spacing={2}>
                 <Search sx={{ flexGrow: 1 }}>
                   <SearchIconWrapper>
                     <SearchIcon />
                   </SearchIconWrapper>
                   <StyledInputBase
-                    id='query'
-                    name='query'
+                    id="query"
+                    name="query"
                     onChange={(e) => setSearchValue(e.target.value)}
                     sx={{ flexGrow: 1 }}
-                    placeholder='Search Products...'
+                    placeholder="Search Products..."
                     inputProps={{ "aria-label": "search", width: "auto" }}
                   />
                 </Search>
                 <Button
-                  variant='outlined'
-                  color='inherit'
+                  variant="outlined"
+                  color="inherit"
                   startIcon={<SearchIcon />}
-                  type='submit'>
+                  type="submit"
+                >
                   Search
                 </Button>
               </Stack>
@@ -203,40 +240,54 @@ export default function Navbar() {
           </div>
           <div>
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
+              <Tooltip
+                title={`You have ${notifications.length} new notifications`}
+              >
+                <IconButton
+                  size="large"
+                  aria-label="show new notifications"
+                  color="inherit"
+                  onClick={handleOpenNotifications}
+                >
+                  <Badge badgeContent={notifications.length} color="error">
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+              {notificationsMenu(
+                openNotifications,
+                anchorElNotifications,
+                handleCloseNotifications,
+                notifications,
+                handleDismissNotifications
+              )}
               <IconButton
-                size='large'
-                aria-label='show new notifications'
-                color='inherit'
-                onClick={handleNotifications}>
-                <Badge badgeContent={109} color='error'>
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                aria-label='cart'
-                size='large'
-                color='inherit'
+                aria-label="cart"
+                size="large"
+                color="inherit"
                 component={Link}
-                to={pathCart}>
-                <StyledBadge badgeContent={44} color='secondary'>
+                to={pathCart}
+              >
+                <StyledBadge badgeContent={44} color="secondary">
                   <ShoppingCartIcon />
                 </StyledBadge>
               </IconButton>
               <IconButton
-                size='large'
-                edge='end'
-                aria-label='account of current user'
+                size="large"
+                edge="end"
+                aria-label="account of current user"
                 aria-controls={menuId}
-                aria-haspopup='true'
+                aria-haspopup="true"
                 onClick={handleProfileMenuOpen}
-                color='inherit'>
+                color="inherit"
+              >
                 <AccountCircle />
               </IconButton>
             </Box>
           </div>
         </Toolbar>
       </AppBar>
-      {renderMenu}
+      {renderMenuAccount}
     </ThemeProvider>
   );
 }

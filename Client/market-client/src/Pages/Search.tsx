@@ -10,7 +10,6 @@ import {
   GridRowsProp,
   GridColDef,
 } from "@mui/x-data-grid";
-import { useDemoData } from "@mui/x-data-grid-generator";
 import Box from "@mui/material/Box";
 
 // import CustomToolbarGrid  from '../components/ProductsList'
@@ -45,7 +44,6 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 import Product from "../DTOs/Product";
 import { fetchProducts } from "../services/ProductsService";
-import DemoTreeDataValue from "@mui/x-data-grid-generator/services/tree-data-generator";
 import { useQueryParam, NumberParam, StringParam } from "use-query-params";
 import { getStore } from "../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";

@@ -6,18 +6,20 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Buyers.Members
 {
+    // 1.5, 1.6
     public class Notifier
     {
-        private Action<string[]> notifyFunc;
+        private Func<string[],bool> notifyFunc;
          
-        public Notifier(Action<string[]> notifyFunc)
+        public Notifier(Func<string[], bool> notifyFunc)
         {
             this.notifyFunc = notifyFunc;
         }
 
-        public void notify(string[] notifications)
+
+        public bool tryToNotify(string[] notifications)
         {
-            this.notifyFunc(notifications);
+            return this.notifyFunc(notifications);
         }
     }
 }

@@ -5,23 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using MarketBackend.BusinessLayer.Market;
+using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 
 namespace MarketBackend.BusinessLayer.Admins
 {
-    internal class AdminManager
+    public class AdminManager
     {
         private ICollection<int> admins;
         private StoreController storeController;
         private BuyersController buyersController;
+        private MembersController membersController;
         
 
-        public AdminManager(StoreController storeController, BuyersController buyersController)
+        public AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController)
         {
             admins = new SynchronizedCollection<int>();
             this.storeController = storeController;
             this.buyersController = buyersController;
+            this.membersController = membersController;
         }
 
         private void VerifyAdmin(int adminId)
@@ -41,6 +44,9 @@ namespace MarketBackend.BusinessLayer.Admins
             admins.Add(id);
             return true;
         }
+        public bool ContainAdmin(int id)
+        => admins.Contains(id);
+        
 
         /// <summary>
         /// Removes the given admin from collection and return if deleted
@@ -74,5 +80,29 @@ namespace MarketBackend.BusinessLayer.Admins
 
         public IList<Purchase> GetStoreHistory(int adminId, string storeName) =>
             GetStoreHistory(adminId, storeController.GetStoreIdByName(storeName));
+
+        public bool RemoveMember(int adminId, int memberToRemoveId)
+        {
+            VerifyAdmin(adminId);
+            if (storeController.HasRolesInMarket(memberToRemoveId))
+                return false;
+            //from this point it's legal to ask the removal of a member from the memberController
+            membersController.RemoveMember(memberToRemoveId);
+            return true;
+        }
+        public IList<int> GetLoggedInMembers(int requestingId)
+        {
+            VerifyAdmin(requestingId);
+            return membersController.GetLoggedInMembers();
+        }
+        public Member? GetMemberInfo(int requestingId, int memberId)
+        {
+            VerifyAdmin(requestingId);
+            return membersController.GetMember(memberId);
+            
+        }
+
+        public bool MemberExists(int memberId)
+        => membersController.GetMember(memberId) != null;
     }
 }

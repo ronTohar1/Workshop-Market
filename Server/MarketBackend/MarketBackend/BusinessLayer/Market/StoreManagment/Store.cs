@@ -1,23 +1,27 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
 using System;
 using System.Collections.Concurrent;
+using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
+using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
     public class Store
     {
         public string name { get; }
         public Member founder { get; }
+        public bool isOpen { get; private set; }
         public Hierarchy<int> appointmentsHierarchy { get; }
-        public virtual StorePolicy policy { get; }
-        public virtual IDictionary<int,Product> products { get; }
-        
+        public virtual IDictionary<int, Product> products { get; }
+
         private IList<Purchase> purchaseHistory;
         private IDictionary<int, IList<Permission>> managersPermissions;
         private IDictionary<Role, IList<int>> rolesInStore;
         private Func<int, Member> membersGetter;
+        private Mutex isOpenMutex;
 
-        private static int productIdCounter = 0; // the next store id
-        private static Mutex productIdCounterMutex = new Mutex();
 
         private const int timeoutMilis = 2000; // time for wating for the rw lock in the next line, after which it throws an exception
         private ReaderWriterLock rolesAndPermissionsLock;
@@ -26,19 +30,27 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private ConcurrentDictionary<int,Mutex> productsMutex;
         private Mutex transactionIdMutex;
 
+        public StoreDiscountPolicyManager discountManager { get; }
+        public virtual StorePurchasePolicyManager purchaseManager { get; }
+
+
         // cc 5
         // cc 6
         public Store(string storeName, Member founder, Func<int, Member> membersGetter)
 	    {
+            discountManager = new StoreDiscountPolicyManager();
+            purchaseManager = new StorePurchasePolicyManager();
+
             this.name = storeName;
             this.founder = founder;
+            this.isOpen = true;
             this.appointmentsHierarchy = new Hierarchy<int>(founder.Id);
             this.purchaseHistory = new SynchronizedCollection<Purchase>();
-            this.policy = new StorePolicy();
-            this.products = new ConcurrentDictionary<int,Product>();
+            this.products = new ConcurrentDictionary<int, Product>();
             this.managersPermissions = new ConcurrentDictionary<int, IList<Permission>>();
             initializeRolesInStore();
             this.membersGetter = membersGetter;
+            this.isOpenMutex = new Mutex();
 
             //Transactions
             this.transactions = new Dictionary<int, IDictionary<Product, int>>();
@@ -47,7 +59,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 
             this.rolesAndPermissionsLock = new ReaderWriterLock(); // no need to acquire it here (probably) because constructor is of one thread
-	    }
+        }
 
         public bool CommitTransaction(int transactionId)
         {
@@ -166,7 +178,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             // need to be called from constructor or with acquiring the lock 
             // saving founder as a coOnwer as well
             if (founder == null)
-                throw new ArgumentNullException("Initializing roles in stores should happen after founder is initialized"); 
+                throw new ArgumentNullException("Initializing roles in stores should happen after founder is initialized");
             this.rolesInStore = new ConcurrentDictionary<Role, IList<int>>();
             foreach (Role role in Enum.GetValues(typeof(Role)))
             {
@@ -222,39 +234,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             try {
                 products[productId].RemoveFromInventory(amount);
             }
-            catch(MarketException mEx) {
+            catch (MarketException mEx) {
                 throw new MarketException(StoreErrorMessage($"Could not take from inventory: {mEx.Message}"));
             }
         }
 
         public IList<Product> SerachProducts(ProductsSearchFilter filter)
-        => products.Values.Where(p=>filter.FilterProduct(p)).ToList();
+        => products.Values.Where(p => filter.FilterProduct(p)).ToList();
 
-        // r.4.2
-        public void AddPurchaseOption(int memberId, PurchaseOption purchaseOption)//Add to store
-        {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option: ");
-            policy.AddPurchaseOption(purchaseOption); 
-        }
-       
-        // r.4.2
-        public void AddProductPurchaseOption(int memberId, int productId, PurchaseOption purchaseOption)//Add to product in the store 
-        {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
-            if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not add purchase option for the product: there isn't such a product with product id: {productId}"));
-            if (!policy.ContainsPurchaseOption(purchaseOption))
-                throw new MarketException(StoreErrorMessage($"Could not add purchase option for the product: the store itself does not support such purchase options"));
-            products[productId].AddPurchaseOption(purchaseOption);
-        }
-        // r.4.2
-        public void SetMinAmountPerProduct(int memberId, int productId, int newMinAmount)//Add to store
-        {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not set minimum amount for product: ");
-            if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not set minimum amount for product: there isn't such a product with product id: {productId}"));
-            policy.SetMinAmountPerProduct(productId, newMinAmount);
-        }
 
         // r.4.1
         public void SetProductPrice(int memberId, int productId, double productPrice)
@@ -281,16 +268,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             products[productId].SetProductCategory(category);
         }
         // r.3.3
+        // r.1.5, 1.6
         public void AddProductReview(int memberId, int productId, string review) {
             string permissionError = CheckAtLeastMemberPermission(memberId);
-            if (permissionError !=null)
-                throw new MarketException("Could not add review: "+permissionError);
+            if (permissionError != null)
+                throw new MarketException("Could not add review: " + permissionError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not add review: there isn't such a product with product id: {productId}"));
-            products[productId].AddProductReview(membersGetter(memberId).Username,review);
+            products[productId].AddProductReview(memberId, review);
+            notifyAllStoreOwners($"The member with id: {memberId} has written a new review of a product woth id: {productId} at {this.name}");
         }
         // 6.4, 4.13
-        public virtual void AddPurchaseRecord(int memberId, Purchase purchase) 
+        public virtual void AddPurchaseRecord(int memberId, Purchase purchase)
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
             purchaseHistory.Add(purchase);
@@ -299,43 +288,62 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // TODO: amit and david should disscus it
         public IList<Purchase> GetPurchaseHistory()
         {
-            return purchaseHistory;
+            lock (isOpenMutex)
+            {
+                if (!isOpen)
+                    throw new MarketException($"Could not recieve purchase history: {this.name} is closed");
+                return purchaseHistory;
+            }
         }
 
         // 6.4, 4.13
         public IList<Purchase> GetPurchaseHistory(int memberId)
         {
             EnforceAtLeastCoOwnerPermission(memberId, "could not get the purchase history: ");
-            return purchaseHistory;
+            lock (isOpenMutex)
+            {
+                if (!isOpen)
+                    throw new MarketException($"Could not recieve purchase history: {this.name} is closed");
+                return purchaseHistory;
+            }
+          
         }
         // r.3.3
-        public IList<string> GetProductReviews(int productId)
+        public IDictionary<Member, IList<string>> GetProductReviews(int productId)
         {
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not get reviews: there isn't such a product with product id: {productId}"));
-            return products[productId].reviews;
-        }
-        // r.3.3
-        public void AddDiscountForAmountPolicy(int memeberId, int amount, double discount)
-        {
-            EnforceAtLeastCoOwnerPermission(memeberId, "Could not add store discount for a certain amount: ");
-            policy.AddDiscountAmountPolicy(amount, discount);
-        }
-        // r.3.3
-        //recieves <productId, productAmount> and calculates the total to pay, consideroing all the restroctions
-        public virtual double GetTotalBagCost(IDictionary<int,int> productsAmounts) 
-        {
-            foreach (int productId in productsAmounts.Keys)
+            lock (isOpenMutex)
             {
-                if (!products.ContainsKey(productId))
-                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay: there isn't such a product with product id: {productId}"));
-                int amountPerProduct = policy.GetMinAmountPerProduct(productId);
-                if (productsAmounts[productId] < amountPerProduct)
-                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay:  {products[productId].name} can be bought only in a set of {amountPerProduct} or more"));
+                if (!isOpen)
+                    throw new MarketException($"Could not recieve purchase history: {this.name} is closed");
+
+                IDictionary<int, IList<string>> memberIdToReviews = products[productId].reviews;
+                IDictionary< Member, IList<string>> membersToReviews = new Dictionary<Member, IList<string>>();
+                foreach (int memberId in memberIdToReviews.Keys) {
+                    Member? m = membersGetter(memberId);
+                    if (m != null)
+                        membersToReviews[m] = memberIdToReviews[memberId];
+                }
+                return membersToReviews;
             }
-            double productsTotalPrices = productsAmounts.Keys.Select(productId => productsAmounts[productId]*products[productId].GetPrice()).ToList().Sum();
-            double amountDiscount = policy.GetDiscountForAmount(productsAmounts.Values.Sum());
-            return productsTotalPrices * (1 - amountDiscount);
+        }
+
+        // r.3.3
+        //recieves shopping bag and calculates the total to pay, consideroing all the restroctions
+        public virtual Tuple<double,double> GetTotalBagCost(ShoppingBag shoppingBag) 
+        {
+            foreach (var product in shoppingBag.ProductsAmounts)
+            {   
+                int productId = product.Key.ProductId;
+                int productAmount = product.Value;
+
+                if (!products.ContainsKey(productId))
+                    throw new MarketException(StoreErrorMessage($"Could not calculate bag total to pay: there isn't such a product"));
+            }
+            double productsTotalPrices = shoppingBag.ProductsAmounts.Keys.Sum(prodInBag => products[prodInBag.ProductId].GetPrice() * shoppingBag.ProductsAmounts[prodInBag]);
+            double amountDiscount = discountManager.EvaluateDiscountForBag(shoppingBag,this);
+            return new(productsTotalPrices ,amountDiscount);
         }
 
         public virtual string? CanBuyProduct(int buyerId, int productId, int amount)
@@ -344,12 +352,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 return $"The product can't be bought in the {name} store, there isn't such a product with id: {productId}";
             string productPurchaseFailMessage = "The product can't be bought: ";
             bool productCanBePurchased = true;
-            int minAmount = policy.GetMinAmountPerProduct(productId);
-            if (minAmount > amount)
-            {
-                productPurchaseFailMessage = productPurchaseFailMessage + $"\n     { products[productId].name} can be bought only in a set of { minAmount} or more";
-                productCanBePurchased = false;
-            }
             if (products[productId].amountInInventory == 0)
             {
                 productPurchaseFailMessage = productPurchaseFailMessage + $"\n     there arn't any {products[productId].name} currently at the inventory";
@@ -427,8 +429,41 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             // todo: check that this mutex is synchronizing all these things okay
         }
 
+        // r 4.5
+        public void RemoveCoOwner(int requestingMemberId, int toRemoveCoOwnerMemberId)
+        {
+            rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
+            string permissionError = CheckAtLeastCoOwnerPermission(requestingMemberId);
+            if (permissionError != null)
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
+                throw new MarketException("Could not remove co owner: " + permissionError);
+            }
+            
+            permissionError = CheckAtLeastCoOwnerPermission(toRemoveCoOwnerMemberId);
+            if (permissionError != null)
+            {
+                rolesAndPermissionsLock.ReleaseWriterLock();
+                throw new MarketException("Could not remove co owner: " + permissionError);
+            }
 
+            Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId);
+            RemovedByOwnerBranchUpdate(removedBrance, $"We regeret to inform you that you've lost your position at {this.name}");
 
+            rolesAndPermissionsLock.ReleaseWriterLock();
+            
+        }
+        private void RemovedByOwnerBranchUpdate(Hierarchy<int> removedBranch, string notification) {
+            if (removedBranch == null)
+                return;
+            int memberId = removedBranch.value;
+            rolesInStore[Role.Owner].Remove(memberId);//doesn't do anything if not in collection
+            rolesInStore[Role.Manager].Remove(memberId);
+            membersGetter(memberId).Notify(notification);
+            foreach (Hierarchy<int> child in removedBranch.children) {
+                RemovedByOwnerBranchUpdate(child, notification);
+            }
+        }
 
         // cc 3
         // r 4.6, r 5
@@ -504,10 +539,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.RecieiveRolesInfo); 
             if (permissionError != null)
                 throw new MarketException("Error in getting members in role: " + role.ToString() + " " + permissionError);
+            lock (isOpenMutex)
+            {
+                if (!isOpen)
+                    throw new MarketException($"Could not check members in role: {this.name} is closed");
 
-            // no need to aquire lock because the second action does not depend on the first
-            IList<int> rollers = rolesInStore[role];
-            return new List<int>(rollers); 
+                // no need to aquire lock because the second action does not depend on the first
+                IList<int> rollers = rolesInStore[role];
+                return new List<int>(rollers);
+            }
         }
 
         // r 4.11 r 5
@@ -535,10 +575,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 rolesAndPermissionsLock.ReleaseReaderLock();
                 throw new MarketException("This is not a manager so its permissions could not be retunrd");
             }
+            lock (isOpenMutex)
+            {
+                if (!isOpen)
+                    throw new MarketException($"Could not recieve purchase history: {this.name} is closed");
 
-            IList<Permission> result = new List<Permission>(managersPermissions[managerMemberId]);
-            rolesAndPermissionsLock.ReleaseReaderLock();
-            return result; 
+                IList<Permission> result = new List<Permission>(managersPermissions[managerMemberId]);
+                rolesAndPermissionsLock.ReleaseReaderLock();
+                return result;
+            }
         }
 
         public bool IsFounder(int memberId)
@@ -572,11 +617,58 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return result; 
         }
 
+       
         private bool IsManagerWithPermission(int memberId, Permission permission)
         {
             rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             bool result = IsManager(memberId) && HasPermission(memberId, permission);
             return result;
+        }
+     
+        // ----------------------------- Discounts policy -----------------------------
+
+        public int AddDiscountPolicy(IExpression exp, string descrption, int memberId)
+        {
+            //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId,Permission.DiscountPolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not add discount policy: " + permissionError);
+            
+            int id = discountManager.AddDiscount(descrption, exp);
+            return id;
+        }
+
+        public void RemoveDiscountPolicy(int disId, int memberId)
+        {
+            //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.DiscountPolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not remove discount policy: " + permissionError);
+
+            discountManager.RemoveDiscount(disId);
+        }
+
+        // ----------------------------- Purchases policy -----------------------------
+
+        public int AddPurchasePolicy(IPurchasePolicy exp, string descrption, int memberId)
+        {
+            //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.purchasePolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not add purchase policy: " + permissionError);
+
+            int id = purchaseManager.AddPurchasePolicy(descrption, exp);
+            return id;
+        }
+
+        public void RemovePurchasePolicy(int policyId, int memberId)
+        {
+            //TODO check if permission alows to handle discounts
+            string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.purchasePolicyManagement);
+            if (permissionError != null)
+                throw new MarketException("Could not add purchase policy: " + permissionError);
+
+            purchaseManager.RemovePurchasePolicy(policyId);
         }
 
         // ------------------------------ General ------------------------------
@@ -584,7 +676,32 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // 4.9
         public void CloseStore(int memberId)
         {
-            // todo: implement
+            lock (isOpenMutex)
+            {
+                string errorMessage = CheckAtLeastFounderPermission(memberId);
+                if (errorMessage != null)
+                    throw new MarketException("Error in closing the store: " + errorMessage);
+                if (!isOpen)
+                    throw new MarketException($"{this.name} is allready closed");
+                string notificationMessage = $"We regret to inform you that {this.name} has been closed";
+                isOpen = false;
+                notifyAllStoreOwners(notificationMessage);
+                notifyAllStoreManagers(notificationMessage);
+            }
+        }
+
+
+        // 1.5, 1.6
+        public virtual void notifyAllStoreOwners(string notificationMessage) 
+            =>notifyAllMembersWithRole(notificationMessage, Role.Owner);
+        public void notifyAllStoreManagers(string notificationMessage)
+            => notifyAllMembersWithRole(notificationMessage, Role.Manager);
+
+
+        private void notifyAllMembersWithRole(string notificationMessage, Role roleAtStore)
+        {
+            foreach (int memberId in rolesInStore[roleAtStore])
+                membersGetter(memberId).Notify(notificationMessage);
         }
 
         // todo: maybe write tests about thers methods
@@ -631,7 +748,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return errorMessage + " in the store: " + name; 
         }
-       
+
         public bool ContainProductInStock(int productId)
         => products.ContainsKey(productId);
         public virtual Product SearchProductByProductId(int productId)

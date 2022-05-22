@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MarketBackend.ServiceLayer.ServiceDTO
 {
 
-    internal class ServiceMember
+    public class ServiceMember
     {
         public string UserName { get; }
         public bool LoggedIn { get;  }
@@ -18,6 +18,12 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         {
             UserName = m.Username;
             LoggedIn = m.LoggedIn;
+        }
+
+        public ServiceMember(string username, bool loggedIn)
+        {
+            UserName = username;
+            LoggedIn = loggedIn;
         }
 
         public override bool Equals(object? obj)

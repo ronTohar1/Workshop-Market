@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
   DataGrid,
+  GridCellEditCommitParams,
   GridColDef,
 } from "@mui/x-data-grid";
 import {
@@ -19,43 +20,48 @@ import * as storeService from "../services/StoreService";
 import Product from "../DTOs/Product";
 import { AddShoppingCart } from "@mui/icons-material";
 
-
+const isManager: boolean = true;
+const store: Store = storeService.dummyStore1;
+const rows: Product[] = store.products;
+const theme = createTheme();
 
 const columns: GridColDef[] = [
   {
     field: "name",
     headerName: "Product Name",
-    // type: 'number',
+    // type: 'string',
     flex: 2,
   },
   {
     field: "price",
     headerName: "Price",
-    // type: 'number',
+    type: 'number',
     flex: 1,
-    editable: true,
+    editable: isManager,
 
   },
   {
     field: "available_quantity",
     headerName: "Available Quantity",
     description: "Product current quantity in store inventory",
-    // type: 'number',
+    type: 'number',
     flex: 1,
+    editable: isManager,
+
   },
   {
     field: "category",
     headerName: "Category",
     // type: 'string',
     flex: 1,
+    editable: isManager,
+
     // valueGetter: (params: GridValueGetterParams) =>
     //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
   },
 ];
 
-const store: Store = storeService.dummyStore1;
-const rows: Product[] = store.products;
-const theme = createTheme();
+
 
 const toolBar = (numSelected: number, handleAddToCart: () => void) => {
   return (
@@ -72,7 +78,7 @@ const toolBar = (numSelected: number, handleAddToCart: () => void) => {
         }),
       }}
     >
-      {numSelected > 0 ? (
+      {numSelected > 0 && isManager ? (
         <Typography
           sx={{ flex: "1 1 100%" }}
           color="inherit"
@@ -91,7 +97,7 @@ const toolBar = (numSelected: number, handleAddToCart: () => void) => {
           {store.name}
         </Typography>
       )}
-      {numSelected > 0 ? (
+      {numSelected > 0 && isManager ? (
         <Tooltip title="Add To Cart">
           <Fab
             size="medium"
@@ -127,9 +133,12 @@ export default function StorePage() {
       if (selectedProductsIds.includes(prod.id)) {
         console.log("Adding to cart: " + prod.name);
       }
-    
     });
   };
+
+  const handleCellEdit = (e: GridCellEditCommitParams) => {
+    alert(e.field + " Changed into "+ e.value + " id "+ e.id)
+  } 
 
   return (
     <Box>
@@ -149,6 +158,7 @@ export default function StorePage() {
           checkboxSelection
           disableSelectionOnClick
           onSelectionModelChange={handleNewSelection}
+          onCellEditCommit={handleCellEdit}
         />
       </div>
     </Box>

@@ -239,7 +239,7 @@ namespace TestMarketBackend.Acceptance
             IDictionary<Role, IList<int>> rolesBefore = GetRolesInStore(storeId());
 
             // in some test cases the action is removing member2, checking that in this case member2 does not receive new notifications
-            IList<string> notificationsBefore = null; 
+            IList<string> notificationsBefore = null;
             if (coOwnerToRemoveId() == member2Id)
             {
                 notificationsBefore = notificationsBefore = member2Notifications.ToList();
@@ -252,11 +252,11 @@ namespace TestMarketBackend.Acceptance
             // check that roles in the store remained as before 
             IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId());
 
-            Assert.IsTrue(SameDictionariesWithLists(rolesBefore, roles)); 
+            Assert.IsTrue(SameDictionariesWithLists(rolesBefore, roles));
 
             if (notificationsBefore != null)
             {
-                Assert.IsTrue(SameElements(notificationsBefore, member2Notifications.ToList())); 
+                Assert.IsTrue(SameElements(notificationsBefore, member2Notifications.ToList()));
             }
         }
 
@@ -405,7 +405,7 @@ namespace TestMarketBackend.Acceptance
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             Assert.IsTrue(!managers.ErrorOccured());
-            Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id , member7Id}));
+            Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id, member7Id }));
 
             Response<IList<int>> owners =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
@@ -447,7 +447,7 @@ namespace TestMarketBackend.Acceptance
             get
             {
                 string description = "two iphones discount";
-                int discountPrecentage = 10; 
+                int discountPrecentage = 10;
                 // memberId is -1
                 yield return new TestCaseData(
                     () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
@@ -487,11 +487,122 @@ namespace TestMarketBackend.Acceptance
 
             // checking that discount description is not in discounts 
 
-            Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId()); 
+            Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
             Assert.IsTrue(!descriptionsResposne.ErrorOccured());
-            Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description)); 
-            
+            Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description));
+
         }
+
+        // helping class for adding discounts tests 
+        private class AddProductToCartArguments
+        {
+            public Func<int> ProductId { get; set; }
+            public Func<int> amount { get; set; }
+        }
+
+        public static IEnumerable<TestCaseData> DataSuccessfulAddDiscount
+        {
+
+            get
+            {
+                Func<IList<AddProductToCartArguments>, Func<StoreOwner_ManagerReqsTests, ServicePurchase>> getPurchaseProcess = (IList<AddProductToCartArguments> addingsToCart) =>
+                    (StoreOwner_ManagerReqsTests thisObject) =>
+                    {
+                        Response<bool> response;
+                        foreach (AddProductToCartArguments addingToCart in addingsToCart)
+                        {
+                            response = thisObject.buyerFacade.AddProdcutToCart(member1Id, storeId, addingToCart.ProductId(), addingToCart.amount());
+                            Assert.IsTrue(!response.ErrorOccured());
+                        }
+
+                        Response<ServicePurchase> purchaseReponse = thisObject.buyerFacade.PurchaseCartContent(member1Id);
+                        Assert.IsTrue(!purchaseReponse.ErrorOccured());
+                        return purchaseReponse.Value;
+                    };
+
+                // discount on specific product 
+
+                // buy product with the amount needed for discount 
+                yield return new TestCaseData(
+
+                    // discout
+                    () => new ServiceProductDiscount(iphoneProductId, 50),
+                    "two iphones 0.5",
+
+                    // store and requesting (to add) member 
+                    () => storeId, () => member3Id,
+
+                    // adding to cart
+                    getPurchaseProcess(new List<AddProductToCartArguments>{
+                        new AddProductToCartArguments() { ProductId = () => iphoneProductId, amount = () => 2 }
+                    }),
+
+                    // expected price
+                    iphoneProductPrice * 2 * 0.5);
+
+                // buy product twice the amount needed for discount 
+                yield return new TestCaseData(
+
+                    // discout
+                    () => new ServiceProductDiscount(iphoneProductId, 50),
+                    "four iphones 0.5",
+
+                    // store and requesting (to add) member 
+                    () => storeId, () => member3Id,
+
+                    // adding to cart
+                    getPurchaseProcess(new List<AddProductToCartArguments>{
+                        new AddProductToCartArguments() { ProductId = () => iphoneProductId, amount = () => 4 } 
+                    }), 
+
+                    // expected price
+                    iphoneProductPrice * 4 * 0.5);
+
+                // discount on all of the store 
+
+                // discount in date 
+
+                // if then 
+
+                // if then else 
+
+                // pred bag value
+
+                // pred product amount 
+
+                // and 
+
+                // or
+
+                // xor 
+
+                // max over the discounts 
+
+                // todo: add tests with multiple discounts 
+
+                // todo: maybe add tests on the other arguments, such as manager requesting etc. 
+
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataSuccessfulAddDiscount")]
+        public void SuccessfulAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase, double expectedPrice)
+        {
+            Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
+            Assert.IsTrue(!response.ErrorOccured());
+
+            // checking that discount description was added 
+            Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
+            Assert.IsTrue(!descriptionsResposne.ErrorOccured());
+            Assert.IsTrue(descriptionsResposne.Value.Values.Contains(description));
+
+            ServicePurchase resultPurchase = purchase(this);
+
+            Assert.AreEqual(expectedPrice, resultPurchase.purchasePrice); 
+        }
+
+
 
         // todo: maybe add tests to cc 6.1 and cc 6.2 
 

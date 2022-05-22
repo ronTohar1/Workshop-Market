@@ -488,77 +488,154 @@ namespace TestMarketBackend.Acceptance
             // checking that discount description is not in discounts 
 
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
-            Assert.IsTrue(!descriptionsResposne.ErrorOccured());
-            Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description));
+            if (!descriptionsResposne.ErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
+            {
+                Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description));
+            }
 
         }
 
-        // helping class for adding discounts tests 
+        // helping classes for adding discounts tests 
+
         private class AddProductToCartArguments
         {
             public Func<int> ProductId { get; set; }
-            public Func<int> amount { get; set; }
+            public Func<int> Amount { get; set; }
         }
+
+        private class TestAddDiscountProductArguments
+        {
+            public Func<int> ProductId { get; set; }
+            public Func<int> Amount { get; set; }
+            public Func<int> Price { get; set; }
+            public Func<int> Discount { get; set; } = () => 0; // default 
+        }
+
+        // helping functions for adding discount tests 
+
+        private static Func<StoreOwner_ManagerReqsTests, ServicePurchase> getPurchaseProcess(IList<AddProductToCartArguments> addingsToCart)
+        {
+            return (StoreOwner_ManagerReqsTests thisObject) =>
+            {
+                Response<bool> response;
+                foreach (AddProductToCartArguments addingToCart in addingsToCart)
+                {
+                    response = thisObject.buyerFacade.AddProdcutToCart(member1Id, storeId, addingToCart.ProductId(), addingToCart.Amount());
+                    Assert.IsTrue(!response.ErrorOccured());
+                }
+
+                Response<ServicePurchase> purchaseReponse = thisObject.buyerFacade.PurchaseCartContent(member1Id);
+                Assert.IsTrue(!purchaseReponse.ErrorOccured());
+                return purchaseReponse.Value;
+            };
+        }
+
+        private static TestCaseData AddDiscountTestCase(Func<IServiceDiscount> getDiscount, IList<TestAddDiscountProductArguments> arguments, int generalDiscount = 0)
+        {
+            return new TestCaseData(
+
+                    // discout
+                    getDiscount, "discount description",
+
+                    // store and requesting (to add) member 
+                    () => storeId, () => member3Id,
+                    // adding to cart
+                    getPurchaseProcess(
+                        arguments.Select(argumentObject =>
+                            new AddProductToCartArguments()
+                            {
+                                ProductId = argumentObject.ProductId,
+                                Amount = argumentObject.Amount
+                            }).ToList()
+                    ),
+
+                    // expected price
+                    (100 - generalDiscount) / 100.0 * 
+                    arguments.Aggregate(0.0, (price, argumentObject) =>
+                        price + 
+                            argumentObject.Amount() * 
+                            argumentObject.Price() * 
+                            (1 - argumentObject.Discount() / 100.0))
+            );
+        }
+
+        private static TestAddDiscountProductArguments GetIphoneArgument(int amount, int discount = 0)
+        {
+            return new TestAddDiscountProductArguments()
+            {
+                ProductId = () => iphoneProductId,
+                Price = () => iphoneProductPrice,
+                Amount = () => amount,
+                Discount = () => discount
+            };
+        }
+
+        private static TestAddDiscountProductArguments GetCalculatorArgument(int amount, int discount = 0)
+        {
+            return new TestAddDiscountProductArguments()
+            {
+                ProductId = () => calculatorProductId,
+                Price = () => calculatorProductPrice,
+                Amount = () => amount,
+                Discount = () => discount
+            };
+        }
+
 
         public static IEnumerable<TestCaseData> DataSuccessfulAddDiscount
         {
 
             get
             {
-                Func<IList<AddProductToCartArguments>, Func<StoreOwner_ManagerReqsTests, ServicePurchase>> getPurchaseProcess = (IList<AddProductToCartArguments> addingsToCart) =>
-                    (StoreOwner_ManagerReqsTests thisObject) =>
-                    {
-                        Response<bool> response;
-                        foreach (AddProductToCartArguments addingToCart in addingsToCart)
-                        {
-                            response = thisObject.buyerFacade.AddProdcutToCart(member1Id, storeId, addingToCart.ProductId(), addingToCart.amount());
-                            Assert.IsTrue(!response.ErrorOccured());
-                        }
 
-                        Response<ServicePurchase> purchaseReponse = thisObject.buyerFacade.PurchaseCartContent(member1Id);
-                        Assert.IsTrue(!purchaseReponse.ErrorOccured());
-                        return purchaseReponse.Value;
-                    };
 
                 // discount on specific product 
 
-                // buy product with the amount needed for discount 
-                yield return new TestCaseData(
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceProductDiscount(iphoneProductId, 10),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(2, 10)
+                    }
+                );
 
-                    // discout
+                // check prodcut that does not have the discount 
+                yield return AddDiscountTestCase(
+                    // the discount
                     () => new ServiceProductDiscount(iphoneProductId, 50),
-                    "two iphones 0.5",
-
-                    // store and requesting (to add) member 
-                    () => storeId, () => member3Id,
-
-                    // adding to cart
-                    getPurchaseProcess(new List<AddProductToCartArguments>{
-                        new AddProductToCartArguments() { ProductId = () => iphoneProductId, amount = () => 2 }
-                    }),
-
-                    // expected price
-                    iphoneProductPrice * 2 * 0.5);
-
-                // buy product twice the amount needed for discount 
-                yield return new TestCaseData(
-
-                    // discout
-                    () => new ServiceProductDiscount(iphoneProductId, 50),
-                    "four iphones 0.5",
-
-                    // store and requesting (to add) member 
-                    () => storeId, () => member3Id,
-
-                    // adding to cart
-                    getPurchaseProcess(new List<AddProductToCartArguments>{
-                        new AddProductToCartArguments() { ProductId = () => iphoneProductId, amount = () => 4 } 
-                    }), 
-
-                    // expected price
-                    iphoneProductPrice * 4 * 0.5);
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetCalculatorArgument(2)
+                    }
+                );
 
                 // discount on all of the store 
+
+                // one product 
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceStoreDiscount(10),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(3, 10)
+                    }
+                );
+
+                // two products 
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceStoreDiscount(40),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1, 40), 
+                        GetCalculatorArgument(2, 40)
+                    }
+                );
 
                 // discount in date 
 
@@ -582,6 +659,115 @@ namespace TestMarketBackend.Acceptance
 
                 // todo: maybe add tests on the other arguments, such as manager requesting etc. 
 
+
+                //yield return new TestCaseData(
+
+                //    // discout
+                //    () => new ServiceStoreDiscount(30),
+                //    "two iphones 30",
+
+                //    // store and requesting (to add) member 
+                //    () => storeId, () => member3Id,
+
+                //    // adding to cart
+                //    getPurchaseProcess(new List<AddProductToCartArguments>{
+                //        new AddProductToCartArguments() { ProductId = () => iphoneProductId, Amount = () => 2 }
+                //    }),
+
+                //    // expected price
+                //    iphoneProductPrice * 2 * (1 - 0.3));
+
+                //// two products product 
+                //yield return new TestCaseData(
+
+                //    // discout
+                //    () => new ServiceStoreDiscount(40),
+                //    "iphone and calculator 40",
+
+                //    // store and requesting (to add) member 
+                //    () => storeId, () => member3Id,
+
+                //    // adding to cart
+                //    getPurchaseProcess(new List<AddProductToCartArguments>{
+                //        new AddProductToCartArguments() { ProductId = () => iphoneProductId, amount = () => 1 },
+                //        new AddProductToCartArguments() { ProductId = () => calculatorProductId, amount = () => 1 }
+                //    }),
+
+                //    // expected price
+                //    (iphoneProductPrice + calculatorProductPrice) * (1 - 0.4));
+
+                //// buy product with the amount needed for discount 
+                //yield return new TestCaseData(
+
+                //    // discout
+                //    () => new ServiceProductDiscount(iphoneProductId, 50),
+                //    "two iphones 0.5",
+
+                //    // store and requesting (to add) member 
+                //    () => storeId, () => member3Id,
+
+                //    // adding to cart
+                //    getPurchaseProcess(new List<AddProductToCartArguments>{
+                //        new AddProductToCartArguments() { ProductId = () => iphoneProductId, amount = () => 2 }
+                //    }),
+
+                //    // expected price
+                //    iphoneProductPrice * 2 * 0.5);
+
+                //// buy product more than the amount needed for discount 
+                //yield return new TestCaseData(
+
+                //    // discout
+                //    () => new ServiceProductDiscount(iphoneProductId, 50),
+                //    "two iphones 0.5",
+
+                //    // store and requesting (to add) member 
+                //    () => storeId, () => member3Id,
+
+                //    // adding to cart
+                //    getPurchaseProcess(new List<AddProductToCartArguments>{
+                //        new AddProductToCartArguments() { ProductId = () => iphoneProductId, amount = () => 4 }
+                //    }),
+
+                //    // expected price
+                //    iphoneProductPrice * 4 * 0.5);
+
+                //// buy product more than the amount needed for discount and less than twice 
+                //yield return new TestCaseData(
+
+                //    // discout
+                //    () => new ServiceProductDiscount(iphoneProductId, 50),
+                //    "three iphones 0.5",
+
+                //    // store and requesting (to add) member 
+                //    () => storeId, () => member3Id,
+
+                //    // adding to cart
+                //    getPurchaseProcess(new List<AddProductToCartArguments>{
+                //        new AddProductToCartArguments() { ProductId = () => iphoneProductId, amount = () => 3 }
+                //    }),
+
+                //    // expected price
+                //    iphoneProductPrice * (2 * 0.5 + 1));
+
+                //// buy product less than the amount needed for the discount
+                //yield return new TestCaseData(
+
+                //    // discout
+                //    () => new ServiceProductDiscount(iphoneProductId, 50),
+                //    "two iphones 0.5",
+
+                //    // store and requesting (to add) member 
+                //    () => storeId, () => member3Id,
+
+                //    // adding to cart
+                //    getPurchaseProcess(new List<AddProductToCartArguments>{
+                //        new AddProductToCartArguments() { ProductId = () => iphoneProductId, amount = () => 3 }
+                //    }),
+
+                //    // expected price
+                //    iphoneProductPrice * (2 * 0.5 + 1));
+
             }
         }
 
@@ -591,15 +777,17 @@ namespace TestMarketBackend.Acceptance
         {
             Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
             Assert.IsTrue(!response.ErrorOccured());
+            int discountId = response.Value; 
 
             // checking that discount description was added 
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
             Assert.IsTrue(!descriptionsResposne.ErrorOccured());
-            Assert.IsTrue(descriptionsResposne.Value.Values.Contains(description));
+            Assert.IsTrue(descriptionsResposne.Value.Contains(new KeyValuePair<int, string>(discountId, description)));
+
 
             ServicePurchase resultPurchase = purchase(this);
 
-            Assert.AreEqual(expectedPrice, resultPurchase.purchasePrice); 
+            Assert.IsTrue(Math.Abs(expectedPrice - resultPurchase.purchasePrice) < 0.00001); 
         }
 
 

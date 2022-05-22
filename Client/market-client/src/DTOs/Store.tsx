@@ -15,3 +15,4 @@ export class Store{
         this.products = Products;
     }
 }
+export default Store;

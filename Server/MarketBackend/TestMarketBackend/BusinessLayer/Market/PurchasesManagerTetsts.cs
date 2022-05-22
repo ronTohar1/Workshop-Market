@@ -513,7 +513,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         [TestCase(new int[] { productId2, productId3 }, new int[] { productId1 })]
         public void TestPurchaseProductIsInCartIsntInStoreFail(int[] cartProductsId, int[] storeProductsId) {
             setUpStoreServicesFail(cartProductsId, storeProductsId, false, false);
-            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.Throws<Exception>(() => purchasesManager.PurchaseCartContent(buyerId1));
             Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
             Assert.AreEqual(counter, 0);//check that the inventory is the same
         }

@@ -123,7 +123,7 @@ public class PurchasesManager
             {
                 int productId = productAmount.Key.ProductId;
                 if (store.SearchProductByProductId(productId) == null)
-                    exceptions += $"Product id {productId} does not exist in store: {store.name} (store id: {storeId})\n";
+                    marketExceptions += $"Product id {productId} does not exist in store: {store.name} (store id: {storeId})\n";
             }
             string? issue = store.purchaseManager.CanBuy(shoppingBag, store.GetName());
             if (issue != null)

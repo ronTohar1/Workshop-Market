@@ -676,6 +676,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             purchaseManager.RemovePurchasePolicy(policyId);
         }
 
+        public IDictionary<int, string> GetPurchasePolicyDescriptions()
+        {
+            return purchaseManager.GetDescriptions();
+        }
+
+        public IDictionary<int, string> GetDiscountPolicyDescriptions()
+        {
+            return discountManager.GetDescriptions();
+        }
+
         // ------------------------------ General ------------------------------
 
         // 4.9

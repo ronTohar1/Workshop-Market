@@ -49,6 +49,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
             purchases.Remove(policyId);
         }
 
+        public IDictionary<int, string> GetDescriptions()
+        {
+            IDictionary<int, string> descriptions = new Dictionary<int, string>();
+            foreach (PurchasePolicy purchasePolicy in purchases.Values)
+            {
+                descriptions.Add(purchasePolicy.id, purchasePolicy.description);
+            }
+            return descriptions;
+        }
+
         public virtual string? CanBuy(ShoppingBag bag, string storeName)
         {
             string? problems = null;

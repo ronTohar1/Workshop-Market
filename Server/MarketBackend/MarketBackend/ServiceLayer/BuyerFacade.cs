@@ -419,5 +419,9 @@ namespace MarketBackend.ServiceLayer
             return new Response<bool>();
         }
 
+        public Response<IDictionary<int, string>> GetDiscountsDescriptions(int storeId)
+        {
+            return new Response<IDictionary<int, string>>("Not implemented yet"); 
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -434,6 +435,65 @@ namespace TestMarketBackend.Acceptance
             }
             return roles;
         }
+
+        // discounts and byuing policies related tests 
+
+        // cc 6.1, cc 6.2 - a store must have discounts and buying policies 
+        // r 2.5 - buying according to discounts etc. 
+        // r 4.2 - changing discounts and buying policies 
+
+        public static IEnumerable<TestCaseData> DataFailedAddDiscount
+        {
+            get
+            {
+                string description = "two iphones discount";
+                int discountPrecentage = 10; 
+                // memberId is -1
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => storeId, () => -1);
+                // guest id
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => storeId, () => guest1Id);
+                // member id (does not have role in store) 
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => storeId, () => member1Id);
+                // manager id no permission
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => storeId, () => member4Id); // not in defalut permissions 
+                // coOwner in different store
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => store2Id, () => member5Id);
+
+                // storeId is -1
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => -1, () => member3Id);
+
+                // currently can add a discount to a product that is not currently in the store 
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataFailedAddDiscount")]
+        public void FailedAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId)
+        {
+            Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
+            Assert.IsTrue(response.ErrorOccured());
+
+            // checking that discount description is not in discounts 
+
+            Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId()); 
+            Assert.IsTrue(!descriptionsResposne.ErrorOccured());
+            Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description)); 
+            
+        }
+
+        // todo: maybe add tests to cc 6.1 and cc 6.2 
 
     }
 }

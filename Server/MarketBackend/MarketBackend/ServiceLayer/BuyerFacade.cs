@@ -419,5 +419,51 @@ namespace MarketBackend.ServiceLayer
             return new Response<bool>();
         }
 
+        public Response<IDictionary<int, string>> GetDiscountsDescriptions(int storeId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<IDictionary<int, string>>($"There isn't a store with an id {storeId}");
+                IDictionary<int, string> discounts = s.GetDiscountPolicyDescriptions();
+                logger.Info($"GetDiscountsDescriptions was called with parameters: [storeId = {storeId}]");
+                return new Response<IDictionary<int, string>>(discounts);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetDiscountsDescriptions, parameters: [storeId = {storeId}]");
+                return new Response<IDictionary<int, string>>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetDiscountsDescriptions, parameters: [storeId = {storeId}]");
+                return new Response<IDictionary<int, string>>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+        public Response<IDictionary<int, string>> GetPurchasePolicyDescriptions(int storeId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<IDictionary<int, string>>($"There isn't a store with an id {storeId}");
+                IDictionary<int, string> policies = s.GetPurchasePolicyDescriptions();
+                logger.Info($"GetPurchasePolicyDescriptions was called with parameters: [storeId = {storeId}]");
+                return new Response<IDictionary<int, string>>(policies);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetPurchasePolicyDescriptions, parameters: [storeId = {storeId}]");
+                return new Response<IDictionary<int, string>>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetPurchasePolicyDescriptions, parameters: [storeId = {storeId}]");
+                return new Response<IDictionary<int, string>>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
     }
 }

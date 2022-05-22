@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
-import { Store } from "../DTOs/Store";
+import  Store from "../DTOs/Store";
 import * as storeService from "../services/StoreService";
 import Product from "../DTOs/Product";
 import { AddShoppingCart } from "@mui/icons-material";

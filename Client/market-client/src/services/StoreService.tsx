@@ -1,10 +1,11 @@
 
-import { Store } from '../DTOs/Store';
-import  { dummyProducts } from "../services/ProductsService";
+import  Store  from '../DTOs/Store';
+import Product from '../DTOs/Product';
+import  { dummyProducts, groupByStore } from "../services/ProductsService";
 
 const stores = [
-                new Store(0,"Ronto's", dummyProducts.slice(0,3)),
-                new Store(1,"Mithcell's", dummyProducts.slice(3))
+                new Store(0,"Ronto's", groupByStore(dummyProducts)[0]),
+                new Store(1,"Mithcell's", groupByStore(dummyProducts)[1])
                 ];
 export const dummyStore1 = stores[0]
 export const dummyStore2 = stores[1]
@@ -15,3 +16,9 @@ export const getStore : (id:number) => Store = (id: number) => {
         throw new Error("Store doesnt exist with id "+ id );
     return store
 }   
+
+export function groupStoresProducts(stores: Store[]) : Product[][]{
+    return stores.map(
+        (store: Store) => store.products
+    )
+}

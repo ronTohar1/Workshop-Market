@@ -180,6 +180,10 @@ export default function StorePageById(store: Store) {
     // alert(e.field + " Changed into "+ e.value + " id "+ e.id)
   };
 
+  const handleAddProduct = (productToAdd: Product) => {
+    setRows([...rows, productToAdd]);
+  };
+
   return (
     <Box>
       <Navbar />
@@ -211,7 +215,7 @@ export default function StorePageById(store: Store) {
           isCellEditable={(params) => isManager}
           onCellEditCommit={handleCellEdit}
         />
-        {isManager && <AddProductForm />}
+        {isManager ? AddProductForm(handleAddProduct) : null}
       </div>
     </Box>
   );

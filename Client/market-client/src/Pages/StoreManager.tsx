@@ -80,11 +80,10 @@ function storeGrid(
         width: "100%",
         mt: 3,
         mb: 3,
-      }}
-    >
-      <Stack justifyContent="space-evenly" alignItems="center" spacing={2}>
+      }}>
+      <Stack justifyContent='space-evenly' alignItems='center' spacing={2}>
         <Box sx={{ m: 1 }}>
-          <Typography variant="h4">{storeName}</Typography>
+          <Typography variant='h4'>{storeName}</Typography>
         </Box>
         <Box style={{ height: 400, width: "90%" }} sx={{ boxShadow: 3, mb: 3 }}>
           <DataGrid
@@ -103,11 +102,10 @@ function storeGrid(
           />
 
           <Button
-            variant="contained"
-            size="large"
+            variant='contained'
+            size='large'
             sx={{ mt: 1 }}
-            startIcon={<ExitToAppIcon />}
-          >
+            startIcon={<ExitToAppIcon />}>
             {storeName}
           </Button>
         </Box>
@@ -120,12 +118,17 @@ const InformationCard = (username: string) => {
   return (
     <Card sx={{ ml: 2, mr: 2 }} elevation={6} component={Paper}>
       <CardContent>
-        <Typography sx={{mb:3}} variant="h3" component="div">
+        <Typography sx={{ mb: 3 }} variant='h3' component='div'>
           Account Information
         </Typography>
-        
-        <Typography variant="h5"><b>Username</b>: {currentMember.username}</Typography>
-        <Typography variant="h5"><b>Number Of Managed Stores</b>:   {getStoresManagedBy(currentMember).length}</Typography>
+
+        <Typography variant='h5'>
+          <b>Username</b>: {currentMember.username}
+        </Typography>
+        <Typography variant='h5'>
+          <b>Number Of Managed Stores</b>:{" "}
+          {getStoresManagedBy(currentMember).length}
+        </Typography>
       </CardContent>
     </Card>
   );
@@ -175,8 +178,7 @@ export default function StoreManagerPage() {
               sx={{
                 my: 2,
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Stack>
                 <Box
                   sx={{
@@ -185,9 +187,8 @@ export default function StoreManagerPage() {
                     width: "100%",
                     mt: 3,
                     mb: 3,
-                  }}
-                >
-                  <Typography variant="h3" component="div">
+                  }}>
+                  <Typography variant='h3' component='div'>
                     Stores You Manage
                   </Typography>
                 </Box>
@@ -200,8 +201,7 @@ export default function StoreManagerPage() {
                 })}
               </Stack>
             </Grid>
-            <Grid item xs={2} sm={2}>
-            </Grid>
+            <Grid item xs={2} sm={2}></Grid>
 
             <Grid
               item
@@ -211,8 +211,7 @@ export default function StoreManagerPage() {
                 justifyContent: "cemter",
                 mt: 3,
                 alignItems: "center",
-              }}
-            >
+              }}>
               {/* <Box
                 sx={{
                   justifyContent: "center",
@@ -220,7 +219,7 @@ export default function StoreManagerPage() {
                   width: "100%",
                 }}
               > */}
-                {InformationCard("Ronto The User")}
+              {InformationCard("Ronto The User")}
               {/* </Box> */}
             </Grid>
           </Grid>

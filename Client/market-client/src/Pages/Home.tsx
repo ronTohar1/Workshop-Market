@@ -16,7 +16,7 @@ const cards = [1, 2, 3];
 const backgroundImage =
   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf";
 
-const theme = createTheme();
+
 
 const createButton = (name: string, path: string) => {
   return (
@@ -50,6 +50,26 @@ const buttons = [
   createButton("Create An Account", pathRegister),
   createButton("Log In To Your Account", pathLogin),
 ];
+
+const theme = createTheme({
+  palette: {
+    mode: "light",
+  },
+  typography: {
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+  },
+});
 
 export default function Home() {
   const bar = Navbar();

@@ -55,13 +55,15 @@ export default function Home() {
   const bar = Navbar();
   return (
     <ThemeProvider theme={theme}>
-      <main>
+      <main >
         <ProductHeroLayout
           sxBackground={{
             backgroundImage: `url(${backgroundImage})`,
             backgroundColor: "#7fc7d9", // Average color of the background image.
             backgroundSize: "cover",
             backgroundPosition: "center",
+            height: "100vh",
+            outerHeight: "100vh",
           }}>
           {/* Increase the network loading priority of the background image. */}
           <img
@@ -76,7 +78,7 @@ export default function Home() {
             color='inherit'
             align='center'
             variant='h5'
-            sx={{ mb: 4, mt: { sx: 4, sm: 10 } }}>
+            sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}>
             Enjoy a variety of products, and mostly the suffering of 6 naive
             students
           </Typography>

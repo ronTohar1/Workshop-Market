@@ -27,7 +27,7 @@ export default function AddProductForm() {
   const handleSubmit = async () => {
     const product: Product = new Product(0, name, price, category, 0, quantity); //TODO: fill real storeid
     alert(`sending to the server the product: ${JSON.stringify(product)}`);
-    await addNewProduct(product);
+    await addNewProduct(-1, product); // TODO: change after making user context
     handleClose();
   };
 

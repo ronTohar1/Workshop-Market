@@ -771,5 +771,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public List<Purchase> findPurchasesByDate(DateTime date)
         => purchaseHistory.Where(p => p.purchaseDate == date).ToList();
 
+
+        //for tests
+        public Store()
+        {
+
+        }
+
     }
 }

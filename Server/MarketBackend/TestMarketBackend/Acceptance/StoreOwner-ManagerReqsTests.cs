@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
+using MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -798,7 +799,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceAnd(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 1)
                             ), 
@@ -817,7 +818,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceAnd(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -838,7 +839,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceOr(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceOr(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 1)
                             ),
@@ -857,7 +858,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceOr(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceOr(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -876,7 +877,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceOr(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceOr(
                                 new ServiceProductAmount(iphoneProductId, 2),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -978,6 +979,8 @@ namespace TestMarketBackend.Acceptance
             }
         }
 
+        // todo: test remove discount policy 
+
         [Test]
         [TestCaseSource("DataSuccessfulAddDiscount")]
         public void SuccessfulAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase, double expectedPrice)
@@ -997,7 +1000,60 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(Math.Abs(expectedPrice - resultPurchase.purchasePrice) < 0.00001); 
         }
 
+        // buying policies tests 
 
+        public static IEnumerable<TestCaseData> DataFailedAddPurchasePolicy
+        {
+            get
+            {
+                string description = "amount should be ta least one";
+                int amount = 1;
+                // memberId is -1
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => storeId, () => -1);
+                // guest id
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => storeId, () => guest1Id);
+                // member id (does not have role in store) 
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => storeId, () => member1Id);
+                // manager id no permission
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => storeId, () => member4Id); // not in defalut permissions 
+                // coOwner in different store
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => store2Id, () => member5Id);
+
+                // storeId is -1
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => -1, () => member3Id);
+
+                // currently can add a discount to a product that is not currently in the store 
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataFailedAddPurchasePolicy")]
+        public void FailedAddPurchasePolicy(Func<IServicePurchase> purchasePolicy, string description, Func<int> storeId, Func<int> memberId)
+        {
+            Response<int> response = storeManagementFacade.AddPurchasePolicy(purchasePolicy(), description, storeId(), memberId());
+            Assert.IsTrue(response.ErrorOccured());
+
+            // checking that policy description is not in purchases policies  
+
+            Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetPurchasePolicyDescriptions(storeId());
+            if (!descriptionsResposne.ErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
+            {
+                Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description));
+            }
+
+        }
 
         // todo: maybe add tests to cc 6.1 and cc 6.2 
 

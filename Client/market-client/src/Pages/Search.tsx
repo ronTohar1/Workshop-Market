@@ -26,6 +26,8 @@ import { fetchProducts, groupByStore } from "../services/ProductsService";
 import { useQueryParam, NumberParam, StringParam } from "use-query-params";
 import { getStore } from "../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import { useNavigate } from "react-router-dom";
+import { pathStore } from "../Paths";
 
 function ProductsTable() {
   return (
@@ -65,7 +67,13 @@ const createRows = (products: Product[]) => {
   return productRow;
 };
 
-function storeGrid(productsRows: ProductRowType[], pageSize:number, setPageSize: any) {
+export function StoreGrid(
+  productsRows: ProductRowType[],
+  pageSize: number,
+  setPageSize: any,
+  storeId: number
+) {
+  const navigate = useNavigate();
   const storeName = productsRows[0].store;
   return (
     <Box
@@ -74,11 +82,10 @@ function storeGrid(productsRows: ProductRowType[], pageSize:number, setPageSize:
         width: "100%",
         mt: 3,
         mb: 3,
-      }}
-    >
-      <Stack justifyContent="space-evenly" alignItems="center" spacing={2}>
+      }}>
+      <Stack justifyContent='space-evenly' alignItems='center' spacing={2}>
         <Box sx={{ m: 1 }}>
-          <Typography variant="h4">{storeName}</Typography>
+          <Typography variant='h4'>{storeName}</Typography>
         </Box>
         <Box style={{ height: 400, width: "90%" }} sx={{ boxShadow: 3, mb: 3 }}>
           <DataGrid
@@ -96,12 +103,11 @@ function storeGrid(productsRows: ProductRowType[], pageSize:number, setPageSize:
           />
 
           <Button
-            variant="contained"
-            size="large"
+            variant='contained'
+            size='large'
             sx={{ mt: 1 }}
-            
             startIcon={<ExitToAppIcon />}
-          >
+            onClick={() => navigate(`${pathStore}?id=${storeId}`)}>
             {storeName}
           </Button>
         </Box>
@@ -110,10 +116,8 @@ function storeGrid(productsRows: ProductRowType[], pageSize:number, setPageSize:
   );
 }
 
-
-
 export default function SearchPage() {
-  const startingPageSize = 5
+  const startingPageSize = 5;
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
   const [query] = useQueryParam("query", StringParam);
 
@@ -142,14 +146,19 @@ export default function SearchPage() {
   // );
   const productsByStore: Product[][] = groupByStore(productsLst);
 
-
   return (
     <ThemeProvider theme={theme}>
       <Box>
         <Navbar />
         <Stack>
           {productsByStore.map((prodsOfStore: Product[]) => {
-            return storeGrid(createRows(prodsOfStore),pageSize, setPageSize);
+            const storeId = prodsOfStore[0].store;
+            return StoreGrid(
+              createRows(prodsOfStore),
+              pageSize,
+              setPageSize,
+              storeId
+            );
           })}
         </Stack>
       </Box>

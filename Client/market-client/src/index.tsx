@@ -8,7 +8,7 @@ import Home from "./Pages/Home";
 import Login from "./Pages/Login";
 import Navbar from "./components/Navbar";
 import SearchPage from "./Pages/Search";
-import StorePage from "./Pages/StorePage";
+import StorePage from "./Pages/StorePagesIndex";
 import Cart from "./Pages/Cart";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import * as Paths from "./Paths";

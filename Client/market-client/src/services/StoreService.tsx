@@ -10,9 +10,9 @@ const stores = [
 export const dummyStore1 = stores[0];
 export const dummyStore2 = stores[1];
 
-export const getStore: (id: number) => Store = (id: number) => {
+export const getStore = (id: number) => {
   const store = stores.find((store) => store.id === id);
-  if (store === undefined) throw new Error("Store doesnt exist with id " + id);
+  if (store === undefined) throw new Error("Store not found");
   return store;
 };
 

@@ -9,13 +9,29 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Product from "../../DTOs/Product";
 import { Currency, makeSetStateFromEvent } from "../../Utils";
 import { addNewProduct } from "../../services/StoreService";
+import SuccessSnackbar from "./SuccessSnackbar";
 
-export default function AddProductForm() {
+export default function AddProductForm(
+  handleAddProduct: (product: Product) => void
+) {
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState("");
   const [category, setCategory] = React.useState("");
   const [quantity, setQuantity] = React.useState(0);
   const [price, setPrice] = React.useState(0);
+  const [openSnack, setOpenSnack] = React.useState(false);
+
+  const resetFields = () => {
+    setOpen(false);
+    setName("");
+    setCategory("");
+    setQuantity(0);
+    setPrice(0);
+  };
+
+  const handleCloseSnack = () => {
+    setOpenSnack(false);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -26,9 +42,14 @@ export default function AddProductForm() {
 
   const handleSubmit = async () => {
     const product: Product = new Product(0, name, price, category, 0, quantity); //TODO: fill real storeid
-    alert(`sending to the server the product: ${JSON.stringify(product)}`);
-    await addNewProduct(-1, product); // TODO: change after making user context
-    handleClose();
+    // alert(`sending to the server the product: ${JSON.stringify(product)}`);
+
+    try {
+      handleClose();
+      resetFields();
+      setOpenSnack(true);
+    } catch {}
+    // TODO: if not succeed!
   };
 
   const makeTextField = (
@@ -93,6 +114,12 @@ export default function AddProductForm() {
           <Button onClick={handleSubmit}>Submit</Button>
         </DialogActions>
       </Dialog>
+
+      {SuccessSnackbar(
+        "Product Added Successfully!",
+        openSnack,
+        handleCloseSnack
+      )}
     </div>
   );
 }

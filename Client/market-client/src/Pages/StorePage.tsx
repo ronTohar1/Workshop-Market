@@ -16,134 +16,134 @@ import {
   Typography,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
-import Store from "../DTOs/Store";
-import * as storeService from "../services/StoreService";
 import Product from "../DTOs/Product";
 import { AddShoppingCart } from "@mui/icons-material";
 import AddProductForm from "../components/Forms/AddProductForm";
+import * as storeService from "../services/StoreService";
+import SearchPage from "./Search";
+import Store from "../DTOs/Store";
 
-const isManager: boolean = true;
-const store: Store = storeService.dummyStore1;
-const storeProducts: Product[] = store.products;
-const theme = createTheme();
-
-const fields = {
-  name: "name",
-  price: "price",
-  available_quantity: "available_quantity",
-  category: "category",
-};
-
-const columns: GridColDef[] = [
-  {
-    field: fields.name,
-    headerName: "Product Name",
-    type: "string",
-    flex: 2,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: fields.price,
-    headerName: "Price",
-    type: "number",
-    flex: 1,
-    editable: isManager,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: fields.available_quantity,
-    headerName: "Available Quantity",
-    description: "Product current quantity in store inventory",
-    type: "number",
-    flex: 1,
-    editable: isManager,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: fields.category,
-    headerName: "Category",
-    // type: 'string',
-    flex: 1,
-    editable: isManager,
-    align: "left",
-    headerAlign: "left",
-
-    // valueGetter: (params: GridValueGetterParams) =>
-    //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  },
-];
-
-const toolBar = (numSelected: number, handleAddToCart: () => void) => {
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        }),
-      }}>
-      {numSelected > 0 && isManager ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color='inherit'
-          variant='subtitle1'
-          component='div'>
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant='h4'
-          id='tableTitle'
-          component='div'>
-          {store.name}
-        </Typography>
-      )}
-      {numSelected > 0 && isManager ? (
-        <Tooltip title='Add To Cart'>
-          <Fab
-            size='medium'
-            color='primary'
-            aria-label='add'
-            onClick={() => handleAddToCart()}>
-            <AddShoppingCart />
-          </Fab>
-        </Tooltip>
-      ) : (
-        <Box></Box>
-      )}
-    </Toolbar>
-  );
-};
-
-function updatePrice(product: Product, price: number) {
-  if (price != null) product.price = price;
-}
-function updateAvailableQuantity(product: Product, available_quantity: number) {
-  if (available_quantity != null)
-    product.available_quantity = available_quantity;
-}
-function updateCategory(product: Product, category: string) {
-  if (category != null) product.category = category;
-}
-
-export default function StorePage() {
+export default function StorePageById(store: Store) {
   const startingPageSize: number = 10;
-
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
   const [numSelected, setNumSelected] = React.useState<number>(0);
   const [selectedProductsIds, setSelectedProductsIds] = React.useState<
     number[]
   >([]);
+  const storeProducts: Product[] = store.products;
+  const isManager: boolean = true; //TODO: change to real value. storeService.getMemberInRole(...)
   const [rows, setRows] = React.useState<Product[]>(storeProducts);
+
+  const fields = {
+    name: "name",
+    price: "price",
+    available_quantity: "available_quantity",
+    category: "category",
+  };
+
+  const columns: GridColDef[] = [
+    {
+      field: fields.name,
+      headerName: "Product Name",
+      type: "string",
+      flex: 2,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: fields.price,
+      headerName: "Price",
+      type: "number",
+      flex: 1,
+      editable: isManager,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: fields.available_quantity,
+      headerName: "Available Quantity",
+      description: "Product current quantity in store inventory",
+      type: "number",
+      flex: 1,
+      editable: isManager,
+      align: "left",
+      headerAlign: "left",
+    },
+    {
+      field: fields.category,
+      headerName: "Category",
+      // type: 'string',
+      flex: 1,
+      editable: isManager,
+      align: "left",
+      headerAlign: "left",
+
+      // valueGetter: (params: GridValueGetterParams) =>
+      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+    },
+  ];
+
+  const toolBar = (numSelected: number, handleAddToCart: () => void) => {
+    return (
+      <Toolbar
+        sx={{
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 },
+          ...(numSelected > 0 && {
+            bgcolor: (theme) =>
+              alpha(
+                theme.palette.primary.main,
+                theme.palette.action.activatedOpacity
+              ),
+          }),
+        }}>
+        {numSelected > 0 && isManager ? (
+          <Typography
+            sx={{ flex: "1 1 100%" }}
+            color='inherit'
+            variant='subtitle1'
+            component='div'>
+            {numSelected} selected
+          </Typography>
+        ) : (
+          <Typography
+            sx={{ flex: "1 1 100%" }}
+            variant='h4'
+            id='tableTitle'
+            component='div'>
+            {store.name}
+          </Typography>
+        )}
+        {numSelected > 0 && isManager ? (
+          <Tooltip title='Add To Cart'>
+            <Fab
+              size='medium'
+              color='primary'
+              aria-label='add'
+              onClick={() => handleAddToCart()}>
+              <AddShoppingCart />
+            </Fab>
+          </Tooltip>
+        ) : (
+          <Box></Box>
+        )}
+      </Toolbar>
+    );
+  };
+
+  function updatePrice(product: Product, price: number) {
+    if (price != null) product.price = price;
+  }
+  function updateAvailableQuantity(
+    product: Product,
+    available_quantity: number
+  ) {
+    if (available_quantity != null)
+      product.available_quantity = available_quantity;
+  }
+  function updateCategory(product: Product, category: string) {
+    if (category != null) product.category = category;
+  }
 
   const handleNewSelection = (newSelectionModel: any) => {
     const chosenIds: number[] = newSelectionModel;
@@ -180,6 +180,10 @@ export default function StorePage() {
     // alert(e.field + " Changed into "+ e.value + " id "+ e.id)
   };
 
+  const handleAddProduct = (productToAdd: Product) => {
+    setRows([...rows, productToAdd]);
+  };
+
   return (
     <Box>
       <Navbar />
@@ -211,7 +215,7 @@ export default function StorePage() {
           isCellEditable={(params) => isManager}
           onCellEditCommit={handleCellEdit}
         />
-        {isManager && <AddProductForm />}
+        {isManager ? AddProductForm(handleAddProduct) : null}
       </div>
     </Box>
   );

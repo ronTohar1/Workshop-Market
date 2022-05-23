@@ -130,7 +130,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public ActionResult<Response<bool>> Login([FromBody] AuthenticationRequest request)
+        public ActionResult<Response<bool>> Login([FromBody] AuthenticationRequestWithPort request)
         {
             Response<int> response = buyerFacade.Login(request.UserName, request.Password,
                 (msgs) => { return false; });

@@ -12,7 +12,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
         static void Main(string[] args)
         {
             SystemOperator so = new SystemOperator();
-            //so.OpenMarket("admin1", "password1");
+            so.OpenMarket("admin1", "password1");
 
             var builder = WebApplication.CreateBuilder(args);
 

@@ -19,7 +19,7 @@ import Typography from "@mui/material/Typography";
 
 import { Button, Card, Fab, makeStyles, Stack } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Navbar from "../components/Navbar";
+import Navbar from "../Componentss/Navbar";
 
 import Product from "../DTOs/Product";
 import { fetchProducts, groupByStore } from "../services/ProductsService";

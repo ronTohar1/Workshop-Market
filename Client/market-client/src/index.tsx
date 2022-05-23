@@ -6,7 +6,7 @@ import App from "./App";
 import Register from "./Pages/Register";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
-import Navbar from "./components/Navbar";
+import Navbar from "./Componentss/Navbar";
 import SearchPage from "./Pages/Search";
 import StorePage from "./Pages/StorePagesIndex";
 import Cart from "./Pages/Cart";

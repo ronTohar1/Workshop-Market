@@ -15,10 +15,10 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import Navbar from "../components/Navbar";
+import Navbar from "../Componentss/Navbar";
 import Product from "../DTOs/Product";
 import { AddShoppingCart } from "@mui/icons-material";
-import AddProductForm from "../components/Forms/AddProductForm";
+import AddProductForm from "../Componentss/Forms/AddProductForm";
 import * as storeService from "../services/StoreService";
 import SearchPage from "./Search";
 import Store from "../DTOs/Store";

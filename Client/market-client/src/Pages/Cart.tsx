@@ -8,7 +8,7 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
-import Navbar from "../components/Navbar";
+import Navbar from "../Componentss/Navbar";
 import { AppBar } from "@mui/material";
 import { Currency } from "../Utils";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";

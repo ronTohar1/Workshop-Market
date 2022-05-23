@@ -1,7 +1,7 @@
 import * as React from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../Componentss/Navbar";
 import { Typography } from "@mui/material";
-import { ProductHeroLayout } from "../components/ProductHeroLayout";
+import { ProductHeroLayout } from "../Componentss/ProductHeroLayout";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import AppBar from "@mui/material/AppBar";

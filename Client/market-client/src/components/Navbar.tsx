@@ -24,7 +24,6 @@ import { Tooltip } from "@mui/material";
 import MarketNotification from "../DTOs/MarketNotification";
 import { dummyNotificaitons } from "../services/NotificationsService";
 
-
 const currentNotifications = dummyNotificaitons;
 
 const Search = styled("div")(({ theme }) => ({
@@ -76,8 +75,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-
-
 const notificationsMenu = (
   open: any,
   anchor: any,
@@ -86,11 +83,11 @@ const notificationsMenu = (
   handleDismissNotifications: (note: MarketNotification) => void
 ) => {
   return (
-    <Menu anchorEl={anchor} open={open} onClose={handleClose} >
+    <Menu anchorEl={anchor} open={open} onClose={handleClose}>
       {currNotifications.map((note: MarketNotification) => (
-        <Tooltip title="Click To Dismiss">
-          <MenuItem  onClick={() => handleDismissNotifications(note)}>
-          {note.description}
+        <Tooltip title='Click To Dismiss'>
+          <MenuItem onClick={() => handleDismissNotifications(note)}>
+            {note.description}
           </MenuItem>
         </Tooltip>
       ))}
@@ -135,8 +132,7 @@ export default function Navbar() {
         (note: MarketNotification) => note.id != noteToDis.id
       )
     );
-    if(notifications.length === 0)
-        setOpenNotifications(false);
+    if (notifications.length === 0) setOpenNotifications(false);
   };
 
   const handleMyAccountClick = () => {
@@ -158,8 +154,7 @@ export default function Navbar() {
         horizontal: "right",
       }}
       open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
+      onClose={handleMenuClose}>
       <MenuItem onClick={handleMyAccountClick}>My account</MenuItem>
     </Menu>
   );
@@ -183,53 +178,50 @@ export default function Navbar() {
   });
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="sticky">
+      <AppBar position='sticky'>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <div>
             <Typography
               onClick={handleClickHome}
-              variant="h6"
+              variant='h6'
               noWrap
-              component="div"
+              component='div'
               sx={{
                 display: { xs: "none", sm: "block" },
                 "&:hover": {
                   cursor: "pointer",
                 },
-              }}
-            >
+              }}>
               Workshop Market
             </Typography>
             <Box sx={{}} />
           </div>
           <div>
             <Box
-              component="form"
+              component='form'
               noValidate
               onSubmit={(e: any) => {
                 navigate(`${pathSearch}?query=${searchValue}`);
-              }}
-            >
-              <Stack direction="row" spacing={2}>
+              }}>
+              <Stack direction='row' spacing={2}>
                 <Search sx={{ flexGrow: 1 }}>
                   <SearchIconWrapper>
                     <SearchIcon />
                   </SearchIconWrapper>
                   <StyledInputBase
-                    id="query"
-                    name="query"
+                    id='query'
+                    name='query'
                     onChange={(e) => setSearchValue(e.target.value)}
-                    sx={{ flexGrow: 1 }}
-                    placeholder="Search Products..."
+                    sx={{ flexGrow: 1, width: "30vw" }}
+                    placeholder='Search Products...'
                     inputProps={{ "aria-label": "search", width: "auto" }}
                   />
                 </Search>
                 <Button
-                  variant="outlined"
-                  color="inherit"
+                  variant='outlined'
+                  color='inherit'
                   startIcon={<SearchIcon />}
-                  type="submit"
-                >
+                  type='submit'>
                   Search
                 </Button>
               </Stack>
@@ -241,15 +233,13 @@ export default function Navbar() {
           <div>
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <Tooltip
-                title={`You have ${notifications.length} new notifications`}
-              >
+                title={`You have ${notifications.length} new notifications`}>
                 <IconButton
-                  size="large"
-                  aria-label="show new notifications"
-                  color="inherit"
-                  onClick={handleOpenNotifications}
-                >
-                  <Badge badgeContent={notifications.length} color="error">
+                  size='large'
+                  aria-label='show new notifications'
+                  color='inherit'
+                  onClick={handleOpenNotifications}>
+                  <Badge badgeContent={notifications.length} color='error'>
                     <NotificationsIcon />
                   </Badge>
                 </IconButton>
@@ -262,25 +252,23 @@ export default function Navbar() {
                 handleDismissNotifications
               )}
               <IconButton
-                aria-label="cart"
-                size="large"
-                color="inherit"
+                aria-label='cart'
+                size='large'
+                color='inherit'
                 component={Link}
-                to={pathCart}
-              >
-                <StyledBadge badgeContent={44} color="secondary">
+                to={pathCart}>
+                <StyledBadge badgeContent={44} color='secondary'>
                   <ShoppingCartIcon />
                 </StyledBadge>
               </IconButton>
               <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
+                size='large'
+                edge='end'
+                aria-label='account of current user'
                 aria-controls={menuId}
-                aria-haspopup="true"
+                aria-haspopup='true'
                 onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
+                color='inherit'>
                 <AccountCircle />
               </IconButton>
             </Box>

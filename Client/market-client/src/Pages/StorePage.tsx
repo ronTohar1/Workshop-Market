@@ -89,31 +89,35 @@ const toolBar = (numSelected: number, handleAddToCart: () => void) => {
               theme.palette.action.activatedOpacity
             ),
         }),
-      }}>
+      }}
+    >
       {numSelected > 0 && isManager ? (
         <Typography
           sx={{ flex: "1 1 100%" }}
-          color='inherit'
-          variant='subtitle1'
-          component='div'>
+          color="inherit"
+          variant="subtitle1"
+          component="div"
+        >
           {numSelected} selected
         </Typography>
       ) : (
         <Typography
           sx={{ flex: "1 1 100%" }}
-          variant='h4'
-          id='tableTitle'
-          component='div'>
+          variant="h4"
+          id="tableTitle"
+          component="div"
+        >
           {store.name}
         </Typography>
       )}
       {numSelected > 0 && isManager ? (
-        <Tooltip title='Add To Cart'>
+        <Tooltip title="Add To Cart">
           <Fab
-            size='medium'
-            color='primary'
-            aria-label='add'
-            onClick={() => handleAddToCart()}>
+            size="medium"
+            color="primary"
+            aria-label="add"
+            onClick={() => handleAddToCart()}
+          >
             <AddShoppingCart />
           </Fab>
         </Tooltip>
@@ -180,11 +184,15 @@ export default function StorePage() {
     // alert(e.field + " Changed into "+ e.value + " id "+ e.id)
   };
 
+  const handleAddProduct = (productToAdd: Product) => {
+    setRows([...rows, productToAdd]);
+  };
+
   return (
     <Box>
       <Navbar />
       {toolBar(numSelected, handleAddToCart)}
-      <Stack direction='row'>{}</Stack>
+      <Stack direction="row">{}</Stack>
       <div>
         <DataGrid
           rows={rows}
@@ -211,7 +219,7 @@ export default function StorePage() {
           isCellEditable={(params) => isManager}
           onCellEditCommit={handleCellEdit}
         />
-        {isManager && <AddProductForm />}
+        {isManager ? AddProductForm(handleAddProduct) : null}
       </div>
     </Box>
   );

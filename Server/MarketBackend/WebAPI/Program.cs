@@ -12,11 +12,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
         static void Main(string[] args)
         {
             SystemOperator so = new SystemOperator();
-            new SystemController(so);
-            so.OpenMarket("admin1", "password1");
-            new AdminController(so.GetAdminFacade().Value);
-            new BuyersController(so.GetBuyerFacade().Value);
-            new StoresController(so.GetStoreManagementFacade().Value);
+            //so.OpenMarket("admin1", "password1");
 
             var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +23,11 @@ namespace MyApp // Note: actual namespace depends on the project name.
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddSingleton<IBuyerFacade>(_ =>so.GetBuyerFacade().Value);
+            builder.Services.AddSingleton<ISystemOperator>(_ => so);
+            builder.Services.AddSingleton<IBuyerFacade>(_ => so.GetBuyerFacade().Value);
+            builder.Services.AddSingleton<IStoreManagementFacade>(_ => so.GetStoreManagementFacade().Value);
+            builder.Services.AddSingleton<IAdminFacade>(_ => so.GetAdminFacade().Value);
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",

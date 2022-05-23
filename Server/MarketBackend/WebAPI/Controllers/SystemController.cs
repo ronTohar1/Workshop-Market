@@ -10,9 +10,9 @@ namespace WebAPI.Controllers
     [ApiController]
     public class SystemController : ControllerBase
     {
-        private readonly SystemOperator systemOperator;
+        private readonly ISystemOperator systemOperator;
 
-        public SystemController(SystemOperator systemOperator) => this.systemOperator = systemOperator;
+        public SystemController(ISystemOperator systemOperator) => this.systemOperator = systemOperator;
 
         [HttpPost("OpenMarket")]
         public ActionResult<Response<int>> OpenMarket([FromBody] OpenMarketRequest request)

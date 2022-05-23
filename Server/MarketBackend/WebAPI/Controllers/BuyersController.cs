@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
 
         public BuyersController(IBuyerFacade buyerFacade) => this.buyerFacade = buyerFacade;
 
-        [HttpGet]
+        [HttpPost]
         public ActionResult<Response<ServiceCart>> GetCart([FromBody] UserRequest request)
         {
             Response<ServiceCart> response = buyerFacade.GetCart(request.UserId);
@@ -80,7 +80,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("Leave")]
+        [HttpPost("Leave")]
         public ActionResult<Response<bool>> Leave([FromBody] UserRequest request)
         {
             Response<bool> response = buyerFacade.Leave(request.UserId);
@@ -91,7 +91,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("StoreInfo")]
+        [HttpPost("StoreInfo")]
         public ActionResult<Response<bool>> GetStoreInfo([FromBody] StoreRequest request)
         {
             Response<ServiceStore> response;
@@ -106,7 +106,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("SerachProducts")]
+        [HttpPost("SerachProducts")]
         public ActionResult<Response<bool>> ProductsSearch([FromBody] SearchProductsRequest request)
         {
             Response<IDictionary<int, IList<ServiceProduct>>> response = 
@@ -141,7 +141,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("Logout")]
+        [HttpPost("Logout")]
         public ActionResult<Response<bool>> Logout([FromBody] UserRequest request)
         {
             Response<bool> response = buyerFacade.Logout(request.UserId);
@@ -152,7 +152,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("ReviewProduct")]
+        [HttpPost("ReviewProduct")]
         public ActionResult<Response<bool>> AddProductReview([FromBody] ReviewProductRequest request)
         {
             Response<bool> response = buyerFacade.AddProductReview(request.UserId,request.StoreId, request.ProductId, request.Review);

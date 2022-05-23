@@ -4,6 +4,6 @@
     {
         public int TargetId { get; set; }
 
-        public AdminRequest(int adminId, int targetId) : base(adminId) => TargetId = targetId;
+        public AdminRequest(int userId, int targetId) : base(userId) => TargetId = targetId;
     }
 }

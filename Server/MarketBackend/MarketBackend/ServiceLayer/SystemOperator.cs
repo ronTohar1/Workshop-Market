@@ -15,7 +15,7 @@ using NLog;
 using MarketBackend.BusinessLayer.System.ExternalServices;
 namespace MarketBackend.ServiceLayer
 {
-    public class SystemOperator
+    public class SystemOperator : ISystemOperator
     {
 
         private bool marketOpen;
@@ -40,7 +40,8 @@ namespace MarketBackend.ServiceLayer
 
         public Response<int> OpenMarket(string username, string password)
         {
-            try { 
+            try
+            {
                 int adminId = bso.OpenMarket(username, password);// will initialize the controllers if it's the first boot
                 InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
                 marketOpen = true;

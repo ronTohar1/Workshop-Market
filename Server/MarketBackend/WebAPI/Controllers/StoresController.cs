@@ -11,9 +11,9 @@ namespace WebAPI.Controllers
     [ApiController]
     public class StoresController : ControllerBase
     {
-        private readonly StoreManagementFacade storeManagementFacade;
+        private readonly IStoreManagementFacade storeManagementFacade;
 
-        public StoresController(StoreManagementFacade storeManagementFacade) => 
+        public StoresController(IStoreManagementFacade storeManagementFacade) => 
             this.storeManagementFacade = storeManagementFacade;
 
         [HttpPost("AddNewProduct")]
@@ -88,7 +88,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("MembersInRole")]
+        [HttpPost("MembersInRole")]
         public ActionResult<Response<IList<int>>> GetMembersInRole([FromBody] GetMembersInRoleRequest request)
         {
             Response<IList<int>> response = storeManagementFacade.GetMembersInRole(
@@ -100,7 +100,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("Founder")]
+        [HttpPost("Founder")]
         public ActionResult<Response<ServiceMember>> GetFounder([FromBody] StoreManagementRequest request)
         {
             Response<ServiceMember> response = storeManagementFacade.GetFounder(request.StoreId, request.UserId);
@@ -111,7 +111,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("ManagerPermissions")]
+        [HttpPost("ManagerPermissions")]
         public ActionResult<Response<IList<Permission>>> GetManagerPermissions([FromBody] RolesManagementRequest request)
         {
             Response<IList<Permission>> response = storeManagementFacade.GetManagerPermissions(
@@ -123,7 +123,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("ChangeManagerPermission")]
+        [HttpPost("ChangeManagerPermission")]
         public ActionResult<Response<bool>> ChangeManagerPermission([FromBody] ChangePermissionsRequest request)
         {
             Response<bool> response = storeManagementFacade.ChangeManagerPermission(
@@ -135,7 +135,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("PurchaseHistory")]
+        [HttpPost("PurchaseHistory")]
         public ActionResult<Response<IList<Purchase>>> GetPurchaseHistory([FromBody] StoreManagementRequest request)
         {
             Response<IList<Purchase>> response = storeManagementFacade.GetPurchaseHistory(

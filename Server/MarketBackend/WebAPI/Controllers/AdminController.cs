@@ -10,11 +10,11 @@ namespace WebAPI.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly AdminFacade adminFacade;
+        private readonly IAdminFacade adminFacade;
 
-        public AdminController(AdminFacade adminFacade) => this.adminFacade = adminFacade;
+        public AdminController(IAdminFacade adminFacade) => this.adminFacade = adminFacade;
 
-        [HttpGet("BuyerPurchaseHistory/{request.TargetId}")]
+        [HttpPost("BuyerPurchaseHistory/{request.TargetId}")]
         public ActionResult<Response<IReadOnlyCollection<ServicePurchase>>> GetBuyerPurchaseHistory
             ([FromBody] AdminRequest request)
         {
@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("StorePurchaseHistory/{request.TargetId}")]
+        [HttpPost("StorePurchaseHistory/{request.TargetId}")]
         public ActionResult<Response<IReadOnlyCollection<ServicePurchase>>> GetStorePurchaseHistory
             ([FromBody] AdminRequest request)
         {
@@ -51,7 +51,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("LoggedInUsers")]
+        [HttpPost("LoggedInUsers")]
         public ActionResult<Response<bool>> GetLoggedInMembers([FromBody] UserRequest request)
         {
             Response<IList<int>> response = adminFacade.GetLoggedInMembers(request.UserId);
@@ -62,7 +62,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("MemberInfo")]
+        [HttpPost("MemberInfo")]
         public ActionResult<Response<bool>> GetMemberInfo([FromBody] AdminRequest request)
         {
             Response<ServiceMember> response = adminFacade.GetMemberInfo(request.UserId, request.TargetId);

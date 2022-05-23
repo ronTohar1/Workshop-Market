@@ -8,11 +8,11 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BuyersController : ControllerBase
+    public class BuyersController : Controller
     {
-        private readonly BuyerFacade buyerFacade;
+        private readonly IBuyerFacade buyerFacade;
 
-        public BuyersController(BuyerFacade buyerFacade) => this.buyerFacade = buyerFacade;
+        public BuyersController(IBuyerFacade buyerFacade) => this.buyerFacade = buyerFacade;
 
         [HttpGet]
         public ActionResult<Response<ServiceCart>> GetCart([FromBody] UserRequest request)

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer
 {
-    public class BuyerFacade
+    public class BuyerFacade : IBuyerFacade
     {
         private BuyersController buyersController;
         private MembersController membersController;
@@ -144,7 +144,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Purchase purchase = purchasesManager.PurchaseCartContent(userId); 
+                Purchase purchase = purchasesManager.PurchaseCartContent(userId);
                 ServicePurchase canBuy = new ServicePurchase(purchase.purchaseDate, purchase.purchasePrice, purchase.purchaseDescription);
                 logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}]");
                 return new Response<ServicePurchase>(canBuy);
@@ -240,7 +240,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                int storeId = storeController.GetStoreIdByName(storeName); 
+                int storeId = storeController.GetStoreIdByName(storeName);
                 Store s = storeController.GetStore(storeId);
                 if (s == null) // never
                     return new Response<ServiceStore>($"No store with name {storeName}");

@@ -45,10 +45,13 @@ export default function AddProductForm(
     // alert(`sending to the server the product: ${JSON.stringify(product)}`);
 
     try {
-      addNewProduct(-1, product);
+      const result = addNewProduct(-1, product);
+    // TODO: Check if good promise
       handleClose();
       resetFields();
       setOpenSnack(true);
+      handleAddProduct(product)
+    
     } catch {}
     // TODO: if not succeed!
   };

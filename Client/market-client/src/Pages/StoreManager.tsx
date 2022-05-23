@@ -21,7 +21,7 @@ import Product from "../DTOs/Product";
 import { Card, CardActions, CardContent } from "@mui/material";
 import { getStore, groupStoresProducts } from "../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import { dummyMember1, getStoresManagedBy } from "../services/MemberSerice";
+import { dummyMember1, getStoresManagedBy } from "../services/MemberService";
 import Grid from "@mui/material/Grid";
 
 const currentMember = dummyMember1;

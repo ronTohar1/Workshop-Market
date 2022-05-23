@@ -28,7 +28,14 @@ namespace MyApp // Note: actual namespace depends on the project name.
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddSingleton<IBuyerFacade>(_ =>so.GetBuyerFacade().Value);
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
+            //builder.Services.AddMvc();
 
             var app = builder.Build();
 
@@ -43,6 +50,10 @@ namespace MyApp // Note: actual namespace depends on the project name.
 
             app.UseAuthorization();
 
+            app.UseCors("CorsPolicy");
+
+ 
+            app.UseStaticFiles();
 
             app.MapControllers();
 

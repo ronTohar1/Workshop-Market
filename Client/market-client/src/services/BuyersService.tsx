@@ -2,7 +2,7 @@ import Product from "../DTOs/Product";
 
 
 
-const serverPort = 'https://localhost:7242';
+export const serverPort = 'https://localhost:7242';
 export async function login(name: string,password: string):Promise<any> {
   const uri = serverPort+'/api/Buyers/Login';
   return await fetch(uri, {
@@ -18,9 +18,7 @@ export async function login(name: string,password: string):Promise<any> {
         'password': password,
         'port': window.location.port
     })
-}).then(response =>  alert(response.json()))
-.then(data => {alert(data);})
-.catch((error) => {alert(error.message);});};
+});};
 
 
 export async function logout(userId: number):Promise<any> {
@@ -35,9 +33,7 @@ export async function logout(userId: number):Promise<any> {
     body: JSON.stringify({
         'userId': userId
     })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
 
 
 export async function register(name: string,password: string):Promise<any> {
@@ -53,9 +49,7 @@ export async function register(name: string,password: string):Promise<any> {
             'userName': name,
             'password': password
         })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
 
   export async function addToCart(userId: number,productId: number,storeId: number,amount: number):Promise<any> {
     const uri = serverPort+'/api/Buyers/AddProduct';
@@ -72,9 +66,7 @@ export async function register(name: string,password: string):Promise<any> {
             'storeId': storeId,
             'amount': amount
         })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
 
 
   export async function removeFromCart(userId: number,productId: number,storeId: number):Promise<any> {
@@ -91,9 +83,7 @@ export async function register(name: string,password: string):Promise<any> {
             'productId': productId,
             'storeId': storeId
         })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
 
 
   export async function changeProductAmount(userId: number,productId: number,storeId: number,amount: number):Promise<any> {
@@ -111,9 +101,7 @@ export async function register(name: string,password: string):Promise<any> {
         'storeId': storeId,
         'amount': amount
         })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
 
 
   export async function purchaseCart(userId: number):Promise<any> {
@@ -128,9 +116,7 @@ export async function register(name: string,password: string):Promise<any> {
         body: JSON.stringify({
             'userId': userId
         })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
 
 
   export async function enterBuyerFacade():Promise<any> {
@@ -139,9 +125,7 @@ export async function register(name: string,password: string):Promise<any> {
         headers: {
             'accept': 'text/plain'
         }
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
 
 
   export async function leaveBuyerFacade(userId:number):Promise<any> {
@@ -156,9 +140,7 @@ export async function register(name: string,password: string):Promise<any> {
         body: JSON.stringify({
             'userId': 0
         })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
 
 
   export async function storeInfo(storeId:number,storeName:string):Promise<any> {
@@ -174,9 +156,7 @@ export async function register(name: string,password: string):Promise<any> {
             'storeId': storeId,
             'storeName': storeName
         })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
 
 
   export async function productsSearch(storeName:string,productName:string,category:string,keyword:string):Promise<any> {
@@ -194,9 +174,7 @@ export async function register(name: string,password: string):Promise<any> {
             'category': category,
             'keyword': keyword
         })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};
  
 
 
@@ -215,6 +193,4 @@ export async function register(name: string,password: string):Promise<any> {
             'productId': productId,
             'review': review
         })
-    }).then(response =>  alert(response.json()))
-  .then(data => {alert(data);})
-  .catch((error) => {alert(error.message);});};
+    });};

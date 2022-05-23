@@ -838,7 +838,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new ServiceOr(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 1)
                             ),
@@ -857,7 +857,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new ServiceOr(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -876,7 +876,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new ServiceOr(
                                 new ServiceProductAmount(iphoneProductId, 2),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -897,7 +897,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new ServiceXor(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 1)
                             ),
@@ -916,7 +916,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new ServiceXor(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -935,7 +935,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new ServiceXor(
                                 new ServiceProductAmount(iphoneProductId, 2),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),

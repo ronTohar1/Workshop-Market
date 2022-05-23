@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -238,7 +239,7 @@ namespace TestMarketBackend.Acceptance
             IDictionary<Role, IList<int>> rolesBefore = GetRolesInStore(storeId());
 
             // in some test cases the action is removing member2, checking that in this case member2 does not receive new notifications
-            IList<string> notificationsBefore = null; 
+            IList<string> notificationsBefore = null;
             if (coOwnerToRemoveId() == member2Id)
             {
                 notificationsBefore = notificationsBefore = member2Notifications.ToList();
@@ -251,11 +252,11 @@ namespace TestMarketBackend.Acceptance
             // check that roles in the store remained as before 
             IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId());
 
-            Assert.IsTrue(SameDictionariesWithLists(rolesBefore, roles)); 
+            Assert.IsTrue(SameDictionariesWithLists(rolesBefore, roles));
 
             if (notificationsBefore != null)
             {
-                Assert.IsTrue(SameElements(notificationsBefore, member2Notifications.ToList())); 
+                Assert.IsTrue(SameElements(notificationsBefore, member2Notifications.ToList()));
             }
         }
 
@@ -404,7 +405,7 @@ namespace TestMarketBackend.Acceptance
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             Assert.IsTrue(!managers.ErrorOccured());
-            Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id , member7Id}));
+            Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id, member7Id }));
 
             Response<IList<int>> owners =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
@@ -434,6 +435,571 @@ namespace TestMarketBackend.Acceptance
             }
             return roles;
         }
+
+        // discounts and byuing policies related tests 
+
+        // cc 6.1, cc 6.2 - a store must have discounts and buying policies 
+        // r 2.5 - buying according to discounts etc. 
+        // r 4.2 - changing discounts and buying policies 
+
+        public static IEnumerable<TestCaseData> DataFailedAddDiscount
+        {
+            get
+            {
+                string description = "two iphones discount";
+                int discountPrecentage = 10;
+                // memberId is -1
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => storeId, () => -1);
+                // guest id
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => storeId, () => guest1Id);
+                // member id (does not have role in store) 
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => storeId, () => member1Id);
+                // manager id no permission
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => storeId, () => member4Id); // not in defalut permissions 
+                // coOwner in different store
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => store2Id, () => member5Id);
+
+                // storeId is -1
+                yield return new TestCaseData(
+                    () => new ServiceProductDiscount(iphoneProductId, discountPrecentage),
+                    description, () => -1, () => member3Id);
+
+                // currently can add a discount to a product that is not currently in the store 
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataFailedAddDiscount")]
+        public void FailedAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId)
+        {
+            Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
+            Assert.IsTrue(response.ErrorOccured());
+
+            // checking that discount description is not in discounts 
+
+            Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
+            if (!descriptionsResposne.ErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
+            {
+                Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description));
+            }
+
+        }
+
+        // helping classes for adding discounts tests 
+
+        private class AddProductToCartArguments
+        {
+            public Func<int> ProductId { get; set; }
+            public Func<int> Amount { get; set; }
+        }
+
+        private class TestAddDiscountProductArguments
+        {
+            public Func<int> ProductId { get; set; }
+            public Func<int> Amount { get; set; }
+            public Func<int> Price { get; set; }
+            public Func<int> Discount { get; set; } = () => 0; // default 
+        }
+
+        // helping functions for adding discount tests 
+
+        private static Func<StoreOwner_ManagerReqsTests, ServicePurchase> getPurchaseProcess(IList<AddProductToCartArguments> addingsToCart)
+        {
+            return (StoreOwner_ManagerReqsTests thisObject) =>
+            {
+                Response<bool> response;
+                foreach (AddProductToCartArguments addingToCart in addingsToCart)
+                {
+                    response = thisObject.buyerFacade.AddProdcutToCart(member1Id, storeId, addingToCart.ProductId(), addingToCart.Amount());
+                    Assert.IsTrue(!response.ErrorOccured());
+                }
+
+                Response<ServicePurchase> purchaseReponse = thisObject.buyerFacade.PurchaseCartContent(member1Id);
+                Assert.IsTrue(!purchaseReponse.ErrorOccured());
+                return purchaseReponse.Value;
+            };
+        }
+
+        private static TestCaseData AddDiscountTestCase(Func<IServiceExpression> getDiscount, IList<TestAddDiscountProductArguments> arguments, string description, int generalDiscount = 0)
+        {
+            return new TestCaseData(
+
+                    // discout
+                    getDiscount, description,
+
+                    // store and requesting (to add) member 
+                    () => storeId, () => member3Id,
+                    // adding to cart
+                    getPurchaseProcess(
+                        arguments.Select(argumentObject =>
+                            new AddProductToCartArguments()
+                            {
+                                ProductId = argumentObject.ProductId,
+                                Amount = argumentObject.Amount
+                            }).ToList()
+                    ),
+
+                    // expected price
+                    (100 - generalDiscount) / 100.0 * 
+                    arguments.Aggregate(0.0, (price, argumentObject) =>
+                        price + 
+                            argumentObject.Amount() * 
+                            argumentObject.Price() * 
+                            (1 - argumentObject.Discount() / 100.0))
+            );
+        }
+
+        private static TestAddDiscountProductArguments GetIphoneArgument(int amount, int discount = 0)
+        {
+            return new TestAddDiscountProductArguments()
+            {
+                ProductId = () => iphoneProductId,
+                Price = () => iphoneProductPrice,
+                Amount = () => amount,
+                Discount = () => discount
+            };
+        }
+
+        private static TestAddDiscountProductArguments GetCalculatorArgument(int amount, int discount = 0)
+        {
+            return new TestAddDiscountProductArguments()
+            {
+                ProductId = () => calculatorProductId,
+                Price = () => calculatorProductPrice,
+                Amount = () => amount,
+                Discount = () => discount
+            };
+        }
+
+
+        public static IEnumerable<TestCaseData> DataSuccessfulAddDiscount
+        {
+
+            get
+            {
+
+
+                // discount on specific product 
+
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceProductDiscount(iphoneProductId, 10),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(2, 10)
+                    }, 
+                    "product discount"
+                );
+
+                // check prodcut that does not have the discount 
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceProductDiscount(iphoneProductId, 50),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetCalculatorArgument(2)
+                    }, 
+                    "product discount purchase other product"
+                );
+
+                // discount on all of the store 
+
+                // one product 
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceStoreDiscount(10),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(3, 10)
+                    }, 
+                    "store discount one product"
+                );
+
+                // two products 
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceStoreDiscount(40),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1, 40), 
+                        GetCalculatorArgument(2, 40)
+                    }, 
+                    "store discount two pdocuts"
+                );
+
+                // discount in date 
+
+                // not the year
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceDateDiscount(40, DateTime.Now.Year - 3),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1)
+                    }, 
+                    "date discount not in year"
+                );
+
+                // this year
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceDateDiscount(40, DateTime.Now.Year),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1, 40)
+                    }, 
+                    "date discount in year"
+                );
+
+                // if then 
+
+                // pred product amount 
+
+                // amount enough (the needed amount) 
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceProductAmount(iphoneProductAmount, 2), 
+                            new ServiceStoreDiscount(30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(2, 30)
+                    }, 
+                    "if amount, amount enough"
+                );
+
+                // amount not enough
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceProductAmount(iphoneProductAmount, 2),
+                            new ServiceStoreDiscount(30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1)
+                    }, 
+                    "if amount, amount not enough"
+                );
+
+                // amount not enough, all products amount is enough 
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceProductAmount(iphoneProductAmount, 2),
+                            new ServiceStoreDiscount(30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1), 
+                        GetCalculatorArgument(1)
+                    },
+                    "if amount, amount not enough all products amount is enough"
+                );
+
+                // pred bag value
+
+                // bag cost enough (the needed cost) 
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceBagValue(iphoneProductPrice + calculatorProductPrice),
+                            new ServiceStoreDiscount(30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1, 30), 
+                        GetCalculatorArgument(1, 30)
+                    },
+                    "if bag cost, cost enough"
+                );
+
+                // bag cost not enough
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceBagValue(iphoneProductPrice + 1),
+                            new ServiceStoreDiscount(30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1)
+                    },
+                    "if bag cost, cost not enough"
+                );
+
+                // if then else 
+
+                // bag amount enough (the needed amount)
+                //  then storeDiscount
+                //  else productDiscount
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceIf(
+                            new ServiceProductAmount(iphoneProductId, 2),
+                            new ServiceStoreDiscount(30), 
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(2),
+                        GetCalculatorArgument(1)
+                    },
+                    "if then else, if is true"
+                    // store discount 
+                    , 30
+                );
+
+                // bag amount not enough
+                //  then storeDiscount
+                //  else productDiscount
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceIf(
+                            new ServiceProductAmount(iphoneProductId, 1),
+                            new ServiceStoreDiscount(30),
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1, 30),
+                        GetCalculatorArgument(1)
+                    },
+                    "if then else, if is true"
+                );
+
+                // and
+
+                // true and true
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceAnd(
+                                new ServiceProductAmount(iphoneProductId, 1),
+                                new ServiceProductAmount(calculatorProductId, 1)
+                            ), 
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1, 30),
+                        GetCalculatorArgument(1)
+                    },
+                    "and, true and true"
+                );
+
+                // true and false
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceAnd(
+                                new ServiceProductAmount(iphoneProductId, 1),
+                                new ServiceProductAmount(calculatorProductId, 2)
+                            ),
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1),
+                        GetCalculatorArgument(1)
+                    },
+                    "and, true and false"
+                );
+
+                // or
+
+                // true and true
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceAnd(
+                                new ServiceProductAmount(iphoneProductId, 1),
+                                new ServiceProductAmount(calculatorProductId, 1)
+                            ),
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1, 30),
+                        GetCalculatorArgument(1)
+                    },
+                    "or, true and true"
+                );
+
+                // true and false
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceAnd(
+                                new ServiceProductAmount(iphoneProductId, 1),
+                                new ServiceProductAmount(calculatorProductId, 2)
+                            ),
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1, 30),
+                        GetCalculatorArgument(1)
+                    },
+                    "or, true and false"
+                );
+
+                // false and false
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceAnd(
+                                new ServiceProductAmount(iphoneProductId, 2),
+                                new ServiceProductAmount(calculatorProductId, 2)
+                            ),
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1),
+                        GetCalculatorArgument(1)
+                    },
+                    "or, false and false"
+                );
+
+                // xor
+
+                // true and true
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceAnd(
+                                new ServiceProductAmount(iphoneProductId, 1),
+                                new ServiceProductAmount(calculatorProductId, 1)
+                            ),
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1),
+                        GetCalculatorArgument(1)
+                    },
+                    "xor, true and true"
+                );
+
+                // true and false
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceAnd(
+                                new ServiceProductAmount(iphoneProductId, 1),
+                                new ServiceProductAmount(calculatorProductId, 2)
+                            ),
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1, 30),
+                        GetCalculatorArgument(1)
+                    },
+                    "xor, true and false"
+                );
+
+                // false and false
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () => new ServiceConditionDiscount(
+                            new ServiceAnd(
+                                new ServiceProductAmount(iphoneProductId, 2),
+                                new ServiceProductAmount(calculatorProductId, 2)
+                            ),
+                            new ServiceProductDiscount(iphoneProductId, 30)
+                        ),
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(1),
+                        GetCalculatorArgument(1)
+                    },
+                    "xor, false and false"
+                );
+
+                // max over the discounts 
+
+                // product1Discount, product2Discount
+                yield return AddDiscountTestCase(
+                    // the discount
+                    () =>
+                    {
+                        ServiceMax discount = new ServiceMax();
+                        discount.AddDiscount(new ServiceProductDiscount(iphoneProductId, 30));
+                        discount.AddDiscount(new ServiceProductDiscount(calculatorProductId, 30));
+                        return discount;
+                    },
+                    new List<TestAddDiscountProductArguments>()
+                    {
+                        // the shopping cart and expected discounts 
+                        GetIphoneArgument(2, 30),
+                        GetCalculatorArgument(2)
+                    },
+                    "max over the discounts, product1Discount, product2Discount"
+                );
+
+                // todo: nice to have, add tests with multiple discounts 
+
+                // todo: nice to have, maybe add tests on the other arguments, such as manager requesting etc. 
+
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataSuccessfulAddDiscount")]
+        public void SuccessfulAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase, double expectedPrice)
+        {
+            Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
+            Assert.IsTrue(!response.ErrorOccured());
+            int discountId = response.Value; 
+
+            // checking that discount description was added 
+            Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
+            Assert.IsTrue(!descriptionsResposne.ErrorOccured());
+            Assert.IsTrue(descriptionsResposne.Value.Contains(new KeyValuePair<int, string>(discountId, description)));
+
+
+            ServicePurchase resultPurchase = purchase(this);
+
+            Assert.IsTrue(Math.Abs(expectedPrice - resultPurchase.purchasePrice) < 0.00001); 
+        }
+
+
+
+        // todo: maybe add tests to cc 6.1 and cc 6.2 
 
     }
 }

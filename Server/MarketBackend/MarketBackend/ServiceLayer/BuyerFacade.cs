@@ -464,6 +464,5 @@ namespace MarketBackend.ServiceLayer
                 return new Response<IDictionary<int, string>>("Sorry, an unexpected error occured. Please try again");
             }
         }
-
     }
 }

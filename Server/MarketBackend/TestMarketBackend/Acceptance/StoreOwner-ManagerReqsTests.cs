@@ -1384,19 +1384,291 @@ namespace TestMarketBackend.Acceptance
                     true
                 );
 
-                // amount is more
+                // date (it means that can not buy on that date) 
 
-                // amount is less
+                // in the date 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceDateRestriction(DateTime.Now.Year, DateTime.Now.Month),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "in the date",
+                    // expected result of is the purchase successful 
+                    false
+                );
 
-                // date 
+                // not in the date 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAtMostAmount(DateTime.Now.Year - 1, DateTime.Now.Month),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "not in the date",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // implies (and predicates) 
+
+                // amount is equal or more
+
+                // false implies false 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductMore(iphoneProductId, 2),
+                        new ServiceCheckProductMore(iphoneProductId, 2)
+                        ), 
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "amount is equal or more, false implies false",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true implies true 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductMore(iphoneProductId, 2),
+                        new ServiceCheckProductMore(iphoneProductId, 2)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "amount is equal or more, true implies true",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true does not imply false 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductMore(iphoneProductId, 2),
+                        new ServiceCheckProductMore(iphoneProductId, 1)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "amount is equal or more, true does not imply false",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // less than amount 
+
+                // false implies false 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductMore(iphoneProductId, 3),
+                        new ServiceCheckProductMore(iphoneProductId, 3)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 3
+                        }
+                    },
+                    "less than amount, false implies false",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true implies true 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductMore(iphoneProductId, 2),
+                        new ServiceCheckProductMore(iphoneProductId, 2)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "less than amount, true implies true",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true does not imply false 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductMore(iphoneProductId, 2),
+                        new ServiceCheckProductMore(iphoneProductId, 1)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "less than amount, true does not imply false",
+                    // expected result of is the purchase successful 
+                    false
+                );
 
                 // and 
 
+                // true and true
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
+                    ), 
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "true and true",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // true and false
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 3)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "true and false",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // false and false
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
+                        new ServiceAtlestAmount(iphoneProductId, 3),
+                        new ServiceAtlestAmount(iphoneProductId, 3)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "false and false",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
                 // or 
 
-                // implies 
+                // true or true
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "true or true",
+                    // expected result of is the purchase successful 
+                    false
+                );
 
+                // true or false
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 3)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "true or false",
+                    // expected result of is the purchase successful 
+                    false
+                );
 
+                // false or false
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
+                        new ServiceAtlestAmount(iphoneProductId, 3),
+                        new ServiceAtlestAmount(iphoneProductId, 3)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "false or false",
+                    // expected result of is the purchase successful 
+                    true
+                );
 
                 // todo: nice to have, add tests with multiple discounts 
 

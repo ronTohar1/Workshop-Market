@@ -51,7 +51,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 		// r.4.5
 		// r.4.8
-		public void RemoveFromHierarchy(T remover, T valueToRemove)
+		public Hierarchy<T> RemoveFromHierarchy(T remover, T valueToRemove)
 		{
 			// remover is a node somewhere in the current Hierarchy
 			// which attemps to remove existing child (valueToRemove) from it's own Hierarchy
@@ -74,7 +74,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			}
 
 			hierarchyMutex.ReleaseMutex();
-
+			return valueHierarchy;
 		}
 
 		public Hierarchy<T> FindHierarchy(T node)

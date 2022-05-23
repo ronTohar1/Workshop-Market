@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceIf : IServicePredicate
+    internal class ServiceIf : IServiceExpression
     {
         public IServicePredicate test { get; set; }
         public IServiceDiscount thenDis { get; set; }

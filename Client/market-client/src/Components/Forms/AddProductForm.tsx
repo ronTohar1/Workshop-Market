@@ -20,22 +20,21 @@ export default function AddProductForm() {
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleSubmit = async () => {
-    const product: Product = new Product(0, name, price, category, 0, quantity); //TODO: fill storeid
+    const product: Product = new Product(0, name, price, category, 0, quantity); //TODO: fill real storeid
     alert(`sending to the server the product: ${JSON.stringify(product)}`);
     await addNewProduct(product);
+    handleClose();
   };
 
-  type field_value = string | number;
   const makeTextField = (
     id: string,
     label: string,
-    value: field_value,
+    value: string | number,
     type: "text" | "number",
     setValue: any
   ) => {

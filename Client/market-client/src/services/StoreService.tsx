@@ -20,6 +20,7 @@ export function groupStoresProducts(stores: Store[]): Product[][] {
 }
 
 export async function addNewProduct(product: Product) {
-  await stores.forEach((store) => store.products.push(product)); //TODO: change to the real implementation
+  dummyStore1.products = [...dummyStore1.products, product]; //TODO: change to the real implementation
+  dummyStore2.products = [...dummyStore2.products, product]; //TODO: change to the real implementation
   // await post('http://localhost:5000/stores?id=123', toJson(product))
 }

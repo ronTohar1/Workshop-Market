@@ -185,11 +185,13 @@ export default function StorePage() {
       <Navbar />
       {toolBar(numSelected, handleAddToCart)}
       <Stack direction='row'>{}</Stack>
-      <div style={{ height: 600, width: "100%" }}>
+      <div>
         <DataGrid
           rows={rows}
           columns={columns}
           sx={{
+            width: "100vw",
+            height: "80vh",
             "& .MuiDataGrid-cell:hover": {
               ...(isManager && {
                 color: "primary.main",
@@ -209,7 +211,7 @@ export default function StorePage() {
           isCellEditable={(params) => isManager}
           onCellEditCommit={handleCellEdit}
         />
-        { isManager && <AddProductForm />}
+        {isManager && <AddProductForm />}
       </div>
     </Box>
   );

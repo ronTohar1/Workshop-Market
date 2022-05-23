@@ -16,7 +16,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme();
 const backgroundImages = [
-  "https://images.unsplash.com/photo-1595853035070-59a39fe84de3?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1025",
+  "https://images.unsplash.com/photo-1595853035070-59a39fe84de3",
 ];
 
 const randBackgroundImage = () =>
@@ -79,7 +79,7 @@ export default function Register() {
                 type='submit'
                 fullWidth
                 variant='contained'
-                sx={{ mt: 3, mb: 2 }}>
+                sx={{ mt: 3, mb: 2, bgcolor: 'secondary.main'}}>
                 Register
               </Button>
               <Grid container justifyContent='flex-end'>

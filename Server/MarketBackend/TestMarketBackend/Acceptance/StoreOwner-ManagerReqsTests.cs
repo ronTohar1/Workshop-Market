@@ -1406,7 +1406,7 @@ namespace TestMarketBackend.Acceptance
                 // not in the date 
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
-                    () => new ServiceAtMostAmount(DateTime.Now.Year - 1, DateTime.Now.Month),
+                    () => new ServiceDateRestriction(DateTime.Now.Year - 1, DateTime.Now.Month),
                     new List<AddProductToCartArguments>()
                     {
                         // the shopping cart 
@@ -1469,7 +1469,7 @@ namespace TestMarketBackend.Acceptance
                     // the purchase policy
                     () => new ServiceImplies(
                         new ServiceCheckProductMore(iphoneProductId, 2),
-                        new ServiceCheckProductMore(iphoneProductId, 1)
+                        new ServiceCheckProductMore(iphoneProductId, 3)
                         ),
                     new List<AddProductToCartArguments>()
                     {
@@ -1490,8 +1490,8 @@ namespace TestMarketBackend.Acceptance
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
                     () => new ServiceImplies(
-                        new ServiceCheckProductMore(iphoneProductId, 3),
-                        new ServiceCheckProductMore(iphoneProductId, 3)
+                        new ServiceCheckProductLess(iphoneProductId, 3),
+                        new ServiceCheckProductLess(iphoneProductId, 3)
                         ),
                     new List<AddProductToCartArguments>()
                     {
@@ -1510,8 +1510,8 @@ namespace TestMarketBackend.Acceptance
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
                     () => new ServiceImplies(
-                        new ServiceCheckProductMore(iphoneProductId, 2),
-                        new ServiceCheckProductMore(iphoneProductId, 2)
+                        new ServiceCheckProductLess(iphoneProductId, 2),
+                        new ServiceCheckProductLess(iphoneProductId, 2)
                         ),
                     new List<AddProductToCartArguments>()
                     {
@@ -1530,8 +1530,8 @@ namespace TestMarketBackend.Acceptance
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
                     () => new ServiceImplies(
-                        new ServiceCheckProductMore(iphoneProductId, 2),
-                        new ServiceCheckProductMore(iphoneProductId, 1)
+                        new ServiceCheckProductLess(iphoneProductId, 2),
+                        new ServiceCheckProductLess(iphoneProductId, 1)
                         ),
                     new List<AddProductToCartArguments>()
                     {
@@ -1545,6 +1545,8 @@ namespace TestMarketBackend.Acceptance
                     // expected result of is the purchase successful 
                     false
                 );
+
+                // (notice in "and" and "or" these are between restictions) 
 
                 // and 
 
@@ -1560,20 +1562,20 @@ namespace TestMarketBackend.Acceptance
                         // the shopping cart 
                         new AddProductToCartArguments() {
                             ProductId = () => iphoneProductId,
-                            Amount = () => 2
+                            Amount = () => 1
                         }
                     },
                     "true and true",
                     // expected result of is the purchase successful 
-                    false
+                    true
                 );
 
                 // true and false
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
                     () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
-                        new ServiceAtlestAmount(iphoneProductId, 2),
-                        new ServiceAtlestAmount(iphoneProductId, 3)
+                        new ServiceAtlestAmount(iphoneProductId, 3),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
                     ),
                     new List<AddProductToCartArguments>()
                     {
@@ -1585,15 +1587,15 @@ namespace TestMarketBackend.Acceptance
                     },
                     "true and false",
                     // expected result of is the purchase successful 
-                    true
+                    false
                 );
 
                 // false and false
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
                     () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
-                        new ServiceAtlestAmount(iphoneProductId, 3),
-                        new ServiceAtlestAmount(iphoneProductId, 3)
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
                     ),
                     new List<AddProductToCartArguments>()
                     {
@@ -1605,7 +1607,7 @@ namespace TestMarketBackend.Acceptance
                     },
                     "false and false",
                     // expected result of is the purchase successful 
-                    true
+                    false
                 );
 
                 // or 
@@ -1622,20 +1624,20 @@ namespace TestMarketBackend.Acceptance
                         // the shopping cart 
                         new AddProductToCartArguments() {
                             ProductId = () => iphoneProductId,
-                            Amount = () => 2
+                            Amount = () => 1
                         }
                     },
                     "true or true",
                     // expected result of is the purchase successful 
-                    false
+                    true
                 );
 
                 // true or false
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
                     () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
-                        new ServiceAtlestAmount(iphoneProductId, 2),
-                        new ServiceAtlestAmount(iphoneProductId, 3)
+                        new ServiceAtlestAmount(iphoneProductId, 3),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
                     ),
                     new List<AddProductToCartArguments>()
                     {
@@ -1647,15 +1649,15 @@ namespace TestMarketBackend.Acceptance
                     },
                     "true or false",
                     // expected result of is the purchase successful 
-                    false
+                    true
                 );
 
                 // false or false
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
                     () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
-                        new ServiceAtlestAmount(iphoneProductId, 3),
-                        new ServiceAtlestAmount(iphoneProductId, 3)
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
                     ),
                     new List<AddProductToCartArguments>()
                     {
@@ -1667,7 +1669,7 @@ namespace TestMarketBackend.Acceptance
                     },
                     "false or false",
                     // expected result of is the purchase successful 
-                    true
+                    false
                 );
 
                 // todo: nice to have, add tests with multiple discounts 

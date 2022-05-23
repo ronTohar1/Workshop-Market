@@ -470,14 +470,14 @@ namespace MarketBackend.ServiceLayer
 
         private BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces.IPredicateExpression ServicePurchasePredicateToPurchasePredicate(ServiceDTO.PurchaseDTOs.IServicePredicate pred, StorePurchasePolicyManager manager)
         {
-            if (pred is CheckProductMoreEqualsPredicate)
+            if (pred is ServiceCheckProductMore)
             {
-                CheckProductMoreEqualsPredicate exp = (CheckProductMoreEqualsPredicate)pred;
+                ServiceCheckProductMore exp = (ServiceCheckProductMore)pred;
                 return manager.NewCheckProductMorePredicate(exp.productId, exp.amount);
             }
             else // product less
             {
-                CheckProductLessPredicate exp = (CheckProductLessPredicate)pred;
+                ServiceCheckProductLess exp = (ServiceCheckProductLess)pred;
                 return manager.NewCheckProductLessPredicate(exp.productId, exp.amount);
             }
         }

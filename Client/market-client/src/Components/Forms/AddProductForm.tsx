@@ -45,6 +45,7 @@ export default function AddProductForm(
     // alert(`sending to the server the product: ${JSON.stringify(product)}`);
 
     try {
+      addNewProduct(-1, product);
       handleClose();
       resetFields();
       setOpenSnack(true);

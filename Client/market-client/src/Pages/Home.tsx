@@ -14,7 +14,7 @@ import { pathLogin, pathRegister, pathSearch } from "../Paths";
 const cards = [1, 2, 3];
 
 const backgroundImage =
-  "https://images.unsplash.com/photo-1471193945509-9ad0617afabf?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170";
+  "https://images.unsplash.com/photo-1471193945509-9ad0617afabf";
 
 const theme = createTheme();
 
@@ -23,18 +23,16 @@ const createButton = (name: string, path: string) => {
     <Button
       href={path}
       style={{ height: 100, width: 500 }}
-      key="name"
-      variant="contained"
-      size="large"
-      color="primary"
-      
+      key='name'
+      variant='contained'
+      size='large'
+      color='primary'
       sx={{
-        m:1,
+        m: 1,
         "&:hover": {
           borderRadius: 5,
         },
-      }}
-    >
+      }}>
       {name}
     </Button>
   );
@@ -57,30 +55,30 @@ export default function Home() {
   const bar = Navbar();
   return (
     <ThemeProvider theme={theme}>
-      <main>
+      <main >
         <ProductHeroLayout
           sxBackground={{
             backgroundImage: `url(${backgroundImage})`,
             backgroundColor: "#7fc7d9", // Average color of the background image.
             backgroundSize: "cover",
             backgroundPosition: "center",
-          }}
-        >
+            height: "100vh",
+            outerHeight: "100vh",
+          }}>
           {/* Increase the network loading priority of the background image. */}
           <img
             style={{ display: "none" }}
             src={backgroundImage}
-            alt="increase priority"
+            alt='increase priority'
           />
-          <Typography color="primary" align="center" variant="h2">
+          <Typography color='primary' align='center' variant='h2'>
             Buy smart and cheap
           </Typography>
           <Typography
-            color="inherit"
-            align="center"
-            variant="h5"
-            sx={{ mb: 4, mt: { sx: 4, sm: 10 } }}
-          >
+            color='inherit'
+            align='center'
+            variant='h5'
+            sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}>
             Enjoy a variety of products, and mostly the suffering of 6 naive
             students
           </Typography>
@@ -90,17 +88,15 @@ export default function Home() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-            }}
-          >
+            }}>
             <ButtonGroup
-              orientation="vertical"
-              aria-label="vertical contained button group"
-              variant="text"
-            >
+              orientation='vertical'
+              aria-label='vertical contained button group'
+              variant='text'>
               {buttons}
             </ButtonGroup>
           </Box>
-          <Typography variant="body2" color="inherit" sx={{ mt: 2 }}>
+          <Typography variant='body2' color='inherit' sx={{ mt: 2 }}>
             Enjoy The Market
           </Typography>
         </ProductHeroLayout>

@@ -142,7 +142,7 @@ export default function SearchPage() {
   // );
   const productsByStore: Product[][] = groupByStore(productsLst);
 
-  console.log(productsByStore);
+
   return (
     <ThemeProvider theme={theme}>
       <Box>

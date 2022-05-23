@@ -7,6 +7,7 @@ import {
 import {
   alpha,
   Box,
+  Button,
   createTheme,
   Fab,
   Stack,
@@ -15,10 +16,11 @@ import {
   Typography,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
-import { Store } from "../DTOs/Store";
+import Store from "../DTOs/Store";
 import * as storeService from "../services/StoreService";
 import Product from "../DTOs/Product";
 import { AddShoppingCart } from "@mui/icons-material";
+import AddProductForm from "../components/Forms/AddProductForm";
 
 const isManager: boolean = true;
 const store: Store = storeService.dummyStore1;
@@ -87,35 +89,31 @@ const toolBar = (numSelected: number, handleAddToCart: () => void) => {
               theme.palette.action.activatedOpacity
             ),
         }),
-      }}
-    >
+      }}>
       {numSelected > 0 && isManager ? (
         <Typography
           sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
+          color='inherit'
+          variant='subtitle1'
+          component='div'>
           {numSelected} selected
         </Typography>
       ) : (
         <Typography
           sx={{ flex: "1 1 100%" }}
-          variant="h4"
-          id="tableTitle"
-          component="div"
-        >
+          variant='h4'
+          id='tableTitle'
+          component='div'>
           {store.name}
         </Typography>
       )}
       {numSelected > 0 && isManager ? (
-        <Tooltip title="Add To Cart">
+        <Tooltip title='Add To Cart'>
           <Fab
-            size="medium"
-            color="primary"
-            aria-label="add"
-            onClick={() => handleAddToCart()}
-          >
+            size='medium'
+            color='primary'
+            aria-label='add'
+            onClick={() => handleAddToCart()}>
             <AddShoppingCart />
           </Fab>
         </Tooltip>
@@ -186,17 +184,19 @@ export default function StorePage() {
     <Box>
       <Navbar />
       {toolBar(numSelected, handleAddToCart)}
-      <Stack direction="row">{}</Stack>
-      <div style={{ height: 600, width: "100%" }}>
+      <Stack direction='row'>{}</Stack>
+      <div>
         <DataGrid
           rows={rows}
           columns={columns}
           sx={{
+            width: "100vw",
+            height: "80vh",
             "& .MuiDataGrid-cell:hover": {
               ...(isManager && {
-              color: "primary.main",
-              border:1
-              })
+                color: "primary.main",
+                border: 1,
+              }),
             },
           }}
           // Paging:
@@ -211,6 +211,7 @@ export default function StorePage() {
           isCellEditable={(params) => isManager}
           onCellEditCommit={handleCellEdit}
         />
+        {isManager && <AddProductForm />}
       </div>
     </Box>
   );

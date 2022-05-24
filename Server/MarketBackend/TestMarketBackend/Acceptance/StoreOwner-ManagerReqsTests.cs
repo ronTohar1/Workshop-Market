@@ -484,12 +484,12 @@ namespace TestMarketBackend.Acceptance
         public void FailedAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId)
         {
             Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
 
             // checking that discount description is not in discounts 
 
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
-            if (!descriptionsResposne.ErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
+            if (!descriptionsResposne.IsErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
             {
                 Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description));
             }
@@ -522,11 +522,11 @@ namespace TestMarketBackend.Acceptance
                 foreach (AddProductToCartArguments addingToCart in addingsToCart)
                 {
                     response = thisObject.buyerFacade.AddProdcutToCart(member1Id, storeId, addingToCart.ProductId(), addingToCart.Amount());
-                    Assert.IsTrue(!response.ErrorOccured());
+                    Assert.IsTrue(!response.IsErrorOccured());
                 }
 
                 Response<ServicePurchase> purchaseReponse = thisObject.buyerFacade.PurchaseCartContent(member1Id);
-                Assert.AreEqual(shouldSucceedBuying, !purchaseReponse.ErrorOccured());
+                Assert.AreEqual(shouldSucceedBuying, !purchaseReponse.IsErrorOccured());
                 return purchaseReponse.Value;
             };
         }
@@ -986,12 +986,12 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase, double expectedPrice)
         {
             Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             int discountId = response.Value; 
 
             // checking that discount description was added 
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
-            Assert.IsTrue(!descriptionsResposne.ErrorOccured());
+            Assert.IsTrue(!descriptionsResposne.IsErrorOccured());
             Assert.IsTrue(descriptionsResposne.Value.Contains(new KeyValuePair<int, string>(discountId, description)));
 
 
@@ -1043,12 +1043,12 @@ namespace TestMarketBackend.Acceptance
         public void FailedAddPurchasePolicy(Func<IServicePurchase> purchasePolicy, string description, Func<int> storeId, Func<int> memberId)
         {
             Response<int> response = storeManagementFacade.AddPurchasePolicy(purchasePolicy(), description, storeId(), memberId());
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
 
             // checking that policy description is not in purchases policies  
 
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetPurchasePolicyDescriptions(storeId());
-            if (!descriptionsResposne.ErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
+            if (!descriptionsResposne.IsErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
             {
                 Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description));
             }
@@ -1686,12 +1686,12 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulAddPurchasePolicy(Func<IServicePurchase> purchasePolicy, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase)
         {
             Response<int> response = storeManagementFacade.AddPurchasePolicy(purchasePolicy(), description, storeId(), memberId());
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             int purchasePolicyId = response.Value;
 
             // checking that purchase policy description was added 
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetPurchasePolicyDescriptions(storeId());
-            Assert.IsTrue(!descriptionsResposne.ErrorOccured());
+            Assert.IsTrue(!descriptionsResposne.IsErrorOccured());
             Assert.IsTrue(descriptionsResposne.Value.Contains(new KeyValuePair<int, string>(purchasePolicyId, description)));
 
 

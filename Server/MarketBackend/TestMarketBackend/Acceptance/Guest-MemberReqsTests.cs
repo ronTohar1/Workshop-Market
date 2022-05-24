@@ -353,17 +353,17 @@ namespace TestMarketBackend.Acceptance
             SetUpShoppingCarts();
 
             Response<ServiceCart> response = buyerFacade.GetCart(memberId);
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             ServiceCart cartBefore = response.Value;
 
             Response<bool> logoutResponse = buyerFacade.Logout(memberId);
-            Assert.IsTrue(!logoutResponse.ErrorOccured());
+            Assert.IsTrue(!logoutResponse.IsErrorOccured());
 
             Response<int> loginResponse = buyerFacade.Login(username, password, notifications => true);
-            Assert.IsTrue(!loginResponse.ErrorOccured());
+            Assert.IsTrue(!loginResponse.IsErrorOccured());
 
             response = buyerFacade.GetCart(memberId);
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             ServiceCart cartAfter = response.Value;
 
             Assert.AreEqual(cartBefore, cartAfter); 

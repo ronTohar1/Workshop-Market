@@ -675,7 +675,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceProductAmount(iphoneProductAmount, 2), 
+                            new ServiceProductAmount(iphoneProductId, 2), 
                             new ServiceStoreDiscount(30)
                         ),
                     new List<TestAddDiscountProductArguments>()
@@ -779,7 +779,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceIf(
-                            new ServiceProductAmount(iphoneProductId, 1),
+                            new ServiceProductAmount(iphoneProductId, 2),
                             new ServiceStoreDiscount(30),
                             new ServiceProductDiscount(iphoneProductId, 30)
                         ),
@@ -789,7 +789,7 @@ namespace TestMarketBackend.Acceptance
                         GetIphoneArgument(1, 30),
                         GetCalculatorArgument(1)
                     },
-                    "if then else, if is true"
+                    "if then else, if is false"
                 );
 
                 // and

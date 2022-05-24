@@ -5,7 +5,7 @@ export const serverPort = "https://localhost:7242";
 
 export async function serverLogin(
   name: string | undefined | null,
-  password: string | undefined| null
+  password: string | undefined | null
 ): Promise<Response<number>> {
   if (name == undefined || password == undefined) return Promise.reject();
   const uri = serverPort + "/api/Buyers/Login";
@@ -44,9 +44,12 @@ export async function logout(userId: number): Promise<any> {
   });
 }
 
-export async function register(name: string, password: string): Promise<any> {
+export async function serverRegister(
+  name: string | undefined,
+  password: string | undefined
+): Promise<Response<number>> {
   const uri = serverPort + "/api/Buyers/Register";
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
       accept: "text/plain",
@@ -58,6 +61,10 @@ export async function register(name: string, password: string): Promise<any> {
       password: password,
     }),
   });
+
+  const response = jsonResponse.json();
+  console.log(response);
+  return response;
 }
 
 export async function addToCart(

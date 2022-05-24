@@ -13,6 +13,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { serverRegister } from "../services/BuyersService";
 
 const theme = createTheme();
 const backgroundImages = [
@@ -22,11 +23,26 @@ const backgroundImages = [
 const randBackgroundImage = () =>
   backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
 
+
+
 export default function Register() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    alert(data.get("username") + ", " + data.get("password"));
+    const username = data.get("username")?.toString()
+    const password = data.get("password")?.toString()
+    try{
+      const serverResponse =  await serverRegister(username,password)
+      // alert("Error occured? " + serverResponse.errorOccured);
+      // alert("Error is: " + serverResponse.errorMessage);
+      if (serverResponse.errorOccured)
+        alert(serverResponse.errorMessage)
+      else
+        alert("new user with id: " + serverResponse.value +" has registered")
+    }
+    catch(e){
+      alert("Error occured! Whoops")
+    }
   };
 
   return (

@@ -19,7 +19,7 @@ namespace WebAPI.Controllers
         {
             Response<ServiceCart> response = buyerFacade.GetCart(request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -30,7 +30,7 @@ namespace WebAPI.Controllers
         {
             Response<bool> response = buyerFacade.AddProdcutToCart(request.UserId, request.StoreId, request.ProductId, request.Amount);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -41,7 +41,7 @@ namespace WebAPI.Controllers
         {
             Response<bool> response = buyerFacade.RemoveProductFromCart(request.UserId, request.StoreId, request.ProductId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -52,7 +52,7 @@ namespace WebAPI.Controllers
         {
             Response<bool> response = buyerFacade.changeProductAmountInCart(request.UserId, request.StoreId, request.ProductId, request.Amount);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -63,7 +63,7 @@ namespace WebAPI.Controllers
         {
             Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -74,7 +74,7 @@ namespace WebAPI.Controllers
         {
             Response<int> response = buyerFacade.Enter();
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
         {
             Response<bool> response = buyerFacade.Leave(request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -100,7 +100,7 @@ namespace WebAPI.Controllers
             else
                 response = buyerFacade.GetStoreInfo(request.StoreName);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -109,21 +109,21 @@ namespace WebAPI.Controllers
         [HttpPost("SerachProducts")]
         public ActionResult<Response<bool>> ProductsSearch([FromBody] SearchProductsRequest request)
         {
-            Response<IDictionary<int, IList<ServiceProduct>>> response = 
+            Response<IDictionary<int, IList<ServiceProduct>>> response =
                 buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
         }
 
         [HttpPost("Register")]
-        public ActionResult<Response<bool>> Register([FromBody] AuthenticationRequest request)
+        public ActionResult<Response<int>> Register([FromBody] AuthenticationRequest request)
         {
             Response<int> response = buyerFacade.Register(request.UserName, request.Password);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -133,13 +133,13 @@ namespace WebAPI.Controllers
         public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
         {
 
-            return Ok(buyerFacade.Login(request.UserName, request.Password,
-                (msgs) => { return false; }));
+            Response<int> response  = buyerFacade.Login(request.UserName, request.Password,
+                (msgs) => { return false; });
 
-            //if (response.ErrorOccured())
-            //    return BadRequest(response.ErrorMessage);
+            if (response.IsErrorOccured())
+                return BadRequest(response.ErrorMessage);
 
-            //return Ok(response.Value);
+            return Ok(response.Value);
         }
 
         [HttpPost("Logout")]
@@ -147,7 +147,7 @@ namespace WebAPI.Controllers
         {
             Response<bool> response = buyerFacade.Logout(request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -156,9 +156,9 @@ namespace WebAPI.Controllers
         [HttpPost("ReviewProduct")]
         public ActionResult<Response<bool>> AddProductReview([FromBody] ReviewProductRequest request)
         {
-            Response<bool> response = buyerFacade.AddProductReview(request.UserId,request.StoreId, request.ProductId, request.Review);
+            Response<bool> response = buyerFacade.AddProductReview(request.UserId, request.StoreId, request.ProductId, request.Review);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);

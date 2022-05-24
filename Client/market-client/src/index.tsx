@@ -14,13 +14,15 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import * as Paths from "./Paths";
 import { QueryParamProvider } from "use-query-params";
 import StoreManagerPage from "./Pages/StoreManager";
+import { initSession } from "./services/SessionVariables";
+
+initSession() // Init new visitor session
 
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-
   <Router>
     <QueryParamProvider>
       <Routes>

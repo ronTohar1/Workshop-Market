@@ -42,7 +42,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
 
         public virtual double GetSum(ShoppingBag bag, Store store)
         {
-            return (sumOfCart(bag, store) * discount) / 100;
+            return sumOfCart(bag, store);
         }
     }
 }

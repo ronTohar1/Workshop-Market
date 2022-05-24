@@ -13,7 +13,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
         public int day { get; set; }
 
         //cant buy on that date
-        public ServiceDateRestriction(int year, int month, int day)
+        public ServiceDateRestriction(int year = -1, int month = -1, int day = -1)
         {
             this.year = year;
             this.month = month;

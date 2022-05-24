@@ -1,6 +1,4 @@
-﻿using MarketBackend.BusinessLayer.Buyers.Members;
-using MarketBackend.BusinessLayer.Market;
-using MarketBackend.ServiceLayer;
+﻿using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using NUnit.Framework;
 using NLog;
@@ -8,11 +6,6 @@ using System.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MarketBackend.BusinessLayer.Buyers;
-using MarketBackend.BusinessLayer.Buyers.Guests;
-using MarketBackend.BusinessLayer.System.ExternalServices;
 using System.Collections.Concurrent;
 
 namespace TestMarketBackend.Acceptance

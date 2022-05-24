@@ -8,7 +8,7 @@
             StoreId = storeId;
         }
 
-        public int ProductId { get; }
+        public virtual int ProductId { get; }
         public int StoreId { get; }
 
         // override object.Equals

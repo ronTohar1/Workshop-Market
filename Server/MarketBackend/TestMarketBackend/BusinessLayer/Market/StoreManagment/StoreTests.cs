@@ -87,7 +87,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private IDictionary<int, bool> wasNotified;
 
         private ProductsSearchFilter filter;
-        
+
         private IExpression expression1 = (new Mock<IExpression>()).Object;
         private IExpression expression2 = (new Mock<IExpression>()).Object;
         private IExpression expression3 = (new Mock<IExpression>()).Object;
@@ -969,8 +969,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         private ShoppingBag getShoppingBagMock(int[] productsId, int[] appropriateAmounts)
         {
-            ConcurrentDictionary<ProductInBag,int> productInShoppingBag = new ConcurrentDictionary<ProductInBag,int>();
-            for (int i = 0; i<productsId.Length ;i++) {
+            ConcurrentDictionary<ProductInBag, int> productInShoppingBag = new ConcurrentDictionary<ProductInBag, int>();
+            for (int i = 0; i < productsId.Length; i++)
+            {
                 productInBagMock = new Mock<ProductInBag>(productsId[i], storeId) { CallBase = true };
                 productInShoppingBag.TryAdd(productInBagMock.Object, appropriateAmounts[i]);
             }
@@ -988,7 +989,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             SetupStoreNoPermissionsChange();
             SetUpProductsIdInStore();
             ShoppingBag shoppingBag = getShoppingBagMock(new int[] { productId1, productId2 }, new int[] { amount1, amount2 });
-            Tuple<double, double> total =  store.GetTotalBagCost(shoppingBag);
+            Tuple<double, double> total = store.GetTotalBagCost(shoppingBag);
             Assert.True(total.Item1 == amount1 * productPrice1 + amount2 * productPrice2);
             Assert.True(total.Item2 == 0);
         }
@@ -1333,6 +1334,125 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             foreach (int memberId in wasNotified.Keys)
                 Assert.False(wasNotified[memberId]);
         }
+        private void SetupProductsWithAmounts()
+        {
+            SetupStoreNoPermissionsChange();
+            SetUpProductsIdInStore();
+            store.AddProductToInventory(founderMemberId, productId1, amount1);
+            store.AddProductToInventory(founderMemberId, productId2, amount2);
+            store.AddProductToInventory(founderMemberId, productId3, amount3);
+        }
+        [Test]
+        [TestCase(memberId1, new int[] { amount1, amount2, amount3 })]
+        [TestCase(memberId2, new int[] { amount1, 0, amount3 })]
+        [TestCase(memberId3, new int[] { 0, 0, amount3 })]
+        [TestCase(memberId2, new int[] { amount1 - 1, 0, amount3 - 3 })]
+        [TestCase(memberId3, new int[] { 0, amount2, 0 })]
 
+        public void TestReserveProductsSuccessfuly(int buyerId, int[] amounts)
+        {
+            SetupProductsWithAmounts();
+            IDictionary<int, int> productsAmount = new Dictionary<int, int>()
+            {
+                [productId1] = amounts[0],
+                [productId2] = amounts[1],
+                [productId3] = amounts[2]
+            };
+            Assert.True(store.products[productId1].amountInInventory == amount1);
+            Assert.True(store.products[productId2].amountInInventory == amount2);
+            Assert.True(store.products[productId3].amountInInventory == amount3);
+            int transactionId = -1;
+            Assert.Null(store.ReserveProducts(buyerId, productsAmount, out transactionId));
+            Assert.True(store.products[productId1].amountInInventory == amount1 - amounts[0]);
+            Assert.True(store.products[productId2].amountInInventory == amount2 - amounts[1]);
+            Assert.True(store.products[productId3].amountInInventory == amount3 - amounts[2]);
+            Assert.AreNotEqual(transactionId, -1);
+
+        }
+        [Test]
+        [TestCase(memberId1, new int[] { amount1, amount2+1, amount3 })]
+        [TestCase(memberId2, new int[] { amount1, 0, amount3+1 })]
+        [TestCase(memberId3, new int[] { 0, 0, amount3+1 })]
+        public void TestReserveProductsAmountIsTooBigFail(int buyerId, int[] amounts)
+        {
+            SetupProductsWithAmounts();
+            IDictionary<int, int> productsAmount = new Dictionary<int, int>()
+            {
+                [productId1] = amounts[0],
+                [productId2] = amounts[1],
+                [productId3] = amounts[2]
+            };
+            Assert.True(store.products[productId1].amountInInventory == amount1);
+            Assert.True(store.products[productId2].amountInInventory == amount2);
+            Assert.True(store.products[productId3].amountInInventory == amount3);
+            int transactionId = -1;
+            Assert.NotNull(store.ReserveProducts(buyerId, productsAmount, out transactionId));
+            Assert.True(store.products[productId1].amountInInventory == amount1);
+            Assert.True(store.products[productId2].amountInInventory == amount2);
+            Assert.True(store.products[productId3].amountInInventory == amount3);
+            Assert.AreEqual(transactionId, -1);
+        }
+        [Test]
+        [TestCase(memberId1, new int[] { amount1, amount2, amount3 })]
+        [TestCase(memberId2, new int[] { amount1, 0, amount3 })]
+        [TestCase(memberId3, new int[] { 0, 0, amount3})]
+        public void TestRollbackTransactionSuccess(int buyerId, int[] amounts) {
+            SetupProductsWithAmounts();
+            IDictionary<int, int> productsAmount = new Dictionary<int, int>()
+            {
+                [productId1] = amounts[0],
+                [productId2] = amounts[1],
+                [productId3] = amounts[2]
+            };
+            int transactionId = -1;
+            Assert.Null(store.ReserveProducts(buyerId, productsAmount, out transactionId));
+            Assert.True(store.RollbackTransaction(transactionId));
+            Assert.True(store.products[productId1].amountInInventory == amount1);
+            Assert.True(store.products[productId2].amountInInventory == amount2);
+            Assert.True(store.products[productId3].amountInInventory == amount3);
+        }
+        [Test]
+        [TestCase(-2)]
+        [TestCase(-3)]
+        [TestCase(-4)]
+        public void TestRollbackTransactionDoesNotExistFail(int transactionId)
+        {
+            SetupProductsWithAmounts();
+            Assert.False(store.RollbackTransaction(transactionId));
+        }
+        [Test]
+        [TestCase(memberId1, new int[] { amount1, amount2, amount3 })]
+        [TestCase(memberId2, new int[] { amount1, 0, amount3 })]
+        [TestCase(memberId3, new int[] { 0, 0, amount3 })]
+        public void TestCommitTransactionSuccess(int buyerId, int[] amounts)
+        {
+            SetupProductsWithAmounts();
+            IDictionary<int, int> productsAmount = new Dictionary<int, int>()
+            {
+                [productId1] = amounts[0],
+                [productId2] = amounts[1],
+                [productId3] = amounts[2]
+            };
+            int transactionId = -1;
+            Assert.Null(store.ReserveProducts(buyerId, productsAmount, out transactionId));
+            Assert.True(store.CommitTransaction(transactionId));
+            Assert.True(store.products[productId1].amountInInventory == amount1 - amounts[0]);
+            Assert.True(store.products[productId2].amountInInventory == amount2 - amounts[1]);
+            Assert.True(store.products[productId3].amountInInventory == amount3 - amounts[2]);
+        }
+        [Test]
+        [TestCase(-2)]
+        [TestCase(-3)]
+        [TestCase(-4)]
+        public void TestCommitTransactionDoesNotExistFail(int transactionId)
+        {
+            SetupProductsWithAmounts();
+            Assert.False(store.RollbackTransaction(transactionId));
+            Assert.True(store.products[productId1].amountInInventory == amount1);
+            Assert.True(store.products[productId2].amountInInventory == amount2);
+            Assert.True(store.products[productId3].amountInInventory == amount3);
+
+
+        }
     }
 }

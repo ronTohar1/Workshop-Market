@@ -331,6 +331,44 @@ namespace TestMarketBackend.Acceptance
             // member3 is logged in, checking that there wasn't a notification
             Assert.IsTrue(SameElements(notificationsBefore, member3Notifications.ToList()));
         }
+
+        public static IEnumerable<TestCaseData> DataLogoutLoginCartSaved
+        {
+            get
+            {
+                // cart with products
+                yield return new TestCaseData(() => member3Id, userName3, password3);
+                // cart with no products 
+                yield return new TestCaseData(() => member2Id, userName2, password2);
+            }
+        }
+
+        // r 3.1, r 2.3
+        [Test]
+        [TestCaseSource("DataLogoutLoginCartSaved")]
+        public void LogoutLoginCartSaved(Func<int> getMemberId, string username, string password)
+        {
+            int memberId = getMemberId();
+
+            SetUpShoppingCarts();
+
+            Response<ServiceCart> response = buyerFacade.GetCart(memberId);
+            Assert.IsTrue(!response.ErrorOccured());
+            ServiceCart cartBefore = response.Value;
+
+            Response<bool> logoutResponse = buyerFacade.Logout(memberId);
+            Assert.IsTrue(!logoutResponse.ErrorOccured());
+
+            Response<int> loginResponse = buyerFacade.Login(username, password, notifications => true);
+            Assert.IsTrue(!loginResponse.ErrorOccured());
+
+            response = buyerFacade.GetCart(memberId);
+            Assert.IsTrue(!response.ErrorOccured());
+            ServiceCart cartAfter = response.Value;
+
+            Assert.AreEqual(cartBefore, cartAfter); 
+        }
+
         /*
         // r.2.5
         [Test]

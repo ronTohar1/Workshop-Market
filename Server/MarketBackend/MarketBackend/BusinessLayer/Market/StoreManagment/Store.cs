@@ -69,7 +69,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 return false;
             return true;
         }
-
+        //getter
         public List<Product> GetTransactionProducts(int transactionId)
         {
             List<Product> productsPrices = new();
@@ -122,6 +122,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
                         if (transaction != -1)
                         {
+                            RevertTransaction(transaction);
                             transactions.Remove(transaction);
                             transaction = -1;
                         }
@@ -140,6 +141,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         }
 
+        private void RevertTransaction(int transaction) {
+            foreach (Product p in transactions[transaction].Keys) 
+                p.AddToInventory(transactions[transaction][p]);
+        }
         // Removing the amount from the prodcut in the inventory 
         private string? ReserveSingleProduct(int buyerId, int productId, int amount)
         {
@@ -671,6 +676,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             purchaseManager.RemovePurchasePolicy(policyId);
         }
 
+        public IDictionary<int, string> GetPurchasePolicyDescriptions()
+        {
+            return purchaseManager.GetDescriptions();
+        }
+
+        public IDictionary<int, string> GetDiscountPolicyDescriptions()
+        {
+            return discountManager.GetDescriptions();
+        }
+
         // ------------------------------ General ------------------------------
 
         // 4.9
@@ -755,6 +770,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         => products.ContainsKey(productId) ? products[productId] : null;
         public List<Purchase> findPurchasesByDate(DateTime date)
         => purchaseHistory.Where(p => p.purchaseDate == date).ToList();
+
+
+        //for tests
+        public Store()
+        {
+
+        }
 
     }
 }

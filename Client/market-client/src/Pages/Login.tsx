@@ -34,8 +34,9 @@ export default function Login() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    var success = login('ABA', 'IMA');
-    success.then(b=> alert(b?"true":"false")).catch(error=>alert(error));
+    if (data.get('username')!=null && data.get('password')!=null){
+    login(data.get('username')?.toString(), data.get('password')?.toString());
+    }
   };
 
   return (

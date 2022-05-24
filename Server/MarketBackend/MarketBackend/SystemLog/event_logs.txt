@@ -292,3 +292,4 @@
 2022-05-19 12:33:22.7332|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 139, storeId = 18, productId = 18, amount = 50]
 2022-05-19 12:33:22.7332|INFO|SystemLog.SystemLogger|AddNewProduct was called with parameters [userId = 139, storeId = 18, productName = 991ES Calculator, price = 100, category = Office]
 2022-05-19 12:33:22.7332|INFO|SystemLog.SystemLogger|AddProductToInventory was called with parameters [userId = 139, storeId = 18, productId = 19, amount = 200]
+2022-05-24 13:51:10.8238|INFO|SystemLog.SystemLogger|Guest with id: 123 purchased a banana !

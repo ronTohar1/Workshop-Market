@@ -130,15 +130,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public ActionResult<bool> Login([FromBody] AuthenticationRequestWithPort request)
+        public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
         {
-            Response<int> response = buyerFacade.Login(request.UserName, request.Password,
-                (msgs) => { return false; });
 
-            if (response.ErrorOccured())
-                return BadRequest(response.ErrorMessage);
+            return Ok(buyerFacade.Login(request.UserName, request.Password,
+                (msgs) => { return false; }));
 
-            return Ok(response.Value);
+            //if (response.ErrorOccured())
+            //    return BadRequest(response.ErrorMessage);
+
+            //return Ok(response.Value);
         }
 
         [HttpPost("Logout")]

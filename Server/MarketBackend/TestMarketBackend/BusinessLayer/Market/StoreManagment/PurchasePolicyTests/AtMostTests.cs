@@ -47,9 +47,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
         }
 
         [Test]
-        [TestCase(12, true)]
-        [TestCase(10, true)]
-        [TestCase(6, false)]
+        [TestCase(12, false)]
+        [TestCase(10, false)]
+        [TestCase(6, true)]
         public void TestAtMost(int amount, bool expected)
         {
             AtMostAmountRestriction res = new AtMostAmountRestriction(pid1, amount);

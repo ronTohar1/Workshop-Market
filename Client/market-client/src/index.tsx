@@ -14,7 +14,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import * as Paths from "./Paths";
 import { QueryParamProvider } from "use-query-params";
 import StoreManagerPage from "./Pages/StoreManager";
-import { initSession } from "./services/SessionVariables";
+import { initSession } from "./services/SessionService";
 
 initSession() // Init new visitor session
 

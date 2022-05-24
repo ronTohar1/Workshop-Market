@@ -3,6 +3,25 @@ import Response from "./Response";
 
 export const serverPort = "https://localhost:7242";
 
+export async function serverEnter(
+): Promise<Response<number>> {
+  const uri = serverPort + "/api/Buyers/Enter";
+  const jsonResponse = await fetch(uri, {
+    method: "POST",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "http",
+    },
+    // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+    body: JSON.stringify({
+      port: window.location.port,
+    }),
+  });
+
+  return jsonResponse.json();
+}
+
 export async function serverLogin(
   name: string | undefined | null,
   password: string | undefined | null

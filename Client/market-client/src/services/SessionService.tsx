@@ -1,8 +1,21 @@
-const isGuest = "isGuest";
-const memberId = "memberId";
+import { serverEnter } from "./BuyersService";
 
-export function initSession() {
-  localStorage.setItem(memberId, "-1");
+const isGuest = "isGuest";
+const buyerId = "memberId";
+
+export async function initSession() {
+
+  const response = serverEnter();
+  try{
+    const id = await response
+    localStorage.setItem(buyerId, String(id));
+
+  }
+  catch(e){
+    alert("Sorry, an unkown error has occured!")
+    window.close()
+  }
+
   localStorage.setItem(isGuest, "true");
 }
 
@@ -22,6 +35,6 @@ export const setIsGuest : (v: boolean) => void = createSetter(isGuest)
 
 // member setter Getter
 
-export const getMemberId = createGetter(Number,memberId);
+export const getBuyerId = createGetter(Number,buyerId);
 
-export const setMemberId : (v: number) => void =  createSetter(memberId)
+export const setBuyerId : (v: number) => void =  createSetter(buyerId)

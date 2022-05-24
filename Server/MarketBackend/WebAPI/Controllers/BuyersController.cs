@@ -70,7 +70,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("Enter")]
-        public ActionResult<Response<bool>> Enter()
+        public ActionResult<Response<int>> Enter()
         {
             Response<int> response = buyerFacade.Enter();
 

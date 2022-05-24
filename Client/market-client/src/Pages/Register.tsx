@@ -14,6 +14,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { serverRegister } from "../services/BuyersService";
+import { useNavigate } from "react-router-dom";
+import { pathLogin } from "../Paths";
 
 const theme = createTheme();
 const backgroundImages = [
@@ -26,6 +28,8 @@ const randBackgroundImage = () =>
 
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -37,8 +41,10 @@ export default function Register() {
       // alert("Error is: " + serverResponse.errorMessage);
       if (serverResponse.errorOccured)
         alert(serverResponse.errorMessage)
-      else
-        alert("new user with id: " + serverResponse.value +" has registered")
+      else{
+        alert(`${username} Registered sucessfully!`)
+        navigate(pathLogin)
+      }
     }
     catch(e){
       alert("Error occured! Whoops")

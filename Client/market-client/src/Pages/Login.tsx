@@ -13,6 +13,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { serverLogin } from "../services/BuyersService";
+import { useNavigate } from "react-router-dom";
+import { pathHome } from "../Paths";
 
 const theme = createTheme();
 
@@ -31,28 +33,32 @@ const randBackgroundImage = () =>
   backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const username = data.get("username")?.toString()
-    const password = data.get("password")?.toString()
-    const result = serverLogin(username,password)
+    const username = data.get("username")?.toString();
+    const password = data.get("password")?.toString();
+    const result = serverLogin(username, password);
 
-    try{
-      const response = await result
-      if(response.errorOccured)
-        alert(response.errorMessage)
-      else
-        alert("Logged in successfully!")
-    }
-    catch(e){
-
+    try {
+      const response = await result;
+      if (response.errorOccured) {
+        alert(response.errorMessage);
+      } else {
+        alert("Logged in successfully!");
+        navigate(pathHome);
+      }
+    } catch (e) {
+      alert(e)
+      alert("Sorry, an unkown error occured")
     }
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container component='main' sx={{ height: "100vh" }}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid
           item
@@ -78,49 +84,52 @@ export default function Login() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-            }}>
+            }}
+          >
             <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component='h1' variant='h5'>
+            <Typography component="h1" variant="h5">
               Sign in
             </Typography>
             <Box
-              component='form'
+              component="form"
               noValidate
               onSubmit={handleSubmit}
-              sx={{ mt: 1 }}>
+              sx={{ mt: 1 }}
+            >
               <TextField
-                margin='normal'
+                margin="normal"
                 required
                 fullWidth
-                id='username'
-                label='Username'
-                name='username'
-                autoComplete='username'
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
                 autoFocus
               />
               <TextField
-                margin='normal'
+                margin="normal"
                 required
                 fullWidth
-                name='password'
-                label='Password'
-                type='password'
-                id='password'
-                autoComplete='current-password'
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
               />
               <Button
-                type='submit'
+                type="submit"
                 fullWidth
-                variant='contained'
-                sx={{ mt: 3, mb: 2 }}>
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
                 Sign In
               </Button>
               <Grid container>
                 <Grid item xs></Grid>
                 <Grid item>
-                  <Link href='/register' variant='body2'>
+                  <Link href="/register" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>

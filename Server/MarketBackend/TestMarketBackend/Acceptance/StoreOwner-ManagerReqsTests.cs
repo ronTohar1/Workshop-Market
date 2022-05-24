@@ -32,19 +32,19 @@ namespace TestMarketBackend.Acceptance
             Response<int> productIdResponse =
                 storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
 
-            Assert.IsTrue(!productIdResponse.ErrorOccured());
+            Assert.IsTrue(!productIdResponse.IsErrorOccured());
 
             int productId = productIdResponse.Value;
 
             Response<bool> response =
                 storeManagementFacade.AddProductToInventory(userId, storeId, productId, amount);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             // Checking that it is available
             response = buyerFacade.AddProdcutToCart(userId, storeId, productId, 5);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
         }
 
         /*TODO
@@ -79,7 +79,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response = storeManagementFacade.DecreaseProduct(ownerId(), storeId(), productId(), amount());
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
         }
 
         public static IEnumerable<TestCaseData> DataFailedInvalidProductAdditionToStore
@@ -104,7 +104,7 @@ namespace TestMarketBackend.Acceptance
             Response<int> productIdResponse =
                 storeManagementFacade.AddNewProduct(userId, storeId, productName, price, category);
 
-            Assert.IsTrue(productIdResponse.ErrorOccured());
+            Assert.IsTrue(productIdResponse.IsErrorOccured());
         }
 
         public static IEnumerable<TestCaseData> DataFailedProductDecrease
@@ -124,7 +124,7 @@ namespace TestMarketBackend.Acceptance
             Response<bool> response =
                 storeManagementFacade.DecreaseProduct(userId, storeId, productId, amount);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         private bool MemberIsRoleInStore(int storeOwnerId, int memberId, int storeId, Role role)
@@ -132,7 +132,7 @@ namespace TestMarketBackend.Acceptance
             Response<IList<int>> ownersResponse =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, role);
 
-            Assert.IsTrue(!ownersResponse.ErrorOccured());
+            Assert.IsTrue(!ownersResponse.IsErrorOccured());
 
             IList<int> ownersIds = ownersResponse.Value;
             return ownersIds.Contains(memberId);
@@ -144,7 +144,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response = storeManagementFacade.MakeCoOwner(storeOwnerId, member1Id, storeId);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Owner));
         }
 
@@ -161,7 +161,7 @@ namespace TestMarketBackend.Acceptance
             Response<IList<int>> ownersAfter =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
             Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
         }
 
@@ -246,7 +246,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> response = storeManagementFacade.RemoveCoOwner(requestingId(), coOwnerToRemoveId(), storeId());
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
 
             // check that roles in the store remained as before 
             IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId());
@@ -274,7 +274,7 @@ namespace TestMarketBackend.Acceptance
             expectedRoles[Role.Manager].Remove(member7Id);
 
             Response<bool> response = storeManagementFacade.RemoveCoOwner(requestingId, coOwnerToRemoveId, storeId);
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             // check that roles in the store where changed as needed 
             IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId);
@@ -317,7 +317,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response = storeManagementFacade.MakeCoManager(storeOwnerId, member1Id, storeId);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Manager));
         }
 
@@ -334,7 +334,7 @@ namespace TestMarketBackend.Acceptance
             Response<IList<int>> managersAfter =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
             Assert.IsTrue(SameElements(managersBefore.Value, managersAfter.Value));
         }
 
@@ -364,7 +364,7 @@ namespace TestMarketBackend.Acceptance
             Response<IList<Permission>> newPermissionResponse =
                 storeManagementFacade.GetManagerPermissions(storeId, storeOwnerId, member4Id);
 
-            Assert.IsTrue(!response.ErrorOccured() && !newPermissionResponse.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured() && !newPermissionResponse.IsErrorOccured());
             Assert.IsTrue(SameElements(newPermissionResponse.Value, permissions));
         }
         /*TODO
@@ -403,13 +403,13 @@ namespace TestMarketBackend.Acceptance
             Response<IList<int>> managers =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
-            Assert.IsTrue(!managers.ErrorOccured());
+            Assert.IsTrue(!managers.IsErrorOccured());
             Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id , member7Id}));
 
             Response<IList<int>> owners =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-            Assert.IsTrue(!owners.ErrorOccured());
+            Assert.IsTrue(!owners.IsErrorOccured());
             Assert.IsTrue(SameElements(owners.Value, new List<int>() { storeOwnerId, member3Id, member5Id, member6Id }));
         }
 
@@ -420,7 +420,7 @@ namespace TestMarketBackend.Acceptance
             Response<IList<Purchase>> purchaseHistory =
                 storeManagementFacade.GetPurchaseHistory(storeOwnerId, storeId);
 
-            Assert.IsTrue(!purchaseHistory.ErrorOccured());
+            Assert.IsTrue(!purchaseHistory.IsErrorOccured());
         }
 
         private IDictionary<Role, IList<int>> GetRolesInStore(int storeId)
@@ -429,7 +429,7 @@ namespace TestMarketBackend.Acceptance
             foreach (Role role in Enum.GetValues(typeof(Role)))
             {
                 Response<IList<int>> membersInRoleResponse = storeManagementFacade.GetMembersInRole(storeId, member2Id, role); // notice member2 is co owner in all stores 
-                Assert.IsTrue(!membersInRoleResponse.ErrorOccured());
+                Assert.IsTrue(!membersInRoleResponse.IsErrorOccured());
                 roles[role] = membersInRoleResponse.Value;
             }
             return roles;

@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
             Response<int> response = storeManagementFacade.AddNewProduct(
                 request.UserId, request.StoreId, request.ProductName, request.Price, request.Category);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
             Response<bool> response = storeManagementFacade.AddProductToInventory(
                 request.UserId, request.StoreId, request.ProductId, request.Amount);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
             Response<bool> response = storeManagementFacade.DecreaseProduct(
                 request.UserId, request.StoreId, request.ProductId, request.Amount);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -58,7 +58,7 @@ namespace WebAPI.Controllers
             Response<bool> response = storeManagementFacade.MakeCoOwner(
                 request.UserId, request.TargetUserId, request.StoreId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -70,7 +70,7 @@ namespace WebAPI.Controllers
             Response<bool> response = storeManagementFacade.RemoveCoOwner(
                 request.UserId, request.TargetUserId, request.StoreId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -82,7 +82,7 @@ namespace WebAPI.Controllers
             Response<bool> response = storeManagementFacade.MakeCoManager(
                 request.UserId, request.TargetUserId, request.StoreId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
             Response<IList<int>> response = storeManagementFacade.GetMembersInRole(
                 request.StoreId, request.UserId, request.Role);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -105,7 +105,7 @@ namespace WebAPI.Controllers
         {
             Response<ServiceMember> response = storeManagementFacade.GetFounder(request.StoreId, request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -117,7 +117,7 @@ namespace WebAPI.Controllers
             Response<IList<Permission>> response = storeManagementFacade.GetManagerPermissions(
                 request.StoreId, request.UserId, request.TargetUserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -129,7 +129,7 @@ namespace WebAPI.Controllers
             Response<bool> response = storeManagementFacade.ChangeManagerPermission(
                 request.UserId, request.TargetUserId, request.StoreId, request.Permissions);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -141,7 +141,7 @@ namespace WebAPI.Controllers
             Response<IList<Purchase>> response = storeManagementFacade.GetPurchaseHistory(
                 request.UserId ,request.StoreId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -153,7 +153,7 @@ namespace WebAPI.Controllers
             Response<int> response = storeManagementFacade.OpenStore(
                 request.UserId, request.StoreName);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -165,7 +165,7 @@ namespace WebAPI.Controllers
             Response<bool> response = storeManagementFacade.CloseStore(
                 request.UserId, request.StoreId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -177,7 +177,7 @@ namespace WebAPI.Controllers
             Response<int> response = storeManagementFacade.AddDiscountPolicy(
                 request.Expression, request.Description, request.StoreId, request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -189,7 +189,7 @@ namespace WebAPI.Controllers
             Response<bool> response = storeManagementFacade.RemoveDiscountPolicy(
                 request.PolicyId, request.StoreId, request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -201,7 +201,7 @@ namespace WebAPI.Controllers
             Response<int> response = storeManagementFacade.AddPurchasePolicy(
                 request.Expression, request.Description, request.StoreId, request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -213,7 +213,7 @@ namespace WebAPI.Controllers
             Response<bool> response = storeManagementFacade.RemovePurchasePolicy(
                 request.PolicyId, request.StoreId, request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);

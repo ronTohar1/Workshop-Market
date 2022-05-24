@@ -19,7 +19,7 @@ namespace WebAPI.Controllers
         {
             Response<int> response = systemOperator.OpenMarket(request.UserName, request.Password);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -30,7 +30,7 @@ namespace WebAPI.Controllers
         {
             Response<bool> response = systemOperator.CloseMarket();
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);

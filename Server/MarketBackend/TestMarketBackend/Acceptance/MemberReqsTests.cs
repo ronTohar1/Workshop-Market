@@ -16,7 +16,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response = buyerFacade.Logout(member2Id);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
         }
 
         // r.3.2
@@ -25,7 +25,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<int> response = storeManagementFacade.OpenStore(member3Id, "VeryNewStoreName");
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
         }
 
         // r.3.2
@@ -56,7 +56,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<int> response = storeManagementFacade.OpenStore(member3Id, storeName);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         // r.3.2
@@ -65,7 +65,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<int> response = storeManagementFacade.OpenStore(member3Id, storeName);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         // r.3.3
@@ -75,7 +75,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
         }
 
         // r.3.3
@@ -86,7 +86,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         // r.3.3
@@ -98,7 +98,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> secondResponse = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
-            Assert.IsTrue(!firstResponse.ErrorOccured() && !secondResponse.ErrorOccured());
+            Assert.IsTrue(!firstResponse.IsErrorOccured() && !secondResponse.IsErrorOccured());
         }
 
         // testing member notifications 
@@ -114,25 +114,25 @@ namespace TestMarketBackend.Acceptance
                 {
                     testsObject.SetUpShoppingCarts();
                     Response<ServicePurchase> response = testsObject.buyerFacade.PurchaseCartContent(member3Id);
-                    Assert.IsTrue(!response.ErrorOccured());
+                    Assert.IsTrue(!response.IsErrorOccured());
                 });
                 // shop of the store owner is closed 
                 yield return new TestCaseData((MemberReqsTests testsObject) =>
                 {
                     Response<bool> response = testsObject.storeManagementFacade.CloseStore(member2Id, storeId);
-                    Assert.IsTrue(!response.ErrorOccured());
+                    Assert.IsTrue(!response.IsErrorOccured());
                 });
                 // store owner is removed from the store 
                 yield return new TestCaseData((MemberReqsTests testsObject) =>
                 {
                     Response<bool> response = testsObject.storeManagementFacade.RemoveCoOwner(member2Id, member5Id, storeId);
-                    Assert.IsTrue(!response.ErrorOccured());
+                    Assert.IsTrue(!response.IsErrorOccured());
                 });
                 // a member writes a review on a product in the store of the store owner 
                 yield return new TestCaseData((MemberReqsTests testsObject) =>
                 {
                     Response<bool> response = testsObject.buyerFacade.AddProductReview(member1Id, storeId, calculatorProductId, "The product is great");
-                    Assert.IsTrue(!response.ErrorOccured());
+                    Assert.IsTrue(!response.IsErrorOccured());
                 });
             }
         }
@@ -165,7 +165,7 @@ namespace TestMarketBackend.Acceptance
         {
             // logging out so we can use the same data as in the SuccessfulNotidicationsLoggedIn tests 
             Response<bool> response = buyerFacade.Logout(member5Id);
-            Assert.IsTrue(!response.ErrorOccured()); 
+            Assert.IsTrue(!response.IsErrorOccured()); 
 
             // getting notifications before
             IList<string> notificationsBefore = member5Notifications.ToList();

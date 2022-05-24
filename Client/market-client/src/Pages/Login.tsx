@@ -40,8 +40,10 @@ export default function Login() {
 
     try{
       const response = await result
-      if(response.errorMessage!=null)
+      if(response.errorOccured)
         alert(response.errorMessage)
+      else
+        alert("Loggedin successfully!")
     }
     catch(e){
 

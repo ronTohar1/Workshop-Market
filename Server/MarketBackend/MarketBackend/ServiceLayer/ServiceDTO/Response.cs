@@ -11,7 +11,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public T Value { get; set; }
         public string ErrorMessage { get; set; }
 
-        public bool errorOccured = false;
+        public bool ErrorOccured { get; set; } = false; 
 
         public Response() =>
             ErrorMessage = string.Empty;
@@ -22,16 +22,16 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public Response(string errorMessage)
         {
             ErrorMessage = errorMessage;
-            errorOccured = true;
+            ErrorOccured = true;
         }
         public Response(T value, string errorMessage) : this(value)
         {
             ErrorMessage = errorMessage;
-            errorOccured = true;
+            ErrorOccured = true;
 
         }
 
-        public bool ErrorOccured() =>
+        public bool IsErrorOccured() =>
             ErrorMessage != string.Empty;
 
      }

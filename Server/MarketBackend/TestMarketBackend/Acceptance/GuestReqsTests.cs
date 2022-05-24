@@ -37,7 +37,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<int> response = buyerFacade.Register(userName, password);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
         }
 
         // r.1.3
@@ -49,7 +49,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<int> response = buyerFacade.Register(userName, password);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         // r.1.3
@@ -62,7 +62,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<int> response = buyerFacade.Register(userName, password);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             buyerFacade.Leave(guest1.Value);
 
@@ -72,7 +72,7 @@ namespace TestMarketBackend.Acceptance
 
             response = buyerFacade.Register(userName, password);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<int> reponse = buyerFacade.Login(userName, password, newNotifications => true);
 
-            Assert.IsTrue(!reponse.ErrorOccured());
+            Assert.IsTrue(!reponse.IsErrorOccured());
         }
 
         [TestCase(userName1, password1)]
@@ -105,7 +105,7 @@ namespace TestMarketBackend.Acceptance
             buyerFacade.Login(username, password, newNotifications => true);
             Response<int> reponse = buyerFacade.Login(username, password, newNotifications => true);
 
-            Assert.IsTrue(reponse.ErrorOccured());
+            Assert.IsTrue(reponse.IsErrorOccured());
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<int> reponse = buyerFacade.Login(userName, password, newNotifications => true);
 
-            Assert.IsTrue(reponse.ErrorOccured());
+            Assert.IsTrue(reponse.IsErrorOccured());
         }
 
 

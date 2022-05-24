@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
             Response<IReadOnlyCollection<ServicePurchase>> response = 
                 adminFacade.GetBuyerPurchaseHistory(request.UserId, request.TargetId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
             Response<IReadOnlyCollection<ServicePurchase>> response =
                 adminFacade.GetStorePurchaseHistory(request.UserId, request.TargetId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
         {
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(request.UserId, request.TargetId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -56,7 +56,7 @@ namespace WebAPI.Controllers
         {
             Response<IList<int>> response = adminFacade.GetLoggedInMembers(request.UserId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
@@ -67,7 +67,7 @@ namespace WebAPI.Controllers
         {
             Response<ServiceMember> response = adminFacade.GetMemberInfo(request.UserId, request.TargetId);
 
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);

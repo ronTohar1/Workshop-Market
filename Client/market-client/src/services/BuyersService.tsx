@@ -3,6 +3,10 @@ import Product from "../DTOs/Product";
 
 
 export const serverPort = 'https://localhost:7242';
+export interface Response<T>{
+    errorMessage:string,
+    value:T
+}
 export async function login(name: string | undefined,password: string| undefined):Promise<any> {
     if (name==undefined || password==undefined)
         return Promise.reject();
@@ -20,10 +24,10 @@ export async function login(name: string | undefined,password: string| undefined
         'password': password,
         'port': window.location.port
     })
-}).then(response =>response.text())
-.then(data=>alert(data))
+}).then(response =>
+    console.log(response.json()))
 .catch(error => {
-    alert(JSON.parse(error));
+    alert(error);
 });};
 
 

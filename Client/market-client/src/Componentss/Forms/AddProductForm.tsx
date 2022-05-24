@@ -20,6 +20,7 @@ export default function AddProductForm(
   const [quantity, setQuantity] = React.useState(0);
   const [price, setPrice] = React.useState(0);
   const [openSnack, setOpenSnack] = React.useState(false);
+  const [x,setx] = React.useState<number>(100) // TODO : DELETE THIS X
 
   const resetFields = () => {
     setOpen(false);
@@ -41,11 +42,12 @@ export default function AddProductForm(
   };
 
   const handleSubmit = async () => {
-    const product: Product = new Product(0, name, price, category, 0, quantity); //TODO: fill real storeid
+    let product: Product = new Product(x, name, price, category, 0, quantity); //TODO: fill real storeid 
+    setx(x+1)// TODO: Delete This x
     // alert(`sending to the server the product: ${JSON.stringify(product)}`);
 
     try {
-      const result = addNewProduct(-1, product);
+      // const result = addNewProduct(-1, product);
     // TODO: Check if good promise
       handleClose();
       resetFields();

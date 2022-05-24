@@ -182,6 +182,7 @@ export default function StorePageById(store: Store) {
 
   const handleAddProduct = (productToAdd: Product) => {
     setRows([...rows, productToAdd]);
+    console.log(rows.map((r)=>r.name))
   };
 
   return (

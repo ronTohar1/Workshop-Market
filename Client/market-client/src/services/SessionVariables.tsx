@@ -1,7 +1,7 @@
 const isGuest = "isGuest";
 const memberId = "memberId";
 
-export function initSessions() {
+export function initSession() {
   localStorage.setItem(memberId, "-1");
   localStorage.setItem(isGuest, "true");
 }

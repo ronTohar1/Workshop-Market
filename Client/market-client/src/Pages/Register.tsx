@@ -14,7 +14,6 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { serverRegister } from "../services/BuyersService";
-import { isGuest, memberId } from "../services/SessionVariables";
 
 const theme = createTheme();
 const backgroundImages = [
@@ -28,8 +27,6 @@ const randBackgroundImage = () =>
 
 export default function Register() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    alert("We got "+ localStorage.getItem(memberId))
-    alert("We got "+ localStorage.setItem(memberId, "2"))
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const username = data.get("username")?.toString()

@@ -3,9 +3,9 @@ import Product from "../DTOs/Product";
 
 
 export const serverPort = 'https://localhost:7242';
-export async function login(name: string,password: string):Promise<any> {
+export async function login(name: string,password: string):Promise<boolean> {
   const uri = serverPort+'/api/Buyers/Login';
-  return await fetch(uri, {
+    return fetch(uri, {
     method: 'POST',
     headers: {
         'accept': 'text/plain',
@@ -18,7 +18,12 @@ export async function login(name: string,password: string):Promise<any> {
         'password': password,
         'port': window.location.port
     })
-});};
+}).then(response => response.json())
+  .then(result =>result. Promise.reject(result))
+  .catch(err =>  Promise.reject(err));}
+
+//.then(response=>Promise.resolve(response.json().then((data)=>data)))
+
 
 
 export async function logout(userId: number):Promise<any> {

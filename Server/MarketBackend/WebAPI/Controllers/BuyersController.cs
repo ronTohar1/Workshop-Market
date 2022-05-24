@@ -137,9 +137,9 @@ namespace WebAPI.Controllers
                 (msgs) => { return false; });
 
             if (response.IsErrorOccured())
-                return BadRequest(response.ErrorMessage);
+                return BadRequest(response);
 
-            return Ok(response.Value);
+            return Ok(response);
         }
 
         [HttpPost("Logout")]

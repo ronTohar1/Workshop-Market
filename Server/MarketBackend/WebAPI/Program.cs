@@ -15,21 +15,22 @@ namespace MyApp // Note: actual namespace depends on the project name.
         {
             SystemOperator so = new SystemOperator();
 
-            while (!so.MarketOpen)
-            {
-                Console.WriteLine("Please enter Admin Username:");
-                string username = Console.ReadLine();
-                Console.WriteLine("Please enter Admin Password:");
-                string password = Console.ReadLine();
-                Response<int> openResponse = so.OpenMarket(username, password);
-                if (openResponse.ErrorOccured)
-                    Console.WriteLine(openResponse.ErrorMessage);
-            }
-            Console.WriteLine("Market opened successfully!");
+            //while (!so.MarketOpen)
+            //{
+            //    Console.WriteLine("Please enter Admin Username:");
+            //    string username = Console.ReadLine();
+            //    Console.WriteLine("Please enter Admin Password:");
+            //    string password = Console.ReadLine();
+            //    Response<int> openResponse = so.OpenMarket(username, password);
+            //    if (openResponse.ErrorOccured)
+            //        Console.WriteLine(openResponse.ErrorMessage);
+            //}
+            //Console.WriteLine("Market opened successfully!");
 
-            //Response<int> openResponse = so.OpenMarket("admin","admin"); // For easier testing
-            //SetUpExample setup = new SetUpExample(so);
-            //setup.SetUp();
+            Response<int> openResponse = so.OpenMarket("admin", "admin"); // For easier testing
+
+            SetUpExample setup = new SetUpExample(so);
+            setup.SetUp();
 
             var builder = WebApplication.CreateBuilder(args);
 

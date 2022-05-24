@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { serverLogin } from "../services/BuyersService";
 import { useNavigate } from "react-router-dom";
 import { pathHome } from "../Paths";
+import * as sessionService from "../services/SessionService";
 
 const theme = createTheme();
 
@@ -36,6 +37,11 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    if (!sessionService.getIsGuest()) {
+      alert("You are already logged in!\nLog out before you try to log in");
+    }
+    console.log(sessionService.getIsGuest())
+
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const username = data.get("username")?.toString();
@@ -48,11 +54,15 @@ export default function Login() {
         alert(response.errorMessage);
       } else {
         alert("Logged in successfully!");
+        sessionService.setIsGuest(false);
+        sessionService.setBuyerId(response.value);
+        console.log(sessionService.getIsGuest())
+
         navigate(pathHome);
       }
     } catch (e) {
-      alert(e)
-      alert("Sorry, an unkown error occured")
+      alert(e);
+      alert("Sorry, an unkown error occured");
     }
   };
 

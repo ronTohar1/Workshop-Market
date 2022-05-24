@@ -123,8 +123,8 @@ namespace WebAPI.Controllers
         {
             Response<int> response = buyerFacade.Register(request.UserName, request.Password);
 
-            //if (response.ErrorOccured())
-            //    return BadRequest(response);
+            if (response.IsErrorOccured())
+                return BadRequest(response);
 
             return Ok(response);
         }
@@ -133,13 +133,13 @@ namespace WebAPI.Controllers
         public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
         {
 
-            return Ok(buyerFacade.Login(request.UserName, request.Password,
-                (msgs) => { return false; }));
+            Response<int> response  = buyerFacade.Login(request.UserName, request.Password,
+                (msgs) => { return false; });
 
-            //if (response.ErrorOccured())
-            //    return BadRequest(response.ErrorMessage);
+            if (response.IsErrorOccured())
+                return BadRequest(response.ErrorMessage);
 
-            //return Ok(response.Value);
+            return Ok(response.Value);
         }
 
         [HttpPost("Logout")]

@@ -14,6 +14,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { serverRegister } from "../services/BuyersService";
+import { isGuest, memberId } from "../services/SessionVariables";
 
 const theme = createTheme();
 const backgroundImages = [
@@ -23,8 +24,12 @@ const backgroundImages = [
 const randBackgroundImage = () =>
   backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
 
+
+
 export default function Register() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    alert("We got "+ localStorage.getItem(memberId))
+    alert("We got "+ localStorage.setItem(memberId, "2"))
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const username = data.get("username")?.toString()
@@ -33,7 +38,10 @@ export default function Register() {
       const serverResponse =  await serverRegister(username,password)
       // alert("Error occured? " + serverResponse.errorOccured);
       // alert("Error is: " + serverResponse.errorMessage);
-      alert("new user with id: " + serverResponse.value +" has registered")
+      if (serverResponse.errorOccured)
+        alert(serverResponse.errorMessage)
+      else
+        alert("new user with id: " + serverResponse.value +" has registered")
     }
     catch(e){
       alert("Error occured! Whoops")

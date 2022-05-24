@@ -43,7 +43,7 @@ export default function Login() {
       if(response.errorOccured)
         alert(response.errorMessage)
       else
-        alert("Loggedin successfully!")
+        alert("Logged in successfully!")
     }
     catch(e){
 

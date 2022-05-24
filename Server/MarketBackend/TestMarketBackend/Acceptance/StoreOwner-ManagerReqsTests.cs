@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
+using MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -513,7 +514,7 @@ namespace TestMarketBackend.Acceptance
 
         // helping functions for adding discount tests 
 
-        private static Func<StoreOwner_ManagerReqsTests, ServicePurchase> getPurchaseProcess(IList<AddProductToCartArguments> addingsToCart)
+        private static Func<StoreOwner_ManagerReqsTests, ServicePurchase> GetPurchaseProcess(IList<AddProductToCartArguments> addingsToCart, bool shouldSucceedBuying = true)
         {
             return (StoreOwner_ManagerReqsTests thisObject) =>
             {
@@ -525,7 +526,7 @@ namespace TestMarketBackend.Acceptance
                 }
 
                 Response<ServicePurchase> purchaseReponse = thisObject.buyerFacade.PurchaseCartContent(member1Id);
-                Assert.IsTrue(!purchaseReponse.ErrorOccured());
+                Assert.AreEqual(shouldSucceedBuying, !purchaseReponse.ErrorOccured());
                 return purchaseReponse.Value;
             };
         }
@@ -540,7 +541,7 @@ namespace TestMarketBackend.Acceptance
                     // store and requesting (to add) member 
                     () => storeId, () => member3Id,
                     // adding to cart
-                    getPurchaseProcess(
+                    GetPurchaseProcess(
                         arguments.Select(argumentObject =>
                             new AddProductToCartArguments()
                             {
@@ -798,7 +799,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceAnd(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 1)
                             ), 
@@ -817,7 +818,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceAnd(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -838,7 +839,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceOr(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 1)
                             ),
@@ -857,7 +858,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceOr(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -876,7 +877,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceOr(
                                 new ServiceProductAmount(iphoneProductId, 2),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -897,7 +898,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new ServiceXor(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 1)
                             ),
@@ -916,7 +917,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new ServiceXor(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -935,7 +936,7 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceAnd(
+                            new ServiceXor(
                                 new ServiceProductAmount(iphoneProductId, 2),
                                 new ServiceProductAmount(calculatorProductId, 2)
                             ),
@@ -978,6 +979,8 @@ namespace TestMarketBackend.Acceptance
             }
         }
 
+        // todo: test remove discount policy 
+
         [Test]
         [TestCaseSource("DataSuccessfulAddDiscount")]
         public void SuccessfulAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase, double expectedPrice)
@@ -995,6 +998,704 @@ namespace TestMarketBackend.Acceptance
             ServicePurchase resultPurchase = purchase(this);
 
             Assert.IsTrue(Math.Abs(expectedPrice - resultPurchase.purchasePrice) < 0.00001); 
+        }
+
+        // buying policies tests 
+
+        public static IEnumerable<TestCaseData> DataFailedAddPurchasePolicy
+        {
+            get
+            {
+                string description = "amount should be ta least one";
+                int amount = 1;
+                // memberId is -1
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => storeId, () => -1);
+                // guest id
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => storeId, () => guest1Id);
+                // member id (does not have role in store) 
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => storeId, () => member1Id);
+                // manager id no permission
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => storeId, () => member4Id); // not in defalut permissions 
+                // coOwner in different store
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => store2Id, () => member5Id);
+
+                // storeId is -1
+                yield return new TestCaseData(
+                    () => new ServiceAtlestAmount(iphoneProductId, amount),
+                    description, () => -1, () => member3Id);
+
+                // currently can add a discount to a product that is not currently in the store 
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataFailedAddPurchasePolicy")]
+        public void FailedAddPurchasePolicy(Func<IServicePurchase> purchasePolicy, string description, Func<int> storeId, Func<int> memberId)
+        {
+            Response<int> response = storeManagementFacade.AddPurchasePolicy(purchasePolicy(), description, storeId(), memberId());
+            Assert.IsTrue(response.ErrorOccured());
+
+            // checking that policy description is not in purchases policies  
+
+            Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetPurchasePolicyDescriptions(storeId());
+            if (!descriptionsResposne.ErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
+            {
+                Assert.IsTrue(!descriptionsResposne.Value.Values.Contains(description));
+            }
+
+        }
+
+        // helping classes for adding purchases policies tests 
+
+        private class TestAddPurchasePolicyArguments
+        {
+            public Func<int> ProductId { get; set; }
+            public Func<int> Amount { get; set; }
+            public Func<bool> ShouldSucceedBuying { get; set; }
+        }
+
+        // helping functions for adding discount tests 
+        // helping functions for adding discount tests 
+
+        private static TestCaseData AddPurchasePolicyTestCase(Func<IServicePurchase> getPolicy, IList<AddProductToCartArguments> arguments, string description, bool shouldSucceedBuying)
+        {
+            return new TestCaseData(
+
+                    // purchase policy
+                    getPolicy, description,
+
+                    // store and requesting (to add) member 
+                    () => storeId, () => member3Id,
+                    // adding to cart
+                    GetPurchaseProcess(
+                        arguments.Select(argumentObject =>
+                            new AddProductToCartArguments()
+                            {
+                                ProductId = argumentObject.ProductId,
+                                Amount = argumentObject.Amount
+                            }).ToList(),
+
+                        // expected result
+                        shouldSucceedBuying
+                    )
+            );
+        }
+
+
+        public static IEnumerable<TestCaseData> DataSuccessfulAddPurchasePolicy
+        {
+
+            get
+            {
+
+                // restrictions tests 
+
+                // after hour
+                
+                // is after hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAfterHour(0),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId, 
+                            Amount = () => 2
+                        }
+                    },
+                    "is after hour",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // is not after hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAfterHour(24),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "is not after hour",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // after hour specific product
+
+                // product amount enough purchase after hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAfterHourProduct(0, iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "product amount enough purchase after hour",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // product amount not enough purchase after hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAfterHourProduct(0, iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "product amount not enough purchase after hour",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // product amount enough from other products purchase after hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAfterHourProduct(0, iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => calculatorProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "product amount enough from other products purchase after hour",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // product amount enough purchase after hour, not after hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAfterHourProduct(24, iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "product amount enough purchase after hour, not after hour",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // before hour
+
+                // is before hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceBeforeHour(23),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "is before hour",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // is not before hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceBeforeHour(-1),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "is not before hour",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // before hour specific product
+
+                // product amount enough purchase before hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceBeforeHourProduct(23, iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "product amount enough purchase before hour",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // product amount not enough purchase before hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceBeforeHourProduct(23, iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "product amount not enough purchase before hour",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // product amount enough from other products purchase before hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceBeforeHourProduct(23, iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => calculatorProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "product amount enough from other products purchase before hour",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // product amount enough purchase before hour, not before hour
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceBeforeHourProduct(-1, iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "product amount enough purchase before hour, not before hour",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // at least amount
+
+                // product amount enough
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAtlestAmount(iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "at least amount, product amount enough",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // product amount not enough
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAtlestAmount(iphoneProductId, 2),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "at least amount, product amount not enough",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // at most amount 
+
+                // product amount at most as needed
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAtMostAmount(iphoneProductId, 1),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "product amount at most as needed",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // product amount more than what that is in at most
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceAtMostAmount(iphoneProductId, 1),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "// product amount more than what that is in at most",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // date (it means that can not buy on that date) 
+
+                // in the date 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceDateRestriction(DateTime.Now.Year, DateTime.Now.Month),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "in the date",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // not in the date 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceDateRestriction(DateTime.Now.Year - 1, DateTime.Now.Month),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "not in the date",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // implies (and predicates) 
+
+                // amount is equal or more
+
+                // false implies false 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductMore(iphoneProductId, 2),
+                        new ServiceCheckProductMore(iphoneProductId, 2)
+                        ), 
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "amount is equal or more, false implies false",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true implies true 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductMore(iphoneProductId, 2),
+                        new ServiceCheckProductMore(iphoneProductId, 2)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "amount is equal or more, true implies true",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true does not imply false 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductMore(iphoneProductId, 2),
+                        new ServiceCheckProductMore(iphoneProductId, 3)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "amount is equal or more, true does not imply false",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // less than amount 
+
+                // false implies false 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductLess(iphoneProductId, 3),
+                        new ServiceCheckProductLess(iphoneProductId, 3)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 3
+                        }
+                    },
+                    "less than amount, false implies false",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true implies true 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductLess(iphoneProductId, 2),
+                        new ServiceCheckProductLess(iphoneProductId, 2)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "less than amount, true implies true",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true does not imply false 
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new ServiceImplies(
+                        new ServiceCheckProductLess(iphoneProductId, 2),
+                        new ServiceCheckProductLess(iphoneProductId, 1)
+                        ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "less than amount, true does not imply false",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // (notice in "and" and "or" these are between restictions) 
+
+                // and 
+
+                // true and true
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
+                    ), 
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "true and true",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true and false
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
+                        new ServiceAtlestAmount(iphoneProductId, 3),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "true and false",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // false and false
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "false and false",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // or 
+
+                // true or true
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 1
+                        }
+                    },
+                    "true or true",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // true or false
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
+                        new ServiceAtlestAmount(iphoneProductId, 3),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "true or false",
+                    // expected result of is the purchase successful 
+                    true
+                );
+
+                // false or false
+                yield return AddPurchasePolicyTestCase(
+                    // the purchase policy
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
+                        new ServiceAtlestAmount(iphoneProductId, 2),
+                        new ServiceAtlestAmount(iphoneProductId, 2)
+                    ),
+                    new List<AddProductToCartArguments>()
+                    {
+                        // the shopping cart 
+                        new AddProductToCartArguments() {
+                            ProductId = () => iphoneProductId,
+                            Amount = () => 2
+                        }
+                    },
+                    "false or false",
+                    // expected result of is the purchase successful 
+                    false
+                );
+
+                // todo: nice to have, add tests with multiple discounts 
+
+                // todo: nice to have, maybe add tests on the other arguments, such as manager requesting etc. 
+
+            }
+        }
+
+        // todo: test remove purchase policy 
+
+        [Test]
+        [TestCaseSource("DataSuccessfulAddPurchasePolicy")]
+        public void SuccessfulAddPurchasePolicy(Func<IServicePurchase> purchasePolicy, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase)
+        {
+            Response<int> response = storeManagementFacade.AddPurchasePolicy(purchasePolicy(), description, storeId(), memberId());
+            Assert.IsTrue(!response.ErrorOccured());
+            int purchasePolicyId = response.Value;
+
+            // checking that purchase policy description was added 
+            Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetPurchasePolicyDescriptions(storeId());
+            Assert.IsTrue(!descriptionsResposne.ErrorOccured());
+            Assert.IsTrue(descriptionsResposne.Value.Contains(new KeyValuePair<int, string>(purchasePolicyId, description)));
+
+
+            ServicePurchase resultPurchase = purchase(this); // including checking if purchase succeeds 
         }
 
 

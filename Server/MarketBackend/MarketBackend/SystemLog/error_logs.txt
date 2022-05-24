@@ -9949,8 +9949,6 @@ The product can't be bought:
 2022-05-23 13:04:14.2346|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1872, targetUserId = 1868, storeId = 240]
 2022-05-23 13:04:14.2503|ERROR|SystemLog.SystemLogger|method: MakeCoManager, parameters: [userId = 1883, targetUserId = 1887, storeId = 242]
 2022-05-23 13:04:14.2503|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1898, targetUserId = 1900, storeId = 244]
-<<<<<<< Updated upstream
-=======
 2022-05-23 16:07:44.3127|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 0, memberToRemoveId = 2]
 2022-05-23 16:07:44.3449|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
 2022-05-23 16:07:44.3449|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
@@ -16474,4 +16472,3 @@ The product can't be bought:
 ]
 2022-05-24 16:38:38.4541|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2766, market exception: TheStore, the policy is violated: false or false
 ]
->>>>>>> Stashed changes

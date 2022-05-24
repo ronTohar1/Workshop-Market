@@ -15,7 +15,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
 
         public override bool IsSatisfied(ShoppingBag bag)
         {
-            return !base.IsSatisfied(bag);      
+            foreach (ProductInBag pib in bag.ProductsAmounts.Keys)
+            {
+                if (pib.ProductId == productId)
+                {
+                    return bag.ProductsAmounts[pib] > amount;
+                }
+            }
+            return false;
         }
     }
 }

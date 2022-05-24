@@ -19,10 +19,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
             {
                 if (pib.ProductId == productId)
                 {
-                    return bag.ProductsAmounts[pib] > amount;
+                    return bag.ProductsAmounts[pib] <= amount;
                 }
             }
-            return false;
+            return true;
         }
     }
 }

@@ -1,14 +1,12 @@
 import Product from "../DTOs/Product";
+import Response from "./Response";
 
 export const serverPort = "https://localhost:7242";
-export interface Response<T> {
-  errorMessage: string;
-  value: T;
-}
-export async function login(
-  name: string | undefined,
-  password: string | undefined
-): Promise<any> {
+
+export async function serverLogin(
+  name: string | undefined | null,
+  password: string | undefined| null
+): Promise<Response<number>> {
   if (name == undefined || password == undefined) return Promise.reject();
   const uri = serverPort + "/api/Buyers/Login";
   const jsonResponse = await fetch(uri, {
@@ -26,9 +24,7 @@ export async function login(
     }),
   });
 
- 
-  const response : Response<number> =  await jsonResponse.json()
-  console.log("look it works " + response.value + " .....and error is " + response.errorMessage)
+  return jsonResponse.json();
 }
 
 //.then(response=>Promise.resolve(response.json().then((data)=>data)))

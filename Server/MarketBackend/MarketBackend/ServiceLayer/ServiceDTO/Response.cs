@@ -11,17 +11,25 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public T Value { get; set; }
         public string ErrorMessage { get; set; }
 
+        public bool errorOccured = false;
+
         public Response() =>
             ErrorMessage = string.Empty;
 
         public Response(T value) : this() =>
             Value = value;
 
-        public Response(string errorMessage) =>
+        public Response(string errorMessage)
+        {
             ErrorMessage = errorMessage;
+            errorOccured = true;
+        }
+        public Response(T value, string errorMessage) : this(value)
+        {
+            ErrorMessage = errorMessage;
+            errorOccured = true;
 
-        public Response(T value, string errorMessage) : this(value) =>
-            ErrorMessage = errorMessage;
+        }
 
         public bool ErrorOccured() =>
             ErrorMessage != string.Empty;

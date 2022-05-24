@@ -12,7 +12,7 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { login } from "../services/BuyersService";
+import { serverLogin } from "../services/BuyersService";
 
 const theme = createTheme();
 
@@ -31,11 +31,20 @@ const randBackgroundImage = () =>
   backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
 
 export default function Login() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (data.get('username')!=null && data.get('password')!=null){
-    login(data.get('username')?.toString(), data.get('password')?.toString());
+    const username = data.get("username")?.toString()
+    const password = data.get("password")?.toString()
+    const result = serverLogin(username,password)
+
+    try{
+      const response = await result
+      if(response.errorMessage!=null)
+        alert(response.errorMessage)
+    }
+    catch(e){
+
     }
   };
 

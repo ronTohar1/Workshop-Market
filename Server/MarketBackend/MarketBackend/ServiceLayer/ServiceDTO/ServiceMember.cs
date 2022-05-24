@@ -10,18 +10,21 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 
     public class ServiceMember
     {
+        public int Id { get; }
         public string UserName { get; }
         public bool LoggedIn { get;  }
         
         // need to change that when adding fields to member
-        public ServiceMember(Member m)
+        public ServiceMember(int memberId, Member m)
         {
+            Id = memberId;
             UserName = m.Username;
             LoggedIn = m.LoggedIn;
         }
 
-        public ServiceMember(string username, bool loggedIn)
+        public ServiceMember(int memberId, string username, bool loggedIn)
         {
+            Id = memberId;
             UserName = username;
             LoggedIn = loggedIn;
         }

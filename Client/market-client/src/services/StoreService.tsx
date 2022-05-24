@@ -1,8 +1,11 @@
 import Store from "../DTOs/Store";
+import Member from "../DTOs/Member";
 import Product from "../DTOs/Product";
 import { dummyProducts, groupByStore } from "../services/ProductsService";
 import {serverPort} from "../services/BuyersService";
-
+import Response from "../services/Response";
+import List from "@mui/material/List";
+import Purchase from "../DTOs/Purchase";
 const stores = [
   new Store(0, "Ronto's", groupByStore(dummyProducts)[0]),
   new Store(1, "Mithcell's", groupByStore(dummyProducts)[1]),
@@ -19,10 +22,32 @@ export const getStore = (id: number) => {
 export function groupStoresProducts(stores: Store[]): Product[][] {
   return stores.map((store: Store) => store.products);
 }
+// export async function serverLogin(
+//   name: string | undefined | null,
+//   password: string | undefined| null
+// ): Promise<Response<number>> {
+//   if (name == undefined || password == undefined) return Promise.reject();
+//   const uri = serverPort + "/api/Buyers/Login";
+//   const jsonResponse = await fetch(uri, {
+//     method: "POST",
+//     headers: {
+//       accept: "text/plain",
+//       "Content-Type": "application/json",
+//       "Access-Control-Allow-Origin": "http",
+//     },
+//     // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+//     body: JSON.stringify({
+//       userName: name,
+//       password: password,
+//       port: window.location.port,
+//     }),
+//   });
 
-export async function addNewProduct(userId: number, product: Product):Promise<any> {
+//   return jsonResponse.json();
+// }
+export async function addNewProduct(userId: number, product: Product): Promise<Response<number>> {
   const uri = serverPort+'/api/Stores/AddNewProduct';
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
         'accept': 'text/plain',
@@ -36,12 +61,14 @@ export async function addNewProduct(userId: number, product: Product):Promise<an
         'price': product.price,
         'category': product.category
     })
-});}
+});
+  return  jsonResponse.json();
+}
 
 
-export async function addToProductInventory(userId: number, storeId:number, productId: number, amount:number):Promise<any> {
+export async function addToProductInventory(userId: number, storeId:number, productId: number, amount:number):Promise<Response<boolean>> {
   const uri = serverPort+'/api/Stores/AddProduct';
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: 'PUT',
     headers: {
         'accept': 'text/plain',
@@ -54,12 +81,14 @@ export async function addToProductInventory(userId: number, storeId:number, prod
       'productId': productId,
       'amount': amount
     })
-});}
+});
+  return jsonResponse.json();
+}
 
 
-export async function removeFromProductInventory(userId: number, storeId:number, productId: number, amount:number):Promise<any> {
+export async function removeFromProductInventory(userId: number, storeId:number, productId: number, amount:number):Promise<Response<boolean>> {
   const uri = serverPort+'/api/Stores/DecreaseProduct';
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: 'PUT',
     headers: {
         'accept': 'text/plain',
@@ -72,12 +101,14 @@ export async function removeFromProductInventory(userId: number, storeId:number,
         'productId': productId,
         'amount': amount
     })
-});}
+});
+  return jsonResponse.json();
+}
 
 
-export async function makeCoOwner(userId: number, storeId: number, targetUserId:number):Promise<any> {
+export async function makeCoOwner(userId: number, storeId: number, targetUserId:number):Promise<Response<boolean>> {
   const uri = serverPort+'/api/Stores/MakeCoOwner';
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: 'PUT',
     headers: {
         'accept': 'text/plain',
@@ -89,12 +120,14 @@ export async function makeCoOwner(userId: number, storeId: number, targetUserId:
         'storeId': storeId,
         'targetUserId': targetUserId
     })
-});}
+});
+  return jsonResponse.json();
+}
 
 
-export async function removeCoOwner(userId: number, storeId: number, targetUserId:number):Promise<any> {
+export async function removeCoOwner(userId: number, storeId: number, targetUserId:number):Promise<Response<boolean>> {
   const uri = serverPort+'/api/Stores/RemoveCoOwner';
-  return await fetch(uri, {
+  const jsonResponse =  await fetch(uri, {
     method: 'PUT',
     headers: {
         'accept': 'text/plain',
@@ -106,12 +139,14 @@ export async function removeCoOwner(userId: number, storeId: number, targetUserI
       'storeId': storeId,
       'targetUserId': targetUserId
     })
-});}
+});
+  return jsonResponse.json()
+}
 
 
-export async function makeCoManager(userId: number, storeId: number, targetUserId:number):Promise<any> {
+export async function makeCoManager(userId: number, storeId: number, targetUserId:number):Promise<Response<boolean>> {
   const uri = serverPort+'/api/Stores/MakeCoManager';
-  return await fetch(uri, {
+  const jsonResponse =  await fetch(uri, {
     method: 'PUT',
     headers: {
         'accept': 'text/plain',
@@ -123,12 +158,14 @@ export async function makeCoManager(userId: number, storeId: number, targetUserI
       'storeId': storeId,
       'targetUserId': targetUserId
     })
-});}
+});
+  return jsonResponse.json();
+}
 
 
-export async function getMembersInRoles(userId: number, storeId: number, role:number):Promise<any> {
+export async function getMembersInRoles(userId: number, storeId: number, role:number):Promise<Response<boolean>> {
   const uri = serverPort+'/api/Stores/MembersInRole';
-  return await fetch(uri, {
+  const jsonResponse =  await fetch(uri, {
     method: 'POST',
     headers: {
         'accept': 'text/plain',
@@ -140,11 +177,13 @@ export async function getMembersInRoles(userId: number, storeId: number, role:nu
         'storeId': storeId,
         'role': role
     })
-});}
+});
+  return jsonResponse.json();
+}
 
-export async function getFounder(userId: number, storeId: number):Promise<any> {
+export async function getFounder(userId: number, storeId: number):Promise<Response<Member>> {
   const uri = serverPort+'/api/Stores/Founder';
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
         'accept': 'text/plain',
@@ -155,12 +194,14 @@ export async function getFounder(userId: number, storeId: number):Promise<any> {
         'userId': userId,
         'storeId': storeId
     })
-});}
+});
+return jsonResponse.json();
+}
 
 
-export async function getManagerPermission(userId: number, storeId: number, targetUserId: number):Promise<any> {
+export async function getManagerPermission(userId: number, storeId: number, targetUserId: number):Promise<Response<number[]>> {
   const uri = serverPort+'/api/Stores/ManagerPermissions';
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
         'accept': 'text/plain',
@@ -172,12 +213,14 @@ export async function getManagerPermission(userId: number, storeId: number, targ
         'storeId': storeId,
         'targetUserId': targetUserId
     })
-});}
+});
+  return jsonResponse.json();
+}
 
 
-export async function setManagerPermission(userId: number, storeId: number, targetUserId: number, newPermissions: number[]):Promise<any> {
+export async function setManagerPermission(userId: number, storeId: number, targetUserId: number, newPermissions: number[]):Promise<Response<boolean>> {
   const uri = serverPort+'/api/Stores/ChangeManagerPermission';
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
         'accept': 'text/plain',
@@ -190,12 +233,14 @@ export async function setManagerPermission(userId: number, storeId: number, targ
         'targetUserId': targetUserId,
         'permissions': newPermissions
     })
-});}
+});
+    return jsonResponse.json();
+}
 
 
-export async function getPurchaseHistory(userId: number, storeId: number):Promise<any> {
+export async function getPurchaseHistory(userId: number, storeId: number):Promise<Response<Purchase[]>> {
   const uri = serverPort+'/api/Stores/PurchaseHistory';
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
         'accept': 'text/plain',
@@ -206,13 +251,14 @@ export async function getPurchaseHistory(userId: number, storeId: number):Promis
         'userId': userId,
         'storeId': storeId
     })
-});}
+});
+  return jsonResponse.json();
+}
 
 
-export async function openStore(userId: number, storeName: string):Promise<any> {
+export async function openStore(userId: number, storeName: string):Promise<Response<number>> {
   const uri = serverPort+'/api/Stores/OpenStore';
-  try{
-      const fetched =  fetch(uri, {
+    const jsonResponse = await fetch(uri, {
         method: 'POST',
         headers: {
             'accept': 'text/plain',
@@ -223,18 +269,13 @@ export async function openStore(userId: number, storeName: string):Promise<any> 
             'userId': userId,
             'storeName': storeName
         })
-    });
-    return fetched;
-  }
-  catch(error){
-    
-  }
+    }); return jsonResponse.json();
 }
 
 //.then(response=>Promise.resolve(response.json().then((data)=>data)))
-export async function closeStore(userId: number, storeId: number):Promise<any> {
+export async function closeStore(userId: number, storeId: number):Promise<Response<boolean>> {
   const uri = serverPort+'/api/Stores/CloseStore';
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: 'DELETE',
     headers: {
         'accept': 'text/plain',
@@ -245,7 +286,8 @@ export async function closeStore(userId: number, storeId: number):Promise<any> {
         'userId': userId,
         'storeId': storeId
     })
-});}
+});return jsonResponse.json();
+}
 //////////////////////////////// ---  ADD FREAKING DISCOUNTS AND PURCHASES ---- ///////
 
 // export async function addDiscountPolicy(userId: number, storeId: number,,description:string):Promise<any> {

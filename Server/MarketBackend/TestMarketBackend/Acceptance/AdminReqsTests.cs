@@ -468,8 +468,8 @@ namespace TestMarketBackend.Acceptance
         {
             get
             {
-                yield return new TestCaseData(() => adminId, () => member1Id, () => new ServiceMember(userName1, false));
-                yield return new TestCaseData(() => adminId, () => member2Id, () => new ServiceMember(userName2, true)); 
+                yield return new TestCaseData(() => adminId, () => member1Id, () => new ServiceMember(member1Id,userName1, false));
+                yield return new TestCaseData(() => adminId, () => member2Id, () => new ServiceMember(member2Id, userName2, true)); 
             }
         }
 

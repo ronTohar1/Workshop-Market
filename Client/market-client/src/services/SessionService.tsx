@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+import { pathHome } from "../Paths";
 import { serverEnter } from "./BuyersService";
 
 const isInitOccured = "isInitOccured";
@@ -6,46 +8,49 @@ const isGuest = "isGuest";
 const buyerId = "memberId";
 
 export async function initSession() {
-  const response = serverEnter();
   try {
-    console.log(response)
     const didInit = localStorage.getItem(isInitOccured);
-    console.log("dafsf" + didInit)
     if (didInit === null) {
+      const response = serverEnter();
       const id = await response;
-
-      localStorage.setItem(buyerId, String(id));
-      localStorage.setItem(isGuest, "true");
-      localStorage.setItem(isInitOccured, "true");
-      console.log("initiated")
       
+      if (id.errorOccured)
+        throw new Error(".......");
+        
+      initFields(id.value)
+      console.log("initiated new guest id");
     }
   } catch (e) {
-    alert("Sorry, an unkown error has occured!");
-    window.close();
+    alert("Sorry, dear visitor, an unkown error has occured!");
   }
-
-  
 }
 
-type Primitive = string | number | boolean;
-function createGetter<T extends Primitive>(
-  convert: (value: string | null | undefined) => T,
+function initFields(id:number){
+  localStorage.setItem(buyerId, String(id));
+  localStorage.setItem(isGuest, "true");
+  localStorage.setItem(isInitOccured, "true");
+}
+
+export function clearSession(){localStorage.clear()}
+
+
+function createGetter<T>(
   field: string
 ): () => T {
-  return () => convert(localStorage.getItem(field));
+  const val = localStorage.getItem(field)
+  return () => val === null? val : JSON.parse(val);
 }
 
-function createSetter<T extends Primitive>(field: string): (v: T) => void {
-  return (newValue: T) => localStorage.setItem(field, String(newValue));
+function createSetter<T>(field: string): (v: T) => void {
+  return (newValue: T) => localStorage.setItem(field, JSON.stringify(newValue));
 }
 
 // Guest setter Getter
-export const getIsGuest = createGetter(Boolean, isGuest);
+export const getIsGuest: () => boolean = createGetter(isGuest);
 
 export const setIsGuest: (v: boolean) => void = createSetter(isGuest);
 
 // member setter Getter
-export const getBuyerId = createGetter(Number, buyerId);
+export const getBuyerId: () => number = createGetter(buyerId);
 
 export const setBuyerId: (v: number) => void = createSetter(buyerId);

@@ -2,8 +2,8 @@ import Store from "../DTOs/Store";
 import Member from "../DTOs/Member";
 import Product from "../DTOs/Product";
 import { dummyProducts, groupByStore } from "../services/ProductsService";
-import {serverPort} from "../services/BuyersService";
-import Response from "../services/Response";
+import {serverPort} from '../Utils'
+import ClientResponse from "../services/Response";
 import List from "@mui/material/List";
 import Purchase from "../DTOs/Purchase";
 const stores = [
@@ -45,7 +45,7 @@ export function groupStoresProducts(stores: Store[]): Product[][] {
 
 //   return jsonResponse.json();
 // }
-export async function addNewProduct(userId: number, product: Product): Promise<Response<number>> {
+export async function addNewProduct(userId: number, product: Product): Promise<ClientResponse<number>> {
   const uri = serverPort+'/api/Stores/AddNewProduct';
   const jsonResponse = await fetch(uri, {
     method: 'POST',
@@ -66,7 +66,7 @@ export async function addNewProduct(userId: number, product: Product): Promise<R
 }
 
 
-export async function addToProductInventory(userId: number, storeId:number, productId: number, amount:number):Promise<Response<boolean>> {
+export async function addToProductInventory(userId: number, storeId:number, productId: number, amount:number):Promise<ClientResponse<boolean>> {
   const uri = serverPort+'/api/Stores/AddProduct';
   const jsonResponse = await fetch(uri, {
     method: 'PUT',
@@ -86,7 +86,7 @@ export async function addToProductInventory(userId: number, storeId:number, prod
 }
 
 
-export async function removeFromProductInventory(userId: number, storeId:number, productId: number, amount:number):Promise<Response<boolean>> {
+export async function removeFromProductInventory(userId: number, storeId:number, productId: number, amount:number):Promise<ClientResponse<boolean>> {
   const uri = serverPort+'/api/Stores/DecreaseProduct';
   const jsonResponse = await fetch(uri, {
     method: 'PUT',
@@ -106,7 +106,7 @@ export async function removeFromProductInventory(userId: number, storeId:number,
 }
 
 
-export async function makeCoOwner(userId: number, storeId: number, targetUserId:number):Promise<Response<boolean>> {
+export async function makeCoOwner(userId: number, storeId: number, targetUserId:number):Promise<ClientResponse<boolean>> {
   const uri = serverPort+'/api/Stores/MakeCoOwner';
   const jsonResponse = await fetch(uri, {
     method: 'PUT',
@@ -125,7 +125,7 @@ export async function makeCoOwner(userId: number, storeId: number, targetUserId:
 }
 
 
-export async function removeCoOwner(userId: number, storeId: number, targetUserId:number):Promise<Response<boolean>> {
+export async function removeCoOwner(userId: number, storeId: number, targetUserId:number):Promise<ClientResponse<boolean>> {
   const uri = serverPort+'/api/Stores/RemoveCoOwner';
   const jsonResponse =  await fetch(uri, {
     method: 'PUT',
@@ -144,7 +144,7 @@ export async function removeCoOwner(userId: number, storeId: number, targetUserI
 }
 
 
-export async function makeCoManager(userId: number, storeId: number, targetUserId:number):Promise<Response<boolean>> {
+export async function makeCoManager(userId: number, storeId: number, targetUserId:number):Promise<ClientResponse<boolean>> {
   const uri = serverPort+'/api/Stores/MakeCoManager';
   const jsonResponse =  await fetch(uri, {
     method: 'PUT',
@@ -163,7 +163,7 @@ export async function makeCoManager(userId: number, storeId: number, targetUserI
 }
 
 
-export async function getMembersInRoles(userId: number, storeId: number, role:number):Promise<Response<boolean>> {
+export async function getMembersInRoles(userId: number, storeId: number, role:number):Promise<ClientResponse<boolean>> {
   const uri = serverPort+'/api/Stores/MembersInRole';
   const jsonResponse =  await fetch(uri, {
     method: 'POST',
@@ -181,7 +181,7 @@ export async function getMembersInRoles(userId: number, storeId: number, role:nu
   return jsonResponse.json();
 }
 
-export async function getFounder(userId: number, storeId: number):Promise<Response<Member>> {
+export async function getFounder(userId: number, storeId: number):Promise<ClientResponse<Member>> {
   const uri = serverPort+'/api/Stores/Founder';
   const jsonResponse = await fetch(uri, {
     method: 'POST',
@@ -199,7 +199,7 @@ return jsonResponse.json();
 }
 
 
-export async function getManagerPermission(userId: number, storeId: number, targetUserId: number):Promise<Response<number[]>> {
+export async function getManagerPermission(userId: number, storeId: number, targetUserId: number):Promise<ClientResponse<number[]>> {
   const uri = serverPort+'/api/Stores/ManagerPermissions';
   const jsonResponse = await fetch(uri, {
     method: 'POST',
@@ -218,7 +218,7 @@ export async function getManagerPermission(userId: number, storeId: number, targ
 }
 
 
-export async function setManagerPermission(userId: number, storeId: number, targetUserId: number, newPermissions: number[]):Promise<Response<boolean>> {
+export async function setManagerPermission(userId: number, storeId: number, targetUserId: number, newPermissions: number[]):Promise<ClientResponse<boolean>> {
   const uri = serverPort+'/api/Stores/ChangeManagerPermission';
   const jsonResponse = await fetch(uri, {
     method: 'POST',
@@ -238,7 +238,7 @@ export async function setManagerPermission(userId: number, storeId: number, targ
 }
 
 
-export async function getPurchaseHistory(userId: number, storeId: number):Promise<Response<Purchase[]>> {
+export async function getPurchaseHistory(userId: number, storeId: number):Promise<ClientResponse<Purchase[]>> {
   const uri = serverPort+'/api/Stores/PurchaseHistory';
   const jsonResponse = await fetch(uri, {
     method: 'POST',
@@ -256,7 +256,7 @@ export async function getPurchaseHistory(userId: number, storeId: number):Promis
 }
 
 
-export async function openStore(userId: number, storeName: string):Promise<Response<number>> {
+export async function openStore(userId: number, storeName: string):Promise<ClientResponse<number>> {
   const uri = serverPort+'/api/Stores/OpenStore';
     const jsonResponse = await fetch(uri, {
         method: 'POST',
@@ -273,7 +273,7 @@ export async function openStore(userId: number, storeName: string):Promise<Respo
 }
 
 //.then(response=>Promise.resolve(response.json().then((data)=>data)))
-export async function closeStore(userId: number, storeId: number):Promise<Response<boolean>> {
+export async function closeStore(userId: number, storeId: number):Promise<ClientResponse<boolean>> {
   const uri = serverPort+'/api/Stores/CloseStore';
   const jsonResponse = await fetch(uri, {
     method: 'DELETE',

@@ -1,4 +1,6 @@
 import Product from "../DTOs/Product";
+import { serverPort } from "../Utils";
+import ClientResponse from "./Response";
 
 export const dummyProducts = [
   new Product(1, "apple", 2.4, "fruits", 0, 100),
@@ -35,4 +37,33 @@ export function groupByStore(products: Product[]): Product[][] {
   const groupedProducts = Array.from(groupedProductsMap.values());
 
   return groupedProducts;
+}
+
+
+// ------------------------------------------------------------
+//                        Server Communication
+
+export async function serverSearchProducts(
+  storeName: string,
+  productName: string,
+  category: string,
+  keyword: string
+): Promise<ClientResponse<Map<number,Product[]>>> {
+  const uri = serverPort + "/api/Buyers/RemoveProduct";
+  const response = await fetch(uri, {
+    method: "DELETE",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+    // body: '{\n  "userId": 0,\n  "productId": 0,\n  "storeId": 0\n}',
+    body: JSON.stringify({
+      storeName: storeName,
+      productName: productName,
+      category: category,
+      keyword: keyword
+    }),
+  });
+
+  
 }

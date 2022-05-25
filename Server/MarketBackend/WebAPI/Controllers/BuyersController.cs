@@ -107,7 +107,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("SerachProducts")]
-        public ActionResult<Response<bool>> ProductsSearch([FromBody] SearchProductsRequest request)
+        public ActionResult<Response<IDictionary<int, IList<ServiceProduct>>>> ProductsSearch([FromBody] SearchProductsRequest request)
         {
             Response<IDictionary<int, IList<ServiceProduct>>> response =
                 buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword);

@@ -1,10 +1,8 @@
 import Product from "../DTOs/Product";
-import Response from "./Response";
+import { serverPort } from "../Utils";
+import ClientResponse from "./Response";
 
-export const serverPort = "https://localhost:7242";
-
-export async function serverEnter(
-): Promise<Response<number>> {
+export async function serverEnter(): Promise<ClientResponse<number>> {
   const uri = serverPort + "/api/Buyers/Enter";
   const jsonResponse = await fetch(uri);
 
@@ -14,7 +12,7 @@ export async function serverEnter(
 export async function serverLogin(
   name: string | undefined | null,
   password: string | undefined | null
-): Promise<Response<number>> {
+): Promise<ClientResponse<number>> {
   if (name == undefined || password == undefined) return Promise.reject();
   const uri = serverPort + "/api/Buyers/Login";
   const jsonResponse = await fetch(uri, {
@@ -32,7 +30,7 @@ export async function serverLogin(
     }),
   });
 
-  const response = jsonResponse.json()
+  const response = jsonResponse.json();
   return response;
 }
 
@@ -56,7 +54,7 @@ export async function logout(userId: number): Promise<any> {
 export async function serverRegister(
   name: string | undefined,
   password: string | undefined
-): Promise<Response<number>> {
+): Promise<ClientResponse<number>> {
   const uri = serverPort + "/api/Buyers/Register";
   const jsonResponse = await fetch(uri, {
     method: "POST",

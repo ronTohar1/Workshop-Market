@@ -33,6 +33,7 @@ export default function StorePageById(store: Store) {
   const storeProducts: Product[] = store.products;
   const isManager: boolean = true; //TODO: change to real value. storeService.getMemberInRole(...)
   const [rows, setRows] = React.useState<Product[]>(storeProducts);
+  
 
   const fields = {
     name: "name",

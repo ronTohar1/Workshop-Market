@@ -6,6 +6,7 @@ const isInitOccured = "isInitOccured";
 
 const isGuest = "isGuest";
 const buyerId = "memberId";
+const searchQuery = "searchQuery"
 
 export async function initSession() {
   try {
@@ -29,6 +30,7 @@ function initFields(id:number){
   localStorage.setItem(buyerId, String(id));
   localStorage.setItem(isGuest, "true");
   localStorage.setItem(isInitOccured, "true");
+  localStorage.setItem(searchQuery, "iphone")
 }
 
 export function clearSession(){localStorage.clear()}

@@ -1,5 +1,5 @@
 import Product from "../DTOs/Product";
-import { serverPort } from "../Utils";
+import { IDictionary, serverPort } from "../Utils";
 import ClientResponse from "./Response";
 
 export const dummyProducts = [
@@ -18,29 +18,27 @@ export const dummyProducts = [
 export const fetchProducts = async (query: string): Promise<Product[][]> => {
   try {
     const promiseResponse = serverSearchProducts(null, query, null, null);
-    console.log("promiseResponse");
-    console.log(promiseResponse);
+
     const serverResponse = await promiseResponse;
-    console.log("serverRespone");
-    console.log(serverResponse);
+    
+    const productsByStore : any = serverResponse.value; // Dicitionary of store to product
     if (serverResponse.errorOccured) {
       alert("Whoops! " + serverResponse.errorMessage);
       return [];
     }
-    const prodsMap : Map<number, Product[]> = serverResponse.value;
-    console.log("prodsMap")
-    console.log(prodsMap)
-    const productsByStore: Product[][] = Array.from(prodsMap.values())
-    console.log("productsByStore");
-    console.log(productsByStore);
-    return productsByStore;
+
+    const allProducts : Product[][] = []
+
+    for (const storeId in productsByStore) {
+      allProducts.push(productsByStore[Number(storeId)])
+    }
+    return allProducts;
+    
   } catch (e) {
     console.log("this is" + e);
     console.log("Sorry, could not find any products for an unkown reason");
     return [];
   }
-  console.log(dummyProducts);
-  return groupByStore(dummyProducts);
 };
 
 // const takeMapValues = (prodsMap: Map<number,Product[]>) : Product[][] => {

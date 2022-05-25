@@ -135,6 +135,12 @@ export default function Navbar() {
     if (notifications.length === 0) setOpenNotifications(false);
   };
 
+  const handleSearch = () =>
+  {
+    navigate(pathSearch)
+    // navigate(`${pathSearch}?query=${searchValue}`);
+  }
+
   const handleMyAccountClick = () => {
     setAnchorEl(null);
   };
@@ -201,7 +207,7 @@ export default function Navbar() {
               component='form'
               noValidate
               onSubmit={(e: any) => {
-                navigate(`${pathSearch}?query=${searchValue}`);
+                handleSearch()
               }}>
               <Stack direction='row' spacing={2}>
                 <Search sx={{ flexGrow: 1 }}>

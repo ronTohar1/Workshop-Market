@@ -1,5 +1,10 @@
+
 export const Currency = "NIS";
 export const serverPort = "https://localhost:7242"; 
+
+export interface IDictionary<T> {
+  [index:number]: T;
+}
 // TextField for example, expect to get this type of function on onChange Event:  (event: React.ChangeEvent<HTMLInputElement>) => void
 // instead of making handler for each property that can be changed, this function generates the handlers (using the setState returned from React.useState())
 export const makeSetStateFromEvent = (setState: any) => {

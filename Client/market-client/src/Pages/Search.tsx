@@ -26,7 +26,7 @@ import { fetchProducts, groupByStore } from "../services/ProductsService";
 import { useQueryParam, NumberParam, StringParam } from "use-query-params";
 import { getStore } from "../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { pathStore } from "../Paths";
 
 function ProductsTable() {
@@ -137,47 +137,37 @@ const theme = createTheme({
 export default function SearchPage() {
   const startingPageSize = 5;
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
-  const [query] = useQueryParam("query", StringParam);
-  // const [productsByStore, setProductsByStore] = React.useState<Product[][]>([]);
-  let productsByStore: Product[][] = [[]];
-
-  // map products to Map indexing items by id
-  fetchProducts(query || "").then((prods) => {
-    console.log("prods is");
-    console.log(prods);
-    productsByStore = prods;
+  // const [query, setQuery] = useQueryParam("query", StringParam);
+  const query = localStorage.getItem("searchQuery");
+  const [productsByStore, setProductsByStore] = React.useState<Product[][]>([]);
+  //Send function to navbar that activates the setProductsByStore here when pushin search
+  let productsByStore : Product[][] = []
+  fetchProducts(query || "").then((prods: Product[][]) => {
+    setProductsByStore(prods);
   });
-  // console.log(productsByStore)
-  // const products: Map<number, Product> = Object.assign(
-  //   {},
-  //   ...productsLst.map((p: Product) => ({ [p.id]: p }))
-  // );
-  // const productsByStore: Product[][] = groupByStore(productsLst);
-
   return (
     <ThemeProvider theme={theme}>
       <Box>
         <Navbar />
         <Stack>
-          {productsByStore !== undefined
-            ? productsByStore.map((prodsOfStore: Product[]) => {
-                const storeId = prodsOfStore[0].store;
-                return StoreGrid(
-                  createRows(prodsOfStore),
-                  pageSize,
-                  setPageSize,
-                  storeId
-                );
-              })
-            : null}
+          {productsByStore.map((prodsOfStore: Product[]) => {
+            const storeId = prodsOfStore[0].store;
+            console.log("store" + storeId);
+            return StoreGrid(
+              createRows(prodsOfStore),
+              pageSize,
+              setPageSize,
+              storeId
+            );
+          })}
         </Stack>
       </Box>
     </ThemeProvider>
   );
 }
 
-SearchPage.defaultProps = {
-  query: "",
-};
+// SearchPage.defaultProps = {
+//   query: "",
+// };
 
 // export default SearchPage;

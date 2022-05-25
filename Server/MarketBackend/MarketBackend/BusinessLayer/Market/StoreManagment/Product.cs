@@ -4,11 +4,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
 	public class Product
 	{
-		public int id { get; private set; }
+		public virtual int id { get; private set; }
 		public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
-		public int amountInInventory { get; set; }
+		public virtual int amountInInventory { get; set; }
 		public IList<PurchaseOption> purchaseOptions { get; }
-		public IList<string> reviews; //mapping between member name and 
+		public IDictionary<int,IList<string>> reviews; //mapping between member id and his reviews
 		public double pricePerUnit { get; set; }
 		public virtual string category { get; private set; }
 		public double productdicount { get; set; }
@@ -18,10 +18,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 		private Mutex amountInInventoryMutex;
 		private Mutex purchaseOptionsMutex;
-		private Mutex reviewMutex;
 		private Mutex pricePerUnitMutex;
 		private Mutex categoryMutex;
 		private Mutex productDiscountMutex;
+
+		public Mutex storeMutex { get; private set; }
 
 		public Product(string product_name, double pricePerUnit, string category, double productdicount = 0.0)
 		{
@@ -29,24 +30,25 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			this.name = product_name;
 			this.amountInInventory = 0;
 			this.purchaseOptions = new SynchronizedCollection<PurchaseOption>();
-			this.reviews = new SynchronizedCollection<string>(); // 
+			this.reviews = new ConcurrentDictionary<int, IList<string>>(); // 
 			this.pricePerUnit = pricePerUnit;
 			this.category = category;
 			this.productdicount = productdicount;
 
 			amountInInventoryMutex = new Mutex();
 			purchaseOptionsMutex = new Mutex();
-			reviewMutex = new Mutex();
 			pricePerUnitMutex = new Mutex();
 			categoryMutex = new Mutex();
 			productDiscountMutex = new Mutex();
+
+			storeMutex = new Mutex();
 
 		}
 
 		public Product(string product_name, double pricePerUnit, string category) : this(product_name, pricePerUnit, category, 0.0) { }
 
 		// r.4.1
-		public void AddToInventory(int amountToAdd)
+		public virtual void AddToInventory(int amountToAdd)
 		{
 			amountInInventoryMutex.WaitOne();
 			amountInInventory = amountInInventory + amountToAdd;
@@ -54,7 +56,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		}
 		// cc 9
 		// r.4.1
-		public void RemoveFromInventory(int amountToRemove)
+		public virtual void RemoveFromInventory(int amountToRemove)
 		{
 			amountInInventoryMutex.WaitOne();
 			if (amountInInventory < amountToRemove)
@@ -91,16 +93,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		}
 
 		// r.4.2
-		public void AddProductReview(string memberRevierName, string review)
+		public void AddProductReview(int memberId, string review)
 		{
-			reviewMutex.WaitOne();
-			reviews.Add(memberRevierName + ": " + review);
-			if (String.IsNullOrWhiteSpace(review)) {
-				reviewMutex.ReleaseMutex();
+			if (String.IsNullOrWhiteSpace(review))
 				throw new MarketException($"can't recieve an empty comment");
-			}
-
-			reviewMutex.ReleaseMutex();
+			
+			if (!reviews.ContainsKey(memberId))
+				reviews[memberId] = new SynchronizedCollection<string>();
+			reviews[memberId].Add(review);
 		}
 		// r.4.2
 		public void SetProductCategory(string newCategory)
@@ -138,8 +138,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public bool ContainsPurchasePolicy(PurchaseOption purchaseOption)
 			=> purchaseOptions.Contains(purchaseOption);
 
-		public double getUnitPriceWithDiscount()
+		public virtual double GetPrice()
 			=> pricePerUnit * (1 - productdicount);
 
-	}
+        public override int GetHashCode()
+        {
+            return this.id.GetHashCode();
+        }
+
+    }
 }

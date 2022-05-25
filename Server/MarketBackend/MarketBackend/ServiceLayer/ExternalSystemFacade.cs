@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MarketBackend.ServiceLayer
 {
     // for now this class has no purpoe because of the lack of systems
-    internal class ExternalSystemFacade
+    public class ExternalSystemFacade
     {
         public ExternalSystemFacade()
         {

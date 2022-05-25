@@ -8,7 +8,7 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
 {
     // this class will hold the outside payment system when we will have it
     // for now its default to returning true to allow the system to operate normally
-    internal class ExternalPaymentSystem : IExternalPaymentSystem
+    public class ExternalPaymentSystem : IExternalPaymentSystem
     {
         public ExternalPaymentSystem()
         {
@@ -20,5 +20,12 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
         {
             return true;
         }
+
+        public virtual bool CancelPayment()
+        {
+            return true;
+        }
+
+        
     }
 }

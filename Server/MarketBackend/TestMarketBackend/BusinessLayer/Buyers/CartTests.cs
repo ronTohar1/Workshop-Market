@@ -14,8 +14,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
     internal class CartTests
     {
         private static Cart cart = new Cart();
-        private static ShoppingBag bag1 = new ShoppingBag();
-        private static ShoppingBag bag2 = new ShoppingBag();
+        private static ShoppingBag bag1 = new ShoppingBag(1);
+        private static ShoppingBag bag2 = new ShoppingBag(2);
         private static ProductInBag productNotInBag1 = new ProductInBag(1, 1);
         private static ProductInBag productInBag2    = new ProductInBag(2, 2);
         private static ProductInBag productNotInBag3 = new ProductInBag(3, 3);

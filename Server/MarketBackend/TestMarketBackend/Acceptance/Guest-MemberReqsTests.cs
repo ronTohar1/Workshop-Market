@@ -17,11 +17,11 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response = buyerFacade.Leave(guest1Id);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(guest1Id);
 
-            Assert.IsTrue(cartResponse.ErrorOccured());
+            Assert.IsTrue(cartResponse.IsErrorOccured());
             Assert.IsNull(cartResponse.Value);
         }
 
@@ -33,11 +33,11 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> response = buyerFacade.Leave(member1Id);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             Response<ServiceCart> cartAfterDisconnectionResponse = buyerFacade.GetCart(guest1Id);
 
-            Assert.IsTrue(!cartResponse.ErrorOccured());
+            Assert.IsTrue(!cartResponse.IsErrorOccured());
             Assert.IsTrue(cartResponse.Value.Equals(cartAfterDisconnectionResponse.Value));
         }
 
@@ -47,7 +47,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<ServiceStore> response = buyerFacade.GetStoreInfo(storeId);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             Assert.IsNotNull(response.Value);
         }
 
@@ -85,7 +85,7 @@ namespace TestMarketBackend.Acceptance
             Response<IDictionary<int, IList<ServiceProduct>>> response =
                 buyerFacade.ProductsSearch(storeName, productName, category, keyword);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             Assert.IsNotNull(response.Value);
             Assert.IsTrue(IsSearchSuccessful(response.Value));
         }
@@ -146,11 +146,11 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(userId());
 
-            Assert.IsTrue(!cartResponse.ErrorOccured());
+            Assert.IsTrue(!cartResponse.IsErrorOccured());
             Assert.IsNotNull(cartResponse);
             Assert.IsTrue(CartHasThisAmountOfProductFromStore(cartResponse.Value, storeId(), productId(), amount));
         }
@@ -174,7 +174,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
 
             Response<ServiceCart> cartResponseAfter = buyerFacade.GetCart(userId());
 
@@ -200,7 +200,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<ServiceCart> response = buyerFacade.GetCart(userId());
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             Assert.IsNotNull(response.Value);
         }
 
@@ -219,7 +219,7 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulRemoveProductFromCart(Func<int> userId, Func<int> storeId, Func<int> productId)
         {
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(userId());
-            Assert.IsFalse(cartResponse.ErrorOccured());
+            Assert.IsFalse(cartResponse.IsErrorOccured());
             ServiceCart cartBefore = cartResponse.Value;
 
             Response<bool> additionResponse = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), 5);
@@ -227,7 +227,7 @@ namespace TestMarketBackend.Acceptance
             Response<bool> removeResponse = buyerFacade.RemoveProductFromCart(userId(), storeId(), productId());
 
             cartResponse = buyerFacade.GetCart(userId());
-            Assert.IsFalse(cartResponse.ErrorOccured());
+            Assert.IsFalse(cartResponse.IsErrorOccured());
             ServiceCart cartAfter = cartResponse.Value;
 
             Assert.IsNotNull(cartBefore);
@@ -276,7 +276,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response = buyerFacade.RemoveProductFromCart(userId, storeId, productId);
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         private void SetUpShoppingCarts()
@@ -290,49 +290,85 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulPurchase()
         {
             SetUpShoppingCarts();
-            IDictionary<int, IList<Tuple<int, int>>> legalCase = new Dictionary<int, IList<Tuple<int, int>>>()
-            {
-                [storeId] = new List<Tuple<int, int>>() { new Tuple<int, int>(iphoneProductId, 12) }
-            };
-            Response<ServicePurchaseAttempt> response = buyerFacade.PurchaseCartContent(member3Id, legalCase);
+            
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
             ServiceCart cart = cartResponse.Value;
 
-            Assert.IsTrue(!response.ErrorOccured() && !cart.IsEmpty() && response.Value.purchaseSucceeded);
+            Assert.IsTrue(cart.IsEmpty());
+            Assert.IsTrue(!response.IsErrorOccured());
         }
 
-        //r.2.5
+        //r.2.5, r I 5
         [Test]
         public void FailedPurchaseEmptyCart()
         {
-            IDictionary<int, IList<Tuple<int, int>>> legalCase = new Dictionary<int, IList<Tuple<int, int>>>()
-            {
-                [storeId] = new List<Tuple<int, int>>() {}
-            };
-            Response<ServicePurchaseAttempt> response = buyerFacade.PurchaseCartContent(member3Id, legalCase);
+            IList<string> notificationsBefore = member2Notifications.ToList(); 
 
-            Assert.IsTrue(!response.ErrorOccured() && !response.Value.purchaseSucceeded);
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
+            Assert.IsTrue(response.IsErrorOccured());
+
+            // member2 is logged in, checking that there wasn't a notification
+            Assert.IsTrue(SameElements(notificationsBefore, member2Notifications.ToList()));
         }
 
-        //r.2.5
+        // r.2.5, r I 5
         [Test]
         public void FailedPurchaseProductsOutOfStock()
         {
-            IDictionary<int, IList<Tuple<int, int>>> legalCase = new Dictionary<int, IList<Tuple<int, int>>>()
-            {
-                [storeId] = new List<Tuple<int, int>>() { new Tuple<int, int>(iphoneProductId, iphoneProductAmount) }
-            };
             // A user purchases all iphones in the store
             buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
             buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, iphoneProductAmount);
-            Response<ServicePurchaseAttempt> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id, legalCase);
-            Assert.True(!firstUserResponse.ErrorOccured() && firstUserResponse.Value.purchaseSucceeded);
+            Response<ServicePurchase> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id);
+            Assert.True(!firstUserResponse.IsErrorOccured());
 
-            Response<ServicePurchaseAttempt> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id, legalCase);
+            IList<string> notificationsBefore = member3Notifications.ToList();
+            Response<ServicePurchase> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id);
 
-            Assert.IsTrue(!secondUserResponse.ErrorOccured() && !secondUserResponse.Value.purchaseSucceeded);
+            Assert.IsTrue(secondUserResponse.IsErrorOccured() );
+
+            // member3 is logged in, checking that there wasn't a notification
+            Assert.IsTrue(SameElements(notificationsBefore, member3Notifications.ToList()));
         }
+
+        public static IEnumerable<TestCaseData> DataLogoutLoginCartSaved
+        {
+            get
+            {
+                // cart with products
+                yield return new TestCaseData(() => member3Id, userName3, password3);
+                // cart with no products 
+                yield return new TestCaseData(() => member2Id, userName2, password2);
+            }
+        }
+
+        // r 3.1, r 2.3
+        [Test]
+        [TestCaseSource("DataLogoutLoginCartSaved")]
+        public void LogoutLoginCartSaved(Func<int> getMemberId, string username, string password)
+        {
+            int memberId = getMemberId();
+
+            SetUpShoppingCarts();
+
+            Response<ServiceCart> response = buyerFacade.GetCart(memberId);
+            Assert.IsTrue(!response.IsErrorOccured());
+            ServiceCart cartBefore = response.Value;
+
+            Response<bool> logoutResponse = buyerFacade.Logout(memberId);
+            Assert.IsTrue(!logoutResponse.IsErrorOccured());
+
+            Response<int> loginResponse = buyerFacade.Login(username, password, notifications => true);
+            Assert.IsTrue(!loginResponse.IsErrorOccured());
+
+            response = buyerFacade.GetCart(memberId);
+            Assert.IsTrue(!response.IsErrorOccured());
+            ServiceCart cartAfter = response.Value;
+
+            Assert.AreEqual(cartBefore, cartAfter); 
+        }
+
         /*
         // r.2.5
         [Test]
@@ -362,6 +398,9 @@ namespace TestMarketBackend.Acceptance
 
         }
         */
+
+        // todo: when writing tests to failed adding product review, check that a
+        // store owner did not receive notifications for the action 
 
     }
 }

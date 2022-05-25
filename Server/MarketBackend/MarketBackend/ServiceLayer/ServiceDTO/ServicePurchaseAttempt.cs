@@ -15,7 +15,8 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public ServicePurchaseAttempt(PurchaseAttempt purchaseAttempt) {
             purchaseSucceeded = purchaseAttempt.purchaseSucceeded;
             failedMessage = purchaseAttempt.failedMessage;
-            purchaseContent = new ServicePurchase(purchaseAttempt.purchaseContent);
+            Purchase businessPurchase = purchaseAttempt.purchaseContent;
+            purchaseContent = new ServicePurchase(businessPurchase.purchaseDate, businessPurchase.purchasePrice, businessPurchase.purchaseDescription);
         }
     }
 }

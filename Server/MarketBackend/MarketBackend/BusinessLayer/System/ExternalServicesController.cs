@@ -13,14 +13,21 @@ public class ExternalServicesController
 		supplySystem = es;
 	}
 
-	public bool makePayment()
+	public virtual bool makePayment()
     {
 		return paymentsSystem.makePayment();
     }
+	
+	public virtual bool CancelPayment()
+    {
+		return paymentsSystem.CancelPayment();
+    }
 
-	public bool makeDelivery()
+	public virtual bool makeDelivery()
     {
 		return supplySystem.supplyDelivery();
 	}
+
+	
 
 }

@@ -27,19 +27,28 @@ export const fetchProducts = async (query: string): Promise<Product[][]> => {
       alert("Whoops! " + serverResponse.errorMessage);
       return [];
     }
-    const productsByStore: Product[][] = Array.from(
-      serverResponse.value.values()
-    );
+    const prodsMap : Map<number, Product[]> = serverResponse.value;
+    console.log("prodsMap")
+    console.log(prodsMap)
+    const productsByStore: Product[][] = Array.from(prodsMap.values())
     console.log("productsByStore");
     console.log(productsByStore);
     return productsByStore;
   } catch (e) {
+    console.log("this is" + e);
     console.log("Sorry, could not find any products for an unkown reason");
     return [];
   }
   console.log(dummyProducts);
   return groupByStore(dummyProducts);
 };
+
+// const takeMapValues = (prodsMap: Map<number,Product[]>) : Product[][] => {
+//   if(prodsMap.)
+
+//   return [[]]
+
+// }
 
 export function groupByStore(products: Product[]): Product[][] {
   const groupedProductsMap: Map<number, Product[]> = new Map();

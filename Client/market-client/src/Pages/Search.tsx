@@ -134,16 +134,19 @@ const theme = createTheme({
   },
 });
 
-
 export default function SearchPage() {
   const startingPageSize = 5;
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
   const [query] = useQueryParam("query", StringParam);
   // const [productsByStore, setProductsByStore] = React.useState<Product[][]>([]);
-  let productsByStore: Product[][] = [[]]
- 
+  let productsByStore: Product[][] = [[]];
+
   // map products to Map indexing items by id
-  fetchProducts(query || "").then((prods) => { console.log("prods is"); console.log(prods);productsByStore = prods});
+  fetchProducts(query || "").then((prods) => {
+    console.log("prods is");
+    console.log(prods);
+    productsByStore = prods;
+  });
   // console.log(productsByStore)
   // const products: Map<number, Product> = Object.assign(
   //   {},
@@ -156,16 +159,17 @@ export default function SearchPage() {
       <Box>
         <Navbar />
         <Stack>
-          {productsByStore.map((prodsOfStore: Product[]) => {
-            console.log(prodsOfStore)
-            const storeId = prodsOfStore[0].store;
-            return StoreGrid(
-              createRows(prodsOfStore),
-              pageSize,
-              setPageSize,
-              storeId
-            );
-          })}
+          {productsByStore !== undefined
+            ? productsByStore.map((prodsOfStore: Product[]) => {
+                const storeId = prodsOfStore[0].store;
+                return StoreGrid(
+                  createRows(prodsOfStore),
+                  pageSize,
+                  setPageSize,
+                  storeId
+                );
+              })
+            : null}
         </Stack>
       </Box>
     </ThemeProvider>

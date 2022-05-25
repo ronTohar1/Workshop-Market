@@ -5,7 +5,7 @@ class Product {
   price: number;
   category: string;
   store: number;
-  available_quantity: number;
+  availableQuantity: number;
 
   constructor(
     id: number = 0,
@@ -20,7 +20,7 @@ class Product {
     this.price = price;
     this.category = category;
     this.store = store;
-    this.available_quantity = available_quantity;
+    this.availableQuantity = available_quantity;
   }
 }
 

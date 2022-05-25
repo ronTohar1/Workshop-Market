@@ -15,11 +15,30 @@ export const dummyProducts = [
 ];
 // Fetch Products
 // should be async
-export const fetchProducts = (query: string) => {
-  // const res = await fetch('http://localhost:5000/products/query=...')
-  // const data = await res.json()
-
-  return dummyProducts.filter((p) => p.name.includes(query));
+export const fetchProducts = async (query: string): Promise<Product[][]> => {
+  try {
+    const promiseResponse = serverSearchProducts(null, query, null, null);
+    console.log("promiseResponse");
+    console.log(promiseResponse);
+    const serverResponse = await promiseResponse;
+    console.log("serverRespone");
+    console.log(serverResponse);
+    if (serverResponse.errorOccured) {
+      alert("Whoops! " + serverResponse.errorMessage);
+      return [];
+    }
+    const productsByStore: Product[][] = Array.from(
+      serverResponse.value.values()
+    );
+    console.log("productsByStore");
+    console.log(productsByStore);
+    return productsByStore;
+  } catch (e) {
+    console.log("Sorry, could not find any products for an unkown reason");
+    return [];
+  }
+  console.log(dummyProducts);
+  return groupByStore(dummyProducts);
 };
 
 export function groupByStore(products: Product[]): Product[][] {
@@ -39,19 +58,18 @@ export function groupByStore(products: Product[]): Product[][] {
   return groupedProducts;
 }
 
-
 // ------------------------------------------------------------
 //                        Server Communication
 
 export async function serverSearchProducts(
-  storeName: string,
-  productName: string,
-  category: string,
-  keyword: string
-): Promise<ClientResponse<Map<number,Product[]>>> {
-  const uri = serverPort + "/api/Buyers/RemoveProduct";
-  const response = await fetch(uri, {
-    method: "DELETE",
+  storeName: string | null,
+  productName: string | null,
+  category: string | null,
+  keyword: string | null
+): Promise<ClientResponse<Map<number, Product[]>>> {
+  const uri = serverPort + "/api/Buyers/SerachProducts";
+  const jsonResponse = await fetch(uri, {
+    method: "POST",
     headers: {
       accept: "text/plain",
       "Content-Type": "application/json",
@@ -61,9 +79,10 @@ export async function serverSearchProducts(
       storeName: storeName,
       productName: productName,
       category: category,
-      keyword: keyword
+      keyword: keyword,
     }),
   });
 
-  
+  const response = jsonResponse.json();
+  return response;
 }

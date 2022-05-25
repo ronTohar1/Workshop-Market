@@ -82,10 +82,11 @@ export function StoreGrid(
         width: "100%",
         mt: 3,
         mb: 3,
-      }}>
-      <Stack justifyContent='space-evenly' alignItems='center' spacing={2}>
+      }}
+    >
+      <Stack justifyContent="space-evenly" alignItems="center" spacing={2}>
         <Box sx={{ m: 1 }}>
-          <Typography variant='h4'>{storeName}</Typography>
+          <Typography variant="h4">{storeName}</Typography>
         </Box>
         <Box style={{ height: 400, width: "90%" }} sx={{ boxShadow: 3, mb: 3 }}>
           <DataGrid
@@ -103,11 +104,12 @@ export function StoreGrid(
           />
 
           <Button
-            variant='contained'
-            size='large'
+            variant="contained"
+            size="large"
             sx={{ mt: 1 }}
             startIcon={<ExitToAppIcon />}
-            onClick={() => navigate(`${pathStore}?id=${storeId}`)}>
+            onClick={() => navigate(`${pathStore}?id=${storeId}`)}
+          >
             {storeName}
           </Button>
         </Box>
@@ -115,36 +117,39 @@ export function StoreGrid(
     </Box>
   );
 }
+const theme = createTheme({
+  typography: {
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+  },
+});
+
 
 export default function SearchPage() {
   const startingPageSize = 5;
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
   const [query] = useQueryParam("query", StringParam);
-
-  const theme = createTheme({
-    typography: {
-      fontFamily: [
-        "-apple-system",
-        "BlinkMacSystemFont",
-        '"Segoe UI"',
-        "Roboto",
-        '"Helvetica Neue"',
-        "Arial",
-        "sans-serif",
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(","),
-    },
-  });
-
+  // const [productsByStore, setProductsByStore] = React.useState<Product[][]>([]);
+  let productsByStore: Product[][] = [[]]
+ 
   // map products to Map indexing items by id
-  const productsLst = fetchProducts(query || "");
+  fetchProducts(query || "").then((prods) => { console.log("prods is"); console.log(prods);productsByStore = prods});
+  // console.log(productsByStore)
   // const products: Map<number, Product> = Object.assign(
   //   {},
   //   ...productsLst.map((p: Product) => ({ [p.id]: p }))
   // );
-  const productsByStore: Product[][] = groupByStore(productsLst);
+  // const productsByStore: Product[][] = groupByStore(productsLst);
 
   return (
     <ThemeProvider theme={theme}>
@@ -152,6 +157,7 @@ export default function SearchPage() {
         <Navbar />
         <Stack>
           {productsByStore.map((prodsOfStore: Product[]) => {
+            console.log(prodsOfStore)
             const storeId = prodsOfStore[0].store;
             return StoreGrid(
               createRows(prodsOfStore),

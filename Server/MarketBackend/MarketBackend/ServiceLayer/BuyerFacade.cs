@@ -262,15 +262,15 @@ namespace MarketBackend.ServiceLayer
         private IDictionary<int, IList<ServiceProduct>> mapToServiceMap(IDictionary<int, IList<Product>> map)
         {
             IDictionary<int, IList<ServiceProduct>> result = new Dictionary<int, IList<ServiceProduct>>();
-            foreach (int key in map.Keys)
+            foreach (int storeId in map.Keys)
             {
-                IList<Product> products = map[key];
+                IList<Product> products = map[storeId];
                 IList<ServiceProduct> l = new List<ServiceProduct>();
                 foreach (Product product in products)
                 {
-                    l.Add(new ServiceProduct(product));
+                    l.Add(new ServiceProduct(product,storeId));
                 }
-                result[key] = l;
+                result[storeId] = l;
             }
             return result;
         }

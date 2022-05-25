@@ -61,7 +61,7 @@ const createRows = (products: Product[]) => {
       price: p.price,
       category: p.category,
       store: getStore(p.store).name,
-      available_quantity: p.available_quantity,
+      available_quantity: p.availableQuantity,
     });
   }
   return productRow;

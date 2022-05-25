@@ -38,7 +38,7 @@ export default function StorePageById(store: Store) {
   const fields = {
     name: "name",
     price: "price",
-    available_quantity: "available_quantity",
+    available_quantity: "availableQuantity",
     category: "category",
   };
 
@@ -140,7 +140,7 @@ export default function StorePageById(store: Store) {
     available_quantity: number
   ) {
     if (available_quantity != null)
-      product.available_quantity = available_quantity;
+      product.availableQuantity = available_quantity;
   }
   function updateCategory(product: Product, category: string) {
     if (category != null) product.category = category;

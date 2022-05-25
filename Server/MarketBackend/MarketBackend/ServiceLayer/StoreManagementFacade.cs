@@ -21,7 +21,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Predicat
 
 namespace MarketBackend.ServiceLayer
 {
-    internal class StoreManagementFacade
+    public class StoreManagementFacade : IStoreManagementFacade
     {
         private StoreController storeController;
         private Logger logger;
@@ -206,7 +206,7 @@ namespace MarketBackend.ServiceLayer
                 Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<ServiceMember>($"There isn't a store with an id {storeId}");
-                ServiceMember m = new ServiceMember(s.GetFounder(memberId));
+                ServiceMember m = new ServiceMember(memberId,s.GetFounder(memberId));
                 logger.Info($"GetFounder was called with parameters: [memberId = {memberId}]");
                 return new Response<ServiceMember>(m);
             }
@@ -369,7 +369,7 @@ namespace MarketBackend.ServiceLayer
                 }
 
             }
-        } 
+        }
         private IDiscountExpression ServiceDiscountToDiscount(IServiceDiscount discount, StoreDiscountPolicyManager manager)
         {
             if (discount is ServiceDateDiscount)
@@ -428,7 +428,7 @@ namespace MarketBackend.ServiceLayer
                 if (s == null)
                     return new Response<int>($"There isn't a store with an id {storeId}");
                 IExpression exp = ServiceExpressionToExpression(expression, s.discountManager);
-                int id = s.AddDiscountPolicy(exp, description, memberId); 
+                int id = s.AddDiscountPolicy(exp, description, memberId);
                 logger.Info($"AddDiscountPolicy was called with parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<int>(id);
             }

@@ -217,7 +217,7 @@ namespace TestMarketBackend.Acceptance
         {
             systemOperator = new SystemOperator();
             Response<int> response = systemOperator.OpenMarket(adminUsername,adminPassword);
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 throw new Exception("Unexpected exception in acceptance setup");
             adminId = response.Value;
 
@@ -264,7 +264,7 @@ namespace TestMarketBackend.Acceptance
                 Response<int> registerResponse = buyerFacade.Register($"Name_{i}", $"Pass_{i}");
                 Response<int> loginResponse = buyerFacade.Login($"Name_{i}", $"Pass_{i}", newNotifications => true);
 
-                if (enterResponse.ErrorOccured() || registerResponse.ErrorOccured() || loginResponse.ErrorOccured())
+                if (enterResponse.IsErrorOccured() || registerResponse.IsErrorOccured() || loginResponse.IsErrorOccured())
                     throw new Exception("Unexpected erorr occured: 'GetFreshMembersIds'");
                 ids[i] = registerResponse.Value;
             }
@@ -274,7 +274,7 @@ namespace TestMarketBackend.Acceptance
 
         protected bool Exactly1ResponseIsSuccessful<T>(Response<T>[] responses)
         {
-            return responses.Where(r => !r.ErrorOccured()).Count() == 1;
+            return responses.Where(r => !r.IsErrorOccured()).Count() == 1;
         }
 
         protected bool SameElements<T>(IList<T> list1, IList<T> list2)

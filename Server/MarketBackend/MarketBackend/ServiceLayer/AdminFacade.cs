@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Buyers.Members;
 namespace MarketBackend.ServiceLayer
 {
-    internal class AdminFacade
+    public class AdminFacade : IAdminFacade
     {
         private AdminManager adminManager;
         private Logger logger;
 
         public AdminFacade(AdminManager adminManager, Logger logger)
         {
-            this.adminManager = adminManager; 
+            this.adminManager = adminManager;
             this.logger = logger;
         }
 
@@ -66,23 +66,23 @@ namespace MarketBackend.ServiceLayer
 
         //public Response<IList<Purchase>> GetBuyerPurchaseHistoryInStore(int currUserId, int buyerId, int storeId)
         //{
-            //try
-            //{
-            //    IList<Purchase> l = adminManager.(currUserId, buyerId);
-            //    logger.Info($"GetBuyerPurchaseHistoryInStore was called with parameters [currUserId = {currUserId}, buyerId = {buyerId}, storeId = {storeId}]");
-            //    return new Response<IList<Purchase>>(l);
-            //}
-            //catch (MarketException mex)
-            //{
-            //    logger.Error(mex, $"method: GetBuyerPurchaseHistoryInStore, parameters: [currUserId = {currUserId}, buyerId = {buyerId}, storeId = {storeId}]");
-            //    return new Response<IList<Purchase>>(mex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex, $"method: GetBuyerPurchaseHistoryInStore, parameters: [currUserId = {currUserId}, buyerId = {buyerId}, storeId = {storeId}]");
-            //    return new Response<IList<Purchase>>("Sorry, an unexpected error occured. Please try again");
-            //}
-            //return new Response<IList<Purchase>>();
+        //try
+        //{
+        //    IList<Purchase> l = adminManager.(currUserId, buyerId);
+        //    logger.Info($"GetBuyerPurchaseHistoryInStore was called with parameters [currUserId = {currUserId}, buyerId = {buyerId}, storeId = {storeId}]");
+        //    return new Response<IList<Purchase>>(l);
+        //}
+        //catch (MarketException mex)
+        //{
+        //    logger.Error(mex, $"method: GetBuyerPurchaseHistoryInStore, parameters: [currUserId = {currUserId}, buyerId = {buyerId}, storeId = {storeId}]");
+        //    return new Response<IList<Purchase>>(mex.Message);
+        //}
+        //catch (Exception ex)
+        //{
+        //    logger.Error(ex, $"method: GetBuyerPurchaseHistoryInStore, parameters: [currUserId = {currUserId}, buyerId = {buyerId}, storeId = {storeId}]");
+        //    return new Response<IList<Purchase>>("Sorry, an unexpected error occured. Please try again");
+        //}
+        //return new Response<IList<Purchase>>();
         //}
 
         private IReadOnlyCollection<ServicePurchase> purchasesToServicePurchases(IEnumerable<Purchase> purchases)
@@ -172,7 +172,7 @@ namespace MarketBackend.ServiceLayer
                 if (member == null)
                     return new Response<ServiceMember>($"There isn't such a member with id {memberId}");
                 logger.Info($"GetLoggedInMembers was called with parameters [requestingId = {requestingId}, memberId = {memberId}]");
-                return new Response<ServiceMember>(new ServiceMember(member));
+                return new Response<ServiceMember>(new ServiceMember(memberId,member));
             }
             catch (MarketException mex)
             {

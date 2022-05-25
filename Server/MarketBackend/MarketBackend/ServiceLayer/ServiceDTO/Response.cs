@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO
 {
-    internal class Response<T>
+    public class Response<T>
     {
         public T Value { get; set; }
         public string ErrorMessage { get; set; }
+
+        public bool ErrorOccured { get; set; } = false; 
 
         public Response() =>
             ErrorMessage = string.Empty;
@@ -17,13 +19,19 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public Response(T value) : this() =>
             Value = value;
 
-        public Response(string errorMessage) =>
+        public Response(string errorMessage)
+        {
             ErrorMessage = errorMessage;
-
-        public Response(T value, string errorMessage) : this(value) =>
+            ErrorOccured = true;
+        }
+        public Response(T value, string errorMessage) : this(value)
+        {
             ErrorMessage = errorMessage;
+            ErrorOccured = true;
 
-        public bool ErrorOccured() =>
+        }
+
+        public bool IsErrorOccured() =>
             ErrorMessage != string.Empty;
 
      }

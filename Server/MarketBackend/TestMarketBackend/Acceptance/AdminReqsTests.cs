@@ -28,7 +28,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<IReadOnlyCollection<ServicePurchase>> response = adminFacade.GetStorePurchaseHistory(adminId(), storeId());
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         // r 6.4
@@ -39,17 +39,17 @@ namespace TestMarketBackend.Acceptance
             // first check that current purchase history is empty
             Response<IReadOnlyCollection<ServicePurchase>> response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             Assert.IsEmpty(response.Value);
 
             // now check that after purchase that it is returned
 
             SetUpShoppingCarts();
             Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id);
-            Assert.IsTrue(!purchaseResponse.ErrorOccured());
+            Assert.IsTrue(!purchaseResponse.IsErrorOccured());
 
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             Assert.AreEqual(1, response.Value.Count); 
             ServicePurchase purchaseResult = response.Value.First();
             // checking the purchase was made at most a minute ago
@@ -74,7 +74,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<IReadOnlyCollection<ServicePurchase>> response = adminFacade.GetStorePurchaseHistory(adminId(), memberId());
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         // r 6.4
@@ -85,17 +85,17 @@ namespace TestMarketBackend.Acceptance
             // first check that current purchase history is empty
             Response<IReadOnlyCollection<ServicePurchase>> response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             Assert.IsEmpty(response.Value);
 
             // now check that after purchase that it is returned
 
             SetUpShoppingCarts();
             Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id);
-            Assert.IsTrue(!purchaseResponse.ErrorOccured()); 
+            Assert.IsTrue(!purchaseResponse.IsErrorOccured()); 
 
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
             Assert.AreEqual(1, response.Value.Count);
             ServicePurchase purchaseResult = response.Value.First();
             // checking the purchase was made at most a minute ago
@@ -259,7 +259,7 @@ namespace TestMarketBackend.Acceptance
         private int GetStoreIdByName(string storeName)
         {
             Response<ServiceStore> response = buyerFacade.GetStoreInfo(storeName);
-            if (response.ErrorOccured())
+            if (response.IsErrorOccured())
                 throw new Exception(response.ErrorMessage);
             return response.Value.Id; 
         }
@@ -276,7 +276,7 @@ namespace TestMarketBackend.Acceptance
                 foreach (Role role in roles)
                 {
                     Response<IList<int>> response = storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, role);
-                    if (response.ErrorOccured())
+                    if (response.IsErrorOccured())
                         throw new Exception(response.ErrorMessage);
                     if (response.Value.Contains(memberId))
                         rolesinStores[storeId] = role;
@@ -309,16 +309,16 @@ namespace TestMarketBackend.Acceptance
         public void FailedRemoveMemberIfWithNoRoles(Func<int> requestingId, Func<int> memberToRemoveId)
         {
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+            Assert.IsTrue(!memberExistsResponse.IsErrorOccured());
             bool memberExsited = memberExistsResponse.Value;
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
 
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
 
             // checking that member still exists if existed before
             memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+            Assert.IsTrue(!memberExistsResponse.IsErrorOccured());
             Assert.AreEqual(memberExsited, memberExistsResponse.Value); 
         }
 
@@ -331,11 +331,11 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId, memberToRemoveId);
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             // checking that member does not exist
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+            Assert.IsTrue(!memberExistsResponse.IsErrorOccured());
             Assert.IsTrue(!memberExistsResponse.Value);
         }
 
@@ -363,11 +363,11 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             // checking that member still exists
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+            Assert.IsTrue(!memberExistsResponse.IsErrorOccured());
             Assert.IsTrue(memberExistsResponse.Value);
 
             // checking that member still has the same roles
@@ -402,7 +402,7 @@ namespace TestMarketBackend.Acceptance
 
             // checking that member does not exist
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
-            Assert.IsTrue(!memberExistsResponse.ErrorOccured());
+            Assert.IsTrue(!memberExistsResponse.IsErrorOccured());
             Assert.IsTrue(!memberExistsResponse.Value);
         }
 
@@ -424,7 +424,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<IList<int>> response = adminFacade.GetLoggedInMembers(requestingId()); 
             
-            Assert.IsTrue(response.ErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
         }
 
         // r 6 c
@@ -434,7 +434,7 @@ namespace TestMarketBackend.Acceptance
             List<int> loggedInMembers = new List<int> { member2Id, member3Id, member5Id };
 
             Response<IList<int>> response = adminFacade.GetLoggedInMembers(adminId);
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             Assert.IsTrue(SameElements(loggedInMembers, response.Value));
         }
@@ -461,15 +461,15 @@ namespace TestMarketBackend.Acceptance
         {
             Response<ServiceMember> response = adminFacade.GetMemberInfo(requestingId(), memberId());
 
-            Assert.IsTrue(response.ErrorOccured()); 
+            Assert.IsTrue(response.IsErrorOccured()); 
         }
 
         public static IEnumerable<TestCaseData> DataSuccessfulGetMemberInfo
         {
             get
             {
-                yield return new TestCaseData(() => adminId, () => member1Id, () => new ServiceMember(userName1, false));
-                yield return new TestCaseData(() => adminId, () => member2Id, () => new ServiceMember(userName2, true)); 
+                yield return new TestCaseData(() => adminId, () => member1Id, () => new ServiceMember(member1Id,userName1, false));
+                yield return new TestCaseData(() => adminId, () => member2Id, () => new ServiceMember(member2Id, userName2, true)); 
             }
         }
 
@@ -480,7 +480,7 @@ namespace TestMarketBackend.Acceptance
         {
             Response<ServiceMember> response = adminFacade.GetMemberInfo(requestingId(), memberId());
 
-            Assert.IsTrue(!response.ErrorOccured());
+            Assert.IsTrue(!response.IsErrorOccured());
 
             Assert.AreEqual(expectedMember(), response.Value); 
         }

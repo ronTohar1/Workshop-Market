@@ -15,10 +15,10 @@ using NLog;
 using MarketBackend.BusinessLayer.System.ExternalServices;
 namespace MarketBackend.ServiceLayer
 {
-    internal class SystemOperator
+    public class SystemOperator : ISystemOperator
     {
 
-        private bool marketOpen;
+        public bool MarketOpen { get; private set; }
         private BusiessSystemOperator bso;
         private AdminFacade adminFacade;
         private BuyerFacade buyerFacade;
@@ -30,7 +30,7 @@ namespace MarketBackend.ServiceLayer
 
         public SystemOperator()
         {
-            marketOpen = false;
+            MarketOpen = false;
             bso = new BusiessSystemOperator();
             adminFacade = null;
             buyerFacade = null;
@@ -40,10 +40,11 @@ namespace MarketBackend.ServiceLayer
 
         public Response<int> OpenMarket(string username, string password)
         {
-            try { 
+            try
+            {
                 int adminId = bso.OpenMarket(username, password);// will initialize the controllers if it's the first boot
                 InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
-                marketOpen = true;
+                MarketOpen = true;
                 bso.logger.Info($"OpenMarket with parameters: [username = {username}, can not reveal password]");
                 return new(adminId);
             }
@@ -66,7 +67,7 @@ namespace MarketBackend.ServiceLayer
                 bso.CloseMarket();
                 InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
                 bso.logger.Info("method CloseMarket was called");
-                marketOpen = false;
+                MarketOpen = false;
                 RemoveFacades();
                 return new(true);
             }
@@ -84,7 +85,7 @@ namespace MarketBackend.ServiceLayer
 
         public Response<AdminFacade> GetAdminFacade()
         {
-            if (!marketOpen)
+            if (!MarketOpen)
                 return new(null, facadeErrorMsg);
             return new(adminFacade);
 
@@ -92,21 +93,21 @@ namespace MarketBackend.ServiceLayer
 
         public Response<BuyerFacade> GetBuyerFacade()
         {
-            if (!marketOpen)
+            if (!MarketOpen)
                 return new(null, facadeErrorMsg);
             return new(buyerFacade);
         }
 
         public Response<ExternalSystemFacade> GetExternalSystemFacade()
         {
-            if (!marketOpen)
+            if (!MarketOpen)
                 return new(null, facadeErrorMsg);
             return new(externalSystemFacade);
         }
 
         public Response<StoreManagementFacade> GetStoreManagementFacade()
         {
-            if (!marketOpen)
+            if (!MarketOpen)
                 return new(null, facadeErrorMsg);
             return new(storeManagementFacade);
         }

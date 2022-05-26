@@ -22,27 +22,42 @@ import AddProductForm from "../Componentss/Forms/AddProductForm";
 import * as storeService from "../services/StoreService";
 import SearchPage from "./Search";
 import Store from "../DTOs/Store";
-import { StringParam, useQueryParam } from "use-query-params";
-import { getStore } from "../services/StoreService";
+import { NumberParam, StringParam, useQueryParam } from "use-query-params";
+import { serverGetStore } from "../services/StoreService";
+import { pathHome } from "../Paths";
+import { useNavigate } from "react-router-dom";
 
-export default function StorePageById(store: Store) {
+const fields = {
+  name: "name",
+  price: "price",
+  available_quantity: "availableQuantity",
+  category: "category",
+};
+
+export default function StorePage() {
+
+  
   const startingPageSize: number = 10;
+
+  const navigate = useNavigate()
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
   const [numSelected, setNumSelected] = React.useState<number>(0);
   const [selectedProductsIds, setSelectedProductsIds] = React.useState<
     number[]
   >([]);
-  const storeProducts: Product[] = store.products;
   const isManager: boolean = true; //TODO: change to real value. storeService.getMemberInRole(...)
-  const [rows, setRows] = React.useState<Product[]>(storeProducts);
+  const [rows, setRows] = React.useState<Product[]>([]);
+  const [storeId] = useQueryParam("id", NumberParam);
+  const [store, setStore] = React.useState<Store | null>(null);
 
-
-  const fields = {
-    name: "name",
-    price: "price",
-    available_quantity: "availableQuantity",
-    category: "category",
-  };
+  React.useEffect(() => {
+    serverGetStore(storeId || -1).then((store: Store) => {
+      setStore(store);
+    }).catch((e) => {
+      alert("Sorry, an unexpected error has occured!")
+      navigate(pathHome)
+    })
+  });
 
   const columns: GridColDef[] = [
     {
@@ -99,31 +114,35 @@ export default function StorePageById(store: Store) {
                 theme.palette.action.activatedOpacity
               ),
           }),
-        }}>
+        }}
+      >
         {numSelected > 0 && isManager ? (
           <Typography
             sx={{ flex: "1 1 100%" }}
-            color='inherit'
-            variant='subtitle1'
-            component='div'>
+            color="inherit"
+            variant="subtitle1"
+            component="div"
+          >
             {numSelected} selected
           </Typography>
         ) : (
           <Typography
             sx={{ flex: "1 1 100%" }}
-            variant='h4'
-            id='tableTitle'
-            component='div'>
-            {store.name}
+            variant="h4"
+            id="tableTitle"
+            component="div"
+          >
+            {store!=null? store.name: "Error- store not exist"}
           </Typography>
         )}
         {numSelected > 0 && isManager ? (
-          <Tooltip title='Add To Cart'>
+          <Tooltip title="Add To Cart">
             <Fab
-              size='medium'
-              color='primary'
-              aria-label='add'
-              onClick={() => handleAddToCart()}>
+              size="medium"
+              color="primary"
+              aria-label="add"
+              onClick={() => handleAddToCart()}
+            >
               <AddShoppingCart />
             </Fab>
           </Tooltip>
@@ -185,14 +204,14 @@ export default function StorePageById(store: Store) {
 
   const handleAddProduct = (productToAdd: Product) => {
     setRows([...rows, productToAdd]);
-    console.log(rows.map((r)=>r.name))
+    console.log(rows.map((r) => r.name));
   };
 
   return (
     <Box>
       <Navbar />
       {toolBar(numSelected, handleAddToCart)}
-      <Stack direction='row'>{}</Stack>
+      <Stack direction="row">{}</Stack>
       <div>
         <DataGrid
           rows={rows}

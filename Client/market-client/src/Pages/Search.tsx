@@ -24,7 +24,7 @@ import Navbar from "../Componentss/Navbar";
 import Product from "../DTOs/Product";
 import { dummyProducts, fetchProducts, groupByStore } from "../services/ProductsService";
 import { useQueryParam, NumberParam, StringParam } from "use-query-params";
-import { getStore } from "../services/StoreService";
+import { serverGetStore } from "../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pathStore } from "../Paths";

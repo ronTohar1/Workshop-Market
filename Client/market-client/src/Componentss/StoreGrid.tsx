@@ -13,7 +13,7 @@ import {
   GridColDef,
 } from "@mui/x-data-grid";
 import Product from "../DTOs/Product";
-import { getStore } from "../services/StoreService";
+import { serverGetStore } from "../services/StoreService";
 
 function ProductsTable() {
   return (
@@ -47,7 +47,7 @@ const createRows = (products: Product[]) => {
       name: p.name,
       price: p.price,
       category: p.category,
-      store: getStore(p.store).name,
+      store: serverGetStore(p.store).name,
     });
   }
   return productRow;

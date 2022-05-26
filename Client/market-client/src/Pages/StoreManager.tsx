@@ -19,7 +19,7 @@ import Navbar from "../Componentss/Navbar";
 
 import Product from "../DTOs/Product";
 import { Card, CardActions, CardContent } from "@mui/material";
-import { getStore, groupStoresProducts } from "../services/StoreService";
+import { serverGetStore, groupStoresProducts } from "../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { dummyMember1, getStoresManagedBy } from "../services/MemberService";
 import Grid from "@mui/material/Grid";
@@ -60,7 +60,7 @@ const createRows = (products: Product[]) => {
       name: p.name,
       price: p.price,
       category: p.category,
-      store: getStore(p.store).name,
+      store: serverGetStore(p.store).name,
       available_quantity: p.availableQuantity,
     });
   }

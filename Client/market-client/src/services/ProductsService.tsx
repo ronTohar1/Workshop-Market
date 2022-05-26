@@ -35,8 +35,6 @@ export const fetchProducts = async (query: string): Promise<Product[][]> => {
     return allProducts;
     
   } catch (e) {
-    console.log("this is" + e);
-    console.log("Sorry, could not find any products for an unkown reason");
     return [];
   }
 };

@@ -92,13 +92,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("StoreInfo")]
-        public ActionResult<Response<bool>> GetStoreInfo([FromBody] StoreRequest request)
+        public ActionResult<Response<ServiceStore>> GetStoreInfo([FromBody] StoreRequest request)
         {
             Response<ServiceStore> response;
-            if (request.StoreId > 0)
-                response = buyerFacade.GetStoreInfo(request.StoreId);
-            else
-                response = buyerFacade.GetStoreInfo(request.StoreName);
+            //if (request.StoreId > 0)
+            response = buyerFacade.GetStoreInfo(request.StoreId);
+            //else if (request.StoreName != null)
+                //response = buyerFacade.GetStoreInfo(request.StoreName);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);

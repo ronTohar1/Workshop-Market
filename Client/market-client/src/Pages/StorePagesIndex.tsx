@@ -27,19 +27,19 @@ import { useNavigate } from "react-router-dom";
 import { pathSearch } from "../Paths";
 import StorePageById from "./StorePage";
 
-export default function StorePage() {
-  const navigate = useNavigate();
-  const theme = createTheme();
-  const [storeId] = useQueryParam("id", NumberParam);
+export default function StorePagesdfasdf() {
+  // const navigate = useNavigate();
+  // const theme = createTheme();
+  // const [storeId] = useQueryParam("id", NumberParam);
 
-  try {
-    const store: Store = storeService.getStore(
-      storeId === undefined || storeId === null ? -1 : storeId
-    );
-    return StorePageById(store);
-  } catch {
-    alert("Could not find the requested store");
-    navigate(pathSearch);
-    return null;
-  }
+  // try {
+  //   const store: Store = storeService.serverGetStore(
+  //     storeId === undefined || storeId === null ? -1 : storeId
+  //   );
+  //   return StorePageById(store);
+  // } catch {
+  //   alert("Could not find the requested store");
+  //   navigate(pathSearch);
+  //   return null;
+  // }
 }

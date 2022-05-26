@@ -230,7 +230,7 @@ namespace MarketBackend.ServiceLayer
         {
             // try and catch is in calling functions 
 
-            IList<int> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => product.id).ToList();
+            IList<ServiceProduct> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => new ServiceProduct(product, storeId)).ToList();
 
             return new ServiceStore(storeId, store.GetName(), productsIds);
         }

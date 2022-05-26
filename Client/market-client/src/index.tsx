@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
@@ -16,8 +15,7 @@ import { QueryParamProvider } from "use-query-params";
 import StoreManagerPage from "./Pages/StoreManager";
 import { initSession } from "./services/SessionService";
 
-initSession() // Init new visitor session
-
+initSession();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -36,5 +34,4 @@ root.render(
       </Routes>
     </QueryParamProvider>
   </Router>
-
 );

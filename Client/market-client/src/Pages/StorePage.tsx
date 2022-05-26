@@ -22,6 +22,8 @@ import AddProductForm from "../Componentss/Forms/AddProductForm";
 import * as storeService from "../services/StoreService";
 import SearchPage from "./Search";
 import Store from "../DTOs/Store";
+import { StringParam, useQueryParam } from "use-query-params";
+import { getStore } from "../services/StoreService";
 
 export default function StorePageById(store: Store) {
   const startingPageSize: number = 10;
@@ -33,7 +35,7 @@ export default function StorePageById(store: Store) {
   const storeProducts: Product[] = store.products;
   const isManager: boolean = true; //TODO: change to real value. storeService.getMemberInRole(...)
   const [rows, setRows] = React.useState<Product[]>(storeProducts);
-  
+
 
   const fields = {
     name: "name",

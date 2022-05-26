@@ -22,29 +22,7 @@ export const getStore = (id: number) => {
 export function groupStoresProducts(stores: Store[]): Product[][] {
   return stores.map((store: Store) => store.products);
 }
-// export async function serverLogin(
-//   name: string | undefined | null,
-//   password: string | undefined| null
-// ): Promise<Response<number>> {
-//   if (name == undefined || password == undefined) return Promise.reject();
-//   const uri = serverPort + "/api/Buyers/Login";
-//   const jsonResponse = await fetch(uri, {
-//     method: "POST",
-//     headers: {
-//       accept: "text/plain",
-//       "Content-Type": "application/json",
-//       "Access-Control-Allow-Origin": "http",
-//     },
-//     // body: '{\n  "userName": "string",\n  "password": "string"\n}',
-//     body: JSON.stringify({
-//       userName: name,
-//       password: password,
-//       port: window.location.port,
-//     }),
-//   });
 
-//   return jsonResponse.json();
-// }
 export async function addNewProduct(userId: number, product: Product): Promise<ClientResponse<number>> {
   const uri = serverPort+'/api/Stores/AddNewProduct';
   const jsonResponse = await fetch(uri, {

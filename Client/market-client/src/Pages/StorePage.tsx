@@ -26,6 +26,7 @@ import { NumberParam, StringParam, useQueryParam } from "use-query-params";
 import { serverGetStore } from "../services/StoreService";
 import { pathHome } from "../Paths";
 import { useNavigate } from "react-router-dom";
+import { fetchResponse } from "../services/GeneralService";
 
 const fields = {
   name: "name",
@@ -48,12 +49,16 @@ export default function StorePage() {
   const [storeId] = useQueryParam("id", NumberParam);
   const [store, setStore] = React.useState<Store | null>(null);
 
+  const handleError = (msg: string) => {
+    alert(msg);
+    navigate(pathHome);
+  };
   React.useEffect(() => {
-    serverGetStore(storeId || -1)
-      .then((store: Store) => {
-        console.log("store")
-        console.log(store)
+    serverGetStore(storeId)
+      .then((response) => { return fetchResponse(response, handleError)})
+      .then((store) => {
         setStore(store);
+        setRows(store.products);
       })
       .catch((e) => {
         alert("Sorry, an unexpected error has occured!");
@@ -216,7 +221,7 @@ export default function StorePage() {
       <Stack direction="row">{}</Stack>
       <div>
         <DataGrid
-          rows={store === null || store === undefined ? [new Product(1,"asdf",1,"asdf",1,"fdfdfddfdf",2)] : store.products}
+          rows={rows}
           columns={columns}
           sx={{
             width: "100vw",

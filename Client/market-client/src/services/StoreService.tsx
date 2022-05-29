@@ -14,8 +14,9 @@ const stores = [
 export const dummyStore1 = stores[0];
 export const dummyStore2 = stores[1];
 
-export const serverGetStore = async (id: number | null): Promise<Store> => {
-  if (id === null) return Promise.reject();
+
+export const serverGetStore = async (id: number |null | undefined): Promise<ClientResponse<Store>> => {
+  if (id === undefined || id === null || id < 0) return Promise.reject();
   const uri = serverPort + "/api/Buyers/StoreInfo";
   const jsonResponse = await fetch(uri, {
     method: "POST",

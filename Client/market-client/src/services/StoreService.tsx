@@ -15,6 +15,13 @@ export const dummyStore1 = stores[0];
 export const dummyStore2 = stores[1];
 
 
+export enum Roles{
+  Manager,
+  Owner
+}
+
+
+
 export const serverGetStore = async (id: number |null | undefined): Promise<ClientResponse<Store>> => {
   if (id === undefined || id === null || id < 0) return Promise.reject();
   const uri = serverPort + "/api/Buyers/StoreInfo";
@@ -173,7 +180,7 @@ export async function getMembersInRoles(
   userId: number,
   storeId: number,
   role: number
-): Promise<ClientResponse<boolean>> {
+): Promise<ClientResponse<number[]>> {
   const uri = serverPort + "/api/Stores/MembersInRole";
   const jsonResponse = await fetch(uri, {
     method: "POST",

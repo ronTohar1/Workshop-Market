@@ -35,11 +35,9 @@ const fields = {
 };
 
 export default function StorePage() {
-
-  
   const startingPageSize: number = 10;
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
   const [numSelected, setNumSelected] = React.useState<number>(0);
   const [selectedProductsIds, setSelectedProductsIds] = React.useState<
@@ -51,13 +49,17 @@ export default function StorePage() {
   const [store, setStore] = React.useState<Store | null>(null);
 
   React.useEffect(() => {
-    serverGetStore(storeId || -1).then((store: Store) => {
-      setStore(store);
-    }).catch((e) => {
-      alert("Sorry, an unexpected error has occured!")
-      navigate(pathHome)
-    })
-  });
+    serverGetStore(storeId || -1)
+      .then((store: Store) => {
+        console.log("store")
+        console.log(store)
+        setStore(store);
+      })
+      .catch((e) => {
+        alert("Sorry, an unexpected error has occured!");
+        navigate(pathHome);
+      });
+  }, [storeId]);
 
   const columns: GridColDef[] = [
     {
@@ -132,7 +134,7 @@ export default function StorePage() {
             id="tableTitle"
             component="div"
           >
-            {store!=null? store.name: "Error- store not exist"}
+            {store != null ? store.name : "Error- store not exist"}
           </Typography>
         )}
         {numSelected > 0 && isManager ? (
@@ -214,7 +216,7 @@ export default function StorePage() {
       <Stack direction="row">{}</Stack>
       <div>
         <DataGrid
-          rows={rows}
+          rows={store === null || store === undefined ? [new Product(1,"asdf",1,"asdf",1,"fdfdfddfdf",2)] : store.products}
           columns={columns}
           sx={{
             width: "100vw",

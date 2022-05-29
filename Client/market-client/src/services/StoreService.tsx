@@ -1,15 +1,15 @@
 import Store from "../DTOs/Store";
 import Member from "../DTOs/Member";
 import Product from "../DTOs/Product";
-import { dummyProducts, groupByStore } from "../services/ProductsService";
+import  {groupByStore } from "../services/ProductsService";
 import { serverPort } from "../Utils";
 import ClientResponse from "../services/Response";
 import List from "@mui/material/List";
 import Purchase from "../DTOs/Purchase";
 
 const stores = [
-  new Store(0, "Ronto's", groupByStore(dummyProducts)[0]),
-  new Store(1, "Mithcell's", groupByStore(dummyProducts)[1]),
+  new Store(0, "Ronto's", []),
+  new Store(1, "Mithcell's", []),
 ];
 export const dummyStore1 = stores[0];
 export const dummyStore2 = stores[1];
@@ -31,10 +31,6 @@ export const serverGetStore = async (id: number | null): Promise<Store> => {
   return jsonResponse.json();
 };
 
-export function groupStoresProducts(stores: Store[]): Product[][] {
-  return stores.map((store: Store) => store.products);
-}
-
 export async function addNewProduct(
   userId: number,
   product: Product
@@ -49,7 +45,7 @@ export async function addNewProduct(
     // body: '{\n  "userId": 0,\n  "storeId": 0,\n  "productName": "string",\n  "price": 0,\n  "category": "string"\n}',
     body: JSON.stringify({
       userId: userId,
-      storeId: product.store,
+      storeId: product.storeId,
       productName: product.name,
       price: product.price,
       category: product.category,

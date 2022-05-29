@@ -230,9 +230,14 @@ namespace MarketBackend.ServiceLayer
         {
             // try and catch is in calling functions 
 
-            IList<ServiceProduct> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => new ServiceProduct(product, storeId)).ToList();
+            IList<ServiceProduct> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => CreateServiceProduct(product, storeId, store.name)).ToList();
 
             return new ServiceStore(storeId, store.GetName(), productsIds);
+        }
+
+        private ServiceProduct CreateServiceProduct(Product product, int storeId, string storeName)
+        {
+            return new ServiceProduct(product, storeId, storeName);
         }
 
         //done
@@ -266,9 +271,12 @@ namespace MarketBackend.ServiceLayer
             {
                 IList<Product> products = map[storeId];
                 IList<ServiceProduct> l = new List<ServiceProduct>();
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    throw new Exception("Store cannot be found !");
                 foreach (Product product in products)
                 {
-                    l.Add(new ServiceProduct(product,storeId));
+                    l.Add(CreateServiceProduct(product,storeId,s.name));
                 }
                 result[storeId] = l;
             }

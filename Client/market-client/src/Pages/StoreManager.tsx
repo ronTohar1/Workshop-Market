@@ -19,7 +19,7 @@ import Navbar from "../Componentss/Navbar";
 
 import Product from "../DTOs/Product";
 import { Card, CardActions, CardContent } from "@mui/material";
-import { serverGetStore, groupStoresProducts } from "../services/StoreService";
+import { serverGetStore } from "../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { dummyMember1, getStoresManagedBy } from "../services/MemberService";
 import Grid from "@mui/material/Grid";
@@ -43,36 +43,13 @@ const columns: GridColDef[] = [
   // { field: "store", headerName: "Store", flex: 1 },
 ];
 
-type ProductRowType = {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  store: string;
-  available_quantity: number;
-};
-
-const createRows = (products: Product[]) => {
-  let productRow: ProductRowType[] = [];
-  for (const p of products) {
-    productRow.push({
-      id: p.id,
-      name: p.name,
-      price: p.price,
-      category: p.category,
-      store: serverGetStore(p.store).name,
-      available_quantity: p.availableQuantity,
-    });
-  }
-  return productRow;
-};
 
 function storeGrid(
-  productsRows: ProductRowType[],
+  productsRows: Product[],
   pageSize: number,
   setPageSize: any
 ) {
-  const storeName = productsRows[0].store;
+  const storeName = productsRows[0].storeName;
   return (
     <Box
       sx={{
@@ -161,7 +138,7 @@ export default function StoreManagerPage() {
   //   {},
   //   ...productsLst.map((p: Product) => ({ [p.id]: p }))
   // );
-  const productsByStore: Product[][] = groupStoresProducts(stores);
+  const productsByStore: Product[][] = []
 
   return (
     <ThemeProvider theme={theme}>
@@ -194,7 +171,7 @@ export default function StoreManagerPage() {
                 </Box>
                 {productsByStore.map((prodsOfStore: Product[]) => {
                   return storeGrid(
-                    createRows(prodsOfStore),
+                    prodsOfStore,
                     pageSize,
                     setPageSize
                   );

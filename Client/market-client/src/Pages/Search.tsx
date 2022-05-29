@@ -22,13 +22,13 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Navbar from "../Componentss/Navbar";
 
 import Product from "../DTOs/Product";
-import { dummyProducts, fetchProducts, groupByStore } from "../services/ProductsService";
+import { fetchProducts } from "../services/ProductsService";
 import { useQueryParam, NumberParam, StringParam } from "use-query-params";
 import { serverGetStore } from "../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useLocation, useNavigate } from "react-router-dom";
 import { pathStore } from "../Paths";
-import StoreGrid, { ProductRowType } from "../Componentss/StoreGrid";
+import StoreGrid from "../Componentss/StoreGrid";
 
 const theme = createTheme({
   typography: {
@@ -60,10 +60,10 @@ export default function SearchPage() {
 
   //Send function to navbar that activates the setProductsByStore here when pushin search
   React.useEffect(() => {
-    fetchProducts(query || "").then((prods: Product[][]) =>
-      setProductsByStore(prods)
-      // setProductsByStore(groupByStore( dummyProducts))
-    );
+    fetchProducts(query || "").then((prods: Product[][]) => {
+      console.log(prods);
+      setProductsByStore(prods);
+    });
   }, [query]);
 
   return (
@@ -72,7 +72,7 @@ export default function SearchPage() {
         <Navbar />
         <Stack>
           {productsByStore.map((prodsOfStore: Product[]) => {
-            const storeId = prodsOfStore[0].store;
+            const storeId = prodsOfStore[0].storeId;
             return StoreGrid(
               prodsOfStore,
               pageSize,

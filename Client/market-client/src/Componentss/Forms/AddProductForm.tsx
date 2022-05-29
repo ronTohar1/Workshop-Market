@@ -42,7 +42,7 @@ export default function AddProductForm(
   };
 
   const handleSubmit = async () => {
-    let product: Product = new Product(x, name, price, category, 0, quantity); //TODO: fill real storeid 
+    let product: Product = new Product(x, name, price, category, 0, "Cool store yea", quantity); //TODO: fill real storeid 
     setx(x+1)// TODO: Delete This x
     // alert(`sending to the server the product: ${JSON.stringify(product)}`);
 

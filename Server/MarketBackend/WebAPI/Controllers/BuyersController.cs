@@ -98,13 +98,14 @@ namespace WebAPI.Controllers
             //if (request.StoreId > 0)
             response = buyerFacade.GetStoreInfo(request.StoreId);
             //else if (request.StoreName != null)
-                //response = buyerFacade.GetStoreInfo(request.StoreName);
+            //response = buyerFacade.GetStoreInfo(request.StoreName);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
             return Ok(response);
         }
+
 
         [HttpPost("SerachProducts")]
         public ActionResult<Response<IDictionary<int, IList<ServiceProduct>>>> ProductsSearch([FromBody] SearchProductsRequest request)

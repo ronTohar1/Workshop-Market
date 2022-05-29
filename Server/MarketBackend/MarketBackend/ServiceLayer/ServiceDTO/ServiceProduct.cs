@@ -14,16 +14,17 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public double Price { get; set; }
         public string Category { get; set; }
         public int AvailableQuantity { get; set; }
-
-        public int Store { get; set; }
-        public ServiceProduct(Product p, int storeId)
+        public int StoreId { get; set; }
+        public string StoreName { get; set; }
+        public ServiceProduct(Product p, int storeId, string storeName)
         {
-            Id = p.id; 
+            Id = p.id;
             Name = p.name;
             Price = p.GetPrice();
             Category = p.category;
             AvailableQuantity = p.amountInInventory;
-            Store = storeId;
+            StoreId = storeId;
+            StoreName = storeName;
         }
 
         public override bool Equals(Object? other)

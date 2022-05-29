@@ -23,35 +23,16 @@ function ProductsTable() {
     </GridToolbarContainer>
   );
 }
-
-export type ProductRowType = {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  store: string;
-};
+;
 
 const columns: GridColDef[] = [
   { field: "name", headerName: "Product", flex: 2 },
   { field: "price", headerName: "Price", flex: 1 },
   { field: "category", headerName: "Category", flex: 1 },
-  { field: "store", headerName: "Store", flex: 1 },
+  { field: "storeName", headerName: "Store", flex: 1 },
 ];
 
-const createRows = (products: Product[]) => {
-  let productRow: ProductRowType[] = [];
-  for (const p of products) {
-    productRow.push({
-      id: p.id,
-      name: p.name,
-      price: p.price,
-      category: p.category,
-      store: serverGetStore(p.store).name,
-    });
-  }
-  return productRow;
-};
+
 
 export default function StoreGrid(
   products: Product[],
@@ -60,9 +41,9 @@ export default function StoreGrid(
   storeId: number,
   handleGoToStore: (storeId: number) => void
 ) {
-  const productsRows: ProductRowType[] = createRows(products);
+  const productsRows: Product[] = products;
 
-  const storeName = productsRows[0].store;
+  const storeName = productsRows[0].storeName; // We know its not empty
   return (
     <Box
       sx={{

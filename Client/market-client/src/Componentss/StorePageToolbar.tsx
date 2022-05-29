@@ -6,7 +6,6 @@ import Store from "../DTOs/Store"
 export default function toolBar(
   numSelected: number,
   store: Store | null,
-  isManager: boolean,
   handleAddToCart: () => void
 ) {
   return (
@@ -23,7 +22,7 @@ export default function toolBar(
         }),
       }}
     >
-      {numSelected > 0 && isManager ? (
+      {numSelected > 0 ? (
         <Typography
           sx={{ flex: "1 1 100%" }}
           color="inherit"
@@ -42,7 +41,7 @@ export default function toolBar(
           {store != null ? store.name : "Error- store not exist"}
         </Typography>
       )}
-      {numSelected > 0 && isManager ? (
+      {numSelected > 0 ? (
         <Tooltip title="Add To Cart">
           <Fab
             size="medium"

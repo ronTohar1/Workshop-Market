@@ -23,15 +23,11 @@ const fields = {
   category: "category",
 }
 
-export default function StorePage() {
-  const startingPageSize: number = 10
+export default function StorePageOfManager() {
+  const initSize: number = 10
 
   const navigate = useNavigate()
-  const [pageSize, setPageSize] = React.useState<number>(startingPageSize)
-  const [numSelected, setNumSelected] = React.useState<number>(0)
-  const [selectedProductsIds, setSelectedProductsIds] = React.useState<
-    number[]
-  >([])
+  const [pageSize, setPageSize] = React.useState<number>(initSize)
   const isManager: boolean = true //TODO: change to real value. storeService.getMemberInRole(...)
   const [rows, setRows] = React.useState<Product[]>([])
   const [storeId] = useQueryParam("id", NumberParam)
@@ -98,23 +94,50 @@ export default function StorePage() {
       //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
     },
   ]
-  const handleNewSelection = (newSelectionModel: any) => {
-    const chosenIds: number[] = newSelectionModel
-    setNumSelected(chosenIds.length)
-    setSelectedProductsIds(chosenIds)
+
+  function updatePrice(product: Product, price: number) {
+    if (price != null) product.price = price
+  }
+  function updateAvailableQuantity(
+    product: Product,
+    available_quantity: number
+  ) {
+    if (available_quantity != null)
+      product.availableQuantity = available_quantity
+  }
+  function updateCategory(product: Product, category: string) {
+    if (category != null) product.category = category
   }
 
-  const handleAddToCart = () => {
-    rows.forEach((prod) => {
-      if (selectedProductsIds.includes(prod.id)) {
-        console.log("Adding to cart: " + prod.name)
+  const handleCellEdit = (e: GridCellEditCommitParams) => {
+    const newRows = rows.map((row) => {
+      if (row.id === e.id) {
+        switch (e.field) {
+          case fields.price:
+            updatePrice(row, e.value)
+            break
+          case fields.available_quantity:
+            updateAvailableQuantity(row, e.value)
+            break
+          case fields.category:
+            updateCategory(row, e.value)
+            break
+        }
       }
+      return row
     })
+    setRows(newRows)
+    // alert(e.field + " Changed into "+ e.value + " id "+ e.id)
   }
+
+  const handleAddProduct = (productToAdd: Product) => {
+    setRows([...rows, productToAdd])
+    console.log(rows.map((r) => r.name))
+  }
+
   return (
     <Box>
       <Navbar />
-      {toolBar(numSelected, store, handleAddToCart)}
       <Stack direction="row">{}</Stack>
       <div style={{ height: "50vh", width: "100%" }}>
         <div style={{ display: "flex", height: "100%" }}>
@@ -124,7 +147,13 @@ export default function StorePage() {
               columns={columns}
               sx={{
                 width: "100vw",
-                // height: "100vh",
+                height: "80vh",
+                "& .MuiDataGrid-cell:hover": {
+                  ...(isManager && {
+                    color: "primary.main",
+                    border: 1,
+                  }),
+                },
               }}
               // Paging:
               pageSize={pageSize}
@@ -132,11 +161,10 @@ export default function StorePage() {
               rowsPerPageOptions={[10, 20, 25]}
               pagination
               // Selection:
-              checkboxSelection
-              disableSelectionOnClick
-              onSelectionModelChange={handleNewSelection}
-              isCellEditable={(params) => false}
+              isCellEditable={(params) => isManager}
+              onCellEditCommit={handleCellEdit}
             />
+            {isManager ? AddProductForm(handleAddProduct) : null}
           </div>
         </div>
       </div>

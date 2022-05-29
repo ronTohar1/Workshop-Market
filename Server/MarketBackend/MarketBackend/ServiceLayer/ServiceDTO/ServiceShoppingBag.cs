@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO
 {
-    internal class ServiceShoppingBag
+    public class ServiceShoppingBag
     {
         private IDictionary<ServiceProductInBag, int> productsAmounts;
-        internal IDictionary<ServiceProductInBag, int> ProductsAmounts { get { return productsAmounts; } }
+        public IDictionary<ServiceProductInBag, int> ProductsAmounts { get { return productsAmounts; } }
         public ServiceShoppingBag(ShoppingBag sb)
         {
             IDictionary<ProductInBag, int> pam = sb.ProductsAmounts;

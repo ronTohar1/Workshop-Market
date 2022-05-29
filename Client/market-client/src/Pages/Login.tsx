@@ -56,12 +56,9 @@ export default function Login() {
         alert("Logged in successfully!");
         sessionService.setIsGuest(false);
         sessionService.setBuyerId(response.value);
-        console.log(sessionService.getIsGuest())
-
         navigate(pathHome);
       }
     } catch (e) {
-      alert(e);
       alert("Sorry, an unkown error occured");
     }
   };

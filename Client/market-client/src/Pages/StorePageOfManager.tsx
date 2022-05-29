@@ -4,7 +4,7 @@ import {
   GridCellEditCommitParams,
   GridColDef,
 } from "@mui/x-data-grid"
-import { Box, Stack } from "@mui/material"
+import { Box, Stack, Typography } from "@mui/material"
 import Navbar from "../Componentss/Navbar"
 import Product from "../DTOs/Product"
 import AddProductForm from "../Componentss/Forms/AddProductForm"
@@ -139,6 +139,14 @@ export default function StorePageOfManager() {
     <Box>
       <Navbar />
       <Stack direction="row">{}</Stack>
+      <Typography
+        sx={{ flex: "1 1 100%" }}
+        variant="h4"
+        id="tableTitle"
+        component="div"
+      >
+        {store != null ? store.name : "Error- store not exist"}
+      </Typography>
       <div style={{ height: "50vh", width: "100%" }}>
         <div style={{ display: "flex", height: "100%" }}>
           <div style={{ flexGrow: 1 }}>
@@ -149,10 +157,8 @@ export default function StorePageOfManager() {
                 width: "100vw",
                 height: "80vh",
                 "& .MuiDataGrid-cell:hover": {
-                  ...(isManager && {
-                    color: "primary.main",
-                    border: 1,
-                  }),
+                  color: "primary.main",
+                  border: 1,
                 },
               }}
               // Paging:

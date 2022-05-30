@@ -435,7 +435,7 @@ const MakeProducts = (products1: Product[]) => {
   )
 }
 
-export default function Cart() {
+export default function CartPage() {
   return (
     <Box>
       <ThemeProvider theme={theme}>

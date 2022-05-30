@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
 
         public BuyersController(IBuyerFacade buyerFacade) => this.buyerFacade = buyerFacade;
 
-        [HttpPost]
+        [HttpPost("GetCart")]
         public ActionResult<Response<ServiceCart>> GetCart([FromBody] UserRequest request)
         {
             Response<ServiceCart> response = buyerFacade.GetCart(request.UserId);

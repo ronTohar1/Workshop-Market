@@ -43,16 +43,13 @@ export default function StorePage() {
   }
 
   React.useEffect(() => {
-    serverGetStore(storeId)
-      .then((response) => {
-        return fetchResponse(response, handleError)
-      })
+    fetchResponse(serverGetStore(storeId))
       .then((store) => {
         setStore(store)
         setRows(store.products)
       })
       .catch((e) => {
-        alert("Sorry, an unexpected error has occured!")
+        alert(e)
         navigate(pathHome)
       })
   }, [storeId])

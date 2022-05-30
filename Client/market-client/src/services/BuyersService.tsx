@@ -1,43 +1,48 @@
-import Product from "../DTOs/Product";
-import { serverPort } from "../Utils";
-import ClientResponse from "./Response";
+import Cart from "../DTOs/Cart"
+import Product from "../DTOs/Product"
+import { serverPort } from "../Utils"
+import ClientResponse from "./Response"
 
 export async function serverEnter(): Promise<ClientResponse<number>> {
-  const uri = serverPort + "/api/Buyers/Enter";
-  const jsonResponse = await fetch(uri);
+  const uri = serverPort + "/api/Buyers/Enter"
+  const jsonResponse = await fetch(uri)
 
-  return jsonResponse.json();
+  return jsonResponse.json()
 }
 
 export async function serverLogin(
   name: string | undefined | null,
   password: string | undefined | null
 ): Promise<ClientResponse<number>> {
-  if (name == undefined || password == undefined) return Promise.reject();
-  const uri = serverPort + "/api/Buyers/Login";
-  const jsonResponse = await fetch(uri, {
-    method: "POST",
-    headers: {
-      accept: "text/plain",
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "http",
-    },
-    // body: '{\n  "userName": "string",\n  "password": "string"\n}',
-    body: JSON.stringify({
-      userName: name,
-      password: password,
-      port: window.location.port,
-    }),
-  });
+  if (name == undefined || password == undefined) return Promise.reject()
+  const uri = serverPort + "/api/Buyers/Login"
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "text/plain",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "http",
+      },
+      // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+      body: JSON.stringify({
+        userName: name,
+        password: password,
+        port: window.location.port,
+      }),
+    })
 
-  const response = jsonResponse.json();
-  return response;
+    const response = jsonResponse.json()
+    return response
+  } catch (e) {
+    return Promise.reject(e)
+  }
 }
 
 //.then(response=>Promise.resolve(response.json().then((data)=>data)))
 
 export async function logout(userId: number): Promise<any> {
-  const uri = serverPort + "/api/Buyers/Logout";
+  const uri = serverPort + "/api/Buyers/Logout"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -48,14 +53,14 @@ export async function logout(userId: number): Promise<any> {
     body: JSON.stringify({
       userId: userId,
     }),
-  });
+  })
 }
 
 export async function serverRegister(
   name: string | undefined,
   password: string | undefined
 ): Promise<ClientResponse<number>> {
-  const uri = serverPort + "/api/Buyers/Register";
+  const uri = serverPort + "/api/Buyers/Register"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -67,11 +72,11 @@ export async function serverRegister(
       userName: name,
       password: password,
     }),
-  });
+  })
 
-  const response = jsonResponse.json();
-  console.log(response);
-  return response;
+  const response = jsonResponse.json()
+  console.log(response)
+  return response
 }
 
 export async function addToCart(
@@ -80,7 +85,7 @@ export async function addToCart(
   storeId: number,
   amount: number
 ): Promise<any> {
-  const uri = serverPort + "/api/Buyers/AddProduct";
+  const uri = serverPort + "/api/Buyers/AddProduct"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -94,7 +99,7 @@ export async function addToCart(
       storeId: storeId,
       amount: amount,
     }),
-  });
+  })
 }
 
 export async function removeFromCart(
@@ -102,7 +107,7 @@ export async function removeFromCart(
   productId: number,
   storeId: number
 ): Promise<any> {
-  const uri = serverPort + "/api/Buyers/RemoveProduct";
+  const uri = serverPort + "/api/Buyers/RemoveProduct"
   return await fetch(uri, {
     method: "DELETE",
     headers: {
@@ -115,7 +120,7 @@ export async function removeFromCart(
       productId: productId,
       storeId: storeId,
     }),
-  });
+  })
 }
 
 export async function changeProductAmount(
@@ -124,7 +129,7 @@ export async function changeProductAmount(
   storeId: number,
   amount: number
 ): Promise<any> {
-  const uri = serverPort + "/api/Buyers/ChangeProductAmount";
+  const uri = serverPort + "/api/Buyers/ChangeProductAmount"
   return await fetch(uri, {
     method: "PUT",
     headers: {
@@ -138,11 +143,11 @@ export async function changeProductAmount(
       storeId: storeId,
       amount: amount,
     }),
-  });
+  })
 }
 
 export async function purchaseCart(userId: number): Promise<any> {
-  const uri = serverPort + "/api/Buyers/PurchaseCart";
+  const uri = serverPort + "/api/Buyers/PurchaseCart"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -153,20 +158,45 @@ export async function purchaseCart(userId: number): Promise<any> {
     body: JSON.stringify({
       userId: userId,
     }),
-  });
+  })
+}
+
+export async function serverGetCart(userId: number): Promise<ClientResponse<Cart>> {
+  const uri = serverPort + "/api/Buyers/GetCart"
+  try{
+  const jsonResponse = await fetch(uri, {
+    method: "POST",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userId: userId,
+    }),
+  })
+  console.log("json response is")
+  console.log(jsonResponse)
+  const response = jsonResponse.json()
+  console.log("get cart promise")
+  console.log(response)
+  return response
+}
+catch(e){
+  return Promise.reject(e)
+}
 }
 
 export async function enterBuyerFacade(): Promise<any> {
-  const uri = serverPort + "/api/Buyers/PurchaseCart";
+  const uri = serverPort + "/api/Buyers/PurchaseCart"
   return await fetch(uri, {
     headers: {
       accept: "text/plain",
     },
-  });
+  })
 }
 
 export async function leaveBuyerFacade(userId: number): Promise<any> {
-  const uri = serverPort + "/api/Buyers/Leave";
+  const uri = serverPort + "/api/Buyers/Leave"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -177,14 +207,14 @@ export async function leaveBuyerFacade(userId: number): Promise<any> {
     body: JSON.stringify({
       userId: 0,
     }),
-  });
+  })
 }
 
 export async function storeInfo(
   storeId: number,
   storeName: string
 ): Promise<any> {
-  const uri = serverPort + "/api/Buyers/StoreInfo";
+  const uri = serverPort + "/api/Buyers/StoreInfo"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -196,7 +226,7 @@ export async function storeInfo(
       storeId: storeId,
       storeName: storeName,
     }),
-  });
+  })
 }
 
 export async function productsSearch(
@@ -205,7 +235,7 @@ export async function productsSearch(
   category: string,
   keyword: string
 ): Promise<any> {
-  const uri = serverPort + "/api/Buyers/SerachProducts";
+  const uri = serverPort + "/api/Buyers/SerachProducts"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -219,7 +249,7 @@ export async function productsSearch(
       category: category,
       keyword: keyword,
     }),
-  });
+  })
 }
 
 export async function reviewProduct(
@@ -228,7 +258,7 @@ export async function reviewProduct(
   productId: number,
   review: string
 ): Promise<any> {
-  const uri = serverPort + "/api/Buyers/ReviewProduct";
+  const uri = serverPort + "/api/Buyers/ReviewProduct"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -242,5 +272,5 @@ export async function reviewProduct(
       productId: productId,
       review: review,
     }),
-  });
+  })
 }

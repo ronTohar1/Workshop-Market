@@ -8,7 +8,7 @@ import Login from "./Pages/Login";
 import Navbar from "./Componentss/Navbar";
 import SearchPage from "./Pages/Search";
 import StorePage from "./Pages/StorePage";
-import Cart from "./Pages/Cart1";
+import CartPage from "./Pages/Cart1";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import * as Paths from "./Paths";
 import { QueryParamProvider } from "use-query-params";
@@ -28,7 +28,7 @@ root.render(
         <Route index element={<Home />} />
         <Route path={Paths.pathRegister} element={<Register />} />
         <Route path={Paths.pathStore} element={<StorePage />} />
-        <Route path={Paths.pathCart} element={<Cart />} />
+        <Route path={Paths.pathCart} element={<CartPage />} />
         <Route path={Paths.pathLogin} element={<Login />} />
         <Route path={Paths.pathSearch} element={<SearchPage />} />
         <Route path={Paths.pathStorePageOfManager} element={<StorePageOfManager />} />

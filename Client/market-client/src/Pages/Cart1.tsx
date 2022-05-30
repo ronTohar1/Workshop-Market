@@ -1,11 +1,18 @@
 import { ThemeProvider } from "@emotion/react"
 import { Box, createTheme, Grid } from "@mui/material"
 import * as React from "react"
+import { useNavigate } from "react-router-dom"
+import { NumberParam, useQueryParam } from "use-query-params"
 import DialogTwoOptions from "../Componentss/CartComponents/DialogTwoOptions"
 import ProductCard from "../Componentss/CartComponents/ProductCard"
 import LargeMessage from "../Componentss/LargeMessage"
 import Navbar from "../Componentss/Navbar"
+import Cart from "../DTOs/Cart"
 import Product from "../DTOs/Product"
+import { pathHome } from "../Paths"
+import { serverGetCart } from "../services/BuyersService"
+import { fetchResponse } from "../services/GeneralService"
+import { getBuyerId } from "../services/SessionService"
 
 const theme = createTheme({
   palette: {
@@ -61,23 +68,30 @@ function MakeProductCard(
   )
 }
 
-export default function Cart() {
+export default function CartPage() {
+  const navigate = useNavigate()
   const [expanded, setExpanded] = React.useState(false)
-  const [prods, updateProducts] = React.useState<Product[]>([
-    dummyProd,
-    dummyProd,
-    dummyProd,
-    dummyProd,
-    dummyProd,
-    dummyProd,
-    dummyProd,
-    dummyProd,
-    dummyProd,
-  ])
+  const [prods, updateProducts] = React.useState<Product[]>([])
   const [openRemoveDialog, setOpenRemoveDialog] = React.useState(false)
+
   const [chosenProduct, updateChosenProduct] = React.useState<Product | null>(
-    dummyProd
+    null
   )
+
+  React.useEffect(() => {
+    const buyerId = getBuyerId()
+      const responsePromise = serverGetCart(buyerId)
+      fetchResponse(responsePromise).then(
+        (cart: Cart)=>{
+          console.log("cart")
+          console.log(cart)
+        }
+      )
+    .catch((e)=>{
+      alert(e)
+      navigate(pathHome)}
+    )
+  }, [])
 
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
     const validQuantity: boolean = newQuan > 0

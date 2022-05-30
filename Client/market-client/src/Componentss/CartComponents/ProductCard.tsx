@@ -14,13 +14,20 @@ import Product from "../../DTOs/Product"
 import { Currency } from "../../Utils"
 import RemoveProductCan from "./RemoveProductCan"
 
-function ProductActions(
-  handleUpdateQuantity: (event: React.FormEvent<HTMLFormElement>) => void
+function UpdateQuantityComponent(
+  product: Product,
+  handleUpdateQuantity: (product: Product, newQuan: number) => void
 ) {
+  const handleQuantity = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    handleUpdateQuantity(product, Number(data.get("quantity")))
+  }
+
   return (
     <Stack direction="column">
       <Typography variant="body1">Change Quantity</Typography>
-      <Box component="form" noValidate onSubmit={handleUpdateQuantity}>
+      <Box component="form" noValidate onSubmit={handleQuantity}>
         <Stack direction="row">
           <TextField
             id="quantity"
@@ -75,10 +82,13 @@ export default function ProductCard(
   return (
     <Card sx={{ m: 1 }} elevation={6} component={Paper}>
       <CardContent>{ProductContent(product, quantity)}</CardContent>
-      <CardActions>
-        {RemoveProductCan(product, handleRemoveProductClick)}
+      <CardActions disableSpacing>
+        {UpdateQuantityComponent(product, handleUpdateQuantity)}
+
+        <Box sx={{ ml: "auto" }}>
+          {RemoveProductCan(product, handleRemoveProductClick)}
+        </Box>
       </CardActions>
     </Card>
   )
 }
-

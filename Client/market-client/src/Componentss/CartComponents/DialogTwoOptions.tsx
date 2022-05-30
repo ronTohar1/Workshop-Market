@@ -26,7 +26,7 @@ export default function DialogTwoOptions(
         keepMounted
         aria-describedby="confirm-remove"
       >
-        <DialogTitle>{"Confirm Remove:" + product.name}</DialogTitle>
+        <DialogTitle>{"Confirm Remove: " + product.name}</DialogTitle>
         <DialogContent>
           <DialogContentText id="confirm-remove">
             Are you sure you want to remove this item from your cart?

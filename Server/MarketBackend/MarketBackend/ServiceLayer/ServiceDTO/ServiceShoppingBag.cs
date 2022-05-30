@@ -9,15 +9,16 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     public class ServiceShoppingBag
     {
-        private IDictionary<ServiceProductInBag, int> productsAmounts;
-        public IDictionary<ServiceProductInBag, int> ProductsAmounts { get { return productsAmounts; } }
+        public IDictionary<ServiceProductInBag, int> ProductsAmounts { get; private set; }
+        public int StoreId { get; private set; }
         public ServiceShoppingBag(ShoppingBag sb)
         {
+            this.StoreId = sb.StoreId;
             IDictionary<ProductInBag, int> pam = sb.ProductsAmounts;
 
-            productsAmounts = new Dictionary<ServiceProductInBag, int>();
+            ProductsAmounts = new Dictionary<ServiceProductInBag, int>();
             foreach (ProductInBag pib in pam.Keys)
-                productsAmounts.Add(new ServiceProductInBag(pib), pam[pib]);
+                ProductsAmounts.Add(new ServiceProductInBag(pib), pam[pib]);
      
         }
 
@@ -35,14 +36,14 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         private bool IsEqualProductAmounts(ServiceShoppingBag other)
         {
 
-            foreach (KeyValuePair<ServiceProductInBag, int> item in other.productsAmounts)
+            foreach (KeyValuePair<ServiceProductInBag, int> item in other.ProductsAmounts)
             {
                 ServiceProductInBag productInBag = item.Key;
                 int amount = item.Value;
 
-                if (!this.productsAmounts.ContainsKey(productInBag))
+                if (!this.ProductsAmounts.ContainsKey(productInBag))
                     return false;
-                if (!this.productsAmounts[productInBag].Equals(amount))
+                if (!this.ProductsAmounts[productInBag].Equals(amount))
                     return false;
             }
 

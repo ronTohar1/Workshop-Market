@@ -1,7 +1,6 @@
-import { Icon, IconButton } from "@mui/material";
-import Product from "../../DTOs/Product";
+import { Icon, IconButton } from "@mui/material"
+import Product from "../../DTOs/Product"
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever"
-
 
 export default function RemoveProductCan(
   product: Product,
@@ -9,8 +8,11 @@ export default function RemoveProductCan(
 ) {
   return (
     <div>
-      <IconButton onClick={() => handleRemoveProduct(product)}>
-        <Icon>
+      <IconButton
+        sx={{ display: "flex" }}
+        onClick={() => handleRemoveProduct(product)}
+      >
+        <Icon sx={{ display: "flex" }}>
           <DeleteForeverIcon fontSize="medium" sx={{ color: "red" }} />
         </Icon>
       </IconButton>

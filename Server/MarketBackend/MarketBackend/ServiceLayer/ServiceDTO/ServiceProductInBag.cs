@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO
 {
-    internal class ServiceProductInBag
+    public class ServiceProductInBag
     {
         public int ProductId { get; }
         public int StoreId { get; }

@@ -63,43 +63,50 @@ function MakeProductCard(
 
 export default function Cart() {
   const [expanded, setExpanded] = React.useState(false)
-  const [prods, updateProducts] = React.useState<Product[]>([dummyProd])
+  const [prods, updateProducts] = React.useState<Product[]>([
+    dummyProd,
+    dummyProd,
+    dummyProd,
+    dummyProd,
+    dummyProd,
+    dummyProd,
+    dummyProd,
+    dummyProd,
+    dummyProd,
+  ])
   const [openRemoveDialog, setOpenRemoveDialog] = React.useState(false)
   const [chosenProduct, updateChosenProduct] = React.useState<Product | null>(
     dummyProd
   )
 
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
-    // const validQuantity: boolean = newQuan > 0
-    // const newProds = validQuantity
-    //   ? prods.map((prod: Product) => {
-    //       if (prod.Id == product.Id) prod.Chosen_Quantity = newQuan
-    //       return prod
-    //     })
-    //   : prods
-    // updateProducts(newProds)
+    const validQuantity: boolean = newQuan > 0
+    const newProds = validQuantity
+      ? prods.map((prod: Product) => {
+          // if (prod.id == product.id)  = newQuan
+          return prod
+        })
+      : prods
+    if (validQuantity) updateProducts(newProds)
   }
 
   const handleCloseRemoveDialog = (remove: boolean, product: Product) => {
     setOpenRemoveDialog(false)
-    // const newProds = remove
-    //   ? prods.filter((prod: Product) => prod.Id != product.Id)
-    //   : prods
-    // if (remove) updateProducts(newProds)
-    // setOpenRemoveDialog(false)
+    const newProds = remove
+      ? prods.filter((prod: Product) => prod.id != product.id)
+      : prods
+    if (remove) updateProducts(newProds)
+    setOpenRemoveDialog(false)
   }
 
-  const handleRemoveProductClick = (product: Product) => {
-    // updateChosen(product)
+  const handleRemoveProductCanClick = (product: Product) => {
+    updateChosenProduct(product)
     setOpenRemoveDialog(true)
-    // updateProducts(prods => prods.filter((prod) => prod.Id != product.Id));
   }
 
   return (
     <ThemeProvider theme={theme}>
-      <Box>
-        <Navbar />
-      </Box>
+      <Navbar />
       <Box sx={{ width: "80%", mt: 2 }}>
         <Grid container spacing={0}>
           {prods.length > 0
@@ -107,7 +114,7 @@ export default function Cart() {
                 MakeProductCard(
                   product,
                   100,
-                  handleRemoveProductClick,
+                  handleRemoveProductCanClick,
                   handleUpdateQuantity
                 )
               )

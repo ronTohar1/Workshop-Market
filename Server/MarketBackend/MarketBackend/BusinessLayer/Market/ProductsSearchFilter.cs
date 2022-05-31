@@ -61,6 +61,12 @@ namespace MarketBackend.BusinessLayer.Market
             productPred = And(productPred, newFilter);
         }
 
+        public void FilterProductIds(IList<int> ids)
+        {
+            Predicate<Product> newFilter = product => ids.Contains(product.id);
+            productPred = And(productPred, newFilter);
+        }
+
         public static Predicate<T> And<T>(Predicate<T> pred1, Predicate<T> pred2)
         {
             return input => pred1(input) && pred2(input); 

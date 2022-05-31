@@ -177,16 +177,30 @@ namespace TestMarketBackend.BusinessLayer.Market
             Assert.AreEqual(expectedResult, productsSearchFilter.FilterProduct(product));
         }
 
-        // ----------- FilterProductName() -----------------------------
+        // ----------- FilterProductId() -----------------------------
 
         [Test]
-        [TestCase(0, 1, false)]
-        [TestCase(-1, 1, false)]
+        [TestCase(1, 2, false)]
+        [TestCase(1, -1, false)]
         [TestCase(1, 1, true)]
         [TestCase(3, 3, true)]
-        public void TestFilterProductName(int actualProductId, int filterProductId, bool expectedResult)
+        public void TestFilterProductId(int actualProductId, int filterProductId, bool expectedResult)
         {
             productsSearchFilter.FilterProductId(filterProductId);
+            Product product = MakeProductMockId(actualProductId);
+            Assert.AreEqual(expectedResult, productsSearchFilter.FilterProduct(product));
+        }
+
+        // ----------- FilterProductIds() -----------------------------
+
+        [Test]
+        [TestCase(1, new int[] { 0, -1, 2 }, false)]
+        [TestCase(1, new int[] { 2 }, false)]
+        [TestCase(1, new int[] { 1 }, true)]
+        [TestCase(3, new int[] { 1, 2, 3 }, true)]
+        public void TestFilterProductIds(int actualProductId, int[] filterProductIds, bool expectedResult)
+        {
+            productsSearchFilter.FilterProductIds(filterProductIds.ToList());
             Product product = MakeProductMockId(actualProductId);
             Assert.AreEqual(expectedResult, productsSearchFilter.FilterProduct(product));
         }

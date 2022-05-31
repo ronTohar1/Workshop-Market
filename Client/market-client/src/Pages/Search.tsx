@@ -62,7 +62,7 @@ export default function SearchPage() {
   React.useEffect(() => {
     fetchProducts(query || "").then((prods: Product[][]) => {
       setProductsByStore(prods);
-    });
+    }).catch((e) => alert(e))
   }, [query]);
 
   return (

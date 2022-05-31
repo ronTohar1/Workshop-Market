@@ -1,6 +1,6 @@
 import ClientResponse from "./Response"
 
-export async function fetchResponse<T>(responsePromise : Promise<ClientResponse<T>> ){
+export async function fetchResponse<T>(responsePromise : Promise<ClientResponse<T>>){
     try{
       const serverResponse = await responsePromise
       if (serverResponse.errorOccured){
@@ -12,4 +12,3 @@ export async function fetchResponse<T>(responsePromise : Promise<ClientResponse<
       return Promise.reject("Sorry, an unexpected error occured")
     }
   }
-  

@@ -162,7 +162,7 @@ export async function purchaseCart(userId: number): Promise<any> {
 }
 
 export async function serverGetCart(userId: number): Promise<ClientResponse<Cart>> {
-  const uri = serverPort + "/api/Buyers/GetCart"
+  const uri = serverPort + "/api/Buyers/GetBuyerCart"
   try{
   const jsonResponse = await fetch(uri, {
     method: "POST",
@@ -174,8 +174,6 @@ export async function serverGetCart(userId: number): Promise<ClientResponse<Cart
       userId: userId,
     }),
   })
-  console.log("json response is")
-  console.log(jsonResponse)
   const response = jsonResponse.json()
   console.log("get cart promise")
   console.log(response)

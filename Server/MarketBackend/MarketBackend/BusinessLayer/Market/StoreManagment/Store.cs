@@ -33,6 +33,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public StoreDiscountPolicyManager discountManager { get; }
         public virtual StorePurchasePolicyManager purchaseManager { get; }
 
+        public IDictionary<int, Bid> bids { get; }
+        private Mutex approvebidLock;
+
 
         // cc 5
         // cc 6
@@ -57,6 +60,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             this.productsMutex = new();
             this.transactionIdMutex = new Mutex();
 
+            //bids
+            bids = new ConcurrentDictionary<int, Bid>();
+            approvebidLock = new Mutex(false);
 
             this.rolesAndPermissionsLock = new ReaderWriterLock(); // no need to acquire it here (probably) because constructor is of one thread
         }
@@ -544,6 +550,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.RecieiveRolesInfo); 
             if (permissionError != null)
                 throw new MarketException("Error in getting members in role: " + role.ToString() + " " + permissionError);
+            return GetMembersInRole(role);
+        }
+
+        private IList<int> GetMembersInRole(Role role)
+        {
             lock (isOpenMutex)
             {
                 if (!isOpen)
@@ -685,6 +696,107 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return discountManager.GetDescriptions();
         }
+        // ------------------------------- Bids --------------------------------
+
+        //every member can add a bid
+        public int AddBid(int productId, int memberId, double bidPrice)
+        {
+            Bid bid = new Bid(productId, memberId, bidPrice);
+            bids.Add(bid.id, bid);
+            notifyAllStoreOwners($"A bid has been made for the product {products[productId].name} for the price of {bidPrice}");
+            notifyAllMembersWithRoleAndPermission($"A bid has been made for the product {products[productId].name} for the price of {bidPrice}", Role.Manager, Permission.handlingBids);
+            return bid.id;
+        }
+
+        // bid actions owners and managers can do
+        public void ApproveBid(int memberId, int bidId)
+        {
+            Bid bid = bids[bidId];
+            if (bid.counterOffer)
+                throw new MarketException("The bid cannot be approved beacause a counter offer has been made but not been approved by the member");
+            if(IsCoOwner(memberId) || IsManagerWithPermission(memberId, Permission.handlingBids))
+            {
+                approvebidLock.WaitOne();
+                bid.approveBid(memberId);
+                IList<int> approved = bid.aprovingIds;
+
+                IList<int> owners = GetMembersInRole(Role.Owner);
+                foreach (int i in owners)
+                    if (!approved.Contains(i))
+                    {
+                        approvebidLock.ReleaseMutex();
+                        return;
+                    }
+
+                IList<int> managers = GetMembersInRole(Role.Manager);
+                foreach (int i in managers)
+                    if (IsManagerWithPermission(memberId, Permission.handlingBids) && !approved.Contains(i))
+                    {
+                        approvebidLock.ReleaseMutex();
+                        return;
+                    }
+                approvebidLock.ReleaseMutex();
+
+                //TODO: add pruchse for the product with the bid price for the member that asked
+
+                Member m = membersGetter.Invoke(bid.memberId);
+                m.Notify($"The bid you placed for the product {products[bid.productId].name} was approved for the cost of {bid.bid}");
+
+            }
+        }
+
+        public void DenyBid(int memberId, int bidId)
+        {
+            Bid bid = bids[bidId];
+            if (IsCoOwner(memberId) || IsManagerWithPermission(memberId, Permission.handlingBids))
+            {
+                bids.Remove(bidId);
+                Member m = membersGetter.Invoke(bid.memberId);
+                m.Notify($"The bid you placed for the product {products[bid.productId].name} was denied for the cost of {bid.bid}");
+            }
+        }
+
+        public void MakeCounterOffer(int memberId, int bidId, double offer)
+        {
+            Bid bid = bids[bidId];
+            if (bid.counterOffer)
+                throw new MarketException("The bid cannot be approved beacause a counter offer has been made but not been approved by the member");
+            if (IsCoOwner(memberId) || IsManagerWithPermission(memberId, Permission.handlingBids))
+            {
+                bid.CounterOffer(offer);
+            }
+        }
+
+        public IList<int> GetApproveForBid(int memberId, int bidId)
+        {
+            Bid bid = bids[bidId];
+            if (IsCoOwner(memberId) || IsManagerWithPermission(memberId, Permission.handlingBids))
+                return bid.aprovingIds;
+            return null;
+        }
+
+        // actions for a member on his own bid
+        public void RemoveBid(int memberId, int bidId)
+        {
+            if (bids[bidId].memberId == memberId)
+                bids.Remove(bidId);
+        }
+
+        public void ApproveCounterOffer(int memberId, int bidId)
+        {
+            Bid bid = bids[bidId];
+            if (bid.memberId != memberId)
+                throw new MarketException("The counter offer cant be approved because it is not your bid!");
+            bid.approveCounterOffer();
+        }
+
+        public void DenyCounterOffer(int memberId, int bidId)
+        {
+            Bid bid = bids[bidId];
+            if (bid.memberId != memberId)
+                throw new MarketException("The counter offer cant be denied because it is not your bid!");
+            bids.Remove(bidId);
+        }
 
         // ------------------------------ General ------------------------------
 
@@ -717,6 +829,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             foreach (int memberId in rolesInStore[roleAtStore])
                 membersGetter(memberId).Notify(notificationMessage);
+        }
+        private void notifyAllMembersWithRoleAndPermission(string notificationMessage, Role roleAtStore, Permission permission)
+        {
+            foreach (int memberId in rolesInStore[roleAtStore])
+            {
+                if (HasPermission(memberId, permission))
+                    membersGetter(memberId).Notify(notificationMessage);
+            }
         }
 
         // todo: maybe write tests about thers methods

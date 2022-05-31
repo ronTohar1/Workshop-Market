@@ -596,5 +596,183 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
+        public Response<int> AddBid(int storeId, int productId, int memberId, double bidPrice)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<int>($"There isn't a store with an id {storeId}");
+                int id = s.AddBid(productId, memberId, bidPrice);
+                logger.Info($"AddBid was called with parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
+                return new Response<int>(id);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: AddBid, parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
+                return new Response<int>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: AddBid, parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
+                return new Response<int>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> ApproveBid(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.ApproveBid(memberId, bidId);
+                logger.Info($"ApproveBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: ApproveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: ApproveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> DenyBid(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.DenyBid(memberId, bidId);
+                logger.Info($"DenyBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: DenyBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: DenyBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> MakeCounterOffer(int storeId, int memberId, int bidId, double offer)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.MakeCounterOffer(memberId, bidId, offer);
+                logger.Info($"MakeCounterOffer was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}, offer = {offer}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: MakeCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}, offer = {offer}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: MakeCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}, offer = {offer}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<IList<int>> GetApproveForBid(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<IList<int>>($"There isn't a store with an id {storeId}");
+                IList<int> approving = s.GetApproveForBid(memberId, bidId);
+                logger.Info($"GetApproveForBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<IList<int>>(approving);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetApproveForBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<IList<int>>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetApproveForBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<IList<int>>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> RemoveBid(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.RemoveBid(memberId, bidId);
+                logger.Info($"RemoveBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: RemoveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: RemoveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> ApproveCounterOffer(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.ApproveCounterOffer(memberId, bidId);
+                logger.Info($"ApproveCounterOffer was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: ApproveCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: ApproveCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> DenyCounterOffer(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.DenyCounterOffer(memberId, bidId);
+                logger.Info($"DenyCounterOffer was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: DenyCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: DenyCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+
     }
 }

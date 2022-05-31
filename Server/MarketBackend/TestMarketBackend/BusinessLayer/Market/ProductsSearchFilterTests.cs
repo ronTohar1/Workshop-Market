@@ -66,6 +66,17 @@ namespace TestMarketBackend.BusinessLayer.Market
             return productMock.Object;
         }
 
+        private Product MakeProductMockId(int id)
+        {
+            Mock<Product> productMock = MakeProductMock(productDefaultName, productDefaultPrice, productDefaultCategory);
+
+            productMock.Setup(product =>
+                    product.id).
+                        Returns(id);
+
+            return productMock.Object;
+        }
+
         private Product MakeProductMockCategory(string category)
         {
             Mock<Product> productMock = MakeProductMock(productDefaultName, productDefaultPrice, category);
@@ -163,6 +174,20 @@ namespace TestMarketBackend.BusinessLayer.Market
         {
             productsSearchFilter.FilterProductKeyword(filterProductKeyword);
             Product product = MakeProductMockNameAndCategory(actualProductName, actualProductCategory);
+            Assert.AreEqual(expectedResult, productsSearchFilter.FilterProduct(product));
+        }
+
+        // ----------- FilterProductName() -----------------------------
+
+        [Test]
+        [TestCase(0, 1, false)]
+        [TestCase(-1, 1, false)]
+        [TestCase(1, 1, true)]
+        [TestCase(3, 3, true)]
+        public void TestFilterProductName(int actualProductId, int filterProductId, bool expectedResult)
+        {
+            productsSearchFilter.FilterProductId(filterProductId);
+            Product product = MakeProductMockId(actualProductId);
             Assert.AreEqual(expectedResult, productsSearchFilter.FilterProduct(product));
         }
     }

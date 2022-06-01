@@ -3,6 +3,7 @@ using MarketBackend.ServiceLayer.ServiceDTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Requests;
+using WebSocketSharp;
 
 namespace WebAPI.Controllers
 {
@@ -134,7 +135,17 @@ namespace WebAPI.Controllers
         {
 
             Response<int> response  = buyerFacade.Login(request.UserName, request.Password,
-                (msgs) => { return false; });
+                (msgs) => 
+                { 
+                    using (WebSocket ws = new WebSocket("ws://something_should_be_here")) // TODO: actual address of client
+                    {
+                        ws.Connect();
+                        foreach (string msg in msgs)
+                            ws.Send(msg);
+                    }
+
+                    return true;
+                });
 
             if (response.IsErrorOccured())
                 return BadRequest(response);

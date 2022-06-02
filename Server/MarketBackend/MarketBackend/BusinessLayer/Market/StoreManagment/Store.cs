@@ -686,7 +686,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return discountManager.GetDescriptions();
         }
         // ------------------------------ Daily profit -------------------------
-        public double GetDailyProfit(int memberId)
+        public virtual double GetDailyProfit(int memberId)
         {
             string permissionError = CheckAtLeastCoOwnerPermission(memberId);
             if (permissionError != null)
@@ -695,7 +695,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             }
             return GetDailyProfit();
         }
-        public double GetDailyProfit()
+        public virtual double GetDailyProfit()
         {
             double total = 0;
             int day = DateTime.Now.Day;

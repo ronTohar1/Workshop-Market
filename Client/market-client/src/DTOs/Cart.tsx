@@ -4,10 +4,10 @@ import ShoppingBag from "./ShoppingBag"
 import Store from "./Store"
 
 class Cart {
-  storeShoppingBags: Map<number, ShoppingBag> // StoreId to Shopping Bag
+  shoppingBags: Map<number, ShoppingBag> // StoreId to Shopping Bag
 
   constructor(storeShoppingBags: Map<number, ShoppingBag>) {
-    this.storeShoppingBags = storeShoppingBags
+    this.shoppingBags = storeShoppingBags
   }
 }
 

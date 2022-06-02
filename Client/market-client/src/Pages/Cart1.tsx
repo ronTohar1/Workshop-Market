@@ -71,20 +71,29 @@ function MakeProductCard(
 export default function CartPage() {
   const navigate = useNavigate()
   const [expanded, setExpanded] = React.useState(false)
-  const [prods, updateProducts] = React.useState<Product[]>([])
-  const [openRemoveDialog, setOpenRemoveDialog] = React.useState(false)
+  const [cartProducts, updateCartProducts] = React.useState<Product[]>([])
+  const [productsAmounts, setProductsAmounts] = React.useState(new Map())
+  const [openRemoveDialog, setOpenRemoveDialog] = React.useState<boolean>(false)
 
   const [chosenProduct, updateChosenProduct] = React.useState<Product | null>(
     null
   )
+    
+  const initProducts = (cart : Cart) => {
+    const prodsIds = []
+    for( const storeId in cart.shoppingBags ){
+      console.log("storeId")
+      console.log(storeId)
+    }
+  }
 
+  // Fetching products from api once when rendered first time.
   React.useEffect(() => {
     const buyerId = getBuyerId()
       const responsePromise = serverGetCart(buyerId)
       fetchResponse(responsePromise).then(
         (cart: Cart)=>{
-          console.log("cart")
-          console.log(cart)
+          initProducts(cart)
         }
       )
     .catch((e)=>{
@@ -96,20 +105,20 @@ export default function CartPage() {
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
     const validQuantity: boolean = newQuan > 0
     const newProds = validQuantity
-      ? prods.map((prod: Product) => {
+      ? cartProducts.map((prod: Product) => {
           // if (prod.id == product.id)  = newQuan
           return prod
         })
-      : prods
-    if (validQuantity) updateProducts(newProds)
+      : cartProducts
+    if (validQuantity) updateCartProducts(newProds)
   }
 
   const handleCloseRemoveDialog = (remove: boolean, product: Product) => {
     setOpenRemoveDialog(false)
     const newProds = remove
-      ? prods.filter((prod: Product) => prod.id != product.id)
-      : prods
-    if (remove) updateProducts(newProds)
+      ? cartProducts.filter((prod: Product) => prod.id != product.id)
+      : cartProducts
+    if (remove) updateCartProducts(newProds)
     setOpenRemoveDialog(false)
   }
 
@@ -123,8 +132,8 @@ export default function CartPage() {
       <Navbar />
       <Box sx={{ width: "80%", mt: 2 }}>
         <Grid container spacing={0}>
-          {prods.length > 0
-            ? prods.map((product: Product) =>
+          {cartProducts.length > 0
+            ? cartProducts.map((product: Product) =>
                 MakeProductCard(
                   product,
                   100,

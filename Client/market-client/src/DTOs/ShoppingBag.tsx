@@ -1,9 +1,9 @@
 import Product from "./Product"
 
 class ShoppingBag {
-  productsAmouns: Map<Product, number>
+  productsAmouns: Map<number, number> // Map of product id --> quantity
   storeId: number
-  constructor(productsAmouns: Map<Product, number>, storeId: number) {
+  constructor(productsAmouns: Map<number, number>, storeId: number) {
     this.storeId = storeId
     this.productsAmouns = productsAmouns
   }

@@ -1454,5 +1454,51 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
 
         }
+
+        // -------------------- Daily Profit tests -------------------
+
+        [Test]
+        [TestCase(10, 20)]
+        [TestCase(0, 100)]
+        public void TestDailyProfitOnlyFromDaySuccess(double v1, double v2)
+        {
+            SetupStoreNoRoles();
+            DateTime now = DateTime.Now;
+            Mock<Purchase> p1 = new Mock<Purchase>(1, now, v1, "Description1") { CallBase = true };
+            Mock<Purchase> p2 = new Mock<Purchase>(2, now, v2, "Description2") { CallBase = true };
+            store.AddPurchaseRecord(founder.Id, p1.Object);
+            store.AddPurchaseRecord(founder.Id, p2.Object);
+            Assert.AreEqual(store.GetDailyProfit(), v1 + v2);
+        }
+
+        [Test]
+        [TestCase(10, 20)]
+        [TestCase(0, 100)]
+        public void TestDailyProfitOnlyFromTwoDaySuccess(double v1, double v2)
+        {
+            SetupStoreNoRoles();
+            DateTime now = DateTime.Now;
+            DateTime tomorrow = new DateTime(2000, 5, 20);
+            Mock<Purchase> p1 = new Mock<Purchase>(1, now, v1, "Description1") { CallBase = true };
+            Mock<Purchase> p2 = new Mock<Purchase>(2, tomorrow, v2, "Description2") { CallBase = true };
+            store.AddPurchaseRecord(founder.Id, p1.Object);
+            store.AddPurchaseRecord(founder.Id, p2.Object);
+            Assert.AreEqual(store.GetDailyProfit(), v1);
+        }
+
+        [Test]
+        [TestCase(10, 20)]
+        [TestCase(0, 100)]
+        public void TestDailyProfitNoPermission(double v1, double v2)
+        {
+            SetupStoreNoRoles();
+            DateTime now = DateTime.Now;
+            DateTime tomorrow = new DateTime(2000, 5, 20);
+            Mock<Purchase> p1 = new Mock<Purchase>(1, now, v1, "Description1") { CallBase = true };
+            Mock<Purchase> p2 = new Mock<Purchase>(2, tomorrow, v2, "Description2") { CallBase = true };
+            store.AddPurchaseRecord(founder.Id, p1.Object);
+            store.AddPurchaseRecord(founder.Id, p2.Object);
+            Assert.Throws<MarketException>(() => store.GetDailyProfit(founder.Id + 1));
+        }
     }
 }

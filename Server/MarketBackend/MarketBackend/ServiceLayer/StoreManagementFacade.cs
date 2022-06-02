@@ -596,5 +596,28 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
+        public Response<double> GetStoreDailyProfit(int storeId, int memberId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<double>($"There isn't a store with an id {storeId}");
+                double total = s.GetDailyProfit(memberId);
+                logger.Info($"GetStoreDailyProfit was called with parameters: [storeId = {storeId}, memberId = {memberId}]");
+                return new Response<double>(total);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetStoreDailyProfit, parameters: [storeId = {storeId}, memberId = {memberId}]");
+                return new Response<double>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetStoreDailyProfit, parameters: [storeId = {storeId}, memberId = {memberId}]");
+                return new Response<double>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
     }
 }

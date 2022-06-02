@@ -109,7 +109,7 @@ namespace MarketBackend.BusinessLayer.Admins
         {
             VerifyAdmin(requestingId);
             double total = 0;
-            foreach (Store store in storeController.openStores.Values)
+            foreach (Store store in storeController.GetOpenStores().Values)
                 total += store.GetDailyProfit();
             return total;
         }

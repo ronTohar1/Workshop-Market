@@ -7,7 +7,7 @@ using MarketBackend.BusinessLayer.Buyers;
 namespace MarketBackend.BusinessLayer.Market; 
 public class StoreController
 {
-	public virtual IDictionary<int, Store> openStores { get; }
+	private IDictionary<int, Store> openStores;
 	private IDictionary<int, Store> closedStores; 
 
 	private MembersController membersController;
@@ -207,9 +207,14 @@ public class StoreController
 	private bool PlaysRoleAtStore(Store store, int memeberId)
 		=> store.IsManager(memeberId) || store.IsCoOwner(memeberId) || store.IsFounder(memeberId);
 
-	// for tests
-	public StoreController()
+	//for tests
+    public StoreController()
     {
 
+    }
+
+	public virtual IDictionary<int, Store> GetOpenStores()
+    {
+		return openStores;
     }
 }

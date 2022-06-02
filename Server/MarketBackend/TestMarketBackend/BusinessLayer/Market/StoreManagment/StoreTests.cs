@@ -1498,7 +1498,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             Mock<Purchase> p2 = new Mock<Purchase>(2, tomorrow, v2, "Description2") { CallBase = true };
             store.AddPurchaseRecord(founder.Id, p1.Object);
             store.AddPurchaseRecord(founder.Id, p2.Object);
-            Assert.Throws<MarketException>(()=>store.GetDailyProfit(founder.Id+1));
+            Assert.Throws<MarketException>(() => store.GetDailyProfit(founder.Id + 1));
         }
     }
 }

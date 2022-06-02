@@ -42,7 +42,7 @@ namespace TestMarketBackend.BusinessLayer
             stores.Add(2, s2.Object);
 
             Mock<StoreController> ms = new Mock<StoreController>();
-            ms.Setup(x => x.openStores).Returns(stores);
+            ms.Setup(x => x.GetOpenStores()).Returns(stores);
 
             adminManager = new AdminManager(ms.Object, It.IsAny<BuyersController>(), It.IsAny<MembersController>());
             adminManager.AddAdmin(adminId);
@@ -58,7 +58,7 @@ namespace TestMarketBackend.BusinessLayer
         [Test]
         public void TestGetSystemProfitInValidAdmin()
         {
-            Assert.Throws<MarketException>(() => adminManager.GetSystemDailyProfit(adminId+1));
+            Assert.Throws<MarketException>(() => adminManager.GetSystemDailyProfit(adminId + 1));
         }
     }
 }

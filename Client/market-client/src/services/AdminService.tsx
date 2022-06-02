@@ -6,7 +6,7 @@ export async function serverGetBuyerPurchaseHistory(
     buyerId: number,
     targetId: number,
   ): Promise<ClientResponse<Purchase[]>> {
-    const uri = serverPort + "/api/Stores/AddNewProduct";
+    const uri = serverPort + "/api/Admin/BuyerPurchaseHistory/2";
     const jsonResponse = await fetch(uri, {
         method: 'POST',
         headers: {

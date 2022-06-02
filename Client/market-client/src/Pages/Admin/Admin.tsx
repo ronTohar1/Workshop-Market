@@ -17,18 +17,7 @@ const backgroundImage =
   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf";
 
 
-const createSearchBuyerPurchase = (name: string) => {
-  function purchaseFetcher(targetBuyerId:number):Promise<Purchase[]>{
-    const buyerId = getBuyerId()
-    const responsePromise = serverGetBuyerPurchaseHistory(buyerId,targetBuyerId)
-    return fetchResponse(responsePromise)
-  }; 
-  return (
-    <div>
-    {FormDialog(name,"","","",purchaseFetcher)}
-    </div>
-    );
-  }
+
 const createButton = (name: string, path: string) => {
   return (
     <Button
@@ -57,7 +46,6 @@ const createButton = (name: string, path: string) => {
   // >
 };
 const buttons = [
-  createSearchBuyerPurchase("Display A buyer purchases"),
   createButton("Display logged in members", pathRegister),
   createButton("Display a member account", pathLogin),
   createButton("display a store purchases", pathLogin),
@@ -85,6 +73,8 @@ const theme = createTheme({
 });
 
 export default function Admin() {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [purchases,setPurchases] = React.useState<Purchase[]>([]);
   return (
     <ThemeProvider theme={theme}>
       <main >
@@ -115,7 +105,7 @@ export default function Admin() {
             alt="Admin setting"
             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
           />
-          
+          <FormDialog/>
           <Box
             sx={{
               display: "flex",

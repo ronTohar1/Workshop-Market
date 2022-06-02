@@ -7,36 +7,57 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Purchase from "../../DTOs/Purchase"
-import { Container, Grid } from "@mui/material"
+import { Box, Container, Grid } from "@mui/material"
 import PurchaseCard from "../../Componentss/AdminComponents/PurcaseCard"
+import { serverGetBuyerPurchaseHistory } from '../../services/AdminService';
+import { getBuyerId } from '../../services/SessionService';
+import { fetchResponse } from '../../services/GeneralService';
 
-let purchases: Purchase[] = [
+export const purchasesDummy= [
   new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
   new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
   new Purchase("10/10/2021",10, "bought 3 apples", 0),
+  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
+  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
+  new Purchase("10/10/2021",10, "bought 3 apples", 0),
+  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
+  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
+
 ]
 
-export default function FormDialog(
-  name:string,
-  dialogTitle:string, 
-  dialogContextText:string,
-  textFieldLabel:string,
-  purchaseFetcher:(arg0: number)=>Promise<Purchase[]>) {
+export default function FormDialog() {
   
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [purchases,setPurchases] = React.useState<Purchase[]>(purchasesDummy);
   
+  React.useEffect(() =>{
+    setPurchases(purchases)
+     },[purchases])
+
   const handleClickOpen = () => {
+    
+    console.log("opened")
     setOpen(true);
   };
-  
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    purchaseFetcher(Number(data.get("id")))
+    console.log("in search")
+    const buyerId = getBuyerId()
+    const responsePromise = serverGetBuyerPurchaseHistory(buyerId,Number(data.get("id")))
+    console.log(responsePromise)
+    fetchResponse(responsePromise).then((newPurchases)=>{
+     setPurchases(newPurchases)
+    })
+    .catch((e) => {
+      alert(e)
+      setOpen(false)
+     })
    
   };
 
   const handleClose = () => {
+    console.log("closed")
     setOpen(false);
   };
   return (
@@ -54,28 +75,31 @@ export default function FormDialog(
             borderRadius: 5,
           },
       }}>
-      {name}
+      Display A buyer purchases
       </Button>
       <Dialog open={open} onClose={handleClose} >
-        <DialogTitle>{dialogTitle}</DialogTitle>
-        <DialogContent>
+        <DialogTitle>Search a buyer purchases</DialogTitle>
+        <DialogContent style={{ overflow: "hidden" }} >
           <DialogContentText>
-            {dialogContextText}
+            Please enter the buyer id of the buyer:
           </DialogContentText>
           <form id="myform" onSubmit={handleSearch} >
           <TextField
             autoFocus
             margin="dense"
             id="id"
-            label={textFieldLabel}
+            label="Buyer id"
             type="number"
             fullWidth
             variant="standard"
           />
+           <Box textAlign='center'>
+             <Button type="submit">Search</Button>
+             </Box>
           </form>
         </DialogContent>
-        <Container>
-      <Grid container spacing={3}>
+        <Container style={{maxHeight: '5%', overflow: 'auto'}} >
+      <Grid container spacing={3} >
         {purchases.map(purchase => (
           <Grid item xs={12} md={6} lg={4}>
             {PurchaseCard(purchase)}
@@ -85,7 +109,6 @@ export default function FormDialog(
     </Container>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>
-          <Button type="submit">Search</Button>
         </DialogActions>
       </Dialog>
     </div>

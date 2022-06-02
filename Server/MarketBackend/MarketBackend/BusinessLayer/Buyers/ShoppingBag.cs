@@ -57,13 +57,10 @@
         {
             if (product == null)
                 throw new ArgumentNullException("product");
-            if (amount < 0)
-                throw new ArgumentOutOfRangeException(nameof(amount));
+            if (amount < 1)
+                throw new MarketException(nameof(amount)+ " of product in cart cannot be lower than 1!!!!");
             if (!productsAmounts.ContainsKey(product))
                 throw new ArgumentException(nameof(product) + "is not exist in cart");
-
-            if (amount == 0)
-                productsAmounts.Remove(product);
             else
                 productsAmounts[product] = amount;
         }

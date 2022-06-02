@@ -7,7 +7,7 @@ using MarketBackend.BusinessLayer.Buyers;
 namespace MarketBackend.BusinessLayer.Market; 
 public class StoreController
 {
-	private IDictionary<int, Store> openStores;
+	public IDictionary<int, Store> openStores { get; }
 	private IDictionary<int, Store> closedStores; 
 
 	private MembersController membersController;

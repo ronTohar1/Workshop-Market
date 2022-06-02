@@ -685,6 +685,33 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return discountManager.GetDescriptions();
         }
+        // ------------------------------ Daily profit -------------------------
+        public double GetDailyProfit(int memberId)
+        {
+            string permissionError = CheckAtLeastCoOwnerPermission(memberId);
+            if (permissionError != null)
+            {
+                throw new MarketException("Could not get the store daily profit: " + permissionError);
+            }
+            return GetDailyProfit();
+        }
+        public double GetDailyProfit()
+        {
+            double total = 0;
+            int day = DateTime.Now.Day;
+            int month = DateTime.Now.Month;
+            int year = DateTime.Now.Year;
+
+            foreach (Purchase p in purchaseHistory)
+            {
+                DateTime date = p.purchaseDate;
+                if ((date.Day == day) && (date.Month == month) && (date.Year == year))
+                {
+                    total += p.purchasePrice;
+                }
+            }
+            return total;
+        }
 
         // ------------------------------ General ------------------------------
 

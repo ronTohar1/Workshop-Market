@@ -121,9 +121,9 @@ namespace TestMarketBackend.Acceptance
             // Verify that the product has been successfuly added to the cart
             ServiceShoppingBag shoppingBag = cart.ShoppingBags[storeId];
 
-            foreach(ServiceProductInBag p in shoppingBag.ProductsAmounts.Keys)
+            foreach(int pid in shoppingBag.ProductsAmounts.Keys)
             {
-                if (p.ProductId == productId && p.StoreId == storeId && shoppingBag.ProductsAmounts[p] == amount)
+                if (pid == productId && shoppingBag.ProductsAmounts[pid] == amount)
                     return true;
             }
             return false;

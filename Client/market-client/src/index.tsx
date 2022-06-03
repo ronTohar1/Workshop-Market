@@ -15,6 +15,8 @@ import { QueryParamProvider } from "use-query-params";
 import StoreManagerPage from "./Pages/StoreManager";
 import { initSession } from "./services/SessionService";
 import StorePageOfManager from "./Pages/StorePageOfManager"
+import Admin from "./Pages/Admin/Admin"
+import ShowLoggedInMembers from "./Componentss/AdminComponents/ShowLoggedInMembers";
 
 initSession();
 
@@ -33,6 +35,7 @@ root.render(
         <Route path={Paths.pathSearch} element={<SearchPage />} />
         <Route path={Paths.pathStorePageOfManager} element={<StorePageOfManager />} />
         <Route path={Paths.pathStoreManager} element={<StoreManagerPage />} />
+        <Route path={Paths.pathAdmin} element={<Admin/>} />
       </Routes>
     </QueryParamProvider>
   </Router>

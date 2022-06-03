@@ -4,27 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
-using Microsoft.Extensions.Http;
 
 namespace MarketBackend.BusinessLayer.System.ExternalServices
 {
     // this class will hold the outside payment system when we will have it
     // for now its default to returning true to allow the system to operate normally
-    public class ExternalPaymentSystem : IExternalPaymentSystem
-    {
-        private const string URL = "https://cs-bgu-wsep.herokuapp.com/";
-
-        private static IDictionary<string, string> handshakeContent = new Dictionary<string, string>()
-        {
-            {"action_type", "handshake" }
-        };
-
-        private HttpClient httpClient;
-        
-        public ExternalPaymentSystem(HttpClient httpClient)
-        {
-            this.httpClient = httpClient;
-        }
+    public class ExternalPaymentSystem : ExternalCommunicator, IExternalPaymentSystem
+    {        
+        public ExternalPaymentSystem(HttpClient httpClient) : base(httpClient) { }
 
         // will contact the external service to make the payment, for now deafult
         public async virtual Task<int> Pay(PaymentDetails paymentDetails)
@@ -64,20 +51,5 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
             return int.Parse(response);
         }
 
-        private bool handshake()
-        {
-            return post(handshakeContent).Result.IsSuccessStatusCode;
-        }
-
-        private async Task<HttpResponseMessage> post(IDictionary<string, string> postParameters)
-        {
-            var content = new FormUrlEncodedContent(postParameters);
-
-            var response = await httpClient.PostAsync(URL, content);
-
-            return response;
-        }
-
-        
     }
 }

@@ -52,7 +52,7 @@ namespace MarketBackend.BusinessLayer
                 storeController = new(membersController);
                 buyersController = new(new List<IBuyersController> { guestsController, membersController });
                 HttpClient httpClient = new HttpClient();
-                externalServicesController = new(new ExternalPaymentSystem(httpClient), new ExternalSupplySystem());
+                externalServicesController = new(new ExternalPaymentSystem(httpClient), new ExternalSupplySystem(httpClient));
 
                 purchasesManager = new(storeController, buyersController, externalServicesController);
 

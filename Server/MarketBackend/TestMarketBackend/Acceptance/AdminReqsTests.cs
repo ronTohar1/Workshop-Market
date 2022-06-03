@@ -45,7 +45,7 @@ namespace TestMarketBackend.Acceptance
             // now check that after purchase that it is returned
 
             SetUpShoppingCarts();
-            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails);
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
             Assert.IsTrue(!purchaseResponse.IsErrorOccured());
 
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
@@ -91,7 +91,7 @@ namespace TestMarketBackend.Acceptance
             // now check that after purchase that it is returned
 
             SetUpShoppingCarts();
-            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails);
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
             Assert.IsTrue(!purchaseResponse.IsErrorOccured()); 
 
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);

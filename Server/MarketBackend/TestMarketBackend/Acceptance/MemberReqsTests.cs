@@ -113,7 +113,7 @@ namespace TestMarketBackend.Acceptance
                 yield return new TestCaseData((MemberReqsTests testsObject) =>
                 {
                     testsObject.SetUpShoppingCarts();
-                    Response<ServicePurchase> response = testsObject.buyerFacade.PurchaseCartContent(member3Id, paymentDetails);
+                    Response<ServicePurchase> response = testsObject.buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
                     Assert.IsTrue(!response.IsErrorOccured());
                 });
                 // shop of the store owner is closed 

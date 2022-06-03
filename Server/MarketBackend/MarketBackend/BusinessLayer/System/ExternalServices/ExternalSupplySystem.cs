@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,17 +9,46 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
 {
     // this class will hold the outside payment system when we will have it
     // for now its default to returning true to allow the system to operate normally
-    public class ExternalSupplySystem : IExternalSupplySystem
+    public class ExternalSupplySystem : ExternalCommunicator, IExternalSupplySystem
     {
-        public ExternalSupplySystem()
-        {
-
-        }
+        public ExternalSupplySystem(HttpClient httpClient) : base(httpClient) { }
 
         // will contact the external service for the delivery, for now default
-        public virtual bool Supply()
+        public async virtual Task<int> Supply(SupplyDetails supplyDetails)
         {
-            return true;
+            if (!handshake())
+                return -1;
+
+            IDictionary<string, string> supplyContent = new Dictionary<string, string>()
+            {
+                {"action_type", "supply" },
+                {"name", supplyDetails.Name },
+                {"address", supplyDetails.Address },
+                {"city", supplyDetails.City },
+                {"country", supplyDetails.Country },
+                {"zip", supplyDetails.Zip },
+            };
+
+            string response = await post(supplyContent).Result.Content.ReadAsStringAsync();
+
+            return int.Parse(response);
         }
+
+        public async Task<int> CancelSupply(int transactionId)
+        {
+            if (!handshake())
+                return -1;
+
+            IDictionary<string, string> cancelSupplyContent = new Dictionary<string, string>()
+            {
+                {"action_type", "cancel_supply" },
+                {"transaction_id", transactionId.ToString() },
+            };
+
+            string response = await post(cancelSupplyContent).Result.Content.ReadAsStringAsync();
+
+            return int.Parse(response);
+        }
+
     }
 }

@@ -53,7 +53,7 @@ public class PurchasesManager
     // cc 10
     // r I 3, r I 4
     // r 1.5
-    public Purchase PurchaseCartContent(int buyerId, PaymentDetails paymentDetails)
+    public Purchase PurchaseCartContent(int buyerId, PaymentDetails paymentDetails, SupplyDetails supplyDetails)
     {
         Buyer buyer = this.GetBuyerOrThrowException(buyerId);
         Cart cart = buyer.Cart;
@@ -82,7 +82,7 @@ public class PurchasesManager
             TryRollback(storesTransactions);
             throw new MarketException("Could not make payment");
         }
-        if (!externalServicesController.makeDelivery())
+        if (externalServicesController.makeDelivery(supplyDetails) == -1)
         {
             externalServicesController.CancelPayment(transactionId);
             TryRollback(storesTransactions);

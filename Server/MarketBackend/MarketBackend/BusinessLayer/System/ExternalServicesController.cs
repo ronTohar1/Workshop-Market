@@ -24,9 +24,9 @@ public class ExternalServicesController
 		return paymentsSystem.CancelPay(transactionId).Result;
     }
 
-	public virtual bool makeDelivery()
+	public virtual int makeDelivery(SupplyDetails supplyDetails)
     {
-		return supplySystem.Supply();
+		return supplySystem.Supply(supplyDetails).Result;
 	}
 
 	

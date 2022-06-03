@@ -15,8 +15,10 @@ import { QueryParamProvider } from "use-query-params";
 import StoreManagerPage from "./Pages/StoreManager";
 import { initSession } from "./services/SessionService";
 import StorePageOfManager from "./Pages/StorePageOfManager"
-import Admin from "./Pages/Admin/Admin"
+import Admin from "./Pages/Admin"
 import ShowLoggedInMembers from "./Componentss/AdminComponents/ShowLoggedInMembers";
+import Checkout from "./Pages/Checkout";
+import Product from "./DTOs/Product";
 
 initSession();
 
@@ -36,6 +38,7 @@ root.render(
         <Route path={Paths.pathStorePageOfManager} element={<StorePageOfManager />} />
         <Route path={Paths.pathStoreManager} element={<StoreManagerPage />} />
         <Route path={Paths.pathAdmin} element={<Admin/>} />
+        <Route path={Paths.pathCheckout} element={<Checkout productsAmount={new Map([[new Product(1,'one',1,'one',1,'one',1), 1]])}/>} />
       </Routes>
     </QueryParamProvider>
   </Router>

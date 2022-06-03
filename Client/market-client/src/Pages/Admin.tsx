@@ -1,21 +1,21 @@
 import * as React from "react";
-import Navbar from "../../Componentss/Navbar";
-import { ProductHeroLayout } from "../../Componentss/ProductHeroLayout";
+import Navbar from "../Componentss/Navbar";
+import { ProductHeroLayout } from "../Componentss/ProductHeroLayout";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Box from "@mui/material/Box";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { pathLogin, pathRegister} from "../../Paths";
-import Purchase from "../../DTOs/Purchase";
-import { getBuyerId } from "../../services/SessionService";
-import { serverGetBuyerPurchaseHistory } from "../../services/AdminService";
-import { fetchResponse } from "../../services/GeneralService";
-import FormDialog from "../../Componentss/AdminComponents/BuyerPurchaseHistoryForm";
-import BuyerPurchaseHistoryForm from "../../Componentss/AdminComponents/BuyerPurchaseHistoryForm";
-import StorePurchaseHistoryForm from "../../Componentss/AdminComponents/StorePurchaseHistoryForm";
-import ShowLoggedInMembers from "../../Componentss/AdminComponents/ShowLoggedInMembers";
-import DisplayMemberAccount from "../../Componentss/AdminComponents/DisplayMemberAccount";
-import RemoveAMember from "../../Componentss/AdminComponents/RemoveAMember";
+import { pathLogin, pathRegister} from "../Paths";
+import Purchase from "../DTOs/Purchase";
+import { getBuyerId } from "../services/SessionService";
+import { serverGetBuyerPurchaseHistory } from "../services/AdminService";
+import { fetchResponse } from "../services/GeneralService";
+import FormDialog from "../Componentss/AdminComponents/BuyerPurchaseHistoryForm";
+import BuyerPurchaseHistoryForm from "../Componentss/AdminComponents/BuyerPurchaseHistoryForm";
+import StorePurchaseHistoryForm from "../Componentss/AdminComponents/StorePurchaseHistoryForm";
+import ShowLoggedInMembers from "../Componentss/AdminComponents/ShowLoggedInMembers";
+import DisplayMemberAccount from "../Componentss/AdminComponents/DisplayMemberAccount";
+import RemoveAMember from "../Componentss/AdminComponents/RemoveAMember";
 
 
 const backgroundImage =

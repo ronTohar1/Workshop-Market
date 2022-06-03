@@ -28,10 +28,10 @@ namespace MarketBackend.ServiceLayer
         private const string facadeErrorMsg = "Cannot give any facade when market is closed!";
 
 
-        public SystemOperator()
+        public SystemOperator(HttpClient httpClient)
         {
             MarketOpen = false;
-            bso = new BusiessSystemOperator();
+            bso = new BusiessSystemOperator(httpClient);
             adminFacade = null;
             buyerFacade = null;
             externalSystemFacade = null;

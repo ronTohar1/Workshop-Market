@@ -2,5 +2,5 @@
 
 public interface IExternalSupplySystem
 {
-    public bool supplyDelivery();
+    public bool Supply();
 }

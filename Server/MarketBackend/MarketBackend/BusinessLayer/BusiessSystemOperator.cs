@@ -27,12 +27,15 @@ namespace MarketBackend.BusinessLayer
         public AdminManager adminManager{ get; private set;}
         public Logger logger{ get; private set;}
 
+        private HttpClient httpClient;
+
         private const string errorMsg = "Cannot give any facade when market is closed!";
 
 
-        public BusiessSystemOperator()
+        public BusiessSystemOperator(HttpClient httpClient)
         {
             marketOpen = false;
+            this.httpClient = httpClient;
         }
 
         public int OpenMarket(string username, string password)
@@ -51,7 +54,7 @@ namespace MarketBackend.BusinessLayer
                 this.guestsController = new();
                 this.storeController = new(membersController);
                 this.buyersController = new(new List<IBuyersController> { guestsController, membersController });
-                this.externalServicesController = new(new ExternalPaymentSystem(), new ExternalSupplySystem());
+                this.externalServicesController = new(new ExternalPaymentSystem(httpClient), new ExternalSupplySystem());
 
                 this.purchasesManager = new(storeController, buyersController, externalServicesController);
 

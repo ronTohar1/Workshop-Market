@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Concurrent;
+using System.Net.Http;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -121,6 +122,10 @@ namespace TestMarketBackend.Acceptance
         protected const int phoneCaseProductPrice = 80;
         protected const int phoneCaseProductAmount = 120;
         protected static int phoneCaseProductId;
+
+        // payment details
+        protected static ServicePaymentDetails paymentDetails =
+            new ServicePaymentDetails("2222333344445555", "12", "2025", "Yossi Cohen", "262", "20444444");
 
         private void SetUpUsers()
         {
@@ -283,7 +288,7 @@ namespace TestMarketBackend.Acceptance
         [SetUp]
         public void SetUp()
         {
-            systemOperator = new SystemOperator();
+            systemOperator = new SystemOperator(new HttpClient());
             Response<int> response = systemOperator.OpenMarket(adminUsername,adminPassword);
             if (response.IsErrorOccured())
                 throw new Exception("Unexpected exception in acceptance setup");

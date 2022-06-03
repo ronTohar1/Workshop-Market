@@ -140,11 +140,11 @@ namespace MarketBackend.ServiceLayer
         }
 
         //TODO
-        public Response<ServicePurchase> PurchaseCartContent(int userId)
+        public Response<ServicePurchase> PurchaseCartContent(int userId, ServicePaymentDetails paymentDetails)
         {
             try
             {
-                Purchase purchase = purchasesManager.PurchaseCartContent(userId);
+                Purchase purchase = purchasesManager.PurchaseCartContent(userId, new PaymentDetails(paymentDetails.CardNumber, paymentDetails.Month, paymentDetails.Year, paymentDetails.Holder, paymentDetails.Ccv, paymentDetails.Id));
                 ServicePurchase canBuy = new ServicePurchase(purchase.purchaseDate, purchase.purchasePrice, purchase.purchaseDescription);
                 logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}]");
                 return new Response<ServicePurchase>(canBuy);

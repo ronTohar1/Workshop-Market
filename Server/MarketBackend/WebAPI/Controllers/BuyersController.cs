@@ -59,9 +59,10 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PurchaseCart")]
-        public ActionResult<Response<bool>> PurchaseCartContent([FromBody] UserRequest request)
+        public ActionResult<Response<bool>> PurchaseCartContent([FromBody] PurchaseCartRequest request)
         {
-            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(request.UserId);
+            ServicePaymentDetails paymentDetails = new ServicePaymentDetails(request.CardNumber, request.Month, request.Year, request.Holder, request.Ccv, request.Id);
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(request.UserId, paymentDetails);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);

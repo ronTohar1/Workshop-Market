@@ -525,7 +525,7 @@ namespace TestMarketBackend.Acceptance
                     Assert.IsTrue(!response.IsErrorOccured());
                 }
 
-                Response<ServicePurchase> purchaseReponse = thisObject.buyerFacade.PurchaseCartContent(member1Id);
+                Response<ServicePurchase> purchaseReponse = thisObject.buyerFacade.PurchaseCartContent(member1Id, paymentDetails);
                 Assert.AreEqual(shouldSucceedBuying, !purchaseReponse.IsErrorOccured());
                 return purchaseReponse.Value;
             };

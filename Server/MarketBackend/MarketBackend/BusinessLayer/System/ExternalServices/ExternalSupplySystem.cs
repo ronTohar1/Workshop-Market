@@ -8,7 +8,7 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
 {
     // this class will hold the outside payment system when we will have it
     // for now its default to returning true to allow the system to operate normally
-    internal class ExternalSupplySystem : IExternalSupplySystem
+    public class ExternalSupplySystem : IExternalSupplySystem
     {
         public ExternalSupplySystem()
         {
@@ -16,7 +16,7 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
         }
 
         // will contact the external service for the delivery, for now default
-        public virtual bool supplyDelivery()
+        public virtual bool Supply()
         {
             return true;
         }

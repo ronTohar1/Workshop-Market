@@ -13,6 +13,8 @@ using MarketBackend.BusinessLayer;
 using MarketBackend.BusinessLayer.System.ExternalServices;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
+using System.Net.Http;
+
 namespace TestMarketBackend.BusinessLayer.Market
 {
     public class PurchasesManagerTetsts
@@ -52,6 +54,9 @@ namespace TestMarketBackend.BusinessLayer.Market
         private int counter;
         private bool[] removeFromStoreFromCart = { false, false, false };
         private bool notifiedOwners;
+
+        private PaymentDetails paymentDetails =
+            new PaymentDetails("2222333344445555", "12", "2025", "Yossi Cohen", "262", "20444444");
 
 
 
@@ -141,10 +146,10 @@ namespace TestMarketBackend.BusinessLayer.Market
 
         private void ExternalServicesControllerSetup()
         {
-            externalServicesControllerMock = new Mock<ExternalServicesController>(new ExternalPaymentSystem(), new ExternalSupplySystem()); // initialized external services
+            externalServicesControllerMock = new Mock<ExternalServicesController>(new ExternalPaymentSystem(new HttpClient()), new ExternalSupplySystem()); // initialized external services
 
             externalServicesControllerMock.Setup(externalSeviceController =>
-                    externalSeviceController.makePayment()).Returns(true);
+                    externalSeviceController.makePayment(paymentDetails)).Returns(1);
             externalServicesControllerMock.Setup(externalSeviceController =>
                     externalSeviceController.makeDelivery()).Returns(true);
 
@@ -393,7 +398,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseFromTwoStoresSuccess(int[] productInBagId)
         {
             setUpPurchase(productInBagId);
-            Assert.IsNotNull(purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.IsNotNull(purchasesManager.PurchaseCartContent(buyerId1, paymentDetails));
             Assert.True(Array.TrueForAll(productInBagId, (index) => removeFromStoreFromCart[index]));
             Assert.AreEqual(counter, productInBagId.Length);
         }
@@ -404,7 +409,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseFromTwpStoresBuyerDoesNotExistFail(int[] productInBagId)
         {
             setUpPurchase(productInBagId);
-            Assert.Throws<ArgumentException>(() => purchasesManager.PurchaseCartContent(notABuyerId1));
+            Assert.Throws<ArgumentException>(() => purchasesManager.PurchaseCartContent(notABuyerId1, paymentDetails));
             Assert.True(Array.TrueForAll(productInBagId, (index) => !removeFromStoreFromCart[index]));
             Assert.AreEqual(counter, 0);
         }
@@ -415,7 +420,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseFromTStoresStoreDoesNotExistFail(int[] productInBagId)
         {
             setUpPurchase(productInBagId);
-            Assert.Throws<ArgumentException>(() => purchasesManager.PurchaseCartContent(notABuyerId1));
+            Assert.Throws<ArgumentException>(() => purchasesManager.PurchaseCartContent(notABuyerId1, paymentDetails));
             Assert.True(Array.TrueForAll(productInBagId, (index) => !removeFromStoreFromCart[index]));
             Assert.AreEqual(counter, 0);
         }
@@ -425,10 +430,10 @@ namespace TestMarketBackend.BusinessLayer.Market
             counter = 0;
             BuyersControllerSetup2(allValidProductId);
             StoreControllerSetup2(allValidProductId);
-            externalServicesControllerMock = new Mock<ExternalServicesController>(new ExternalPaymentSystem(), new ExternalSupplySystem()); // initialized external services
+            externalServicesControllerMock = new Mock<ExternalServicesController>(new ExternalPaymentSystem(new HttpClient()), new ExternalSupplySystem()); // initialized external services
             if (check == 0 || check == 2)
                 externalServicesControllerMock.Setup(externalSeviceController =>
-                    externalSeviceController.makePayment()).Returns(false);
+                    externalSeviceController.makePayment(paymentDetails)).Returns(-1);
             if (check == 1 || check == 2)
                 externalServicesControllerMock.Setup(externalSeviceController =>
                     externalSeviceController.makeDelivery()).Returns(false);
@@ -443,7 +448,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseFromTStoresStoresExternalServicesFail(int check)
         {
             setUpExternalServicesFail(check);
-            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1, paymentDetails));
             Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
             Assert.AreEqual(counter, 0);
         }
@@ -521,7 +526,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         [TestCase(new int[] { productId2, productId3 }, new int[] { productId1 })]
         public void TestPurchaseProductIsInCartIsntInStoreFail(int[] cartProductsId, int[] storeProductsId) {
             setUpStoreServicesFail(cartProductsId, storeProductsId, false, false);
-            Assert.Throws<Exception>(() => purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.Throws<Exception>(() => purchasesManager.PurchaseCartContent(buyerId1, paymentDetails));
             Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
             Assert.AreEqual(counter, 0);//check that the inventory is the same
         }
@@ -533,7 +538,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseProductIsInCartAndStoreGreatSuccess(int[] cartProductsId, int[] storeProductsId)
         {
             setUpStoreServicesFail(cartProductsId, storeProductsId, false, false);
-            Assert.IsNotNull(purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.IsNotNull(purchasesManager.PurchaseCartContent(buyerId1, paymentDetails));
             Assert.True(Array.TrueForAll(cartProductsId, (index) => removeFromStoreFromCart[index]));
             Assert.AreEqual(counter, cartProductsId.Length);//check that the inventory is the same
         }
@@ -545,7 +550,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseProductIsInCartProductOutOfStockFail(int[] cartProductsId, int[] storeProductsId)
         {
             setUpStoreServicesFail(cartProductsId, storeProductsId, true, false);
-            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1, paymentDetails));
             Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
             Assert.AreEqual(counter, 0);//check that the inventory is the same
         }
@@ -556,7 +561,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void TestPurchaseProductIsInCartAndPolicyFail(int[] cartProductsId, int[] storeProductsId)
         {
             setUpStoreServicesFail(cartProductsId, storeProductsId, false, true);
-            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1));
+            Assert.Throws<MarketException>(() => purchasesManager.PurchaseCartContent(buyerId1, paymentDetails));
             Assert.True(Array.TrueForAll(removeFromStoreFromCart, (b) => !b));
             Assert.AreEqual(counter, 0);//check that the inventory is the same
             Assert.False(notifiedOwners);

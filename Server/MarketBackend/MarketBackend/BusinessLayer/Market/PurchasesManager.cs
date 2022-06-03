@@ -53,7 +53,7 @@ public class PurchasesManager
     // cc 10
     // r I 3, r I 4
     // r 1.5
-    public Purchase PurchaseCartContent(int buyerId)
+    public Purchase PurchaseCartContent(int buyerId, PaymentDetails paymentDetails)
     {
         Buyer buyer = this.GetBuyerOrThrowException(buyerId);
         Cart cart = buyer.Cart;
@@ -76,14 +76,15 @@ public class PurchasesManager
         IDictionary<int, double> storesTotal = GetPurchaseTotal(shoppingBags);
         double purchaseTotal = storesTotal.Values.Sum(x => x); // Sum prices of all products
 
-        if (!externalServicesController.makePayment())
+        int transactionId = externalServicesController.makePayment(paymentDetails);
+        if (transactionId == -1)
         {
             TryRollback(storesTransactions);
             throw new MarketException("Could not make payment");
         }
         if (!externalServicesController.makeDelivery())
         {
-            externalServicesController.CancelPayment();
+            externalServicesController.CancelPayment(transactionId);
             TryRollback(storesTransactions);
             throw new MarketException("Could not send a delivery");
         }

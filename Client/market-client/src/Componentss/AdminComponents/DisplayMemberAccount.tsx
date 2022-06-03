@@ -9,31 +9,23 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Purchase from "../../DTOs/Purchase"
 import { Box, Container, Grid } from "@mui/material"
 import PurchaseCard from "./PurcaseCard"
-import { serverGetBuyerPurchaseHistory } from '../../services/AdminService';
+import { serverGetAMemberInfo, serverGetBuyerPurchaseHistory } from '../../services/AdminService';
 import { getBuyerId } from '../../services/SessionService';
 import { fetchResponse } from '../../services/GeneralService';
+import Member from '../../DTOs/Member';
+import MemberCard from './MemberCard';
+import MemberCardDialog from './MemberCardDialog';
+import { dummyMember1 } from '../../services/MemberService';
 
-export const purchasesDummy= [
-  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
-  new Purchase("10/10/2021",10, "bought 3 apples", 0),
-  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
-  new Purchase("10/10/2021",10, "bought 3 apples", 0),
-  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
+export const memberDummy= new Member(5,"David",true)
+export const memberDummy1= new Member(6,"David",true)
 
-]
-
-export default function StorePurchaseHistoryForm() {
-  
+export default function DisplayMemberAccount() {
+    
   const [open, setOpen] = React.useState<boolean>(false);
-  const [purchases,setPurchases] = React.useState<Purchase[]>(purchasesDummy);
+  const [member,setMember] = React.useState<Member>(memberDummy);
   
-  React.useEffect(() =>{
-    setPurchases(purchases)
-     },[purchases])
-
+  
   const handleClickOpen = () => {
     
     console.log("opened")
@@ -44,10 +36,10 @@ export default function StorePurchaseHistoryForm() {
     const data = new FormData(event.currentTarget)
     console.log("in search")
     const buyerId = getBuyerId()
-    const responsePromise = serverGetBuyerPurchaseHistory(buyerId,Number(data.get("id")))
+    const responsePromise = serverGetAMemberInfo(buyerId,Number(data.get("id")))
     console.log(responsePromise)
-    fetchResponse(responsePromise).then((newPurchases)=>{
-     setPurchases(newPurchases)
+    fetchResponse(responsePromise).then((member)=>{
+        setMember(member)
     })
     .catch((e) => {
       alert(e)
@@ -75,13 +67,13 @@ export default function StorePurchaseHistoryForm() {
             borderRadius: 5,
           },
       }}>
-      Display A store purchases
+      Display a member account
       </Button>
       <Dialog open={open} onClose={handleClose} >
-        <DialogTitle>Search a store purchases</DialogTitle>
+        <DialogTitle>Search a member account</DialogTitle>
         <DialogContent style={{ overflow: "hidden" }} >
           <DialogContentText>
-            Please enter the store id of the store:
+            Please enter the member id of the member:
           </DialogContentText>
           <form id="myform" onSubmit={handleSearch} >
           <TextField
@@ -89,7 +81,7 @@ export default function StorePurchaseHistoryForm() {
             margin="dense"
             id="id"
             name="id"
-            label="Store id"
+            label="member id"
             type="number"
             fullWidth
             variant="standard"
@@ -100,18 +92,16 @@ export default function StorePurchaseHistoryForm() {
           </form>
         </DialogContent>
         <Container style={{maxHeight: '5%', overflow: 'auto'}} >
-      <Grid container spacing={3} >
-        {purchases.map(purchase => (
+     
           <Grid item xs={12} md={6} lg={4}>
-            {PurchaseCard(purchase)}
+          {MemberCard(member)}
           </Grid>
-        ))}
-      </Grid>
+        
     </Container>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>
         </DialogActions>
       </Dialog>
     </div>
-  );
+  );     
 }

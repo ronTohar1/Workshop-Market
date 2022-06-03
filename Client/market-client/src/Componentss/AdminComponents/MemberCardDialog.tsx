@@ -4,32 +4,22 @@ import { useNavigate } from 'react-router-dom';
 import Member from "../../DTOs/Member";
 import { pathAdmin } from '../../Paths';
 
-export default function PurchaseCard( member:Member) {
-  // const [open, setOpen] = React.useState(false);
+export default function MemberCardDialog(member:Member) {
+  const [open, setOpen] = React.useState(true);
   const handleClose = () => {
-    // setOpen(false);
+    setOpen(false);
   };
   const handleClickOpen = () => {
-    // setOpen(true);
+    setOpen(true);
   };
     return (
-        <div>
-             <Card elevation={1}>
-                    <CardHeader
-                    title={member.username}
-                    />
-                    <CardContent>
-                    <Box textAlign='center'>
-                    <Button  onClick = {handleClickOpen}>
-                        Member info
-                    </Button>
-                    </Box>  
-              <Dialog
-              open={true}
+        <div>  
+             <Dialog
+              open={open}
               onClose={handleClose}
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
-            >
+              >
               <DialogTitle id="alert-dialog-title">
               <Box
                 component="img"
@@ -61,8 +51,6 @@ export default function PurchaseCard( member:Member) {
                 </Button>
               </DialogActions>
             </Dialog>
-            </CardContent>
-            </Card>
         </div>
     )
 }

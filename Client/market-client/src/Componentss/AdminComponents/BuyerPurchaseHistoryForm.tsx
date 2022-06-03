@@ -30,14 +30,15 @@ export default function BuyerPurchaseHistoryForm() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [purchases,setPurchases] = React.useState<Purchase[]>(purchasesDummy);
   
-  React.useEffect(() =>{
-    setPurchases(purchases)
-     },[purchases])
 
   const handleClickOpen = () => {
     
     console.log("opened")
     setOpen(true);
+  };
+  const handleClose = () => {
+    console.log("closed")
+    setOpen(false);
   };
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -56,10 +57,6 @@ export default function BuyerPurchaseHistoryForm() {
    
   };
 
-  const handleClose = () => {
-    console.log("closed")
-    setOpen(false);
-  };
   return (
     <div>
       <Button
@@ -88,6 +85,7 @@ export default function BuyerPurchaseHistoryForm() {
             autoFocus
             margin="dense"
             id="id"
+            name="id"
             label="Buyer id"
             type="number"
             fullWidth

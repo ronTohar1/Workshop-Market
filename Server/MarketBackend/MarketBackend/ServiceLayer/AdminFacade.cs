@@ -144,23 +144,24 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<IList<int>> GetLoggedInMembers(int requestingId)
+        public Response<IList<ServiceMember>> GetLoggedInMembers(int requestingId)
         {
             try
             {
-                IList<int> res = adminManager.GetLoggedInMembers(requestingId);
+                IDictionary<int, Member> members =  adminManager.GetLoggedInMembers(requestingId);
+                IList<ServiceMember> res = members.Keys.Select(key => new ServiceMember(key, members[key])).ToList();
                 logger.Info($"GetLoggedInMembers was called with parameters [requestingId = {requestingId}]");
-                return new Response<IList<int>>(res);
+                return new Response<IList<ServiceMember>>(res);
             }
             catch (MarketException mex)
             {
                 logger.Error(mex, $"method: GetLoggedInMembers, parameters: [requestingId = {requestingId}]");
-                return new Response<IList<int>>(mex.Message);
+                return new Response<IList<ServiceMember>>(mex.Message);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"method: GetLoggedInMembers, parameters: [requestingId = {requestingId}]");
-                return new Response<IList<int>>("Sorry, an unexpected error occured. Please try again");
+                return new Response<IList<ServiceMember>>("Sorry, an unexpected error occured. Please try again");
             }
         }
 

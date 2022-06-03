@@ -10,7 +10,10 @@ import Purchase from "../../DTOs/Purchase";
 import { getBuyerId } from "../../services/SessionService";
 import { serverGetBuyerPurchaseHistory } from "../../services/AdminService";
 import { fetchResponse } from "../../services/GeneralService";
-import FormDialog from "../../Componentss/AdminComponents/FormDialog";
+import FormDialog from "../../Componentss/AdminComponents/BuyerPurchaseHistoryForm";
+import BuyerPurchaseHistoryForm from "../../Componentss/AdminComponents/BuyerPurchaseHistoryForm";
+import StorePurchaseHistoryForm from "../../Componentss/AdminComponents/StorePurchaseHistoryForm";
+import ShowLoggedInMembers from "../../Componentss/AdminComponents/ShowLoggedInMembers";
 
 
 const backgroundImage =
@@ -46,9 +49,7 @@ const createButton = (name: string, path: string) => {
   // >
 };
 const buttons = [
-  createButton("Display logged in members", pathRegister),
   createButton("Display a member account", pathLogin),
-  createButton("display a store purchases", pathLogin),
   createButton("Remove a member", pathLogin),
 ];
 
@@ -105,7 +106,9 @@ export default function Admin() {
             alt="Admin setting"
             src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
           />
-          <FormDialog/>
+          <BuyerPurchaseHistoryForm/>
+          <StorePurchaseHistoryForm/>
+          <ShowLoggedInMembers/>
           <Box
             sx={{
               display: "flex",

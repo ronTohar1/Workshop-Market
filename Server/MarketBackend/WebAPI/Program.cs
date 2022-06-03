@@ -6,7 +6,6 @@ using WebAPI.Controllers;
 using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using WebAPI;
-using MarketBackend.BusinessLayer.System.ExternalServices;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
@@ -14,8 +13,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            HttpClient client = new HttpClient();
-            SystemOperator so = new SystemOperator(client);
+            SystemOperator so = new SystemOperator();
 
             //while (!so.MarketOpen)
             //{

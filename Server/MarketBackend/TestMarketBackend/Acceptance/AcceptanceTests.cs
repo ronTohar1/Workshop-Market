@@ -288,7 +288,7 @@ namespace TestMarketBackend.Acceptance
         [SetUp]
         public void SetUp()
         {
-            systemOperator = new SystemOperator(new HttpClient());
+            systemOperator = new SystemOperator();
             Response<int> response = systemOperator.OpenMarket(adminUsername,adminPassword);
             if (response.IsErrorOccured())
                 throw new Exception("Unexpected exception in acceptance setup");

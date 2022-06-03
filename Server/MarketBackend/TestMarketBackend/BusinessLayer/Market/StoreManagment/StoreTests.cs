@@ -1454,5 +1454,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
 
         }
+
+        // -------------------------- Bid tests ----------------------------------
     }
 }

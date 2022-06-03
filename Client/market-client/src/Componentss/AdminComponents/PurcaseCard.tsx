@@ -2,7 +2,7 @@ import { Box, Button, Card, CardContent, CardHeader, Dialog, DialogActions, Dial
 import React from 'react';
 import Purchase from "../../DTOs/Purchase"
 
-export default function PurchaseCard( purchase: Purchase) {
+export default function PurchaseCard({purchase}: {purchase: Purchase}) {
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);

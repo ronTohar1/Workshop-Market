@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import Member from "../../DTOs/Member";
 import { pathAdmin } from '../../Paths';
 
-export default function PurchaseCard( member:Member) {
-  // const [open, setOpen] = React.useState(false);
+export default function MemberCard({member} : {member:Member}) {
+   const [open, setOpen] = React.useState(false);
   const handleClose = () => {
-    // setOpen(false);
+    setOpen(false);
   };
   const handleClickOpen = () => {
-    // setOpen(true);
+     setOpen(true);
   };
     return (
         <div>
@@ -25,7 +25,7 @@ export default function PurchaseCard( member:Member) {
                     </Button>
                     </Box>  
               <Dialog
-              open={true}
+              open={open}
               onClose={handleClose}
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"

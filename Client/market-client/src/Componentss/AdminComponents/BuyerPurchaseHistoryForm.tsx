@@ -100,7 +100,7 @@ export default function BuyerPurchaseHistoryForm() {
       <Grid container spacing={3} >
         {purchases.map(purchase => (
           <Grid item xs={12} md={6} lg={4}>
-            {PurchaseCard(purchase)}
+            <PurchaseCard purchase={purchase}/>
           </Grid>
         ))}
       </Grid>

@@ -87,9 +87,9 @@ export default function ShowLoggedInMembers() {
           </DialogContent> */}
           <Container style={{maxHeight: '100%', overflow: 'auto'}} >
         <Grid container spacing={3} >
-          {members.map(member => (
+          {members.map(currMember => (
             <Grid item xs={12} md={6} lg={4}>
-                 {MemberCard(member)}
+                 <MemberCard member={currMember}/>
             </Grid>
           ))}
         </Grid>

@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Purchase from "../../DTOs/Purchase"
 import { Box, Container, Grid } from "@mui/material"
 import PurchaseCard from "./PurcaseCard"
-import { serverGetBuyerPurchaseHistory } from '../../services/AdminService';
+import { serverGetBuyerPurchaseHistory, serverGetStorePurchaseHistory } from '../../services/AdminService';
 import { getBuyerId } from '../../services/SessionService';
 import { fetchResponse } from '../../services/GeneralService';
 
@@ -44,7 +44,7 @@ export default function StorePurchaseHistoryForm() {
     const data = new FormData(event.currentTarget)
     console.log("in search")
     const buyerId = getBuyerId()
-    const responsePromise = serverGetBuyerPurchaseHistory(buyerId,Number(data.get("id")))
+    const responsePromise = serverGetStorePurchaseHistory(buyerId,Number(data.get("id")))
     console.log(responsePromise)
     fetchResponse(responsePromise).then((newPurchases)=>{
      setPurchases(newPurchases)
@@ -103,7 +103,7 @@ export default function StorePurchaseHistoryForm() {
       <Grid container spacing={3} >
         {purchases.map(purchase => (
           <Grid item xs={12} md={6} lg={4}>
-            {PurchaseCard(purchase)}
+            <PurchaseCard purchase={purchase}/>
           </Grid>
         ))}
       </Grid>

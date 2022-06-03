@@ -94,7 +94,7 @@ export default function DisplayMemberAccount() {
         <Container style={{maxHeight: '5%', overflow: 'auto'}} >
      
           <Grid item xs={12} md={6} lg={4}>
-          {MemberCard(member)}
+          <MemberCard member={member}/>
           </Grid>
         
     </Container>

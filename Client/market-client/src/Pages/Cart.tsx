@@ -135,6 +135,10 @@ export default function CartPage() {
 
   const reloadCartProducts = () => setRenderProducts(!renderProducts)
 
+  const calulateTotal = () : number => {
+    return cartProducts.reduce((total:number,cartProduct:CartProduct) => total + cartProduct.product.price, 0)
+  }
+
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
     fetchResponse(
       serverChangeProductAmount(
@@ -149,20 +153,23 @@ export default function CartPage() {
       })
       .catch((e) => alert(e))
   }
-  const RemoveProduct = (product: Product) => {
+  const tryRemoveProduct = (product: Product) => {
     fetchResponse(
       serverRemoveFromCart(getBuyerId(), product.id, product.storeId) //Trying to remove from cart in server
-    ).then((removedSuccess: boolean) => {
-      if (removedSuccess) {
-        setOpenRemoveProdSnackbar(true)
-
-        reloadCartProducts()
-      } // Reload products again from server
-    })
+    )
+      .then((removedSuccess: boolean) => {
+        if (removedSuccess) {
+          setOpenRemoveProdSnackbar(true)
+          setOpenRemoveDialog(false)
+          reloadCartProducts()
+        } // Reload products again from server
+      })
+      .catch((e) => {
+        alert(e)
+      })
   }
   const handleCloseRemoveDialog = (remove: boolean, product: Product) => {
-    if (remove) RemoveProduct(product)
-    setOpenRemoveDialog(false)
+    if (remove) tryRemoveProduct(product)
   }
 
   const handleRemoveProductCanClick = (product: Product) => {
@@ -192,7 +199,7 @@ export default function CartPage() {
         </Box>
         <Box sx={{ width: "20%", mt: 2 }}>
           {CartSummary(
-            -1,
+            calulateTotal(),
             -1,
             cartProducts,
             expandSummary,
@@ -202,6 +209,9 @@ export default function CartPage() {
           )}
         </Box>
       </Stack>
+
+
+
       {chosenProduct !== null
         ? DialogTwoOptions(
             chosenProduct,

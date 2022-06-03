@@ -85,7 +85,7 @@ export default function ProductCard(
       <CardActions disableSpacing>
         {UpdateQuantityComponent(product, handleUpdateQuantity)}
 
-        <Box sx={{ ml: "auto" }}>
+        <Box sx={{ ml: "auto",mt:"auto" }}>
           {RemoveProductCan(product, handleRemoveProductClick)}
         </Box>
       </CardActions>

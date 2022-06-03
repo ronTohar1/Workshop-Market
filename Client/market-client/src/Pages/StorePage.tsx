@@ -15,6 +15,8 @@ import { pathHome } from "../Paths"
 import { useNavigate } from "react-router-dom"
 import { fetchResponse } from "../services/GeneralService"
 import toolBar from "../Componentss/StorePageToolbar"
+import { serverAddToCart } from "../services/BuyersService"
+import { getBuyerId } from "../services/SessionService"
 
 const fields = {
   name: "name",
@@ -23,30 +25,38 @@ const fields = {
   category: "category",
 }
 
+const handleFailToAdd = (products: Product[]) => {
+  const failString: string =
+    "Failed to add the following products to your cart:\n" +
+    products.map((product: Product) => product.name)
+  alert(failString)
+}
+
+const handleSucceedToAdd = (products: Product[]) => {
+  const success: string =
+    "Successfully added the following products to your cart:\n" +
+    products.map((product: Product) => product.name)
+}
+
 export default function StorePage() {
   const startingPageSize: number = 10
 
   const navigate = useNavigate()
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize)
-  const [numSelected, setNumSelected] = React.useState<number>(0)
+  const [selectionModel, setSelectionModel] = React.useState<number[]>([])
   const [selectedProductsIds, setSelectedProductsIds] = React.useState<
     number[]
   >([])
   const isManager: boolean = true //TODO: change to real value. storeService.getMemberInRole(...)
-  const [rows, setRows] = React.useState<Product[]>([])
+  const [products, setProducts] = React.useState<Product[]>([])
   const [storeId] = useQueryParam("id", NumberParam)
   const [store, setStore] = React.useState<Store | null>(null)
-
-  const handleError = (msg: string) => {
-    alert(msg)
-    navigate(pathHome)
-  }
 
   React.useEffect(() => {
     fetchResponse(serverGetStore(storeId))
       .then((store) => {
         setStore(store)
-        setRows(store.products)
+        setProducts(store.products)
       })
       .catch((e) => {
         alert(e)
@@ -95,29 +105,50 @@ export default function StorePage() {
       //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
     },
   ]
-  const handleNewSelection = (newSelectionModel: any) => {
-    const chosenIds: number[] = newSelectionModel
-    setNumSelected(chosenIds.length)
+
+  const updateSelection = (newSelection: any) => {
+    const chosenIds: number[] = newSelection
+    setSelectionModel(newSelection)
     setSelectedProductsIds(chosenIds)
   }
 
+  const handleNewSelection = (newSelectionModel: any) => {
+    updateSelection(newSelectionModel)
+  }
+
   const handleAddToCart = () => {
-    rows.forEach((prod) => {
+    const failedToAdd: Product[] = []
+    const succeedToAdd: Product[] = []
+    products.forEach((prod: Product) => {
       if (selectedProductsIds.includes(prod.id)) {
-        console.log("Adding to cart: " + prod.name)
+        fetchResponse(serverAddToCart(getBuyerId(), prod.id, prod.storeId, 0))
+          .then((success: boolean) => {
+            if(success) succeedToAdd.push(prod)
+          })
+          .catch((e) => {
+            failedToAdd.push(prod)
+            alert(e)
+          })
       }
     })
+
+    if (failedToAdd.length === 0)
+      alert("Successfully added all requested products to your cart")
+    else
+      alert("Managed to add only "+succeedToAdd.length+" products")
+    updateSelection([])
   }
+
   return (
     <Box>
       <Navbar />
-      {toolBar(numSelected, store, handleAddToCart)}
+      {toolBar(selectedProductsIds.length, store, handleAddToCart)}
       <Stack direction="row">{}</Stack>
       <div style={{ height: "50vh", width: "100%" }}>
         <div style={{ display: "flex", height: "100%" }}>
           <div style={{ flexGrow: 1 }}>
             <DataGrid
-              rows={rows}
+              rows={products}
               columns={columns}
               sx={{
                 width: "100vw",
@@ -132,6 +163,7 @@ export default function StorePage() {
               checkboxSelection
               disableSelectionOnClick
               onSelectionModelChange={handleNewSelection}
+              selectionModel={selectionModel}
               isCellEditable={(params) => false}
             />
           </div>

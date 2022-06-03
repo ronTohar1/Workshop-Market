@@ -79,14 +79,14 @@ export async function serverRegister(
   return response
 }
 
-export async function addToCart(
+export async function serverAddToCart(
   userId: number,
   productId: number,
   storeId: number,
   amount: number
-): Promise<any> {
+): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Buyers/AddProduct"
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
       accept: "text/plain",
@@ -100,6 +100,7 @@ export async function addToCart(
       amount: amount,
     }),
   })
+  return jsonResponse.json()
 }
 
 export async function serverRemoveFromCart(
@@ -108,7 +109,7 @@ export async function serverRemoveFromCart(
   storeId: number
 ): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Buyers/RemoveProduct"
-  const jsonResponse =  await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: "DELETE",
     headers: {
       accept: "text/plain",
@@ -164,25 +165,26 @@ export async function purchaseCart(userId: number): Promise<any> {
   })
 }
 
-export async function serverGetCart(userId: number): Promise<ClientResponse<Cart>> {
+export async function serverGetCart(
+  userId: number
+): Promise<ClientResponse<Cart>> {
   const uri = serverPort + "/api/Buyers/GetBuyerCart"
-  try{
-  const jsonResponse = await fetch(uri, {
-    method: "POST",
-    headers: {
-      accept: "text/plain",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      userId: userId,
-    }),
-  })
-  const response = jsonResponse.json()
-  return response
-}
-catch(e){
-  return Promise.reject(e)
-}
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "text/plain",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userId,
+      }),
+    })
+    const response = jsonResponse.json()
+    return response
+  } catch (e) {
+    return Promise.reject(e)
+  }
 }
 
 export async function enterBuyerFacade(): Promise<any> {

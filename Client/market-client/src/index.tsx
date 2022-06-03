@@ -8,7 +8,7 @@ import Login from "./Pages/Login";
 import Navbar from "./Componentss/Navbar";
 import SearchPage from "./Pages/Search";
 import StorePage from "./Pages/StorePage";
-import CartPage from "./Pages/Cart1";
+import CartPage from "./Pages/Cart";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import * as Paths from "./Paths";
 import { QueryParamProvider } from "use-query-params";

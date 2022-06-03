@@ -1,182 +1,30 @@
+import { ThemeProvider } from "@emotion/react"
+import { Box, createTheme, Grid, Stack } from "@mui/material"
 import * as React from "react"
-import Grid from "@mui/material/Grid"
-import Paper from "@mui/material/Paper"
-import Box from "@mui/material/Box"
-import Card from "@mui/material/Card"
-import CardActions from "@mui/material/CardActions"
-import CardContent from "@mui/material/CardContent"
-import Button from "@mui/material/Button"
-import Typography from "@mui/material/Typography"
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
-import Navbar from "../Componentss/Navbar"
-import { AppBar } from "@mui/material"
-import { Currency } from "../Utils"
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever"
-import { IconButton } from "@mui/material"
-import { Icon } from "@mui/material"
-import { TextField } from "@mui/material"
-import { Stack } from "@mui/material"
-import UpdateIcon from "@mui/icons-material/Update"
-import Collapse from "@mui/material/Collapse"
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import { IconButtonProps } from "@mui/material/IconButton"
-
-import Dialog from "@mui/material/Dialog"
-import DialogActions from "@mui/material/DialogActions"
-import DialogContent from "@mui/material/DialogContent"
-import DialogContentText from "@mui/material/DialogContentText"
-import DialogTitle from "@mui/material/DialogTitle"
-import Slide from "@mui/material/Slide"
-import { TransitionProps } from "@mui/material/transitions"
-import { fontFamily } from "@mui/system"
+import { useNavigate } from "react-router-dom"
+import { NumberParam, useQueryParam } from "use-query-params"
+import CartSummary from "../Componentss/CartComponents/CartSummary"
+import DialogTwoOptions from "../Componentss/CartComponents/DialogTwoOptions"
+import ProductCard from "../Componentss/CartComponents/ProductCard"
+import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
 import LargeMessage from "../Componentss/LargeMessage"
-
-export interface Product {
-  Id: number
-  Name: string
-  Price: number
-  Chosen_Quantity: number
-  Show_Description: boolean
-}
-
-export const createProduct = (
-  Id: number,
-  Name: string,
-  Price: number,
-  Chosen_Quantity: number
-): Product => {
-  return {
-    Id: Id,
-    Name: Name,
-    Price: Price,
-    Chosen_Quantity: Chosen_Quantity,
-    Show_Description: false,
-  }
-}
-
-interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean
-}
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props
-  return <IconButton {...other} />
-})(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}))
-
-function BasicCard(
-  product: Product,
-  handleRemoveProduct: (product: Product) => void,
-  handleShowDescription: (product: Product) => void,
-  handleUpdateQuantity: (product: Product, newQuan: number) => void
-) {
-  const handleQuantity = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    handleUpdateQuantity(product, Number(data.get("quantity")))
-  }
-  return (
-    <Card sx={{ ml: 2, mr: 2 }} elevation={6} component={Paper}>
-      <CardContent>
-        <Typography variant="h3" component="div">
-          {product.Name}
-        </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          <br></br>
-          Product Information
-        </Typography>
-        <Typography variant="h6">
-          Price ({Currency}): {product.Price}
-        </Typography>
-        <Typography variant="h6">
-          Quantity: {product.Chosen_Quantity}
-        </Typography>
-      </CardContent>
-
-      <Stack direction="row" justifyContent="space-between">
-        <Box
-          sx={{ display: "flex", mr: 3, mb: 3, ml: 1, justfiyContent: "right" }}
-        >
-          <Stack direction="column">
-            <Typography variant="body1">Change Quantity</Typography>
-
-            <Box component="form" noValidate onSubmit={handleQuantity}>
-              <Stack direction="row">
-                <TextField
-                  id="quantity"
-                  name="quantity"
-                  type="number"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  size="small"
-                  // value={value}
-                  // onChange={(e) => {
-                  //     setValue(e.target.value);
-                  // }}
-                />
-                <Button
-                  color="primary"
-                  variant="contained"
-                  // color="inherit"
-                  size="small"
-                  sx={{ ml: 1 }}
-                  startIcon={<UpdateIcon fontSize="small" />}
-                  type="submit"
-                  // onClick={() => handleUpdateQuantity(product, Number(value))}
-                >
-                  Update
-                </Button>
-              </Stack>
-            </Box>
-          </Stack>
-        </Box>
-        <CardActions>
-          {/* <IconButton onClick={() => handleRemoveProduct(product)}>
-                        <Icon>
-                            <DeleteForeverIcon fontSize="medium" sx={{ color: 'black' }} />
-                        </Icon>
-                    </IconButton> */}
-          {removeGarbageCan(product, handleRemoveProduct)}
-          <ExpandMore
-            expand={product.Show_Description}
-            onClick={() => handleShowDescription(product)}
-            aria-expanded={product.Show_Description}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </ExpandMore>
-        </CardActions>
-      </Stack>
-      <Collapse in={product.Show_Description} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Product Description:</Typography>
-          <Typography paragraph color="red">
-            There is no available decription for this product
-          </Typography>
-        </CardContent>
-      </Collapse>
-    </Card>
-  )
-}
-
-let allProducts: Product[] = [
-  createProduct(1, "Cupcake", 305, 3),
-  createProduct(2, "Hamburger", 30, 33),
-  createProduct(3, "Salad", 340, 3000),
-  createProduct(4, "Cheese", 130, 232),
-  createProduct(5, "Banana", 35, 22),
-  createProduct(6, "Cooler", 3051, 22),
-  createProduct(7, "Sunglasses", 3035, 223),
-  createProduct(8, "Elephant", 10, 32),
-  createProduct(9, "Zebra", 3, 21),
-  createProduct(10, "Hot Dog", 100, 222),
-]
+import Navbar from "../Componentss/Navbar"
+import Cart from "../DTOs/Cart"
+import Product from "../DTOs/Product"
+import ShoppingBag from "../DTOs/ShoppingBag"
+import { pathHome } from "../Paths"
+import {
+  serverChangeProductAmount,
+  serverGetCart,
+  serverRemoveFromCart,
+} from "../services/BuyersService"
+import { fetchResponse } from "../services/GeneralService"
+import {
+  fetchProducts,
+  getCartProducts,
+  serverSearchProducts,
+} from "../services/ProductsService"
+import { getBuyerId } from "../services/SessionService"
 
 const theme = createTheme({
   palette: {
@@ -197,283 +45,176 @@ const theme = createTheme({
     ].join(","),
   },
 })
-const makeSingleProduct = (
+
+export interface CartProduct {
+  product: Product
+  quantity: number
+}
+
+const getProductQuantity = (
+  prodId: number,
+  quantities: Map<number, number>
+): number => {
+  const quantity = quantities.get(prodId)
+  if (quantity === undefined) {
+    alert("Sorry, but an unusual error happened when tried to load your cart")
+    return -1 //Not going to happen
+  }
+  return quantity
+}
+
+function convertToCartProduct(
+  products: Product[],
+  quantities: Map<number, number>
+): CartProduct[] {
+  return products.map((product: Product) => {
+    return {
+      product: product,
+      quantity: getProductQuantity(product.id, quantities),
+    }
+  })
+}
+
+function MakeProductCard(
   product: Product,
-  handleRemoveProduct: (product: Product) => void,
-  handleShowDescription: (product: Product) => void,
+  quantity: number,
+  handleRemoveProductClick: (product: Product) => void,
   handleUpdateQuantity: (product: Product, newQuan: number) => void
-) => {
+) {
   return (
     <Grid
       item
-      xs={6}
-      sm={4}
+      sm={6}
+      md={4}
       sx={{
-        my: 2,
         alignItems: "center",
       }}
     >
-      {BasicCard(
+      {ProductCard(
         product,
-        handleRemoveProduct,
-        handleShowDescription,
+        quantity,
+        handleRemoveProductClick,
         handleUpdateQuantity
       )}
     </Grid>
   )
 }
 
-const makeSingleProductDetails = (
-  product: Product,
-  handleRemoveProduct: (product: Product) => void
-) => {
-  return (
-    <Box sx={{ borderRadius: 2, boxShadow: 2 }}>
-      <Box sx={{ ml: 2, mb: 2 }}>
-        <Typography sx={{ mb: 1.5 }} variant="h5">
-          {product.Name} x {product.Chosen_Quantity}
-        </Typography>
-        <Stack
-          direction="row"
-          sx={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <Typography sx={{ mb: 1.5 }} variant="h6">
-            Total : {product.Price * product.Chosen_Quantity}
-          </Typography>
-          {removeGarbageCan(product, handleRemoveProduct)}
-        </Stack>
-      </Box>
-    </Box>
-  )
-}
-
-const createDialog = (
-  product: Product,
-  open: boolean,
-  handleClose: (remove: boolean, product: Product) => void
-) => {
-  return (
-    <div>
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        // onClose={() => handleClose(false,product)}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle>{"Confirm Remove:" + product.Name}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            Are you sure you want to remove this item from your cart?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleClose(false, product)}>Cancel</Button>
-          <Button onClick={() => handleClose(true, product)}>Confirm</Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  )
-}
-
-const width = 80
-const widthCart: string = width + "%"
-const widthDash: string = 100 - width + "%"
-
-//Assuming products1 is not empty!
-const MakeProducts = (products1: Product[]) => {
+export default function CartPage() {
+  const navigate = useNavigate()
   const [expanded, setExpanded] = React.useState(false)
-  const [prods, updateProducts] = React.useState(products1)
-  const [openRemoveDialog, setOpenRemoveDialog] = React.useState(false)
-  const [chosenProd, updateChosen] = React.useState<Product>(products1[0])
+  const [cartProducts, setCartProducts] = React.useState<CartProduct[]>([])
+  const [openRemoveDialog, setOpenRemoveDialog] = React.useState<boolean>(false)
+  const [renderProducts, setRenderProducts] = React.useState<boolean>(false)
+  const [chosenProduct, updateChosenProduct] = React.useState<Product | null>(
+    null
+  )
+  const [openRemoveProdSnackbar, setOpenRemoveProdSnackbar] =
+    React.useState<boolean>(false)
+  const [expandSummary, setExpandSummary] = React.useState<boolean>(false)
+
+  // Fetching products from api once when rendered first time.
+  React.useEffect(() => {
+    const buyerId = getBuyerId()
+    fetchResponse(serverGetCart(buyerId))
+      .then((cart: Cart) => {
+        const [prodsIds, prodsToQuantity] = getCartProducts(cart)
+        fetchProducts(
+          serverSearchProducts(null, null, null, null, null, prodsIds)
+        ).then((products: Product[]) =>
+          setCartProducts(convertToCartProduct(products, prodsToQuantity))
+        )
+        console.log("Loaded cart")
+        console.log(prodsToQuantity)
+      })
+      .catch((e) => {
+        alert(e)
+        navigate(pathHome)
+      })
+  }, [renderProducts])
+
+  const reloadCartProducts = () => setRenderProducts(!renderProducts)
 
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
-    const validQuantity: boolean = newQuan > 0
-    const newProds = validQuantity
-      ? prods.map((prod: Product) => {
-          if (prod.Id == product.Id) prod.Chosen_Quantity = newQuan
-          return prod
-        })
-      : prods
-
-    updateProducts(newProds)
+    fetchResponse(
+      serverChangeProductAmount(
+        getBuyerId(),
+        product.id,
+        product.storeId,
+        newQuan
+      )
+    )
+      .then((success: boolean) => {
+        if (success) reloadCartProducts()
+      })
+      .catch((e) => alert(e))
   }
+  const RemoveProduct = (product: Product) => {
+    fetchResponse(
+      serverRemoveFromCart(getBuyerId(), product.id, product.storeId) //Trying to remove from cart in server
+    ).then((removedSuccess: boolean) => {
+      if (removedSuccess) {
+        setOpenRemoveProdSnackbar(true)
 
-  const handleClose = (remove: boolean, product: Product) => {
-    const newProds = remove
-      ? prods.filter((prod: Product) => prod.Id != product.Id)
-      : prods
-    if (remove) updateProducts(newProds)
+        reloadCartProducts()
+      } // Reload products again from server
+    })
+  }
+  const handleCloseRemoveDialog = (remove: boolean, product: Product) => {
+    if (remove) RemoveProduct(product)
     setOpenRemoveDialog(false)
   }
 
-  const handleRemoveProduct = (product: Product) => {
-    updateChosen(product)
+  const handleRemoveProductCanClick = (product: Product) => {
+    updateChosenProduct(product)
     setOpenRemoveDialog(true)
-
-    // updateProducts(prods => prods.filter((prod) => prod.Id != product.Id));
   }
 
-  const handleShowDescription = (product: Product) => {
-    updateProducts((prods) =>
-      prods.map((prod) => {
-        if (product.Id == prod.Id)
-          prod.Show_Description = !prod.Show_Description
-        return prod
-      })
-    )
-  }
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded)
-  }
-
-  const handlePurchase = (products: Product[]) => {
-    alert("buynig")
-  }
+  const handlePurchase = () => alert("Purchasing.....")
 
   return (
-    <Stack direction="row">
-      <Box sx={{ width: widthCart }}>
-        <Grid container spacing={0}>
-          {prods.map((prod) => {
-            return makeSingleProduct(
-              prod,
-              handleRemoveProduct,
-              handleShowDescription,
-              handleUpdateQuantity
-            )
-          })}
-        </Grid>
-      </Box>
-      <Box sx={{ width: widthDash }}>
-        <Card
-          elevation={10}
-          sx={{
-            border: 0,
-            borderRadius: 3,
-            mr: 2,
-            width: "auto",
-            height: "auto",
-          }}
-        >
-          <Typography sx={{ ml: 1 }} variant="h3" component="div">
-            Your Cart
-          </Typography>
-          <Card
-            elevation={2}
-            sx={{
-              border: 0,
-              borderRadius: 3,
-              m: 1.5,
-              width: "auto",
-              height: "auto",
-            }}
-          >
-            <Box sx={{ borderBottom: 1 }}>
-              <Typography sx={{ mb: 1.5, ml: 1 }} variant="h5">
-                <br></br>
-                Total
-              </Typography>
-              <Typography sx={{ ml: "25%" }} variant="h6">
-                300 {Currency}
-              </Typography>
-            </Box>
-            <Box sx={{ borderBottom: 0, mb: 3 }}>
-              <Typography variant="h5" sx={{ mb: 1.5, mt: 1.5, ml: 1 }}>
-                Total After Discount
-              </Typography>
-              <Typography sx={{ ml: "25%" }} variant="h6">
-                300 {Currency}
-              </Typography>
-            </Box>
-          </Card>
-
-          <Stack
-            direction="row"
-            sx={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <div>
-              <Button
-                sx={{ m: 1, ml: 2 }}
-                onClick={() => handlePurchase(prods)}
-                variant="contained"
-                color="success"
-              >
-                Purchase
-              </Button>
-            </div>
-            <div>
-              <ExpandMore
-                sx={{ m: 1, ml: 2 }}
-                expand={expanded}
-                onClick={handleExpandClick}
-                aria-expanded={expanded}
-                aria-label="show more"
-              >
-                <ExpandMoreIcon />
-              </ExpandMore>
-            </div>
-          </Stack>
-
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CardContent>
-              <Typography paragraph>Cart Details:</Typography>
-              {prods.map((prod) => {
-                return makeSingleProductDetails(prod, handleRemoveProduct)
-              })}
-            </CardContent>
-          </Collapse>
-        </Card>
-      </Box>
-      {openRemoveDialog ? (
-        createDialog(chosenProd, openRemoveDialog, handleClose)
-      ) : (
-        <div></div>
-      )}
-    </Stack>
-  )
-}
-
-export default function CartPage() {
-  return (
-    <Box>
-      <ThemeProvider theme={theme}>
-        <Box>
-          <Navbar />
+    <ThemeProvider theme={theme}>
+      <Navbar />
+      <Stack direction="row">
+        <Box sx={{ width: "80%", mt: 2 }}>
+          <Grid container spacing={0}>
+            {cartProducts.length > 0
+              ? cartProducts.map((cartProduct: CartProduct) =>
+                  MakeProductCard(
+                    cartProduct.product,
+                    cartProduct.quantity,
+                    handleRemoveProductCanClick,
+                    handleUpdateQuantity
+                  )
+                )
+              : LargeMessage("No Products In Cart....")}
+          </Grid>
         </Box>
-        {allProducts.length > 0 ? (
-          <Box sx={{ mt: 5 }}>
-            <Box>{MakeProducts(allProducts)}</Box>
-          </Box>
-        ) : (
-          LargeMessage("No Products In Cart....")
-        )}
-      </ThemeProvider>
-    </Box>
-  )
-}
+        <Box sx={{ width: "20%", mt: 2 }}>
+          {CartSummary(
+            -1,
+            -1,
+            cartProducts,
+            expandSummary,
+            handleRemoveProductCanClick,
+            () => setExpandSummary(!expandSummary),
+            handlePurchase
+          )}
+        </Box>
+      </Stack>
+      {chosenProduct !== null
+        ? DialogTwoOptions(
+            chosenProduct,
+            openRemoveDialog,
+            handleCloseRemoveDialog
+          )
+        : null}
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>
-  },
-  ref: React.Ref<unknown>
-) {
-  return <Slide direction="up" ref={ref} {...props} />
-})
-
-const removeGarbageCan = (
-  product: Product,
-  handleRemoveProduct: (product: Product) => void
-) => {
-  return (
-    <div>
-      <IconButton onClick={() => handleRemoveProduct(product)}>
-        <Icon>
-          <DeleteForeverIcon fontSize="medium" sx={{ color: "red" }} />
-        </Icon>
-      </IconButton>
-    </div>
+      {SuccessSnackbar(
+        "Removed " + chosenProduct?.name + " Successfully",
+        openRemoveProdSnackbar,
+        () => setOpenRemoveProdSnackbar(false)
+      )}
+    </ThemeProvider>
   )
 }

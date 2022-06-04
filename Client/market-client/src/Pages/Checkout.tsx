@@ -17,15 +17,23 @@ import PaymentForm from '../Componentss/CheckoutComponents/PaymentForm';
 import Review from '../Componentss/CheckoutComponents/Review';
 import CheckoutDTO from '../DTOs/CheckoutDTO';
 import Product from '../DTOs/Product';
-import { pathStore } from '../Paths';
+import { pathCart, pathHome, pathStore } from '../Paths';
 import { getBuyerId } from '../services/SessionService';
+import { purchaseCart } from '../services/BuyersService';
+import { fetchResponse } from '../services/GeneralService';
+import Purchase from '../DTOs/Purchase';
+import { blue, indigo, red } from '@mui/material/colors';
+import { useNavigate } from "react-router-dom";
+
+const backgroundImage =
+  "https://images.unsplash.com/photo-1471193945509-9ad0617afabf";
 
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        Workshop Market
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -48,12 +56,25 @@ function getStepContent(step: number, checkout:CheckoutDTO,productsAmount:Map<Pr
   }
 }
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: indigo[500],
+    },
+    background: {
+      default: "#008394"
+    }
+    
+  },
+});
 const checkout = new CheckoutDTO();
 
 export default function Checkout({productsAmount}:{productsAmount:Map<Product,number>}) {
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
-
+  const [succeeded, setSucceeded] = React.useState<boolean>(false);
+  const [purchase, setPurchase] = React.useState<Purchase>();
+  const [errorMessage, setErrorMessage] = React.useState<string>("");
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -62,24 +83,31 @@ export default function Checkout({productsAmount}:{productsAmount:Map<Product,nu
     setActiveStep(activeStep - 1);
   };
   console.log(checkout)
-  const placeOrder = () =>{
+  const handleClickHome = () => {
+    navigate(`${pathHome}`);
+  };
+ function placeOrder(){
     const buyerId = getBuyerId()
-    const responsePromise = serverGetAMemberInfo(buyerId)
+    const responsePromise = purchaseCart(buyerId, checkout)
     console.log(responsePromise)
-    fetchResponse(responsePromise).then((member)=>{
-        setMember(member)
+    
+    fetchResponse(responsePromise).then((purchase)=>{
+      setPurchase(purchase)
+      setSucceeded(true)
     })
     .catch((e) => {
-      alert(e)
-      setOpen(false)
-     })
-   
+      setErrorMessage(e)
+      setSucceeded(false)
+    })
+    return succeeded
+ 
   };
   return (
     <ThemeProvider theme={theme}>
+       
       <CssBaseline />
       <AppBar
-        position="absolute"
+        position="sticky"
         color="default"
         elevation={0}
         sx={{
@@ -87,10 +115,21 @@ export default function Checkout({productsAmount}:{productsAmount:Map<Product,nu
           borderBottom: (t) => `1px solid ${t.palette.divider}`,
         }}
       >
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Company name
-          </Typography>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography
+              onClick={handleClickHome}
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{
+                display: { xs: "none", sm: "block" },
+                "&:hover": {
+                  cursor: "pointer",
+                },
+              }}
+            >
+              Workshop Market
+            </Typography>
         </Toolbar>
       </AppBar>
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
@@ -106,28 +145,43 @@ export default function Checkout({productsAmount}:{productsAmount:Map<Product,nu
             ))}
           </Stepper>
           <React.Fragment>
-            {activeStep === steps.length ? (
+            {activeStep === steps.length ? (placeOrder() ? (
               <React.Fragment>
                 <Typography variant="h5" gutterBottom>
                   Thank you for your order.
                 </Typography>
                 <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order
-                  confirmation, and will send you an update when your order has
-                  shipped.
+                  {purchase?.purchaseDescription}
                 </Typography>
                 <Box textAlign='center'>
                 <Button
                     href = {pathStore}
                     variant="contained"
-                    onClick={handleNext}
                     sx={{ mt: 3, ml: 1 }}
                   >
                     Back To store
                   </Button>
                   </Box>
               </React.Fragment>
-            ) : (
+            ) :(
+              <React.Fragment>
+                <Typography variant="h5" gutterBottom>
+                 Couldn't complete the order.
+                </Typography>
+                <Typography variant="subtitle1">
+                  {errorMessage}
+                </Typography>
+                <Box textAlign='center'>
+                <Button
+                    href = {pathCart}
+                    variant="contained"
+                    sx={{ mt: 3, ml: 1 }}
+                  >
+                    Back To my cart
+                  </Button>
+                  </Box>
+              </React.Fragment>
+            )) : (
               <React.Fragment>
                 {getStepContent(activeStep,checkout,productsAmount)}
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

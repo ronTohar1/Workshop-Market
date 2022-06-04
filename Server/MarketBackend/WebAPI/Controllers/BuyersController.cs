@@ -113,7 +113,7 @@ namespace WebAPI.Controllers
         public ActionResult<Response<IDictionary<int, IList<ServiceProduct>>>> ProductsSearch([FromBody] SearchProductsRequest request)
         {
             Response<IDictionary<int, IList<ServiceProduct>>> response =
-                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword);
+                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword,request.ProductId, request.ProductIds);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);

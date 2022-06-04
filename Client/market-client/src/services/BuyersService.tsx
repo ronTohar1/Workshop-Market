@@ -104,13 +104,13 @@ export async function addToCart(
   })
 }
 
-export async function removeFromCart(
+export async function serverRemoveFromCart(
   userId: number,
   productId: number,
   storeId: number
-): Promise<any> {
+): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Buyers/RemoveProduct"
-  return await fetch(uri, {
+  const jsonResponse =  await fetch(uri, {
     method: "DELETE",
     headers: {
       accept: "text/plain",
@@ -123,16 +123,18 @@ export async function removeFromCart(
       storeId: storeId,
     }),
   })
+
+  return jsonResponse.json()
 }
 
-export async function changeProductAmount(
+export async function serverChangeProductAmount(
   userId: number,
   productId: number,
   storeId: number,
   amount: number
-): Promise<any> {
+): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Buyers/ChangeProductAmount"
-  return await fetch(uri, {
+  const jsonResponse = await fetch(uri, {
     method: "PUT",
     headers: {
       accept: "text/plain",
@@ -146,6 +148,7 @@ export async function changeProductAmount(
       amount: amount,
     }),
   })
+  return jsonResponse.json()
 }
 
 export async function purchaseCart(userId: number, checkout: CheckoutDTO): Promise<ClientResponse<Purchase>> {
@@ -189,8 +192,6 @@ export async function serverGetCart(userId: number): Promise<ClientResponse<Cart
     }),
   })
   const response = jsonResponse.json()
-  console.log("get cart promise")
-  console.log(response)
   return response
 }
 catch(e){

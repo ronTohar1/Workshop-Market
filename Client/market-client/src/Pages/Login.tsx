@@ -39,6 +39,7 @@ export default function Login() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     if (!sessionService.getIsGuest()) {
       alert("You are already logged in!\nLog out before you try to log in");
+      return;
     }
     console.log(sessionService.getIsGuest())
 

@@ -8,8 +8,8 @@ import List from "@mui/material/List";
 import Purchase from "../DTOs/Purchase";
 
 const stores = [
-  new Store(0, "Ronto's", []),
-  new Store(1, "Mithcell's", []),
+  new Store(0, "Ronto's", [],new Member(0,"ron",true),true),
+  new Store(1, "Mithcell's", [],new Member(0,"ron",true),true),
 ];
 export const dummyStore1 = stores[0];
 export const dummyStore2 = stores[1];

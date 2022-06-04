@@ -11,13 +11,19 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
     {
         public int Id { get; }
         public string Name { get; }
+
+        public bool IsOpen { get; }
+        public ServiceMember Founder { get; }
         public IList<ServiceProduct> Products { get; private set; }
 
-        public ServiceStore(int id, string name, IList<ServiceProduct> productsIds)
+        public ServiceStore(int id, Store store, IList<ServiceProduct> productsIds)
         {
             Id = id;
-            Name = name;
+            Name = store.name;
             Products = productsIds;
+            IsOpen = store.isOpen;
+            Founder = new ServiceMember(store.founder);
+
         }
 
         public override bool Equals(Object? other)

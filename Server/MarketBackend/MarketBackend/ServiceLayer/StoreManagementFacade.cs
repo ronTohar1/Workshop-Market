@@ -206,7 +206,7 @@ namespace MarketBackend.ServiceLayer
                 Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<ServiceMember>($"There isn't a store with an id {storeId}");
-                ServiceMember m = new ServiceMember(memberId,s.GetFounder(memberId));
+                ServiceMember m = new ServiceMember(s.GetFounder(memberId));
                 logger.Info($"GetFounder was called with parameters: [memberId = {memberId}]");
                 return new Response<ServiceMember>(m);
             }

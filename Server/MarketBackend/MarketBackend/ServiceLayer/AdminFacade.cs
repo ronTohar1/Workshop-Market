@@ -172,7 +172,7 @@ namespace MarketBackend.ServiceLayer
                 if (member == null)
                     return new Response<ServiceMember>($"There isn't such a member with id {memberId}");
                 logger.Info($"GetLoggedInMembers was called with parameters [requestingId = {requestingId}, memberId = {memberId}]");
-                return new Response<ServiceMember>(new ServiceMember(memberId,member));
+                return new Response<ServiceMember>(new ServiceMember(member));
             }
             catch (MarketException mex)
             {

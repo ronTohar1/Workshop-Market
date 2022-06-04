@@ -232,7 +232,7 @@ namespace MarketBackend.ServiceLayer
 
             IList<ServiceProduct> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => CreateServiceProduct(product, storeId, store.name)).ToList();
 
-            return new ServiceStore(storeId, store.GetName(), productsIds);
+            return new ServiceStore(storeId, store, productsIds);
         }
 
         private ServiceProduct CreateServiceProduct(Product product, int storeId, string storeName)

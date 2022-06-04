@@ -23,6 +23,48 @@ const fields = {
   category: "category",
 }
 
+const columns: GridColDef[] = [
+  {
+    field: fields.name,
+    headerName: "Product Name",
+    type: "string",
+    flex: 2,
+    align: "left",
+    headerAlign: "left",
+  },
+  {
+    field: fields.price,
+    headerName: "Price",
+    type: "number",
+    flex: 1,
+    editable: true,
+    align: "left",
+    headerAlign: "left",
+  },
+  {
+    field: fields.available_quantity,
+    headerName: "Available Quantity",
+    description: "Product current quantity in store inventory",
+    type: "number",
+    flex: 1,
+    editable: true,
+    align: "left",
+    headerAlign: "left",
+  },
+  {
+    field: fields.category,
+    headerName: "Category",
+    // type: 'string',
+    flex: 1,
+    editable: true,
+    align: "left",
+    headerAlign: "left",
+
+    // valueGetter: (params: GridValueGetterParams) =>
+    //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+  },
+]
+
 export default function StorePageOfManager() {
   const initSize: number = 10
 
@@ -37,8 +79,7 @@ export default function StorePageOfManager() {
     alert(msg)
     navigate(pathHome)
   }
-
-  React.useEffect(() => {
+  const fetchStore = () =>{
     fetchResponse(serverGetStore(storeId))
       .then((store) => {
         setStore(store)
@@ -48,49 +89,12 @@ export default function StorePageOfManager() {
         alert(e)
         navigate(pathHome)
       })
+  }
+
+  React.useEffect(() => {
+    fetchStore()
   }, [storeId])
   
-  const columns: GridColDef[] = [
-    {
-      field: fields.name,
-      headerName: "Product Name",
-      type: "string",
-      flex: 2,
-      align: "left",
-      headerAlign: "left",
-    },
-    {
-      field: fields.price,
-      headerName: "Price",
-      type: "number",
-      flex: 1,
-      editable: isManager,
-      align: "left",
-      headerAlign: "left",
-    },
-    {
-      field: fields.available_quantity,
-      headerName: "Available Quantity",
-      description: "Product current quantity in store inventory",
-      type: "number",
-      flex: 1,
-      editable: isManager,
-      align: "left",
-      headerAlign: "left",
-    },
-    {
-      field: fields.category,
-      headerName: "Category",
-      // type: 'string',
-      flex: 1,
-      editable: isManager,
-      align: "left",
-      headerAlign: "left",
-
-      // valueGetter: (params: GridValueGetterParams) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-    },
-  ]
 
   function updatePrice(product: Product, price: number) {
     if (price != null) product.price = price

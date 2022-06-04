@@ -176,10 +176,10 @@ export async function makeCoManager(
   return jsonResponse.json();
 }
 
-export async function getMembersInRoles(
+export async function serverGetMembersInRoles(
   userId: number,
   storeId: number,
-  role: number
+  role: Roles
 ): Promise<ClientResponse<number[]>> {
   const uri = serverPort + "/api/Stores/MembersInRole";
   const jsonResponse = await fetch(uri, {

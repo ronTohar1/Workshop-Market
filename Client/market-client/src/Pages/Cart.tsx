@@ -1,42 +1,42 @@
-import * as React from "react"
-import Grid from "@mui/material/Grid"
-import Paper from "@mui/material/Paper"
-import Box from "@mui/material/Box"
-import Card from "@mui/material/Card"
-import CardActions from "@mui/material/CardActions"
-import CardContent from "@mui/material/CardContent"
-import Button from "@mui/material/Button"
-import Typography from "@mui/material/Typography"
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
-import Navbar from "../Componentss/Navbar"
-import { AppBar } from "@mui/material"
-import { Currency } from "../Utils"
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever"
-import { IconButton } from "@mui/material"
-import { Icon } from "@mui/material"
-import { TextField } from "@mui/material"
-import { Stack } from "@mui/material"
-import UpdateIcon from "@mui/icons-material/Update"
-import Collapse from "@mui/material/Collapse"
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import { IconButtonProps } from "@mui/material/IconButton"
+import * as React from "react";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
+import Navbar from "../Componentss/Navbar";
+import { AppBar } from "@mui/material";
+import { Currency } from "../Utils";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { IconButton } from "@mui/material";
+import { Icon } from "@mui/material";
+import { TextField } from "@mui/material";
+import { Stack } from "@mui/material";
+import UpdateIcon from "@mui/icons-material/Update";
+import Collapse from "@mui/material/Collapse";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { IconButtonProps } from "@mui/material/IconButton";
 
-import Dialog from "@mui/material/Dialog"
-import DialogActions from "@mui/material/DialogActions"
-import DialogContent from "@mui/material/DialogContent"
-import DialogContentText from "@mui/material/DialogContentText"
-import DialogTitle from "@mui/material/DialogTitle"
-import Slide from "@mui/material/Slide"
-import { TransitionProps } from "@mui/material/transitions"
-import { fontFamily } from "@mui/system"
-import LargeMessage from "../Componentss/LargeMessage"
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
+import { fontFamily } from "@mui/system";
+import LargeMessage from "../Componentss/LargeMessage";
 
 export interface Product {
-  Id: number
-  Name: string
-  Price: number
-  Chosen_Quantity: number
-  Show_Description: boolean
+  Id: number;
+  Name: string;
+  Price: number;
+  Chosen_Quantity: number;
+  Show_Description: boolean;
 }
 
 export const createProduct = (
@@ -51,23 +51,23 @@ export const createProduct = (
     Price: Price,
     Chosen_Quantity: Chosen_Quantity,
     Show_Description: false,
-  }
-}
+  };
+};
 
 interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean
+  expand: boolean;
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props
-  return <IconButton {...other} />
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
 })(({ theme, expand }) => ({
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
   marginLeft: "auto",
   transition: theme.transitions.create("transform", {
     duration: theme.transitions.duration.shortest,
   }),
-}))
+}));
 
 function BasicCard(
   product: Product,
@@ -76,58 +76,63 @@ function BasicCard(
   handleUpdateQuantity: (product: Product, newQuan: number) => void
 ) {
   const handleQuantity = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    handleUpdateQuantity(product, Number(data.get("quantity")))
-  }
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    handleUpdateQuantity(product, Number(data.get("quantity")));
+  };
   return (
     <Card sx={{ ml: 2, mr: 2 }} elevation={6} component={Paper}>
       <CardContent>
-        <Typography variant="h3" component="div">
+        <Typography variant='h3' component='div'>
           {product.Name}
         </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+        <Typography sx={{ mb: 1.5 }} color='text.secondary'>
           <br></br>
           Product Information
         </Typography>
-        <Typography variant="h6">
+        <Typography variant='h6'>
           Price ({Currency}): {product.Price}
         </Typography>
-        <Typography variant="h6">
+        <Typography variant='h6'>
           Quantity: {product.Chosen_Quantity}
         </Typography>
       </CardContent>
 
-      <Stack direction="row" justifyContent="space-between">
+      <Stack direction='row' justifyContent='space-between'>
         <Box
-          sx={{ display: "flex", mr: 3, mb: 3, ml: 1, justfiyContent: "right" }}
-        >
-          <Stack direction="column">
-            <Typography variant="body1">Change Quantity</Typography>
+          sx={{
+            display: "flex",
+            mr: 3,
+            mb: 3,
+            ml: 1,
+            justfiyContent: "right",
+          }}>
+          <Stack direction='column'>
+            <Typography variant='body1'>Change Quantity</Typography>
 
-            <Box component="form" noValidate onSubmit={handleQuantity}>
-              <Stack direction="row">
+            <Box component='form' noValidate onSubmit={handleQuantity}>
+              <Stack direction='row'>
                 <TextField
-                  id="quantity"
-                  name="quantity"
-                  type="number"
+                  id='quantity'
+                  name='quantity'
+                  type='number'
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  size="small"
+                  size='small'
                   // value={value}
                   // onChange={(e) => {
                   //     setValue(e.target.value);
                   // }}
                 />
                 <Button
-                  color="primary"
-                  variant="contained"
+                  color='primary'
+                  variant='contained'
                   // color="inherit"
-                  size="small"
+                  size='small'
                   sx={{ ml: 1 }}
-                  startIcon={<UpdateIcon fontSize="small" />}
-                  type="submit"
+                  startIcon={<UpdateIcon fontSize='small' />}
+                  type='submit'
                   // onClick={() => handleUpdateQuantity(product, Number(value))}
                 >
                   Update
@@ -147,22 +152,21 @@ function BasicCard(
             expand={product.Show_Description}
             onClick={() => handleShowDescription(product)}
             aria-expanded={product.Show_Description}
-            aria-label="show more"
-          >
+            aria-label='show more'>
             <ExpandMoreIcon />
           </ExpandMore>
         </CardActions>
       </Stack>
-      <Collapse in={product.Show_Description} timeout="auto" unmountOnExit>
+      <Collapse in={product.Show_Description} timeout='auto' unmountOnExit>
         <CardContent>
           <Typography paragraph>Product Description:</Typography>
-          <Typography paragraph color="red">
+          <Typography paragraph color='red'>
             There is no available decription for this product
           </Typography>
         </CardContent>
       </Collapse>
     </Card>
-  )
+  );
 }
 
 let allProducts: Product[] = [
@@ -176,7 +180,7 @@ let allProducts: Product[] = [
   createProduct(8, "Elephant", 10, 32),
   createProduct(9, "Zebra", 3, 21),
   createProduct(10, "Hot Dog", 100, 222),
-]
+];
 
 const theme = createTheme({
   palette: {
@@ -196,7 +200,7 @@ const theme = createTheme({
       '"Segoe UI Symbol"',
     ].join(","),
   },
-})
+});
 const makeSingleProduct = (
   product: Product,
   handleRemoveProduct: (product: Product) => void,
@@ -211,8 +215,7 @@ const makeSingleProduct = (
       sx={{
         my: 2,
         alignItems: "center",
-      }}
-    >
+      }}>
       {BasicCard(
         product,
         handleRemoveProduct,
@@ -220,8 +223,8 @@ const makeSingleProduct = (
         handleUpdateQuantity
       )}
     </Grid>
-  )
-}
+  );
+};
 
 const makeSingleProductDetails = (
   product: Product,
@@ -230,22 +233,21 @@ const makeSingleProductDetails = (
   return (
     <Box sx={{ borderRadius: 2, boxShadow: 2 }}>
       <Box sx={{ ml: 2, mb: 2 }}>
-        <Typography sx={{ mb: 1.5 }} variant="h5">
+        <Typography sx={{ mb: 1.5 }} variant='h5'>
           {product.Name} x {product.Chosen_Quantity}
         </Typography>
         <Stack
-          direction="row"
-          sx={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <Typography sx={{ mb: 1.5 }} variant="h6">
+          direction='row'
+          sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography sx={{ mb: 1.5 }} variant='h6'>
             Total : {product.Price * product.Chosen_Quantity}
           </Typography>
           {removeGarbageCan(product, handleRemoveProduct)}
         </Stack>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 const createDialog = (
   product: Product,
@@ -259,11 +261,10 @@ const createDialog = (
         TransitionComponent={Transition}
         keepMounted
         // onClose={() => handleClose(false,product)}
-        aria-describedby="alert-dialog-slide-description"
-      >
+        aria-describedby='alert-dialog-slide-description'>
         <DialogTitle>{"Confirm Remove:" + product.Name}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
+          <DialogContentText id='alert-dialog-slide-description'>
             Are you sure you want to remove this item from your cart?
           </DialogContentText>
         </DialogContent>
@@ -273,67 +274,67 @@ const createDialog = (
         </DialogActions>
       </Dialog>
     </div>
-  )
-}
+  );
+};
 
-const width = 80
-const widthCart: string = width + "%"
-const widthDash: string = 100 - width + "%"
+const width = 80;
+const widthCart: string = width + "%";
+const widthDash: string = 100 - width + "%";
 
 //Assuming products1 is not empty!
 const MakeProducts = (products1: Product[]) => {
-  const [expanded, setExpanded] = React.useState(false)
-  const [prods, updateProducts] = React.useState(products1)
-  const [openRemoveDialog, setOpenRemoveDialog] = React.useState(false)
-  const [chosenProd, updateChosen] = React.useState<Product>(products1[0])
+  const [expanded, setExpanded] = React.useState(false);
+  const [prods, updateProducts] = React.useState(products1);
+  const [openRemoveDialog, setOpenRemoveDialog] = React.useState(false);
+  const [chosenProd, updateChosen] = React.useState<Product>(products1[0]);
 
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
-    const validQuantity: boolean = newQuan > 0
+    const validQuantity: boolean = newQuan > 0;
     const newProds = validQuantity
       ? prods.map((prod: Product) => {
-          if (prod.Id == product.Id) prod.Chosen_Quantity = newQuan
-          return prod
+          if (prod.Id == product.Id) prod.Chosen_Quantity = newQuan;
+          return prod;
         })
-      : prods
+      : prods;
 
-    updateProducts(newProds)
-  }
+    updateProducts(newProds);
+  };
 
   const handleClose = (remove: boolean, product: Product) => {
     const newProds = remove
       ? prods.filter((prod: Product) => prod.Id != product.Id)
-      : prods
-    if (remove) updateProducts(newProds)
-    setOpenRemoveDialog(false)
-  }
+      : prods;
+    if (remove) updateProducts(newProds);
+    setOpenRemoveDialog(false);
+  };
 
   const handleRemoveProduct = (product: Product) => {
-    updateChosen(product)
-    setOpenRemoveDialog(true)
+    updateChosen(product);
+    setOpenRemoveDialog(true);
 
     // updateProducts(prods => prods.filter((prod) => prod.Id != product.Id));
-  }
+  };
 
   const handleShowDescription = (product: Product) => {
     updateProducts((prods) =>
       prods.map((prod) => {
         if (product.Id == prod.Id)
-          prod.Show_Description = !prod.Show_Description
-        return prod
+          prod.Show_Description = !prod.Show_Description;
+        return prod;
       })
-    )
-  }
+    );
+  };
 
   const handleExpandClick = () => {
-    setExpanded(!expanded)
-  }
+    setExpanded(!expanded);
+  };
 
   const handlePurchase = (products: Product[]) => {
-    alert("buynig")
-  }
+    alert("buynig");
+  };
 
   return (
-    <Stack direction="row">
+    <Stack direction='row'>
       <Box sx={{ width: widthCart }}>
         <Grid container spacing={0}>
           {prods.map((prod) => {
@@ -342,7 +343,7 @@ const MakeProducts = (products1: Product[]) => {
               handleRemoveProduct,
               handleShowDescription,
               handleUpdateQuantity
-            )
+            );
           })}
         </Grid>
       </Box>
@@ -355,9 +356,8 @@ const MakeProducts = (products1: Product[]) => {
             mr: 2,
             width: "auto",
             height: "auto",
-          }}
-        >
-          <Typography sx={{ ml: 1 }} variant="h3" component="div">
+          }}>
+          <Typography sx={{ ml: 1 }} variant='h3' component='div'>
             Your Cart
           </Typography>
           <Card
@@ -368,38 +368,35 @@ const MakeProducts = (products1: Product[]) => {
               m: 1.5,
               width: "auto",
               height: "auto",
-            }}
-          >
+            }}>
             <Box sx={{ borderBottom: 1 }}>
-              <Typography sx={{ mb: 1.5, ml: 1 }} variant="h5">
+              <Typography sx={{ mb: 1.5, ml: 1 }} variant='h5'>
                 <br></br>
                 Total
               </Typography>
-              <Typography sx={{ ml: "25%" }} variant="h6">
+              <Typography sx={{ ml: "25%" }} variant='h6'>
                 300 {Currency}
               </Typography>
             </Box>
             <Box sx={{ borderBottom: 0, mb: 3 }}>
-              <Typography variant="h5" sx={{ mb: 1.5, mt: 1.5, ml: 1 }}>
+              <Typography variant='h5' sx={{ mb: 1.5, mt: 1.5, ml: 1 }}>
                 Total After Discount
               </Typography>
-              <Typography sx={{ ml: "25%" }} variant="h6">
+              <Typography sx={{ ml: "25%" }} variant='h6'>
                 300 {Currency}
               </Typography>
             </Box>
           </Card>
 
           <Stack
-            direction="row"
-            sx={{ display: "flex", justifyContent: "space-between" }}
-          >
+            direction='row'
+            sx={{ display: "flex", justifyContent: "space-between" }}>
             <div>
               <Button
                 sx={{ m: 1, ml: 2 }}
                 onClick={() => handlePurchase(prods)}
-                variant="contained"
-                color="success"
-              >
+                variant='contained'
+                color='success'>
                 Purchase
               </Button>
             </div>
@@ -409,18 +406,17 @@ const MakeProducts = (products1: Product[]) => {
                 expand={expanded}
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
-                aria-label="show more"
-              >
+                aria-label='show more'>
                 <ExpandMoreIcon />
               </ExpandMore>
             </div>
           </Stack>
 
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <Collapse in={expanded} timeout='auto' unmountOnExit>
             <CardContent>
               <Typography paragraph>Cart Details:</Typography>
               {prods.map((prod) => {
-                return makeSingleProductDetails(prod, handleRemoveProduct)
+                return makeSingleProductDetails(prod, handleRemoveProduct);
               })}
             </CardContent>
           </Collapse>
@@ -432,8 +428,8 @@ const MakeProducts = (products1: Product[]) => {
         <div></div>
       )}
     </Stack>
-  )
-}
+  );
+};
 
 export default function CartPage() {
   return (
@@ -451,17 +447,17 @@ export default function CartPage() {
         )}
       </ThemeProvider>
     </Box>
-  )
+  );
 }
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
-    children: React.ReactElement<any, any>
+    children: React.ReactElement<any, any>;
   },
   ref: React.Ref<unknown>
 ) {
-  return <Slide direction="up" ref={ref} {...props} />
-})
+  return <Slide direction='up' ref={ref} {...props} />;
+});
 
 const removeGarbageCan = (
   product: Product,
@@ -471,9 +467,9 @@ const removeGarbageCan = (
     <div>
       <IconButton onClick={() => handleRemoveProduct(product)}>
         <Icon>
-          <DeleteForeverIcon fontSize="medium" sx={{ color: "red" }} />
+          <DeleteForeverIcon fontSize='medium' sx={{ color: "red" }} />
         </Icon>
       </IconButton>
     </div>
-  )
-}
+  );
+};

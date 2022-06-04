@@ -62,7 +62,7 @@ namespace WebAPI.Controllers
         public ActionResult<Response<bool>> PurchaseCartContent([FromBody] PurchaseCartRequest request)
         {
             ServicePaymentDetails paymentDetails = new ServicePaymentDetails(request.CardNumber, request.Month, request.Year, request.Holder, request.Ccv, request.Id);
-            ServiceSupplyDetails supplyDetails = new ServiceSupplyDetails(request.SupplyName, request.Address, request.City, request.Country, request.Zip);
+            ServiceSupplyDetails supplyDetails = new ServiceSupplyDetails(request.ReceiverName, request.Address, request.City, request.Country, request.Zip);
             Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(request.UserId, paymentDetails, supplyDetails);
 
             if (response.IsErrorOccured())

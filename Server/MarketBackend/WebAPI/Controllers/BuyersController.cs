@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Requests;
 using WebSocketSharp;
+using WebSocketSharp.Server;
 
 namespace WebAPI.Controllers
 {
@@ -12,8 +13,28 @@ namespace WebAPI.Controllers
     public class BuyersController : Controller
     {
         private readonly IBuyerFacade buyerFacade;
+        private const int port = 7890;
+        private WebSocketServer notificationServer;
+        private IDictionary<int, string> buyerIdToRelativeNotificationPath;
+        private class NotificationsService : WebSocketBehavior
+        {
 
-        public BuyersController(IBuyerFacade buyerFacade) => this.buyerFacade = buyerFacade;
+        }
+
+        public BuyersController(IBuyerFacade buyerFacade, WebSocketServer notificationServer) {
+            Console.WriteLine("CONSTRUCTOR CALLED");
+            this.buyerFacade = buyerFacade;
+            buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
+            this.notificationServer = notificationServer;
+            notificationServer.Start();
+            Console.WriteLine("WS server started on ws://127.0.0.1:" + port);
+        }
+
+        ~BuyersController()
+        {
+            Console.WriteLine("destructor called");
+            notificationServer.Stop();
+        }
 
         [HttpPost]
         public ActionResult<Response<ServiceCart>> GetCart([FromBody] UserRequest request)
@@ -135,23 +156,30 @@ namespace WebAPI.Controllers
         [HttpPost("Login")]
         public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
         {
-
+            string relativeServicePath = "/" + request.UserName + "-notifications";
+            notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
             Response<int> response  = buyerFacade.Login(request.UserName, request.Password,
                 (msgs) => 
-                { 
-                    using (WebSocket ws = new WebSocket("ws://something_should_be_here")) // TODO: actual address of client
+                {
+                    try
                     {
-                        ws.Connect();
                         foreach (string msg in msgs)
-                            ws.Send(msg);
+                            notificationServer.WebSocketServices[relativeServicePath].Sessions.Broadcast(msg);
                     }
-
+                    catch (Exception ex)
+                    {
+                        return false;
+                    }
                     return true;
                 });
 
             if (response.IsErrorOccured())
+            {
+                notificationServer.RemoveWebSocketService("ws://127.0.0.1:" + port + relativeServicePath);
                 return BadRequest(response);
+            }
 
+            buyerIdToRelativeNotificationPath.Add(response.Value, relativeServicePath);
             return Ok(response);
         }
 
@@ -163,6 +191,8 @@ namespace WebAPI.Controllers
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
+            notificationServer.RemoveWebSocketService("ws://127.0.0.1:" + port + 
+                buyerIdToRelativeNotificationPath[request.UserId]);
             return Ok(response);
         }
 

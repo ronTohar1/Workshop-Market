@@ -6,6 +6,7 @@ using WebAPI.Controllers;
 using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using WebAPI;
+using WebSocketSharp.Server;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
@@ -45,6 +46,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
             builder.Services.AddSingleton<IBuyerFacade>(_ => so.GetBuyerFacade().Value);
             builder.Services.AddSingleton<IStoreManagementFacade>(_ => so.GetStoreManagementFacade().Value);
             builder.Services.AddSingleton<IAdminFacade>(_ => so.GetAdminFacade().Value);
+            builder.Services.AddSingleton(_ => new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 7890));
 
             builder.Services.AddCors(options =>
             {

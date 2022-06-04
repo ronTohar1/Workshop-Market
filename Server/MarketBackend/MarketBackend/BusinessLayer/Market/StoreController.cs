@@ -207,4 +207,14 @@ public class StoreController
 	private bool PlaysRoleAtStore(Store store, int memeberId)
 		=> store.IsManager(memeberId) || store.IsCoOwner(memeberId) || store.IsFounder(memeberId);
 
+	//for tests
+    public StoreController()
+    {
+
+    }
+
+	public virtual IDictionary<int, Store> GetOpenStores()
+    {
+		return openStores;
+    }
 }

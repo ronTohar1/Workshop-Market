@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Concurrent;
+using System.Net.Http;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -77,20 +78,57 @@ namespace TestMarketBackend.Acceptance
         protected static int store2Id;
         protected const string store2Name = "TheSecondStore";
 
-        protected static int[] storesIds; 
+        protected static int[] storesIds;
 
         // products
+        // categories
+        protected const string mobileCategory = "Mobile";
+        protected const string officeCategory = "Office";
+        protected const string foodCategory = "Food";
+            
+        // first store products
         protected const string iphoneProductName = "Iphone13";
         protected const int iphoneProductPrice = 4000;
         protected const int iphoneProductAmount = 50;
-        protected const string mobileCategory = "Mobile";
         protected static int iphoneProductId;
 
         protected const string calculatorProductName = "991ES Calculator";
         protected const int calculatorProductPrice = 100;
         protected const int calculatorProductAmount = 200;
-        protected const string officeCategory = "Office";
         protected static int calculatorProductId;
+
+        protected const string bambaProductName = "Bamba";
+        protected const int bambaProductPrice = 30;
+        protected const int bambaProductAmount = 20;
+        protected static int bambaProductId;
+
+        // second store products
+        protected const string galaxyProductName = "Galaxy S22";
+        protected const int galaxyProductPrice = 4000;
+        protected const int galaxyProductAmount = 60;
+        protected static int galaxyProductId;
+
+        protected const string usbChargerProductName = "USB Charger";
+        protected const int usbChargerProductPrice = 50;
+        protected const int usbChargerProductAmount = 250;
+        protected static int usbChargerProductId;
+
+        protected const string portableChargerProductName = "Portable Charger";
+        protected const int portableChargerProductPrice = 75;
+        protected const int portableChargerProductAmount = 150;
+        protected static int portableChargerProductId;
+
+        protected const string phoneCaseProductName = "Phone Case";
+        protected const int phoneCaseProductPrice = 80;
+        protected const int phoneCaseProductAmount = 120;
+        protected static int phoneCaseProductId;
+
+        // payment details
+        protected static ServicePaymentDetails paymentDetails =
+            new ServicePaymentDetails("2222333344445555", "12", "2025", "Yossi Cohen", "262", "20444444");
+
+        protected static ServiceSupplyDetails supplyDetails =
+            new ServiceSupplyDetails("Yossi Cohen", "Rager 100", "Beer Sheva", "Israel", "8458527");
 
         private void SetUpUsers()
         {
@@ -180,7 +218,7 @@ namespace TestMarketBackend.Acceptance
             storesIds = new int[] { storeId, store2Id }; 
         }
 
-        public void SetUpStoresInventories()
+        private void SetUpStore1Inventory()
         {
             // Adding Iphones to the store
             Response<int> iphoneProductIdResponse = storeManagementFacade.AddNewProduct(storeOwnerId, storeId, iphoneProductName, iphoneProductPrice, mobileCategory);
@@ -192,12 +230,50 @@ namespace TestMarketBackend.Acceptance
             calculatorProductId = calculatorProductIdResponse.Value;
             storeManagementFacade.AddProductToInventory(storeOwnerId, storeId, calculatorProductId, calculatorProductAmount);
 
+            // Adding Bambas to the store
+            Response<int> bambaProductIdResponse = storeManagementFacade.AddNewProduct(storeOwnerId, storeId, bambaProductName, bambaProductPrice, foodCategory);
+            bambaProductId = bambaProductIdResponse.Value;
+            storeManagementFacade.AddProductToInventory(storeOwnerId, storeId, bambaProductId, bambaProductAmount);
+        }
+
+        public void SetUpStore2Inventory()
+        {
+            // Adding Galaxies to the store
+            Response<int> galaxyProductIdResponse = storeManagementFacade.AddNewProduct(store2OwnerId, store2Id, galaxyProductName, galaxyProductPrice, mobileCategory);
+            galaxyProductId = galaxyProductIdResponse.Value;
+            storeManagementFacade.AddProductToInventory(store2OwnerId, store2Id, galaxyProductId, galaxyProductAmount);
+
+            // Adding USB chargers to the store
+            Response<int> usbChargerProductIdResponse = storeManagementFacade.AddNewProduct(store2OwnerId, store2Id, usbChargerProductName, usbChargerProductPrice, mobileCategory);
+            usbChargerProductId = usbChargerProductIdResponse.Value;
+            storeManagementFacade.AddProductToInventory(store2OwnerId, store2Id, usbChargerProductId, usbChargerProductAmount);
+
+            // Adding USB chargers to the store
+            Response<int> portableChargerProductIdResponse = storeManagementFacade.AddNewProduct(store2OwnerId, store2Id, portableChargerProductName, portableChargerProductPrice, mobileCategory);
+            portableChargerProductId = portableChargerProductIdResponse.Value;
+            storeManagementFacade.AddProductToInventory(store2OwnerId, store2Id, portableChargerProductId, portableChargerProductAmount);
+
+            // Adding USB chargers to the store
+            Response<int> phoneCaseProductIdResponse = storeManagementFacade.AddNewProduct(store2OwnerId, store2Id, phoneCaseProductName, phoneCaseProductPrice, mobileCategory);
+            phoneCaseProductId = phoneCaseProductIdResponse.Value;
+            storeManagementFacade.AddProductToInventory(store2OwnerId, store2Id, phoneCaseProductId, phoneCaseProductAmount);
+        }
+
+        public void SetUpStoresInventories()
+        {
+            SetUpStore1Inventory();
+
+            SetUpStore2Inventory();
+            
         }
 
         protected void SetUpShoppingCarts()
         {
             buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, 2);
             buyerFacade.AddProdcutToCart(member3Id, storeId, calculatorProductId, 5);
+            buyerFacade.AddProdcutToCart(member3Id, store2Id, galaxyProductId, 1);
+            buyerFacade.AddProdcutToCart(member3Id, store2Id, usbChargerProductId, 1);
+            buyerFacade.AddProdcutToCart(member3Id, store2Id, portableChargerProductId, 2);
         }
 
         // removing the current notifications that could have occured becuase of the setup or in other tests

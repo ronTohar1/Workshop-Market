@@ -1,4 +1,5 @@
-﻿using MarketBackend.BusinessLayer.System.ExternalServices;
+﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.BusinessLayer.System.ExternalServices;
 
 
 // this class right now has a deault implementation because of the fact we dont have an actual supply/payment
@@ -13,19 +14,19 @@ public class ExternalServicesController
 		supplySystem = es;
 	}
 
-	public virtual bool makePayment()
+	public virtual int makePayment(PaymentDetails paymentDetails)
     {
-		return paymentsSystem.makePayment();
+		return paymentsSystem.Pay(paymentDetails).Result;
     }
 	
-	public virtual bool CancelPayment()
+	public virtual int CancelPayment(int transactionId)
     {
-		return paymentsSystem.CancelPayment();
+		return paymentsSystem.CancelPay(transactionId).Result;
     }
 
-	public virtual bool makeDelivery()
+	public virtual int makeDelivery(SupplyDetails supplyDetails)
     {
-		return supplySystem.supplyDelivery();
+		return supplySystem.Supply(supplyDetails).Result;
 	}
 
 	

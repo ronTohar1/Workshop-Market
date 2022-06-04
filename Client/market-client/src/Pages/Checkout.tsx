@@ -17,6 +17,8 @@ import PaymentForm from '../Componentss/CheckoutComponents/PaymentForm';
 import Review from '../Componentss/CheckoutComponents/Review';
 import CheckoutDTO from '../DTOs/CheckoutDTO';
 import Product from '../DTOs/Product';
+import { pathStore } from '../Paths';
+import { getBuyerId } from '../services/SessionService';
 
 function Copyright() {
   return (
@@ -60,6 +62,19 @@ export default function Checkout({productsAmount}:{productsAmount:Map<Product,nu
     setActiveStep(activeStep - 1);
   };
   console.log(checkout)
+  const placeOrder = () =>{
+    const buyerId = getBuyerId()
+    const responsePromise = serverGetAMemberInfo(buyerId)
+    console.log(responsePromise)
+    fetchResponse(responsePromise).then((member)=>{
+        setMember(member)
+    })
+    .catch((e) => {
+      alert(e)
+      setOpen(false)
+     })
+   
+  };
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -101,6 +116,16 @@ export default function Checkout({productsAmount}:{productsAmount:Map<Product,nu
                   confirmation, and will send you an update when your order has
                   shipped.
                 </Typography>
+                <Box textAlign='center'>
+                <Button
+                    href = {pathStore}
+                    variant="contained"
+                    onClick={handleNext}
+                    sx={{ mt: 3, ml: 1 }}
+                  >
+                    Back To store
+                  </Button>
+                  </Box>
               </React.Fragment>
             ) : (
               <React.Fragment>

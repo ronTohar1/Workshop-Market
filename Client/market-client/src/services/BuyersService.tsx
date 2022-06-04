@@ -1,5 +1,7 @@
 import Cart from "../DTOs/Cart"
+import CheckoutDTO from "../DTOs/CheckoutDTO"
 import Product from "../DTOs/Product"
+import Purchase from "../DTOs/Purchase"
 import { serverPort } from "../Utils"
 import ClientResponse from "./Response"
 
@@ -146,19 +148,20 @@ export async function changeProductAmount(
   })
 }
 
-export async function purchaseCart(userId: number): Promise<any> {
+export async function purchaseCart(userId: number, checkout: CheckoutDTO): Promise<ClientResponse<Purchase>> {
   const uri = serverPort + "/api/Buyers/PurchaseCart"
-  return await fetch(uri, {
-    method: "POST",
-    headers: {
-      accept: "text/plain",
-      "Content-Type": "application/json",
-    },
-    // body: '{\n  "userId": 0\n}',
-    body: JSON.stringify({
-      userId: userId,
-    }),
-  })
+  const jsonResponse = await fetch(uri, {
+      method: 'POST',
+      headers: {
+          'accept': 'text/plain',
+          'Content-Type': 'application/json'
+      },
+      // body: '{\n  "userId": 0,\n  "targetId": 0\n}',
+      body: JSON.stringify({
+          'userId': 0
+      })
+  });
+  return jsonResponse.json();
 }
 
 export async function serverGetCart(userId: number): Promise<ClientResponse<Cart>> {

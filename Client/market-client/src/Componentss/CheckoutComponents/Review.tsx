@@ -7,29 +7,7 @@ import Grid from '@mui/material/Grid';
 import CheckoutDTO from '../../DTOs/CheckoutDTO';
 import Product from '../../DTOs/Product';
 
-const products = [
-  {
-    name: 'Product 1',
-    desc: 'A nice thing',
-    price: '$9.99',
-  },
-  {
-    name: 'Product 2',
-    desc: 'Another thing',
-    price: '$3.45',
-  },
-  {
-    name: 'Product 3',
-    desc: 'Something else',
-    price: '$6.51',
-  },
-  {
-    name: 'Product 4',
-    desc: 'Best thing of all',
-    price: '$14.11',
-  },
-  { name: 'Shipping', desc: '', price: 'Free' },
-];
+
 
 export default function Review({checkout, productsAmounts}: {checkout:CheckoutDTO,productsAmounts:Map<Product,number> }) {
   const payments = [
@@ -47,14 +25,20 @@ export default function Review({checkout, productsAmounts}: {checkout:CheckoutDT
       <List disablePadding>
         {Array.from( productsAmounts ).map(([product, amount]) => (
           <ListItem key={product.name} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary={product.name} secondary={product.storeName} />
-            <Typography variant="body2">{product.price}</Typography>
+            <ListItemText primary={`${product.name} ${amount>1?` X ${amount}`:""}`} secondary={product.storeName} />
+            <Typography variant="body2">{`${product.price*amount} ₪`}</Typography>
           </ListItem>
         ))}
+         <ListItem sx={{ py: 1, px: 0 }}>
+          <ListItemText primary="Shipping" />
+          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+          Free
+          </Typography>
+        </ListItem>
         <ListItem sx={{ py: 1, px: 0 }}>
           <ListItemText primary="Total" />
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-            $34.06
+          {`${Array.from( productsAmounts ).reduce((sum, [product, amount])=>sum+(product.price*amount),0)} ₪`}
           </Typography>
         </ListItem>
       </List>

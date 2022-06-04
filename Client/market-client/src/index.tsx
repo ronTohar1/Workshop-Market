@@ -25,6 +25,37 @@ initSession();
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+const products = new Map(
+  [
+    [new Product(0,'Milk',12.9,'Dairy',1,'Kaldo',10), 1],
+    [new Product(1,'Bread',5,'Bakery',1,'Kaldo',10), 2],
+    [new Product(2,'Wine',50.5,'Alchohol',1,'Kaldo',10), 3],
+    [new Product(3,'Apple',4,'Fruits',1,'Shufersal',10), 1],
+    [new Product(4,'Cheese',13.9,'Dairy',1,'Shufersal',10), 5],
+    [new Product(5,'Tommato',1.9,'Vegtables',1,'Shufersal',10), 1]
+  ]
+)
+//   {
+//     name: 'Product 1',
+//     desc: 'A nice thing',
+//     price: '$9.99',
+//   },
+//   {
+//     name: 'Product 2',
+//     desc: 'Another thing',
+//     price: '$3.45',
+//   },
+//   {
+//     name: 'Product 3',
+//     desc: 'Something else',
+//     price: '$6.51',
+//   },
+//   {
+//     name: 'Product 4',
+//     desc: 'Best thing of all',
+//     price: '$14.11',
+//   },
+// ];
 root.render(
   <Router>
     <QueryParamProvider>
@@ -38,7 +69,7 @@ root.render(
         <Route path={Paths.pathStorePageOfManager} element={<StorePageOfManager />} />
         <Route path={Paths.pathStoreManager} element={<StoreManagerPage />} />
         <Route path={Paths.pathAdmin} element={<Admin/>} />
-        <Route path={Paths.pathCheckout} element={<Checkout productsAmount={new Map([[new Product(1,'one',1,'one',1,'one',1), 1]])}/>} />
+        <Route path={Paths.pathCheckout} element={<Checkout productsAmount={products}/>} />
       </Routes>
     </QueryParamProvider>
   </Router>

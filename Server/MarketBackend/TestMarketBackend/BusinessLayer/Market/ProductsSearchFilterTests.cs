@@ -66,6 +66,17 @@ namespace TestMarketBackend.BusinessLayer.Market
             return productMock.Object;
         }
 
+        private Product MakeProductMockId(int id)
+        {
+            Mock<Product> productMock = MakeProductMock(productDefaultName, productDefaultPrice, productDefaultCategory);
+
+            productMock.Setup(product =>
+                    product.id).
+                        Returns(id);
+
+            return productMock.Object;
+        }
+
         private Product MakeProductMockCategory(string category)
         {
             Mock<Product> productMock = MakeProductMock(productDefaultName, productDefaultPrice, category);
@@ -163,6 +174,34 @@ namespace TestMarketBackend.BusinessLayer.Market
         {
             productsSearchFilter.FilterProductKeyword(filterProductKeyword);
             Product product = MakeProductMockNameAndCategory(actualProductName, actualProductCategory);
+            Assert.AreEqual(expectedResult, productsSearchFilter.FilterProduct(product));
+        }
+
+        // ----------- FilterProductId() -----------------------------
+
+        [Test]
+        [TestCase(1, 2, false)]
+        [TestCase(1, -1, false)]
+        [TestCase(1, 1, true)]
+        [TestCase(3, 3, true)]
+        public void TestFilterProductId(int actualProductId, int filterProductId, bool expectedResult)
+        {
+            productsSearchFilter.FilterProductId(filterProductId);
+            Product product = MakeProductMockId(actualProductId);
+            Assert.AreEqual(expectedResult, productsSearchFilter.FilterProduct(product));
+        }
+
+        // ----------- FilterProductIds() -----------------------------
+
+        [Test]
+        [TestCase(1, new int[] { 0, -1, 2 }, false)]
+        [TestCase(1, new int[] { 2 }, false)]
+        [TestCase(1, new int[] { 1 }, true)]
+        [TestCase(3, new int[] { 1, 2, 3 }, true)]
+        public void TestFilterProductIds(int actualProductId, int[] filterProductIds, bool expectedResult)
+        {
+            productsSearchFilter.FilterProductIds(filterProductIds.ToList());
+            Product product = MakeProductMockId(actualProductId);
             Assert.AreEqual(expectedResult, productsSearchFilter.FilterProduct(product));
         }
     }

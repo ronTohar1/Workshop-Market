@@ -186,5 +186,25 @@ namespace MarketBackend.ServiceLayer
                 return new Response<ServiceMember>("Sorry, an unexpected error occured. Please try again");
             }
         }
+
+        public Response<double> GetSystemDailyProfit(int memberId)
+        {
+            try
+            {
+                double total = adminManager.GetSystemDailyProfit(memberId);
+                logger.Info($"GetSystemDailyProfit was called with parameters: [memberId = {memberId}]");
+                return new Response<double>(total);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetSystemDailyProfit, parameters: [memberId = {memberId}]");
+                return new Response<double>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetSystemDailyProfit, parameters: [memberId = {memberId}]");
+                return new Response<double>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
     }
 }

@@ -422,7 +422,7 @@ namespace TestMarketBackend.Acceptance
         [TestCaseSource("DataFailedGetLoggedInMembers")]
         public void FailedGetLoggedInMembers(Func<int> requestingId)
         {
-            Response<IList<int>> response = adminFacade.GetLoggedInMembers(requestingId()); 
+            Response<IList<ServiceMember>> response = adminFacade.GetLoggedInMembers(requestingId()); 
             
             Assert.IsTrue(response.IsErrorOccured());
         }
@@ -433,10 +433,10 @@ namespace TestMarketBackend.Acceptance
         {
             List<int> loggedInMembers = new List<int> { member2Id, member3Id, member5Id };
 
-            Response<IList<int>> response = adminFacade.GetLoggedInMembers(adminId);
+            Response<IList<ServiceMember>> response = adminFacade.GetLoggedInMembers(adminId);
             Assert.IsTrue(!response.IsErrorOccured());
 
-            Assert.IsTrue(SameElements(loggedInMembers, response.Value));
+            Assert.IsTrue(SameElements(loggedInMembers, response.Value.Select(mem=>mem.Id).ToList()));
         }
 
         public static IEnumerable<TestCaseData> DataFailedGetMemberInfo

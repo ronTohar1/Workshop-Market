@@ -1,30 +1,35 @@
-import * as React from "react";
-import { styled, alpha } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import Button from "@mui/material/Button";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { BadgeProps, List, ListItem, ListItemText } from "@mui/material";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import Stack from "@mui/material/Stack";
-import { pathCart, pathHome, pathSearch } from "../Paths";
-import { Link, Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { Tooltip } from "@mui/material";
-import MarketNotification from "../DTOs/MarketNotification";
-import { dummyNotificaitons } from "../services/NotificationsService";
+import * as React from "react"
+import { styled, alpha } from "@mui/material/styles"
+import AppBar from "@mui/material/AppBar"
+import Box from "@mui/material/Box"
+import Toolbar from "@mui/material/Toolbar"
+import IconButton from "@mui/material/IconButton"
+import Typography from "@mui/material/Typography"
+import InputBase from "@mui/material/InputBase"
+import Badge from "@mui/material/Badge"
+import MenuItem from "@mui/material/MenuItem"
+import Menu from "@mui/material/Menu"
+import SearchIcon from "@mui/icons-material/Search"
+import AccountCircle from "@mui/icons-material/AccountCircle"
+import NotificationsIcon from "@mui/icons-material/Notifications"
+import Button from "@mui/material/Button"
+import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { BadgeProps, List, ListItem, ListItemText } from "@mui/material"
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"
+import Stack from "@mui/material/Stack"
+import { pathCart, pathHome, pathSearch } from "../Paths"
+import { Link, Navigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+import { Tooltip } from "@mui/material"
+import MarketNotification from "../DTOs/MarketNotification"
+import { dummyNotificaitons } from "../services/NotificationsService"
+import { getCartProducts } from "../services/ProductsService"
+import { fetchResponse } from "../services/GeneralService"
+import { getBuyerId } from "../services/SessionService"
+import { serverGetCart } from "../services/BuyersService"
+import Cart from "../DTOs/Cart"
 
-const currentNotifications = dummyNotificaitons;
+const currentNotifications = dummyNotificaitons
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -40,7 +45,7 @@ const Search = styled("div")(({ theme }) => ({
     marginLeft: theme.spacing(3),
     width: "auto",
   },
-}));
+}))
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -49,7 +54,7 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     border: `2px solid ${theme.palette.background.paper}`,
     padding: "0 4px",
   },
-}));
+}))
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -59,7 +64,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-}));
+}))
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
@@ -73,7 +78,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       width: "20ch",
     },
   },
-}));
+}))
 
 const notificationsMenu = (
   open: any,
@@ -92,59 +97,69 @@ const notificationsMenu = (
         </Tooltip>
       ))}
     </Menu>
-  );
-};
+  )
+}
 
 export default function Navbar() {
   // const navigate = (x: any) => {};
-  const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [searchValue, setSearchValue] = React.useState("");
+  const navigate = useNavigate()
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [searchValue, setSearchValue] = React.useState("")
   const [anchorElNotifications, setAnchorElNotifications] =
-    React.useState<null | HTMLElement>(null);
+    React.useState<null | HTMLElement>(null)
   const [openNotifications, setOpenNotifications] =
-    React.useState<boolean>(false);
+    React.useState<boolean>(false)
   const [notifications, setNotifications] =
-    React.useState<MarketNotification[]>(currentNotifications);
+    React.useState<MarketNotification[]>(currentNotifications)
+  const [numItemsInCart, setNumItemsInCart] = React.useState<number>(0)
+
+  // React.useEffect(() => {
+  //   fetchResponse(serverGetCart(getBuyerId()))
+  //     .then((cart: Cart) => {
+  //       const [prodsIds, prodsToQuantity] = getCartProducts(cart)
+  //       setNumItemsInCart(prodsIds.length)
+  //     })
+  //     .catch((e) => {
+  //       // setNumItemsInCart(0)
+  //       alert(e)
+  //       alert("herre")
+  //     })
+  // })
 
   const handleClickHome = () => {
-    navigate(`${pathHome}`);
-  };
+    navigate(`${pathHome}`)
+  }
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNotifications(event.currentTarget);
-    setOpenNotifications(!openNotifications && notifications.length > 0);
-  };
-  const handleCloseNotifications = () => {
-    setOpenNotifications(false);
-  };
+    setAnchorElNotifications(event.currentTarget)
+    setOpenNotifications(!openNotifications && notifications.length > 0)
+  }
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
-  const handleDismissNotifications = (noteToDis: MarketNotification) => {
-    setNotifications(
-      notifications.filter(
-        (note: MarketNotification) => note.id != noteToDis.id
-      )
-    );
-    if (notifications.length === 0) setOpenNotifications(false);
-  };
+  const handleDismissNotification = (noteToDis: MarketNotification) => {
+    const newNotifications = notifications.filter(
+      (note: MarketNotification) => note.id != noteToDis.id
+    )
+    setNotifications(newNotifications)
+    if (newNotifications.length === 0) setOpenNotifications(false)
+  }
 
   const handleSearch = () => {
     // navigate(pathSearch)
-    navigate(`${pathSearch}?query=${searchValue}`);
-  };
+    navigate(`${pathSearch}?query=${searchValue}`)
+  }
 
   const handleMyAccountClick = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
-  const menuId = "primary-search-account-menu";
+  const menuId = "primary-search-account-menu"
   const renderMenuAccount = (
     <Menu
       anchorEl={anchorEl}
@@ -163,7 +178,7 @@ export default function Navbar() {
     >
       <MenuItem onClick={handleMyAccountClick}>My account</MenuItem>
     </Menu>
-  );
+  )
 
   const theme = createTheme({
     typography: {
@@ -180,7 +195,7 @@ export default function Navbar() {
         '"Segoe UI Symbol"',
       ].join(","),
     },
-  });
+  })
   return (
     <ThemeProvider theme={theme}>
       <AppBar position="sticky">
@@ -207,7 +222,7 @@ export default function Navbar() {
               component="form"
               noValidate
               onSubmit={(e: any) => {
-                handleSearch();
+                handleSearch()
               }}
             >
               <Stack direction="row" spacing={2}>
@@ -257,9 +272,9 @@ export default function Navbar() {
               {notificationsMenu(
                 openNotifications,
                 anchorElNotifications,
-                handleCloseNotifications,
+                () => setOpenNotifications(false),
                 notifications,
-                handleDismissNotifications
+                handleDismissNotification
               )}
               <IconButton
                 aria-label="cart"
@@ -268,7 +283,7 @@ export default function Navbar() {
                 component={Link}
                 to={pathCart}
               >
-                <StyledBadge badgeContent={44} color="secondary">
+                <StyledBadge badgeContent={numItemsInCart} color="secondary">
                   <ShoppingCartIcon />
                 </StyledBadge>
               </IconButton>
@@ -289,5 +304,5 @@ export default function Navbar() {
       </AppBar>
       {renderMenuAccount}
     </ThemeProvider>
-  );
+  )
 }

@@ -102,11 +102,10 @@ function MakeProductCard(
 
 export default function CartPage() {
   const navigate = useNavigate()
-  const [expanded, setExpanded] = React.useState(false)
   const [cartProducts, setCartProducts] = React.useState<CartProduct[]>([])
   const [openRemoveDialog, setOpenRemoveDialog] = React.useState<boolean>(false)
   const [renderProducts, setRenderProducts] = React.useState<boolean>(false)
-  const [chosenProduct, updateChosenProduct] = React.useState<Product | null>(
+  const [ProductToRemove, setProductToRemove] = React.useState<Product | null>(
     null
   )
   const [openRemoveProdSnackbar, setOpenRemoveProdSnackbar] =
@@ -124,8 +123,6 @@ export default function CartPage() {
         ).then((products: Product[]) =>
           setCartProducts(convertToCartProduct(products, prodsToQuantity))
         )
-        console.log("Loaded cart")
-        console.log(prodsToQuantity)
       })
       .catch((e) => {
         alert(e)
@@ -160,7 +157,6 @@ export default function CartPage() {
       .then((removedSuccess: boolean) => {
         if (removedSuccess) {
           setOpenRemoveProdSnackbar(true)
-          setOpenRemoveDialog(false)
           reloadCartProducts()
         } // Reload products again from server
       })
@@ -170,10 +166,11 @@ export default function CartPage() {
   }
   const handleCloseRemoveDialog = (remove: boolean, product: Product) => {
     if (remove) tryRemoveProduct(product)
+    setOpenRemoveDialog(false)
   }
 
   const handleRemoveProductCanClick = (product: Product) => {
-    updateChosenProduct(product)
+    setProductToRemove(product)
     setOpenRemoveDialog(true)
   }
 
@@ -212,16 +209,16 @@ export default function CartPage() {
 
 
 
-      {chosenProduct !== null
+      {ProductToRemove !== null
         ? DialogTwoOptions(
-            chosenProduct,
+            ProductToRemove,
             openRemoveDialog,
             handleCloseRemoveDialog
           )
         : null}
 
       {SuccessSnackbar(
-        "Removed " + chosenProduct?.name + " Successfully",
+        "Removed " + ProductToRemove?.name + " Successfully",
         openRemoveProdSnackbar,
         () => setOpenRemoveProdSnackbar(false)
       )}

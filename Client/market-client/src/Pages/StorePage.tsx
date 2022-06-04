@@ -17,6 +17,7 @@ import { fetchResponse } from "../services/GeneralService"
 import toolBar from "../Componentss/StorePageToolbar"
 import { serverAddToCart } from "../services/BuyersService"
 import { getBuyerId } from "../services/SessionService"
+import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
 
 const fields = {
   name: "name",
@@ -51,6 +52,8 @@ export default function StorePage() {
   const [products, setProducts] = React.useState<Product[]>([])
   const [storeId] = useQueryParam("id", NumberParam)
   const [store, setStore] = React.useState<Store | null>(null)
+  const [openSnack, setOpenSnack] = React.useState<boolean>(false)
+  const [addToCartMsg, setAddToCartMsg] = React.useState<string>("")
 
   React.useEffect(() => {
     fetchResponse(serverGetStore(storeId))
@@ -121,9 +124,9 @@ export default function StorePage() {
     const succeedToAdd: Product[] = []
     products.forEach((prod: Product) => {
       if (selectedProductsIds.includes(prod.id)) {
-        fetchResponse(serverAddToCart(getBuyerId(), prod.id, prod.storeId, 0))
+        fetchResponse(serverAddToCart(getBuyerId(), prod.id, prod.storeId, 1))
           .then((success: boolean) => {
-            if(success) succeedToAdd.push(prod)
+            success ? succeedToAdd.push(prod) : failedToAdd.push(prod)
           })
           .catch((e) => {
             failedToAdd.push(prod)
@@ -132,10 +135,10 @@ export default function StorePage() {
       }
     })
 
-    if (failedToAdd.length === 0)
-      alert("Successfully added all requested products to your cart")
-    else
-      alert("Managed to add only "+succeedToAdd.length+" products")
+    if (failedToAdd.length === 0) {
+      setAddToCartMsg("Added " + succeedToAdd.length + " products to cart")
+      setOpenSnack(true)
+    } else handleFailToAdd(failedToAdd)
     updateSelection([])
   }
 
@@ -169,6 +172,7 @@ export default function StorePage() {
           </div>
         </div>
       </div>
+      {SuccessSnackbar(addToCartMsg, openSnack, () => setOpenSnack(false))}
     </Box>
   )
 }

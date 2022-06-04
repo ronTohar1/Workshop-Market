@@ -48,6 +48,7 @@ const theme = createTheme({
 })
 
 export default function SearchPage() {
+  
   const startingPageSize = 5
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize)
   const [query] = useQueryParam("query", StringParam)

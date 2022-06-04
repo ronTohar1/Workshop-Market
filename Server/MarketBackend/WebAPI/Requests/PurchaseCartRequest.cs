@@ -8,7 +8,7 @@
         public string Holder { get; set; }
         public string Ccv { get; set; }
         public string Id { get; set; }
-        public string SupplyName { get; set; }
+        public string ReceiverName { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
         public string Country { get; set; }
@@ -34,7 +34,7 @@
             Holder = holder;
             Ccv = ccv;
             Id = id;
-            SupplyName = supplyName;
+            ReceiverName = supplyName;
             Address = address;
             City = city;
             Country = country;

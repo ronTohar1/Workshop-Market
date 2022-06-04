@@ -16,6 +16,10 @@ namespace MyApp // Note: actual namespace depends on the project name.
         {
             SystemOperator so = new SystemOperator();
 
+            WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 7890);
+            notificationServer.Start();
+            Console.WriteLine("WS server started on ws://127.0.0.1:7890");
+
             //while (!so.MarketOpen)
             //{
             //    Console.WriteLine("Please enter Admin Username:");
@@ -46,7 +50,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
             builder.Services.AddSingleton<IBuyerFacade>(_ => so.GetBuyerFacade().Value);
             builder.Services.AddSingleton<IStoreManagementFacade>(_ => so.GetStoreManagementFacade().Value);
             builder.Services.AddSingleton<IAdminFacade>(_ => so.GetAdminFacade().Value);
-            builder.Services.AddSingleton(_ => new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 7890));
+            builder.Services.AddSingleton(_ => notificationServer);
 
             builder.Services.AddCors(options =>
             {

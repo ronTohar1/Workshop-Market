@@ -22,18 +22,9 @@ namespace WebAPI.Controllers
         }
 
         public BuyersController(IBuyerFacade buyerFacade, WebSocketServer notificationServer) {
-            Console.WriteLine("CONSTRUCTOR CALLED");
             this.buyerFacade = buyerFacade;
             buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
             this.notificationServer = notificationServer;
-            notificationServer.Start();
-            Console.WriteLine("WS server started on ws://127.0.0.1:" + port);
-        }
-
-        ~BuyersController()
-        {
-            Console.WriteLine("destructor called");
-            notificationServer.Stop();
         }
 
         [HttpPost]
@@ -157,21 +148,25 @@ namespace WebAPI.Controllers
         public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
         {
             string relativeServicePath = "/" + request.UserName + "-notifications";
-            notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
-            Response<int> response  = buyerFacade.Login(request.UserName, request.Password,
-                (msgs) => 
+            try
+            {
+                notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
+            }catch (ArgumentException ex) { } // in case the client tries to login again
+            Func<string[], bool> notifier = (msgs) =>
+            {
+                Action<string[]> send = (msgs) =>
                 {
-                    try
-                    {
-                        foreach (string msg in msgs)
-                            notificationServer.WebSocketServices[relativeServicePath].Sessions.Broadcast(msg);
-                    }
-                    catch (Exception ex)
-                    {
-                        return false;
-                    }
-                    return true;
-                });
+                    while (notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
+                        Thread.Sleep(1000);
+                    foreach (string msg in msgs)
+                        notificationServer.WebSocketServices[relativeServicePath].Sessions.Broadcast(msg);
+                };
+
+                Task task = new Task(() => send(msgs));
+                task.Start();
+                return true;
+            };
+            Response<int> response  = buyerFacade.Login(request.UserName, request.Password, notifier);
 
             if (response.IsErrorOccured())
             {

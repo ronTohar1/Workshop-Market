@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 import "./index.css"
 import Register from "./Pages/Register"
@@ -15,11 +15,21 @@ import StoreManagerPage from "./Pages/StoreManager"
 import { clearSession, initSession } from "./services/SessionService"
 import StorePageOfManager from "./Pages/StorePageOfManager"
 
-initSession()
-
 const App = () => {
   // window.onunload = () => clearSession()
+  useEffect(() => {
+    const handleTabClose = (event:any) => {
+      event.preventDefault()
 
+      console.log("beforeunload event triggered")
+    }
+
+    window.addEventListener("beforeunload", handleTabClose)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleTabClose)
+    }
+  }, [])
   return (
     <Router>
       <QueryParamProvider>

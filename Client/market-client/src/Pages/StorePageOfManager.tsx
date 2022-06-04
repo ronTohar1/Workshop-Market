@@ -10,17 +10,26 @@ import Product from "../DTOs/Product"
 import AddProductForm from "../Componentss/Forms/AddProductForm"
 import Store from "../DTOs/Store"
 import { NumberParam, StringParam, useQueryParam } from "use-query-params"
-import { serverGetStore } from "../services/StoreService"
+import {
+  Roles,
+  serverGetMembersInRoles,
+  serverGetStore,
+} from "../services/StoreService"
 import { pathHome } from "../Paths"
 import { useNavigate } from "react-router-dom"
 import { fetchResponse } from "../services/GeneralService"
 import toolBar from "../Componentss/StorePageToolbar"
+import { getBuyerId } from "../services/SessionService"
 
 const fields = {
   name: "name",
   price: "price",
   available_quantity: "availableQuantity",
   category: "category",
+}
+
+const isEditableField = (field: string) => {
+  return field == fields.available_quantity || field == fields.price
 }
 
 const columns: GridColDef[] = [
@@ -30,6 +39,7 @@ const columns: GridColDef[] = [
     type: "string",
     flex: 2,
     align: "left",
+    editable: isEditableField(fields.name),
     headerAlign: "left",
   },
   {
@@ -37,7 +47,7 @@ const columns: GridColDef[] = [
     headerName: "Price",
     type: "number",
     flex: 1,
-    editable: true,
+    editable: isEditableField(fields.price),
     align: "left",
     headerAlign: "left",
   },
@@ -47,7 +57,7 @@ const columns: GridColDef[] = [
     description: "Product current quantity in store inventory",
     type: "number",
     flex: 1,
-    editable: true,
+    editable: isEditableField(fields.available_quantity),
     align: "left",
     headerAlign: "left",
   },
@@ -56,7 +66,7 @@ const columns: GridColDef[] = [
     headerName: "Category",
     // type: 'string',
     flex: 1,
-    editable: true,
+    editable: isEditableField(fields.category),
     align: "left",
     headerAlign: "left",
 
@@ -75,15 +85,32 @@ export default function StorePageOfManager() {
   const [storeId] = useQueryParam("id", NumberParam)
   const [store, setStore] = React.useState<Store | null>(null)
 
-  const handleError = (msg: string) => {
-    alert(msg)
-    navigate(pathHome)
-  }
-  const fetchStore = () =>{
+  const fetchStore = () => {
     fetchResponse(serverGetStore(storeId))
       .then((store) => {
+        verifyIsManagerOrOwner(store)
         setStore(store)
         setRows(store.products)
+      })
+      .catch((e) => {
+        alert(e)
+        navigate(pathHome)
+      })
+  }
+  const verifyIsManagerOrOwner = (store: Store) => {
+    fetchResponse(
+      serverGetMembersInRoles(getBuyerId(), store.id, Roles.Manager)
+    )
+      .then((managerIds: number[]) => {
+        fetchResponse(
+          serverGetMembersInRoles(getBuyerId(), store.id, Roles.Owner)
+        ).then((ownersIds: number[]) => {
+          const buyerId = getBuyerId()
+          if (!(managerIds.includes(buyerId) || ownersIds.includes(buyerId))) {
+            alert("You dont have permission to watch this page!!!!")
+            navigate(pathHome)
+          }
+        })
       })
       .catch((e) => {
         alert(e)
@@ -94,7 +121,6 @@ export default function StorePageOfManager() {
   React.useEffect(() => {
     fetchStore()
   }, [storeId])
-  
 
   function updatePrice(product: Product, price: number) {
     if (price != null) product.price = price
@@ -106,9 +132,6 @@ export default function StorePageOfManager() {
     if (available_quantity != null)
       product.availableQuantity = available_quantity
   }
-  function updateCategory(product: Product, category: string) {
-    if (category != null) product.category = category
-  }
 
   const handleCellEdit = (e: GridCellEditCommitParams) => {
     const newRows = rows.map((row) => {
@@ -119,9 +142,6 @@ export default function StorePageOfManager() {
             break
           case fields.available_quantity:
             updateAvailableQuantity(row, e.value)
-            break
-          case fields.category:
-            updateCategory(row, e.value)
             break
         }
       }
@@ -168,7 +188,7 @@ export default function StorePageOfManager() {
               rowsPerPageOptions={[10, 20, 25]}
               pagination
               // Selection:
-              isCellEditable={(params) => isManager}
+              isCellEditable={(params) => isEditableField(params.field)}
               onCellEditCommit={handleCellEdit}
             />
             {isManager ? AddProductForm(handleAddProduct) : null}

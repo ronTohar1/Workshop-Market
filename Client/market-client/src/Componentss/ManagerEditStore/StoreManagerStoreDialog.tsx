@@ -41,7 +41,7 @@ import Product from "../../DTOs/Product";
 import { Card, CardActions, CardContent } from "@mui/material";
 import { serverGetStore } from "../../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import { dummyMember1, getStoresManagedBy } from "../../services/MemberService";
+import { dummyMember1, fetchStoresManagedBy } from "../../services/MemberService";
 import Grid from "@mui/material/Grid";
 import Store from "../../DTOs/Store";
 

@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom"
 import { fetchResponse } from "../services/GeneralService"
 import toolBar from "../Componentss/StorePageToolbar"
 import { getBuyerId } from "../services/SessionService"
-import CircularProgress from "@mui/material/CircularProgress"
+import LoadingCircle from "../Componentss/LoadingCircle"
 const fields = {
   name: "name",
   price: "price",
@@ -155,13 +155,7 @@ export default function StorePageOfManager({ storeId }: { storeId: number }) {
     setRows([...rows, productToAdd])
     console.log(rows.map((r) => r.name))
   }
-  function LoadingComponent() {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <CircularProgress />
-      </Box>
-    )
-  }
+
   const storePreview = () => {
     return (
       <Box>
@@ -197,16 +191,14 @@ export default function StorePageOfManager({ storeId }: { storeId: number }) {
                 isCellEditable={(params) => isEditableField(params.field)}
                 onCellEditCommit={handleCellEdit}
               />
-              {isManager ? (<AddProductForm handleAddProduct={handleAddProduct}/>) : null}
+              {isManager ? (
+                <AddProductForm handleAddProduct={handleAddProduct} />
+              ) : null}
             </div>
           </div>
         </div>
       </Box>
     )
   }
-  return (
-   <div>
-    {store === null ? LoadingComponent() : storePreview()}
-    </div>
-  )  // return  store === null ? LoadingComponent() : storePreview()
+  return <div>{store === null ? LoadingCircle() : storePreview()}</div> // return  store === null ? LoadingComponent() : storePreview()
 }

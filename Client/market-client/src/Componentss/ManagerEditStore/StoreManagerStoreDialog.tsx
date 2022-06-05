@@ -50,7 +50,7 @@ import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 import { Label } from "@mui/icons-material";
 import StorePage from "../../Pages/StorePage";
-import StorePageOfManager from "../../Pages/StorePageOfManager";
+import StorePageOfManager from "../StorePageOfManager";
 
 interface TabPanelProps {
   children?: React.ReactNode;

@@ -56,10 +56,9 @@ import { useNavigate } from "react-router-dom"
 import { pathHome } from "../Paths"
 import LoadingCircle from "../Componentss/LoadingCircle"
 
-
-const UserInfoCard = ( numOfManagedStores:number, ) => {
+const UserInfoCard = (numOfManagedStores: number) => {
   return (
-    <Card>
+    <Card elevation={5}>
       <CardContent>
         <Typography variant="h4" component="div">
           Account Information
@@ -69,8 +68,7 @@ const UserInfoCard = ( numOfManagedStores:number, ) => {
           <b>Username</b>: Hello Dear User
         </Typography>
         <Typography variant="h6">
-          <b>Number Of Managed Stores</b>:
-          {numOfManagedStores}
+          <b>Number Of Managed Stores</b>:{numOfManagedStores}
         </Typography>
       </CardContent>
     </Card>
@@ -166,29 +164,61 @@ export default function StoreManagerPage() {
   const startingPageSize = 5
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize)
   const [stores, setStores] = React.useState<Store[] | null>(null) // sotres managed by current member
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  if(getIsGuest())
-    {
-      alert("You are not allowed to visit this page!")
-      navigate(`${pathHome}`)
-    }
+  if (getIsGuest()) {
+    alert("You are not allowed to visit this page!")
+    navigate(`${pathHome}`)
+  }
 
   React.useEffect(() => {
-    fetchStoresManagedBy(getBuyerId()).then((managedStores: Store[]) => {  
+    fetchStoresManagedBy(getBuyerId()).then((managedStores: Store[]) => {
       setStores(managedStores)
     })
-  },[])
+  }, [])
 
- 
+  const ManagedStores = (stores: Store[]) => {
+    return (
+      <Grid>
+        <Box
+          sx={{
+            justifyContent: "center",
+            display: "flex",
+            width: "100%",
+            mt: 3,
+            mb: 3,
+            ml: 3,
+            mr: 3,
+          }}
+        >
+          <Typography variant="h3" component="div">
+            Stores You Manage
+          </Typography>
+        </Box>
+        <Grid
+          sx={{ ml: 2 }}
+          container
+          flex={1}
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        >
+          {stores.map((s) => (
+            <Item>
+              <StoreCard store={s} />
+            </Item>
+          ))}
+        </Grid>
+      </Grid>
+    )
+  }
 
-  return stores !== null? (
+  return stores !== null ? (
     <ThemeProvider theme={theme}>
       <Box>
         <Box>
           <Navbar />
         </Box>
-        <Box>
+        <Box sx={{ ml: 3, mr: 3 }}>
           <Grid
             item
             xs={2}
@@ -209,36 +239,7 @@ export default function StoreManagerPage() {
             {UserInfoCard(stores.length)}
             {/* </Box> */}
           </Grid>
-          <Grid>
-            <Box
-              sx={{
-                justifyContent: "center",
-                display: "flex",
-                width: "100%",
-                mt: 3,
-                mb: 3,
-              }}
-            >
-              <Typography variant="h3" component="div">
-                Stores You Manage
-              </Typography>
-            </Box>
-            {/* {productsByStore.map((prodsOfStore: Product[]) => {
-                  return storeGrid(prodsOfStore, pageSize, setPageSize);
-                })} */}
-            <Grid
-              container
-              flex={1}
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
-              {stores.map((s) => (
-                <Item>
-                  <StoreCard store={s} />
-                </Item>
-              ))}
-            </Grid>
-          </Grid>
+          {ManagedStores(stores)}
         </Box>
       </Box>
     </ThemeProvider>

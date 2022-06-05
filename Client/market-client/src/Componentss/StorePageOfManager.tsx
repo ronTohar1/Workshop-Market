@@ -5,9 +5,9 @@ import {
   GridColDef,
 } from "@mui/x-data-grid"
 import { Box, Stack, Typography } from "@mui/material"
-import Navbar from "../Componentss/Navbar"
+import Navbar from "./Navbar"
 import Product from "../DTOs/Product"
-import AddProductForm from "../Componentss/Forms/AddProductForm"
+import AddProductForm from "./Forms/AddProductForm"
 import Store from "../DTOs/Store"
 import { NumberParam, StringParam, useQueryParam } from "use-query-params"
 import {
@@ -18,9 +18,9 @@ import {
 import { pathHome } from "../Paths"
 import { useNavigate } from "react-router-dom"
 import { fetchResponse } from "../services/GeneralService"
-import toolBar from "../Componentss/StorePageToolbar"
+import toolBar from "./StorePageToolbar"
 import { getBuyerId } from "../services/SessionService"
-import LoadingCircle from "../Componentss/LoadingCircle"
+import LoadingCircle from "./LoadingCircle"
 const fields = {
   name: "name",
   price: "price",
@@ -29,13 +29,17 @@ const fields = {
 }
 
 const isEditableField = (field: string) => {
-  return field == fields.available_quantity || field == fields.price
+  return field == fields.available_quantity
+}
+
+const nameEnding = (field: string) => {
+  return field == fields.available_quantity ? " (Editable)" : ""
 }
 
 const columns: GridColDef[] = [
   {
     field: fields.name,
-    headerName: "Product Name",
+    headerName: "Product Name" + nameEnding(fields.name),
     type: "string",
     flex: 2,
     align: "left",
@@ -44,7 +48,7 @@ const columns: GridColDef[] = [
   },
   {
     field: fields.price,
-    headerName: "Price",
+    headerName: "Price" + nameEnding(fields.price),
     type: "number",
     flex: 1,
     editable: isEditableField(fields.price),
@@ -53,7 +57,7 @@ const columns: GridColDef[] = [
   },
   {
     field: fields.available_quantity,
-    headerName: "Available Quantity",
+    headerName: "Available Quantity" + nameEnding(fields.available_quantity),
     description: "Product current quantity in store inventory",
     type: "number",
     flex: 1,
@@ -63,7 +67,7 @@ const columns: GridColDef[] = [
   },
   {
     field: fields.category,
-    headerName: "Category",
+    headerName: "Category" + nameEnding(fields.category),
     // type: 'string',
     flex: 1,
     editable: isEditableField(fields.category),

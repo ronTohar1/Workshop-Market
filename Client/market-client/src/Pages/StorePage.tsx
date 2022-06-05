@@ -140,14 +140,16 @@ export default function StorePage() {
       Promise.resolve([])
     )
 
-    failedToAdd.then((failedToAdd: Product[]) => {
-      if (failedToAdd.length === 0) {
-        //Didnt fail to add
-        setAddToCartMsg("Added products to cart")
-        setOpenSnack(true)
-      } else handleFailToAdd(failedToAdd)
-      updateSelection([])
-    }).catch(alert)
+    failedToAdd
+      .then((failedToAdd: Product[]) => {
+        if (failedToAdd.length === 0) {
+          //Didnt fail to add
+          setAddToCartMsg("Added products to cart")
+          setOpenSnack(true)
+        } else handleFailToAdd(failedToAdd)
+        updateSelection([])
+      })
+      .catch(alert)
   }
 
   return (

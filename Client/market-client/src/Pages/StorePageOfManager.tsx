@@ -88,7 +88,7 @@ export default function StorePageOfManager() {
   const fetchStore = () => {
     fetchResponse(serverGetStore(storeId))
       .then((store) => {
-        verifyIsManagerOrOwner(store)
+        verifyIsManagerOrOwner(store) // Verifying this is user is allowed to watch the page
         setStore(store)
         setRows(store.products)
       })

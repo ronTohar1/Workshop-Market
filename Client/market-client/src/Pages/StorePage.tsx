@@ -137,7 +137,7 @@ export default function StorePage() {
     })
 
     if (failedToAdd.length === 0) {
-      setAddToCartMsg("Added " + succeedToAdd.length + " products to cart")
+      setAddToCartMsg("Added "  + " products to cart")
       setOpenSnack(true)
     } else handleFailToAdd(failedToAdd)
     updateSelection([])

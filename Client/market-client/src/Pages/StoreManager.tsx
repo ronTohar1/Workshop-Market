@@ -140,10 +140,7 @@ export default function StoreManagerPage() {
 
   // map products to Map indexing items by id
   const stores = getStoresManagedBy(currentMember);
-  // const products: Map<number, Product> = Object.assign(
-  //   {},
-  //   ...productsLst.map((p: Product) => ({ [p.id]: p }))
-  // );
+  
   const productsByStore: Product[][] = [];
 
   const Item = styled("div")(({ theme }) => ({

@@ -13,7 +13,7 @@ export const getCartProducts = (
   const prodsIds = []
   const prodsToQuantity: Map<number, number> = new Map()
   // Getting all products ids in order to fetch the products from the server
-  if (cart.shoppingBags !== undefined) {
+  if (cart != null && cart.shoppingBags !== undefined) {
     const shoppingBags: any = cart.shoppingBags //Store id to shopping bag
     for (const storeId in shoppingBags) {
       const shoppingBag: ShoppingBag = shoppingBags[Number(storeId)]

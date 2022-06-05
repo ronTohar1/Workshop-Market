@@ -152,53 +152,53 @@ export async function serverChangeProductAmount(
   return jsonResponse.json()
 }
 
-export async function purchaseCart(userId: number, checkout: CheckoutDTO): Promise<ClientResponse<Purchase>> {
+export async function purchaseCart(
+  userId: number,
+  checkout: CheckoutDTO
+): Promise<ClientResponse<Purchase>> {
   const uri = serverPort + "/api/Buyers/PurchaseCart"
   const jsonResponse = await fetch(uri, {
-    method: 'POST',
+    method: "POST",
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      accept: "text/plain",
+      "Content-Type": "application/json",
     },
     // body: '{\n  "userId": 0,\n  "cardNumber": "string",\n  "month": "string",\n  "year": "string",\n  "holder": "string",\n  "ccv": "string",\n  "id": "string",\n  "receiverName": "string",\n  "address": "string",\n  "city": "string",\n  "country": "string",\n  "zip": "string"\n}',
     body: JSON.stringify({
-        'userId': userId,
-        'cardNumber': checkout.cardNumber,
-        'month': checkout.month,
-        'year': checkout.year,
-        'holder': checkout.nameOnCard,
-        'ccv': checkout.ccv,
-        'id': checkout.id,
-        'receiverName': checkout.firstName+" "+checkout.lastName,
-        'address': checkout.address,
-        'city': checkout.city,
-        'country': checkout.country,
-        'zip': checkout.zip
-    })
-});
-  return jsonResponse.json();
+      userId: userId,
+      cardNumber: checkout.cardNumber,
+      month: checkout.month,
+      year: checkout.year,
+      holder: checkout.nameOnCard,
+      ccv: checkout.ccv,
+      id: checkout.id,
+      receiverName: checkout.firstName + " " + checkout.lastName,
+      address: checkout.address,
+      city: checkout.city,
+      country: checkout.country,
+      zip: checkout.zip,
+    }),
+  })
+  return jsonResponse.json()
 }
 
 export async function serverGetCart(
   userId: number
 ): Promise<ClientResponse<Cart>> {
   const uri = serverPort + "/api/Buyers/GetBuyerCart"
-  try {
-    const jsonResponse = await fetch(uri, {
-      method: "POST",
-      headers: {
-        accept: "text/plain",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: userId,
-      }),
-    })
-    const response = jsonResponse.json()
-    return response
-  } catch (e) {
-    return Promise.reject(e)
-  }
+
+  const jsonResponse = await fetch(uri, {
+    method: "POST",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userId: userId,
+    }),
+  })
+  const response = jsonResponse.json()
+  return response
 }
 
 export async function enterBuyerFacade(): Promise<any> {

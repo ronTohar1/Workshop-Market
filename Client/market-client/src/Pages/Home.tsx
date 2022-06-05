@@ -76,7 +76,6 @@ const styles = {
   },
 }
 export default function Home() {
-  const bar = Navbar()
   return (
     <ThemeProvider theme={theme}>
       <main>

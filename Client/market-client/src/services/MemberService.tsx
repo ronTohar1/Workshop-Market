@@ -35,6 +35,8 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
         const managers = await fetchResponse(
           serverGetMembersInRoles(memberId, storeId, Roles.Manager)
         )
+        console.log("managers")
+        console.log(managers)
         if (managers.includes(memberId)) managedStoresIds.push(storeId) // If member is manager in store -> add to managed stores
       } catch (e) {}
     })
@@ -42,10 +44,15 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
     //Filtering for all stores that are owned by member
     storesIds.forEach(async (storeId: number) => {
       try {
-        const managers = await fetchResponse(
+        const owners = await fetchResponse(
           serverGetMembersInRoles(memberId, storeId, Roles.Owner)
         )
-        if (managers.includes(memberId)) managedStoresIds.push(storeId) // If member is manager in store -> add to managed stores
+        console.log("owners")
+        console.log(owners)
+
+        if (owners.includes(memberId)) {
+            console.log("ASFGASFGASGFAWRGQWARGQWAr")
+            managedStoresIds.push(storeId)} // If member is manager in store -> add to managed stores
       } catch (e) {}
     })
 
@@ -58,34 +65,12 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
       } catch (e) {}
     })
 
+    console.log("managedStores")
+    console.log(managedStores)
+    console.log("memberId")
+    console.log(memberId)
     return managedStores
   } catch (e) {
     return Promise.reject(e)
   }
-  //   return fetchResponse(serverSearchProducts(null, null, null, null, null, null))
-  //     .then((storesToProducts: Map<number, Product[]>) => {
-
-  //       let storesIds: number[] = []
-  //       for (const storeId in storesToProducts) {
-  //         storesIds.push(Number(storeId))
-  //       }
-
-  //       let stores: Store[] = []
-  //       storesIds.forEach((storeId: number) => {
-
-  //         fetchResponse(
-  //           serverGetMembersInRoles(member.id, storeId, Roles.Manager)
-  //         )
-  //           .then((managedStoresIds: number[]) => {
-  //             if (managedStoresIds.includes(member.id)) {
-  //               fetchResponse(serverGetStore(storeId)).then((store: Store) =>
-  //                 stores.push(store)
-  //               ).catch((e)=> Promise.reject(e))
-  //             }
-  //           })
-  //       })
-  //       return stores
-
-  //     })
-  //     .catch((e) => Promise.reject(e))
 }

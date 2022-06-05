@@ -284,11 +284,11 @@ export async function getPurchaseHistory(
   return jsonResponse.json();
 }
 
-export async function serverOpenStore(
+export async function openStore(
   userId: number,
   storeName: string
 ): Promise<ClientResponse<number>> {
-  const uri = serverPort + "/api/Stores/OpenNewStore";
+  const uri = serverPort + "/api/Stores/OpenStore";
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -305,7 +305,7 @@ export async function serverOpenStore(
 }
 
 //.then(response=>Promise.resolve(response.json().then((data)=>data)))
-export async function serverCloseStore(
+export async function closeStore(
   userId: number,
   storeId: number
 ): Promise<ClientResponse<boolean>> {

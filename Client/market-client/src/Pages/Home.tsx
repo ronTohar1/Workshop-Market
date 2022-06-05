@@ -13,8 +13,8 @@ import { pathLogin, pathRegister, pathSearch } from "../Paths"
 
 const cards = [1, 2, 3]
 
-// const backgroundImage =
-//   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
+const backgroundImage =
+  "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
 
 const createButton = (name: string, path: string) => {
   return (
@@ -72,7 +72,7 @@ const theme = createTheme({
 const styles = {
   paperContainer: {
     height: 1356,
-    // backgroundImage: `url(${"https://images.unsplash.com/photo-1630326120534-9619533ba0d3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"})`,
+    backgroundImage: `url(${"https://images.unsplash.com/photo-1630326120534-9619533ba0d3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"})`,
   },
 }
 export default function Home() {
@@ -82,11 +82,11 @@ export default function Home() {
       <main>
         <div style={styles.paperContainer}>
         {/* Increase the network loading priority of the background image. */}
-        {/* <img
+        <img
           style={{ display: "none" }}
           src={backgroundImage}
           alt="increase priority"
-        /> */}
+        />
         <Typography color="primary" align="center" variant="h2">
           Buy smart and cheap
         </Typography>

@@ -8,17 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BusinessLayer\Market\Admins\**" />
+    <Compile Remove="BusinessLayer\Market\StoreManagement\**" />
+    <EmbeddedResource Remove="BusinessLayer\Market\Admins\**" />
+    <EmbeddedResource Remove="BusinessLayer\Market\StoreManagement\**" />
+    <None Remove="BusinessLayer\Market\Admins\**" />
+    <None Remove="BusinessLayer\Market\StoreManagement\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 
 	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 		<_Parameter1>TestMarketBackend</_Parameter1>
 	</AssemblyAttribute>
-	  
-	  
-    <Folder Include="BusinessLayer\Market\Admins\" />
-    <Folder Include="BusinessLayer\Market\StoreManagement\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
     <PackageReference Include="NLog" Version="4.7.15" />
   </ItemGroup>

@@ -97,8 +97,8 @@ function MakeProductCard(
         handleUpdateQuantity
       )}
     </Grid>
-  )
-}
+  );
+};
 
 export default function CartPage() {
   const navigate = useNavigate()

@@ -1,5 +1,7 @@
 import Cart from "../DTOs/Cart"
+import CheckoutDTO from "../DTOs/CheckoutDTO"
 import Product from "../DTOs/Product"
+import Purchase from "../DTOs/Purchase"
 import { serverPort } from "../Utils"
 import ClientResponse from "./Response"
 
@@ -150,19 +152,31 @@ export async function serverChangeProductAmount(
   return jsonResponse.json()
 }
 
-export async function purchaseCart(userId: number): Promise<any> {
+export async function purchaseCart(userId: number, checkout: CheckoutDTO): Promise<ClientResponse<Purchase>> {
   const uri = serverPort + "/api/Buyers/PurchaseCart"
-  return await fetch(uri, {
-    method: "POST",
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
     headers: {
-      accept: "text/plain",
-      "Content-Type": "application/json",
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
     },
-    // body: '{\n  "userId": 0\n}',
+    // body: '{\n  "userId": 0,\n  "cardNumber": "string",\n  "month": "string",\n  "year": "string",\n  "holder": "string",\n  "ccv": "string",\n  "id": "string",\n  "receiverName": "string",\n  "address": "string",\n  "city": "string",\n  "country": "string",\n  "zip": "string"\n}',
     body: JSON.stringify({
-      userId: userId,
-    }),
-  })
+        'userId': userId,
+        'cardNumber': checkout.cardNumber,
+        'month': checkout.month,
+        'year': checkout.year,
+        'holder': checkout.nameOnCard,
+        'ccv': checkout.ccv,
+        'id': checkout.id,
+        'receiverName': checkout.firstName+" "+checkout.lastName,
+        'address': checkout.address,
+        'city': checkout.city,
+        'country': checkout.country,
+        'zip': checkout.zip
+    })
+});
+  return jsonResponse.json();
 }
 
 export async function serverGetCart(

@@ -13,7 +13,24 @@ import Box from "@mui/material/Box";
 
 import Typography from "@mui/material/Typography";
 
-import { Button, Fab, makeStyles, Paper, Stack } from "@mui/material";
+import {
+  AppBar,
+  Button,
+  Dialog,
+  Divider,
+  FormGroup,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  makeStyles,
+  Paper,
+  Stack,
+  styled,
+  Switch,
+  TextField,
+  Toolbar,
+} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Navbar from "../Componentss/Navbar";
 
@@ -23,91 +40,80 @@ import { serverGetStore } from "../services/StoreService";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { dummyMember1, getStoresManagedBy } from "../services/MemberService";
 import Grid from "@mui/material/Grid";
+import Store from "../DTOs/Store";
+
+import StoreIcon from "@mui/icons-material/Store";
+import CloseIcon from "@mui/icons-material/Close";
+import StoreDialog from "../Componentss/ManagerEditStore/StoreManagerStoreDialog";
+import StorePage from "./StorePage";
 
 const currentMember = dummyMember1;
 
-function ProductsTable() {
+
+
+const UserInfoCard = (username: string) => {
   return (
-    <GridToolbarContainer>
-      <GridToolbarFilterButton />
-      <GridToolbarDensitySelector />
-    </GridToolbarContainer>
-  );
-}
-
-const columns: GridColDef[] = [
-  { field: "name", headerName: "Product", flex: 2 },
-  { field: "price", headerName: "Price", flex: 1 },
-  { field: "category", headerName: "Category", flex: 1 },
-  { field: "available_quantity", headerName: "Available Quantity", flex: 1 },
-  // { field: "store", headerName: "Store", flex: 1 },
-];
-
-
-function storeGrid(
-  productsRows: Product[],
-  pageSize: number,
-  setPageSize: any
-) {
-  const storeName = productsRows[0].storeName;
-  return (
-    <Box
-      sx={{
-        justifyContent: "center",
-        width: "100%",
-        mt: 3,
-        mb: 3,
-      }}>
-      <Stack justifyContent='space-evenly' alignItems='center' spacing={2}>
-        <Box sx={{ m: 1 }}>
-          <Typography variant='h4'>{storeName}</Typography>
-        </Box>
-        <Box style={{ height: 400, width: "90%" }} sx={{ boxShadow: 3, mb: 3 }}>
-          <DataGrid
-            sx={{ overflow: "auto" }}
-            rows={productsRows}
-            columns={columns}
-            //Paging
-            rowsPerPageOptions={[5, 10, 15]}
-            pageSize={pageSize}
-            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-            pagination
-            //Components
-            components={{
-              Toolbar: ProductsTable,
-            }}
-          />
-
-          <Button
-            variant='contained'
-            size='large'
-            sx={{ mt: 1 }}
-            startIcon={<ExitToAppIcon />}>
-            {storeName}
-          </Button>
-        </Box>
-      </Stack>
-    </Box>
-  );
-}
-
-const InformationCard = (username: string) => {
-  return (
-    <Card sx={{ ml: 2, mr: 2 }} elevation={6} component={Paper}>
+    <Card>
       <CardContent>
-        <Typography sx={{ mb: 3 }} variant='h3' component='div'>
+        <Typography variant='h4' component='div'>
           Account Information
         </Typography>
 
-        <Typography variant='h5'>
+        <Typography variant='h6'>
           <b>Username</b>: {currentMember.username}
         </Typography>
-        <Typography variant='h5'>
+        <Typography variant='h6'>
           <b>Number Of Managed Stores</b>:{" "}
           {getStoresManagedBy(currentMember).length}
         </Typography>
       </CardContent>
     </Card>
+  );
+};
+
+const StoreCard = ({ store }: { store: Store }) => {
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [isStoreOpen, setIsStoreOpen] = React.useState(false);
+  // TODO: open and close store
+
+  const handleClickOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleChangeStoreOpen = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsStoreOpen(event.target.checked);
+    // TODO: service update
+  };
+
+  return (
+    <div>
+      {openDialog && <StoreDialog store={store} handleCloseDialog={handleCloseDialog}/>}
+      <Card sx={{ display: "flex" }} elevation={6} component={Paper}>
+        <CardContent sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography sx={{ mb: 3 }} variant='h3' component='div'>
+            Store "{store.name}"
+          </Typography>
+
+          <Button
+            variant='contained'
+            endIcon={<StoreIcon />}
+            sx={{ mb: 3 }}
+            onClick={handleClickOpenDialog}>
+            To the store
+          </Button>
+          <FormGroup>
+            <Stack direction='row' spacing={1} alignItems='center'>
+              <Typography>Store is now {isStoreOpen ? "Open" : "Closed"}</Typography>
+              <Switch checked={isStoreOpen} onChange={handleChangeStoreOpen} />
+            </Stack>
+          </FormGroup>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
@@ -138,7 +144,14 @@ export default function StoreManagerPage() {
   //   {},
   //   ...productsLst.map((p: Product) => ({ [p.id]: p }))
   // );
-  const productsByStore: Product[][] = []
+  const productsByStore: Product[][] = [];
+
+  const Item = styled("div")(({ theme }) => ({
+    ...theme.typography.body2,
+    padding: theme.spacing(3),
+    textAlign: "center",
+    color: theme.palette.text.secondary,
+  }));
 
   return (
     <ThemeProvider theme={theme}>
@@ -147,57 +160,51 @@ export default function StoreManagerPage() {
           <Navbar />
         </Box>
         <Box>
-          <Grid container spacing={0}>
-            <Grid
-              item
-              xs={8}
-              sm={6}
-              sx={{
-                my: 2,
-                alignItems: "center",
-              }}>
-              <Stack>
-                <Box
-                  sx={{
-                    justifyContent: "center",
-                    display: "flex",
-                    width: "100%",
-                    mt: 3,
-                    mb: 3,
-                  }}>
-                  <Typography variant='h3' component='div'>
-                    Stores You Manage
-                  </Typography>
-                </Box>
-                {productsByStore.map((prodsOfStore: Product[]) => {
-                  return storeGrid(
-                    prodsOfStore,
-                    pageSize,
-                    setPageSize
-                  );
-                })}
-              </Stack>
-            </Grid>
-            <Grid item xs={2} sm={2}></Grid>
-
-            <Grid
-              item
-              xs={2}
-              sm={4}
-              sx={{
-                justifyContent: "cemter",
-                mt: 3,
-                alignItems: "center",
-              }}>
-              {/* <Box
+          <Grid
+            item
+            xs={2}
+            sm={4}
+            sx={{
+              justifyContent: "cemter",
+              mt: 3,
+              alignItems: "center",
+            }}>
+            {/* <Box
                 sx={{
                   justifyContent: "center",
                   display: "flex",
                   width: "100%",
                 }}
               > */}
-              {InformationCard("Ronto The User")}
-              {/* </Box> */}
+            {UserInfoCard("Ronto The User")}
+            {/* </Box> */}
+          </Grid>
+          <Grid>
+            <Box
+              sx={{
+                justifyContent: "center",
+                display: "flex",
+                width: "100%",
+                mt: 3,
+                mb: 3,
+              }}>
+              <Typography variant='h3' component='div'>
+                Stores You Manage
+              </Typography>
+            </Box>
+            {/* {productsByStore.map((prodsOfStore: Product[]) => {
+                  return storeGrid(prodsOfStore, pageSize, setPageSize);
+                })} */}
+            <Grid
+              container
+              flex={1}
+              rowSpacing={1}
+              columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              {stores.map((s) => (
+                <Item>
+                  <StoreCard store={s} />
+                </Item>
+              ))}
             </Grid>
           </Grid>
         </Box>

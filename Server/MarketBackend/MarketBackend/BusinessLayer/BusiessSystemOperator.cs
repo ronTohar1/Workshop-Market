@@ -45,18 +45,19 @@ namespace MarketBackend.BusinessLayer
             if (adminManager == null)//meaning first 
             {
                 InitLogger();
-                this.membersController = new();
+                membersController = new();
                 int adminId = membersController.Register(username, password);
                 //Init controllers
-                this.guestsController = new();
-                this.storeController = new(membersController);
-                this.buyersController = new(new List<IBuyersController> { guestsController, membersController });
-                this.externalServicesController = new(new ExternalPaymentSystem(), new ExternalSupplySystem());
+                guestsController = new();
+                storeController = new(membersController);
+                buyersController = new(new List<IBuyersController> { guestsController, membersController });
+                HttpClient httpClient = new HttpClient();
+                externalServicesController = new(new ExternalPaymentSystem(httpClient), new ExternalSupplySystem(httpClient));
 
-                this.purchasesManager = new(storeController, buyersController, externalServicesController);
+                purchasesManager = new(storeController, buyersController, externalServicesController);
 
-                this.adminManager = new(storeController, buyersController, membersController);
-                this.adminManager.AddAdmin(adminId);
+                adminManager = new(storeController, buyersController, membersController);
+                adminManager.AddAdmin(adminId);
                 marketOpen = true;
                 return adminId;
             }

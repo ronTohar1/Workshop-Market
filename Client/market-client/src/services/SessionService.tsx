@@ -10,8 +10,7 @@ const isGuest = "isGuest"
 const buyerId = "buyerId"
 
 export async function initSession() {
-  const didInit = storage.getItem(isInitOccured)
-  while (didInit === null) {
+  if (storage.getItem(isInitOccured) === null) {
     fetchResponse(serverEnter())
       .then((guestId: number) => {
         initFields(guestId)

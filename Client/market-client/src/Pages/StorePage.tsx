@@ -67,7 +67,6 @@ export default function StorePage() {
       })
   }, [storeId])
 
- 
   const columns: GridColDef[] = [
     {
       field: fields.name,
@@ -121,26 +120,34 @@ export default function StorePage() {
   }
 
   const handleAddToCart = () => {
-    const failedToAdd: Product[] = []
-    const succeedToAdd: Product[] = []
-    products.forEach((prod: Product) => {
-      if (selectedProductsIds.includes(prod.id)) {
-        fetchResponse(serverAddToCart(getBuyerId(), prod.id, prod.storeId, 1))
-          .then((success: boolean) => {
-            success ? succeedToAdd.push(prod) : failedToAdd.push(prod)
-          })
-          .catch((e) => {
-            failedToAdd.push(prod)
-            alert(e)
-          })
-      }
-    })
+    // const failedToAdd: Product[] = []
+    // const succeedToAdd: Product[] = []
 
-    if (failedToAdd.length === 0) {
-      setAddToCartMsg("Added "  + " products to cart")
-      setOpenSnack(true)
-    } else handleFailToAdd(failedToAdd)
-    updateSelection([])
+    const failedToAdd: Promise<Product[]> = products.reduce(
+      (failedProducts: Promise<Product[]>, currProd: Product) => {
+        return fetchResponse(
+          serverAddToCart(getBuyerId(), currProd.id, currProd.storeId, 1)
+        )
+          .then(async (success: boolean) => {
+            return success
+              ? failedProducts
+              : failedProducts.then((failedProducts: Product[]) =>
+                  failedProducts.concat(currProd)
+                )
+          })
+          .catch((e) => failedProducts)
+      },
+      Promise.resolve([])
+    )
+
+    failedToAdd.then((failedToAdd: Product[]) => {
+      if (failedToAdd.length === 0) {
+        //Didnt fail to add
+        setAddToCartMsg("Added products to cart")
+        setOpenSnack(true)
+      } else handleFailToAdd(failedToAdd)
+      updateSelection([])
+    }).catch(alert)
   }
 
   return (

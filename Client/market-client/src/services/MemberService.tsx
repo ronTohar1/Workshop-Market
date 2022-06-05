@@ -25,45 +25,24 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
     for (const storeId in storesToProducts) {
       storesIds.push(Number(storeId))
     }
+    const managedStoresIds: number[] = await filterStoresManagedBy(
+      memberId,
+      storesIds
+    )
 
-    // Filter stores that are managed or owned by member
-    let managedStoresIds: number[] = []
-
-    //Filtering for all stores that are Managed by member
-    storesIds.forEach(async (storeId: number) => {
-      try {
-        const managers = await fetchResponse(
-          serverGetMembersInRoles(memberId, storeId, Roles.Manager)
-        )
-        console.log("managers")
-        console.log(managers)
-        if (managers.includes(memberId)) managedStoresIds.push(storeId) // If member is manager in store -> add to managed stores
-      } catch (e) {}
-    })
-
-    //Filtering for all stores that are owned by member
-    storesIds.forEach(async (storeId: number) => {
-      try {
-        const owners = await fetchResponse(
-          serverGetMembersInRoles(memberId, storeId, Roles.Owner)
-        )
-        console.log("owners")
-        console.log(owners)
-
-        if (owners.includes(memberId)) {
-            console.log("ASFGASFGASGFAWRGQWARGQWAr")
-            managedStoresIds.push(storeId)} // If member is manager in store -> add to managed stores
-      } catch (e) {}
-    })
+    console.log("managedStoresIds\n")
+    console.log(managedStoresIds)
 
     // Get the managed or owned stores from server
-    let managedStores: Store[] = []
-    managedStoresIds.forEach(async (storeId: number) => {
-      try {
-        const store: Store = await fetchResponse(serverGetStore(storeId))
-        managedStores.push(store)
-      } catch (e) {}
-    })
+
+    const managedStores: Promise<Store[]> = managedStoresIds.reduce(
+      async (prevStores: Promise<Store[]>, storeId: number) => {
+        return fetchResponse(serverGetStore(storeId))
+          .then(async (store: Store) => (await prevStores).concat(store))
+          .catch(async (e) => prevStores)
+      },
+      Promise.resolve<Store[]>([])
+    )
 
     console.log("managedStores")
     console.log(managedStores)
@@ -71,6 +50,55 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
     console.log(memberId)
     return managedStores
   } catch (e) {
+    alert("rejecting")
     return Promise.reject(e)
   }
+}
+
+const filterStoresManagedBy = async (
+  memberId: number,
+  storesIds: number[]
+): Promise<number[]> => {
+  // Filter stores that are managed or owned by member
+
+  //Filtering for all stores that are Managed by member
+  const ownedStoresIds = await storesIds.reduce(
+    reduceStoreByMember(memberId, Roles.Owner),
+    Promise.resolve<number[]>([])
+  )
+
+  //Filtering for all stores that are owned by member
+  const managedStoresIds = await storesIds.reduce(
+    reduceStoreByMember(memberId, Roles.Manager),
+    Promise.resolve<number[]>([])
+  )
+
+  return managedStoresIds.concat(ownedStoresIds)
+}
+
+// Reduces a store for a specific member
+const reduceStoreByMember = (memberId: number, role: Roles) => {
+  return (membersInRole: Promise<number[]>, storeId: number) =>
+    reduceSingleStore(memberId, membersInRole, storeId, role)
+}
+
+//
+const reduceSingleStore = async (
+  memberId: number,
+  previousStores: Promise<number[]>,
+  storeId: number,
+  role: Roles
+): Promise<number[]> => {
+  return fetchResponse(serverGetMembersInRoles(memberId, storeId, role))
+    .then(async (owners: number[]) => {
+      console.log("owner")
+      console.log(owners)
+
+      if (owners.includes(memberId))
+        return (await previousStores).concat([storeId])
+      else return previousStores
+    })
+    .catch((e) => {
+      return previousStores
+    })
 }

@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom"
 import { fetchResponse } from "../services/GeneralService"
 import toolBar from "../Componentss/StorePageToolbar"
 import { getBuyerId } from "../services/SessionService"
-
+import CircularProgress from "@mui/material/CircularProgress"
 const fields = {
   name: "name",
   price: "price",
@@ -75,14 +75,14 @@ const columns: GridColDef[] = [
   },
 ]
 
-export default function StorePageOfManager() {
+export default function StorePageOfManager({ storeId }: { storeId: number }) {
   const initSize: number = 10
 
   const navigate = useNavigate()
   const [pageSize, setPageSize] = React.useState<number>(initSize)
   const isManager: boolean = true //TODO: change to real value. storeService.getMemberInRole(...)
   const [rows, setRows] = React.useState<Product[]>([])
-  const [storeId] = useQueryParam("id", NumberParam)
+  // const [storeId] = useQueryParam("id", NumberParam)
   const [store, setStore] = React.useState<Store | null>(null)
 
   const fetchStore = () => {
@@ -120,7 +120,7 @@ export default function StorePageOfManager() {
 
   React.useEffect(() => {
     fetchStore()
-  }, [storeId])
+  }, [])
 
   function updatePrice(product: Product, price: number) {
     if (price != null) product.price = price
@@ -155,46 +155,58 @@ export default function StorePageOfManager() {
     setRows([...rows, productToAdd])
     console.log(rows.map((r) => r.name))
   }
-
-  return (
-    <Box>
-      <Navbar />
-      <Stack direction="row">{}</Stack>
-      <Typography
-        sx={{ flex: "1 1 100%" }}
-        variant="h4"
-        id="tableTitle"
-        component="div"
-      >
-        {store != null ? store.name : "Error- store not exist"}
-      </Typography>
-      <div style={{ height: "50vh", width: "100%" }}>
-        <div style={{ display: "flex", height: "100%" }}>
-          <div style={{ flexGrow: 1 }}>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              sx={{
-                width: "100vw",
-                height: "80vh",
-                "& .MuiDataGrid-cell:hover": {
-                  color: "primary.main",
-                  border: 1,
-                },
-              }}
-              // Paging:
-              pageSize={pageSize}
-              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-              rowsPerPageOptions={[10, 20, 25]}
-              pagination
-              // Selection:
-              isCellEditable={(params) => isEditableField(params.field)}
-              onCellEditCommit={handleCellEdit}
-            />
-            {isManager ? AddProductForm(handleAddProduct) : null}
+  function LoadingComponent() {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
+  const storePreview = () => {
+    return (
+      <Box>
+        <Stack direction="row">{}</Stack>
+        <Typography
+          sx={{ flex: "1 1 100%" }}
+          variant="h4"
+          id="tableTitle"
+          component="div"
+        >
+          {store != null ? store.name : "Error- store not exist"}
+        </Typography>
+        <div style={{ height: "50vh", width: "100%" }}>
+          <div style={{ display: "flex", height: "100%" }}>
+            <div style={{ flexGrow: 1 }}>
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                sx={{
+                  width: "100vw",
+                  height: "80vh",
+                  "& .MuiDataGrid-cell:hover": {
+                    color: "primary.main",
+                    border: 1,
+                  },
+                }}
+                // Paging:
+                pageSize={pageSize}
+                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                rowsPerPageOptions={[10, 20, 25]}
+                pagination
+                // Selection:
+                isCellEditable={(params) => isEditableField(params.field)}
+                onCellEditCommit={handleCellEdit}
+              />
+              {isManager ? (<AddProductForm handleAddProduct={handleAddProduct}/>) : null}
+            </div>
           </div>
         </div>
-      </div>
-    </Box>
-  )
+      </Box>
+    )
+  }
+  return (
+   <div>
+    {store === null ? LoadingComponent() : storePreview()}
+    </div>
+  )  // return  store === null ? LoadingComponent() : storePreview()
 }

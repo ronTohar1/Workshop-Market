@@ -35,8 +35,6 @@ export default function Register() {
     const password = data.get("password")?.toString();
     try {
       const serverResponse = await serverRegister(username, password);
-      // alert("Error occured? " + serverResponse.errorOccured);
-      // alert("Error is: " + serverResponse.errorMessage);
       if (serverResponse.errorOccured) alert(serverResponse.errorMessage);
       else {
         alert(`${username} Registered sucessfully!`);

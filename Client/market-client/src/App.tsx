@@ -12,7 +12,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import * as Paths from "./Paths"
 import { QueryParamProvider } from "use-query-params"
 import StoreManagerPage from "./Pages/StoreManager"
-import { clearSession, initSession } from "./services/SessionService"
 import StorePageOfManager from "./Pages/StorePageOfManager"
 import Checkout from "./Pages/Checkout"
 import Admin from "./Pages/Admin"
@@ -51,10 +50,10 @@ const App = () => {
           <Route path={Paths.pathCart} element={<CartPage />} />
           <Route path={Paths.pathLogin} element={<Login />} />
           <Route path={Paths.pathSearch} element={<SearchPage />} />
-          <Route
+          {/* <Route
             path={Paths.pathStorePageOfManager}
             element={<StorePageOfManager />}
-          />
+          /> */}
           <Route path={Paths.pathStoreManager} element={<StoreManagerPage />} />
           <Route path={Paths.pathAdmin} element={<Admin />} />
           <Route

@@ -1,9 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { pathHome } from "../Paths"
 import { serverEnter } from "./BuyersService"
-
-
-
+import { fetchResponse } from "./GeneralService"
 
 const storage = sessionStorage
 const isInitOccured = "isInitOccured"
@@ -12,20 +10,16 @@ const isGuest = "isGuest"
 const buyerId = "buyerId"
 
 export async function initSession() {
-  try {
-    const didInit = storage.getItem(isInitOccured)
-    if (didInit === null) {
-      const response = serverEnter()
-      const id = await response
-
-      if (id.errorOccured) throw new Error(".......")
-
-      initFields(id.value)
-      console.log("initiated new guest id")
-      alert("Hello, new guest!")
-    }
-  } catch (e) {
-    alert("Sorry, dear visitor, an unkown error has occured!")
+  const didInit = storage.getItem(isInitOccured)
+  while (didInit === null) {
+    fetchResponse(serverEnter())
+      .then((guestId: number) => {
+        initFields(guestId)
+        alert("Hello, new guest!")
+      })
+      .catch((e) => {
+        alert("Sorry, dear visitor, an unkown error has occured!")
+      })
   }
 }
 

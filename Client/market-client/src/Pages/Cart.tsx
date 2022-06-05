@@ -82,23 +82,25 @@ function MakeProductCard(
   handleUpdateQuantity: (product: Product, newQuan: number) => void
 ) {
   return (
-    <Grid
-      item
-      sm={6}
-      md={4}
-      sx={{
-        alignItems: "center",
-      }}
-    >
+    // <Grid
+    //   item
+    //   sm={6}
+    //   md={4}
+    //   sx={{
+    //     alignItems: "center",
+    //   }}
+    // >
+    <Box sx={{m:2}}>
       {ProductCard(
         product,
         quantity,
         handleRemoveProductClick,
         handleUpdateQuantity
       )}
-    </Grid>
-  );
-};
+    </Box>
+    // </Grid>
+  )
+}
 
 export default function CartPage() {
   const navigate = useNavigate()
@@ -132,8 +134,12 @@ export default function CartPage() {
 
   const reloadCartProducts = () => setRenderProducts(!renderProducts)
 
-  const calulateTotal = () : number => {
-    return cartProducts.reduce((total:number,cartProduct:CartProduct) => total + cartProduct.product.price, 0)
+  const calulateTotal = (): number => {
+    return cartProducts.reduce(
+      (total: number, cartProduct: CartProduct) =>
+        total + cartProduct.product.price,
+      0
+    )
   }
 
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
@@ -180,8 +186,14 @@ export default function CartPage() {
     <ThemeProvider theme={theme}>
       <Navbar />
       <Stack direction="row">
-        <Box sx={{ width: "80%", mt: 2 }}>
-          <Grid container spacing={0}>
+        <Box sx={{ width: "80%", ml: 3, mt: 2 }}>
+          <Grid
+            container
+            flex={1}
+            spacing={2}
+            rowSpacing={1}
+            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          >
             {cartProducts.length > 0
               ? cartProducts.map((cartProduct: CartProduct) =>
                   MakeProductCard(
@@ -206,8 +218,6 @@ export default function CartPage() {
           )}
         </Box>
       </Stack>
-
-
 
       {ProductToRemove !== null
         ? DialogTwoOptions(

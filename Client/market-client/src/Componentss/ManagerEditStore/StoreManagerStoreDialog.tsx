@@ -49,6 +49,8 @@ import StoreIcon from "@mui/icons-material/Store";
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 import { Label } from "@mui/icons-material";
+import StorePage from "../../Pages/StorePage";
+import StorePageOfManager from "../../Pages/StorePageOfManager";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -92,23 +94,6 @@ const columns: GridColDef[] = [
   // { field: "store", headerName: "Store", flex: 1 },
 ];
 
-function StoreGrid({ store }: { store: Store }) {
-  const productsRows = store.products;
-  return (
-    <DataGrid
-      sx={{ overflow: "auto" }}
-      rows={productsRows}
-      columns={columns}
-      //Paging
-      rowsPerPageOptions={[5, 10, 15]}
-      //Components
-      components={{
-        Toolbar: ProductsTable,
-      }}
-    />
-  );
-}
-
 export function StoreTabs({ store }: { store: Store }) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -129,7 +114,7 @@ export function StoreTabs({ store }: { store: Store }) {
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <StoreGrid store={store} />
+        <StorePageOfManager storeId={store.id} />
       </TabPanel>
       <TabPanel value={value} index={1}>
         Item Two

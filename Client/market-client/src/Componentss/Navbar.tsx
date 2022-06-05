@@ -17,7 +17,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { BadgeProps, List, ListItem, ListItemText } from "@mui/material"
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"
 import Stack from "@mui/material/Stack"
-import { pathCart, pathHome, pathSearch } from "../Paths"
+import { pathCart, pathHome, pathLogin, pathSearch, pathStoreManager } from "../Paths"
 import { Link, Navigate } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { Tooltip } from "@mui/material"
@@ -25,7 +25,7 @@ import MarketNotification from "../DTOs/MarketNotification"
 import { dummyNotificaitons } from "../services/NotificationsService"
 import { getCartProducts } from "../services/ProductsService"
 import { fetchResponse } from "../services/GeneralService"
-import { getBuyerId } from "../services/SessionService"
+import { getBuyerId, getIsGuest } from "../services/SessionService"
 import { serverGetCart } from "../services/BuyersService"
 import Cart from "../DTOs/Cart"
 
@@ -81,7 +81,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }))
 
 const notificationsMenu = (
-  open: any,
+  open: boolean,
   anchor: any,
   handleClose: any,
   currNotifications: MarketNotification[],
@@ -113,18 +113,16 @@ export default function Navbar() {
     React.useState<MarketNotification[]>(currentNotifications)
   const [numItemsInCart, setNumItemsInCart] = React.useState<number>(0)
 
-  // React.useEffect(() => {
-  //   fetchResponse(serverGetCart(getBuyerId()))
-  //     .then((cart: Cart) => {
-  //       const [prodsIds, prodsToQuantity] = getCartProducts(cart)
-  //       setNumItemsInCart(prodsIds.length)
-  //     })
-  //     .catch((e) => {
-  //       // setNumItemsInCart(0)
-  //       alert(e)
-  //       alert("herre")
-  //     })
-  // })
+  React.useEffect(() => {
+    fetchResponse(serverGetCart(getBuyerId()))
+      .then((cart: Cart) => {
+        const [prodsIds, prodsToQuantity] = getCartProducts(cart)
+        setNumItemsInCart(prodsIds.length)
+      })
+      .catch((e) => {
+        alert(e)
+      })
+  })
 
   const handleClickHome = () => {
     navigate(`${pathHome}`)
@@ -157,6 +155,11 @@ export default function Navbar() {
 
   const handleMyAccountClick = () => {
     setAnchorEl(null)
+    if(getIsGuest())
+      navigate(`${pathLogin}`)
+    else
+      navigate(`${pathStoreManager}`)
+
   }
 
   const menuId = "primary-search-account-menu"

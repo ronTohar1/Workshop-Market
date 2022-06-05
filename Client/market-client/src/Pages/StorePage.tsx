@@ -67,6 +67,7 @@ export default function StorePage() {
       })
   }, [storeId])
 
+ 
   const columns: GridColDef[] = [
     {
       field: fields.name,

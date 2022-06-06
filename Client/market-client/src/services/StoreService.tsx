@@ -308,7 +308,7 @@ export async function getPurchaseHistory(
   return jsonResponse.json()
 }
 
-export async function serverOpenStore(
+export async function serverOpenNewStore(
   userId: number,
   storeName: string
 ): Promise<ClientResponse<number>> {

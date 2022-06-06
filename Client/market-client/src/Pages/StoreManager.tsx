@@ -7,7 +7,7 @@ import {
   GridColDef,
 } from "@mui/x-data-grid"
 import Box from "@mui/material/Box"
-
+import AddBusinessIcon from "@mui/icons-material/AddBusiness"
 // import CustomToolbarGrid  from '../components/ProductsList'
 // import * as React from 'react';
 
@@ -38,8 +38,8 @@ import Product from "../DTOs/Product"
 import { Card, CardActions, CardContent } from "@mui/material"
 import {
   serverGetStore,
-  serverOpenStore,
   serverCloseStore,
+  serverOpenNewStore,
 } from "../services/StoreService"
 import ExitToAppIcon from "@mui/icons-material/ExitToApp"
 import { dummyMember1, fetchStoresManagedBy } from "../services/MemberService"
@@ -55,6 +55,9 @@ import { getBuyerId, getIsGuest } from "../services/SessionService"
 import { useNavigate } from "react-router-dom"
 import { pathHome } from "../Paths"
 import LoadingCircle from "../Componentss/LoadingCircle"
+import AddStoreForm from "../Componentss/Forms/AddStoreForm"
+import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
+import FailureSnackbar from "../Componentss/Forms/FailureSnackbar"
 
 const UserInfoCard = (numOfManagedStores: number) => {
   return (
@@ -64,11 +67,9 @@ const UserInfoCard = (numOfManagedStores: number) => {
           Account Information
         </Typography>
 
+        <Typography variant="h6">Hello Dear User</Typography>
         <Typography variant="h6">
-          <b>Username</b>: Hello Dear User
-        </Typography>
-        <Typography variant="h6">
-          <b>Number Of Managed Stores</b>:{numOfManagedStores}
+          <b>Number Of Managed Stores</b>: {numOfManagedStores}
         </Typography>
       </CardContent>
     </Card>
@@ -173,7 +174,8 @@ const Item = styled("div")(({ theme }) => ({
 
 const ManagedStores = (
   stores: Store[],
-  handleChangedStore: (store: Store) => void
+  handleChangedStore: (store: Store) => void,
+  handleOpenStoreForm: () => void
 ) => {
   return (
     <Grid>
@@ -188,9 +190,24 @@ const ManagedStores = (
           mr: 3,
         }}
       >
-        <Typography variant="h3" component="div">
-          Stores You Manage
-        </Typography>
+        <Stack>
+          <Typography variant="h3" component="div">
+            Stores You Manage
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{
+              width: "100%",
+              mt: 2,
+              display: "flex",
+              justifyContent: "center",
+            }}
+            endIcon={<AddBusinessIcon />}
+            onClick={handleOpenStoreForm}
+          >
+            Add A Store
+          </Button>
+        </Stack>
       </Box>
       <Grid
         sx={{ ml: 2 }}
@@ -213,7 +230,32 @@ export default function StoreManagerPage() {
   const startingPageSize = 5
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize)
   const [stores, setStores] = React.useState<Store[] | null>(null) // sotres managed by current member
+
+  const [openStoreForm, setOpenStoreForm] = React.useState<boolean>(false)
+  const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false)
+  const [successProductMsg, setSuccessProductMsg] = React.useState<string>("")
+  const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false)
+  const [failureProductMsg, setFailureProductMsg] = React.useState<string>("")
+  const showFailureSnack = (msg: string) => {
+    setOpenFailSnack(true)
+    setFailureProductMsg(msg)
+  }
+
   const navigate = useNavigate()
+  const showSuccessSnack = (msg: string) => {
+    setOpenSuccSnack(true)
+    setSuccessProductMsg(msg)
+    setOpenStoreForm(false)
+  }
+  const handleAddStore = (storeName: string) => {
+    fetchResponse(serverOpenNewStore(getBuyerId(), storeName))
+      .then((storeId: number) => fetchResponse(serverGetStore(storeId)))
+      .then((newStore: Store) =>
+        setStores(stores === null ? [newStore] : stores.concat(newStore))
+      )
+      .then(() => showSuccessSnack("Added " + storeName + " Successfully"))
+      .catch(showFailureSnack)
+  }
 
   if (getIsGuest()) {
     alert("You are not allowed to visit this page!")
@@ -269,9 +311,26 @@ export default function StoreManagerPage() {
             {UserInfoCard(stores.length)}
             {/* </Box> */}
           </Grid>
-          {ManagedStores(stores, handleChangedStore)}
+          {ManagedStores(stores, handleChangedStore, () =>
+            setOpenStoreForm(true)
+          )}
         </Box>
       </Box>
+
+      {/* Unrelated dialogs: */}
+      <AddStoreForm
+        open={openStoreForm}
+        handleAddStore={handleAddStore}
+        handleClose={() => setOpenStoreForm(false)}
+      />
+      <Dialog open={openFailSnack}>
+        {FailureSnackbar(failureProductMsg, openFailSnack, () =>
+          setOpenFailSnack(false)
+        )}
+      </Dialog>
+      {SuccessSnackbar(successProductMsg, openSuccSnack, () =>
+        setOpenSuccSnack(false)
+      )}
     </ThemeProvider>
   ) : (
     LoadingCircle()

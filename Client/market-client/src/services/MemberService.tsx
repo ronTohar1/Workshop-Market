@@ -25,6 +25,11 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
     for (const storeId in storesToProducts) {
       storesIds.push(Number(storeId))
     }
+
+    console.log("storesIds")
+    console.log(storesIds)
+    console.log("storesToProducts")
+    console.log(storesToProducts)
     const managedStoresIds: number[] = await filterStoresManagedBy(
       memberId,
       storesIds
@@ -45,16 +50,14 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
     )
 
     console.log("managedStores")
-    console.log(managedStores)
-    console.log("memberId")
-    console.log(memberId)
+    console.log((await managedStores).map((store: Store) => store.name))
     return managedStores
   } catch (e) {
-    alert("rejecting")
     return Promise.reject(e)
   }
 }
 
+// Return all stores that with id from storesIds that are managed (or owned ) by the memeber
 const filterStoresManagedBy = async (
   memberId: number,
   storesIds: number[]
@@ -91,7 +94,7 @@ const reduceSingleStore = async (
 ): Promise<number[]> => {
   return fetchResponse(serverGetMembersInRoles(memberId, storeId, role))
     .then(async (owners: number[]) => {
-      console.log("owner")
+      console.log("managed")
       console.log(owners)
 
       if (owners.includes(memberId))

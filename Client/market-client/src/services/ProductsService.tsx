@@ -70,7 +70,7 @@ export const fetchProductsByStore = async (
 
     for (const storeId in productsByStore) {
       const prodsOfStore: Product[] = productsByStore[Number(storeId)] // Products of store (Product[] type)
-      allProducts.push(prodsOfStore)
+      if (prodsOfStore.length > 0) allProducts.push(prodsOfStore)
     }
     return allProducts
   } catch (e) {

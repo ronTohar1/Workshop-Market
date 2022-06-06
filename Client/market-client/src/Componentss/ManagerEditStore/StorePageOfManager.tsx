@@ -97,7 +97,7 @@ export default function StorePageOfManager({
   const [failureProductMsg, setFailureProductMsg] = React.useState<string>("")
   const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false)
   const [successProductMsg, setSuccessProductMsg] = React.useState<string>("")
-
+  const [hasPermission, setHasPermission] = React.useState<boolean>(true) // Has permission to watch store info
   const showSuccessSnack = (msg: string) => {
     setOpenSuccSnack(true)
     setSuccessProductMsg(msg)
@@ -111,31 +111,35 @@ export default function StorePageOfManager({
 
   // const [storeId] = useQueryParam("id", NumberParam)
 
-  const verifyIsManagerOrOwner = (store: Store) => {
-    fetchResponse(
-      serverGetMembersInRoles(getBuyerId(), store.id, Roles.Manager)
-    )
-      .then((managerIds: number[]) => {
-        fetchResponse(
-          serverGetMembersInRoles(getBuyerId(), store.id, Roles.Owner)
-        ).then((ownersIds: number[]) => {
-          const buyerId = getBuyerId()
-          if (!(managerIds.includes(buyerId) || ownersIds.includes(buyerId))) {
-            alert("You dont have permission to watch this page!!!!")
-            navigate(pathHome)
-          }
-        })
-      })
-      .catch((e) => {
-        alert(e)
-        navigate(pathHome)
-      })
-  }
+  // const verifyIsManagerOrOwner = (store: Store) => {
+  //   fetchResponse(
+  //     serverGetMembersInRoles(getBuyerId(), store.id, Roles.Manager)
+  //   )
+  //     .then((managerIds: number[]) => {
+  //       fetchResponse(
+  //         serverGetMembersInRoles(getBuyerId(), store.id, Roles.Owner)
+  //       ).then((ownersIds: number[]) => {
+  //         const buyerId = getBuyerId()
+  //         if (!(managerIds.includes(buyerId) || ownersIds.includes(buyerId))) {
+  //           alert("You dont have permission to watch this page!!!!")
+  //           navigate(pathHome)
+  //         }
+  //         setHasPermission(true) //Has permission to watch page
+  //       })
+  //     })
+  //     .catch((e) => {
+  //       alert(e)
+  //       navigate(pathHome)
+  //     })
+  // }
+
+  // React.useEffect(() => {
+  //   verifyIsManagerOrOwner(store) // Verifying this is user is allowed to watch the page
+  // }, [store])
 
   React.useEffect(() => {
-    verifyIsManagerOrOwner(store) // Verifying this is user is allowed to watch the page
-    setRows(store.products)
-  })
+    if (hasPermission) setRows(store.products)
+  }, [hasPermission])
 
   function updateAvailableQuantity(product: Product, newQuantity: number) {
     fetchResponse(

@@ -184,7 +184,7 @@ public class StoreController
         foreach (KeyValuePair<int, Store> idStorepair in passedStoresFilter)
         {
             passedProductsFilter = idStorepair.Value.SerachProducts(filter);
-            if (passedProductsFilter.Count > 0)
+            if (passedProductsFilter.Count > -1) //TODO : Check if need > 0 -> if so then we need another way to get all stores
             {
                 result[idStorepair.Key] = passedProductsFilter;
             }

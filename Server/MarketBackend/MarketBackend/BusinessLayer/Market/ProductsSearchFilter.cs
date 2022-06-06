@@ -22,7 +22,8 @@ namespace MarketBackend.BusinessLayer.Market
 
         public bool FilterStore(Store store)
         {
-            return storePred(store);
+            bool passedFilter =  storePred(store);
+            return passedFilter;
         }
 
         public bool FilterProduct(Product product)

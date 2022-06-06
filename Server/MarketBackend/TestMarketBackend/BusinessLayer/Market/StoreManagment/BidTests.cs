@@ -16,6 +16,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         int mid1;
 
+        int sid1;
+
         double bid1;
 
         Bid b1;
@@ -27,23 +29,11 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
             mid1 = 1;
 
+            sid1 = 1;
+
             bid1 = 100;
 
-            b1 = new Bid(pid1, mid1, bid1);
-        }
-
-        [Test]
-        [TestCase(1, 1)]
-        [TestCase(2, 2)]
-        [TestCase(4, 5)]
-        public void TestCreateBids(int id, int howMany)
-        {
-            for (int i = 1; i <= howMany; i++)
-            {
-                Bid b = new Bid(pid1, mid1, bid1);
-                Assert.AreEqual(id, b.id);
-                id++;
-            }
+            b1 = new Bid(pid1, mid1, sid1, bid1);
         }
 
         [Test]

@@ -4,23 +4,24 @@ import {
   GridCellEditCommitParams,
   GridColDef,
 } from "@mui/x-data-grid"
-import { Box, Stack, Typography } from "@mui/material"
-import Navbar from "./Navbar"
-import Product from "../DTOs/Product"
-import AddProductForm from "./Forms/AddProductForm"
-import Store from "../DTOs/Store"
-import { NumberParam, StringParam, useQueryParam } from "use-query-params"
+import { Box, Dialog, Stack, Typography } from "@mui/material"
+import Product from "../../DTOs/Product"
+import AddProductForm from "../Forms/AddProductForm"
+import Store from "../../DTOs/Store"
 import {
   Roles,
+  serverAddNewProduct,
+  serverChangeProductAmountInInventory,
   serverGetMembersInRoles,
   serverGetStore,
-} from "../services/StoreService"
-import { pathHome } from "../Paths"
+} from "../../services/StoreService"
+import { pathHome } from "../../Paths"
 import { useNavigate } from "react-router-dom"
-import { fetchResponse } from "../services/GeneralService"
-import toolBar from "./StorePageToolbar"
-import { getBuyerId } from "../services/SessionService"
-import LoadingCircle from "./LoadingCircle"
+import { fetchResponse } from "../../services/GeneralService"
+import { getBuyerId } from "../../services/SessionService"
+import LoadingCircle from "../LoadingCircle"
+import FailureSnackbar from "../Forms/FailureSnackbar"
+import SuccessSnackbar from "../Forms/SuccessSnackbar"
 const fields = {
   name: "name",
   price: "price",
@@ -79,28 +80,37 @@ const columns: GridColDef[] = [
   },
 ]
 
-export default function StorePageOfManager({ storeId }: { storeId: number }) {
-  const initSize: number = 10
+export default function StorePageOfManager({
+  store,
+  handleChangedStore,
+}: {
+  store: Store
+  handleChangedStore: (s: Store) => void
+}) {
+  const initSize: number = 5
 
   const navigate = useNavigate()
   const [pageSize, setPageSize] = React.useState<number>(initSize)
-  const isManager: boolean = true //TODO: change to real value. storeService.getMemberInRole(...)
   const [rows, setRows] = React.useState<Product[]>([])
-  // const [storeId] = useQueryParam("id", NumberParam)
-  const [store, setStore] = React.useState<Store | null>(null)
+  const [openProductForm, setOpenProductForm] = React.useState<boolean>(false)
+  const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false)
+  const [failureProductMsg, setFailureProductMsg] = React.useState<string>("")
+  const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false)
+  const [successProductMsg, setSuccessProductMsg] = React.useState<string>("")
 
-  const fetchStore = () => {
-    fetchResponse(serverGetStore(storeId))
-      .then((store) => {
-        verifyIsManagerOrOwner(store) // Verifying this is user is allowed to watch the page
-        setStore(store)
-        setRows(store.products)
-      })
-      .catch((e) => {
-        alert(e)
-        navigate(pathHome)
-      })
+  const showSuccessSnack = (msg: string) => {
+    setOpenSuccSnack(true)
+    setSuccessProductMsg(msg)
+    setOpenProductForm(false)
   }
+
+  const showFailureSnack = (msg: string) => {
+    setOpenFailSnack(true)
+    setFailureProductMsg(msg)
+  }
+
+  // const [storeId] = useQueryParam("id", NumberParam)
+
   const verifyIsManagerOrOwner = (store: Store) => {
     fetchResponse(
       serverGetMembersInRoles(getBuyerId(), store.id, Roles.Manager)
@@ -123,27 +133,37 @@ export default function StorePageOfManager({ storeId }: { storeId: number }) {
   }
 
   React.useEffect(() => {
-    fetchStore()
-  }, [])
+    verifyIsManagerOrOwner(store) // Verifying this is user is allowed to watch the page
+    setRows(store.products)
+  })
 
-  function updatePrice(product: Product, price: number) {
-    if (price != null) product.price = price
-  }
-  function updateAvailableQuantity(
-    product: Product,
-    available_quantity: number
-  ) {
-    if (available_quantity != null)
-      product.availableQuantity = available_quantity
+  function updateAvailableQuantity(product: Product, newQuantity: number) {
+    fetchResponse(
+      serverChangeProductAmountInInventory(
+        getBuyerId(),
+        store.id,
+        product.id,
+        newQuantity,
+        product.availableQuantity
+      )
+    )
+      .then((updated: boolean) => {
+        if (updated) handleChangedStore(store)
+        showSuccessSnack(
+          `Changed ${product.name} amount in inventory to ${newQuantity}`
+        )
+      })
+      .catch((e) => {
+        const newRows = rows.map((row) => row)
+        setRows(newRows) //Re-rendering for the changed fields to stay the same as before
+        showFailureSnack(e)
+      })
   }
 
   const handleCellEdit = (e: GridCellEditCommitParams) => {
     const newRows = rows.map((row) => {
       if (row.id === e.id) {
         switch (e.field) {
-          case fields.price:
-            updatePrice(row, e.value)
-            break
           case fields.available_quantity:
             updateAvailableQuantity(row, e.value)
             break
@@ -151,18 +171,26 @@ export default function StorePageOfManager({ storeId }: { storeId: number }) {
       }
       return row
     })
-    setRows(newRows)
-    // alert(e.field + " Changed into "+ e.value + " id "+ e.id)
   }
 
-  const handleAddProduct = (productToAdd: Product) => {
-    setRows([...rows, productToAdd])
-    console.log(rows.map((r) => r.name))
+  const handleAddProduct = (
+    productName: string,
+    price: number,
+    category: string
+  ) => {
+    fetchResponse(
+      serverAddNewProduct(getBuyerId(), store.id, productName, price, category)
+    )
+      .then((prodId: number) => {
+        handleChangedStore(store)
+        showSuccessSnack("Added " + productName + " Successfully")
+      })
+      .catch(showFailureSnack)
   }
 
   const storePreview = () => {
     return (
-      <Box>
+      <Box sx={{ mr: 3 }}>
         <Stack direction="row">{}</Stack>
         <Typography
           sx={{ flex: "1 1 100%" }}
@@ -172,15 +200,15 @@ export default function StorePageOfManager({ storeId }: { storeId: number }) {
         >
           {store != null ? store.name : "Error- store not exist"}
         </Typography>
-        <div style={{ height: "50vh", width: "100%" }}>
+        <div style={{ height: "40vh", width: "100%" }}>
           <div style={{ display: "flex", height: "100%" }}>
             <div style={{ flexGrow: 1 }}>
               <DataGrid
                 rows={rows}
                 columns={columns}
                 sx={{
-                  width: "100vw",
-                  height: "80vh",
+                  width: "95vw",
+                  height: "50vh",
                   "& .MuiDataGrid-cell:hover": {
                     color: "primary.main",
                     border: 1,
@@ -189,18 +217,30 @@ export default function StorePageOfManager({ storeId }: { storeId: number }) {
                 // Paging:
                 pageSize={pageSize}
                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                rowsPerPageOptions={[10, 20, 25]}
+                rowsPerPageOptions={[initSize, initSize + 5, initSize + 10]}
                 pagination
                 // Selection:
                 isCellEditable={(params) => isEditableField(params.field)}
                 onCellEditCommit={handleCellEdit}
+                disableSelectionOnClick
               />
-              {isManager ? (
-                <AddProductForm handleAddProduct={handleAddProduct} />
-              ) : null}
+              <AddProductForm
+                handleAddProduct={handleAddProduct}
+                open={openProductForm}
+                handleClose={() => setOpenProductForm(false)}
+                handleOpen={() => setOpenProductForm(true)}
+              />
             </div>
           </div>
         </div>
+        <Dialog open={openFailSnack}>
+          {FailureSnackbar(failureProductMsg, openFailSnack, () =>
+            setOpenFailSnack(false)
+          )}
+        </Dialog>
+        {SuccessSnackbar(successProductMsg, openSuccSnack, () =>
+          setOpenSuccSnack(false)
+        )}
       </Box>
     )
   }

@@ -75,7 +75,13 @@ const UserInfoCard = (numOfManagedStores: number) => {
   )
 }
 
-const StoreCard = ({ store }: { store: Store }) => {
+const StoreCard = ({
+  store,
+  handleChangedStore,
+}: {
+  store: Store
+  handleChangedStore: (s: Store) => void
+}) => {
   const [openDialog, setOpenDialog] = React.useState(false)
   const [isStoreOpen, setIsStoreOpen] = React.useState(store.isOpen)
 
@@ -97,6 +103,7 @@ const StoreCard = ({ store }: { store: Store }) => {
         .then((closed: boolean) => {
           if (closed) alert("Closed store successfuly!")
           setIsStoreOpen(false)
+          handleChangedStore(store)
         })
         .catch((e) => {
           alert(e)
@@ -106,7 +113,11 @@ const StoreCard = ({ store }: { store: Store }) => {
   return (
     <div>
       {openDialog && (
-        <StoreDialog store={store} handleCloseDialog={handleCloseDialog} />
+        <StoreDialog
+          store={store}
+          handleCloseDialog={handleCloseDialog}
+          handleChangedStore={handleChangedStore}
+        />
       )}
       <Card sx={{ display: "flex" }} elevation={6} component={Paper}>
         <CardContent sx={{ display: "flex", flexDirection: "column" }}>
@@ -160,6 +171,44 @@ const Item = styled("div")(({ theme }) => ({
   color: theme.palette.text.secondary,
 }))
 
+const ManagedStores = (
+  stores: Store[],
+  handleChangedStore: (store: Store) => void
+) => {
+  return (
+    <Grid>
+      <Box
+        sx={{
+          justifyContent: "center",
+          display: "flex",
+          width: "100%",
+          mt: 3,
+          mb: 3,
+          ml: 3,
+          mr: 3,
+        }}
+      >
+        <Typography variant="h3" component="div">
+          Stores You Manage
+        </Typography>
+      </Box>
+      <Grid
+        sx={{ ml: 2 }}
+        container
+        flex={1}
+        rowSpacing={1}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+      >
+        {stores.map((s) => (
+          <Item>
+            <StoreCard store={s} handleChangedStore={handleChangedStore} />
+          </Item>
+        ))}
+      </Grid>
+    </Grid>
+  )
+}
+
 export default function StoreManagerPage() {
   const startingPageSize = 5
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize)
@@ -177,39 +226,20 @@ export default function StoreManagerPage() {
     })
   }, [])
 
-  const ManagedStores = (stores: Store[]) => {
-    return (
-      <Grid>
-        <Box
-          sx={{
-            justifyContent: "center",
-            display: "flex",
-            width: "100%",
-            mt: 3,
-            mb: 3,
-            ml: 3,
-            mr: 3,
-          }}
-        >
-          <Typography variant="h3" component="div">
-            Stores You Manage
-          </Typography>
-        </Box>
-        <Grid
-          sx={{ ml: 2 }}
-          container
-          flex={1}
-          rowSpacing={1}
-          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-        >
-          {stores.map((s) => (
-            <Item>
-              <StoreCard store={s} />
-            </Item>
-          ))}
-        </Grid>
-      </Grid>
-    )
+  const handleChangedStore = (changedStore: Store) => {
+    fetchResponse(serverGetStore(changedStore.id))
+      .then((loadedStore: Store) => {
+        const newStores = stores?.map((currStore) => {
+          if (currStore.id === loadedStore.id) return loadedStore
+          return currStore
+        })
+        console.log(newStores)
+        setStores(newStores || null)
+      })
+      .catch((e) => {
+        alert(e)
+        setStores([])
+      })
   }
 
   return stores !== null ? (
@@ -239,7 +269,7 @@ export default function StoreManagerPage() {
             {UserInfoCard(stores.length)}
             {/* </Box> */}
           </Grid>
-          {ManagedStores(stores)}
+          {ManagedStores(stores, handleChangedStore)}
         </Box>
       </Box>
     </ThemeProvider>

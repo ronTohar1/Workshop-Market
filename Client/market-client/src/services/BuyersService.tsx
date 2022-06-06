@@ -128,7 +128,7 @@ export async function serverRemoveFromCart(
   return jsonResponse.json()
 }
 
-export async function serverChangeProductAmount(
+export async function serverChangeProductAmountInCart(
   userId: number,
   productId: number,
   storeId: number,

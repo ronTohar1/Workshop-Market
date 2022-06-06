@@ -540,10 +540,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
 
         // r 4.11, r 5
-        public IList<int> GetMembersInRole(int memberId, Role role) {
+        public virtual IList<int> GetMembersInRole(int memberId, Role role) {
             string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.RecieiveRolesInfo); 
             if (permissionError != null)
                 throw new MarketException("Error in getting members in role: " + role.ToString() + " " + permissionError);
+            return GetMembersInRoleNoPermissionsCheck(role); 
+        }
+
+        public virtual IList<int> GetMembersInRoleNoPermissionsCheck(Role role)
+        {
             lock (isOpenMutex)
             {
                 if (!isOpen)

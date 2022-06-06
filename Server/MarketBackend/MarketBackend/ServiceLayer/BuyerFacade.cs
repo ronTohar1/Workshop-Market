@@ -465,28 +465,28 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        //public Response<bool> PurchaseBid(int storeId, int bidId, int memberId)
-        //{
-        //    try
-        //    {
-        //        Store? s = storeController.GetStore(storeId);
-        //        if (s == null)
-        //            return new Response<bool>($"There isn't a store with an id {storeId}");
-        //        Bid bid = s.GetBid(bidId);
-        //        purchasesManager.PurchaseBid(bid, memberId);
-        //        logger.Info($"PurchaseBid was called with parameters: [storeId = {storeId}, bidId = {bidId}, memberId = {memberId}]");
-        //        return new Response<bool>(true);
-        //    }
-        //    catch (MarketException mex)
-        //    {
-        //        logger.Error(mex, $"method: PurchaseBid, parameters: [storeId = {storeId}, bidId = {bidId}, memberId = {memberId}]");
-        //        return new Response<bool>(mex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.Error(ex, $"method: PurchaseBid, parameters: [storeId = {storeId}, bidId = {bidId}, memberId = {memberId}]");
-        //        return new Response<bool>("Sorry, an unexpected error occured. Please try again");
-        //    }
-        //}
+        public Response<bool> PurchaseBid(int storeId, int bidId, int memberId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                Bid bid = s.GetBid(bidId);
+                purchasesManager.PurchaseBid(bid, memberId);
+                logger.Info($"PurchaseBid was called with parameters: [storeId = {storeId}, bidId = {bidId}, memberId = {memberId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: PurchaseBid, parameters: [storeId = {storeId}, bidId = {bidId}, memberId = {memberId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: PurchaseBid, parameters: [storeId = {storeId}, bidId = {bidId}, memberId = {memberId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
     }
 }

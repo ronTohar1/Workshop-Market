@@ -96,10 +96,72 @@ public class PurchasesManager
 
         string finalReceipt = String.Join("", receipts.Values);
         return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
+    }
 
+    // an adaptation of the purchase cart for cases where its for a bid
+    public Purchase PurchaseBid(Bid bid, int memberId)
+    {
+        if (bid.memberId != memberId)
+            throw new MarketException("Not your bid to purchase");
+        // Basic fields for the purcahse
+        int buyerId = bid.memberId;
+        int storeId = bid.storeId;
+        int productId = bid.productId;
+        double bidPrice = bid.bid;
 
+        Store? s = storeController.GetStore(storeId);
+        if (!s.checkAllApproved(bid))
+            throw new MarketException("Cant purchase bid until all owners and managers approve");
 
+        Buyer buyer = this.GetBuyerOrThrowException(buyerId);
 
+        IDictionary<int, int> storesTransactions;
+
+        // get the product in a bag for the purchse 
+        ProductInBag prod = new ProductInBag(productId, storeId);
+        IDictionary<ProductInBag, int> products = new ConcurrentDictionary<ProductInBag, int>();
+        products.Add(prod, 1);
+
+        // set up in the theme of a normal purchase
+        ShoppingBag bag = new ShoppingBag(bid.storeId, products);
+        ICollection<ShoppingBag> shoppingBags = new List<ShoppingBag>();
+        shoppingBags.Add(bag);
+
+        VerifyStoresAndProducts(shoppingBags); //Verifying all stores are open and contain all products requested.
+        string? cantBuy = ReserveProducts(buyerId, shoppingBags, out storesTransactions);
+        if (cantBuy != null)
+        {
+            TryRollback(storesTransactions);
+            throw new MarketException(cantBuy);
+        }
+        // ---------------------------------------------------------
+        // Try buying products
+
+        // setting up the price to be the bid price
+        IDictionary<int, double> storesTotal = new ConcurrentDictionary<int, double>();
+        storesTotal.Add(storeId, bidPrice);
+        double purchaseTotal = storesTotal.Values.Sum(x => x); // Sum prices of all products
+
+        if (!externalServicesController.makePayment())
+        {
+            TryRollback(storesTransactions);
+            throw new MarketException("Could not make payment");
+        }
+        if (!externalServicesController.makeDelivery())
+        {
+            externalServicesController.CancelPayment();
+            TryRollback(storesTransactions);
+            throw new MarketException("Could not send a delivery");
+        }
+
+        IDictionary<int, string> receipts = GetReceipt(storesTransactions, shoppingBags);
+
+        ICollection<ShoppingBag> shoppingBagsInPurchase = new List<ShoppingBag>(shoppingBags); 
+        UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
+        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts);
+
+        string finalReceipt = String.Join("", receipts.Values);
+        return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
     }
 
     // Verifying all stores are open and the items in the shopping bag exist in the store.

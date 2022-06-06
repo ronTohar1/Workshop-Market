@@ -603,7 +603,7 @@ namespace MarketBackend.ServiceLayer
                 Store? s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<int>($"There isn't a store with an id {storeId}");
-                int id = s.AddBid(productId, memberId, bidPrice);
+                int id = s.AddBid(productId, memberId, storeId, bidPrice);
                 logger.Info($"AddBid was called with parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
                 return new Response<int>(id);
             }

@@ -11,6 +11,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private static int idCounter = 1;
         private static Mutex counterLock = new Mutex(false);
         public int id { get; }
+        public int storeId { get; set; }
         public int productId { get; set; }
         public int memberId { get; set; }
         public double bid { get; set; }
@@ -28,9 +29,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             counterLock.ReleaseMutex();
             return temp;
         }
-        public Bid(int productId, int memberId, double bid)
+        public Bid(int productId, int memberId, int storeId ,double bid)
         {
             this.id = getId();
+            this.storeId = storeId;
             this.productId = productId;
             this.memberId = memberId;
             this.bid = bid;

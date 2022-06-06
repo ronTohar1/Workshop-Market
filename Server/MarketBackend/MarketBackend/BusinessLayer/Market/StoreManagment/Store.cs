@@ -699,15 +699,38 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // ------------------------------- Bids --------------------------------
 
         //every member can add a bid
-        public int AddBid(int productId, int memberId, double bidPrice)
+        public int AddBid(int productId, int memberId, int storeId, double bidPrice)
         {
-            Bid bid = new Bid(productId, memberId, bidPrice);
+            Bid bid = new Bid(productId, memberId, storeId, bidPrice);
             bids.Add(bid.id, bid);
             notifyAllStoreOwners($"A bid has been made for the product {products[productId].name} for the price of {bidPrice}");
             notifyAllMembersWithRoleAndPermission($"A bid has been made for the product {products[productId].name} for the price of {bidPrice}", Role.Manager, Permission.handlingBids);
             return bid.id;
         }
 
+        public bool checkAllApproved(Bid bid)
+        {
+            approvebidLock.WaitOne();
+            IList<int> approved = bid.aprovingIds;
+
+            IList<int> owners = GetMembersInRole(Role.Owner);
+            foreach (int i in owners)
+                if (!approved.Contains(i))
+                {
+                    approvebidLock.ReleaseMutex();
+                    return false;
+                }
+
+            IList<int> managers = GetMembersInRole(Role.Manager);
+            foreach (int i in managers)
+                if (IsManagerWithPermission(i, Permission.handlingBids) && !approved.Contains(i))
+                {
+                    approvebidLock.ReleaseMutex();
+                    return false;
+                }
+            approvebidLock.ReleaseMutex();
+            return true;
+        }
         // bid actions owners and managers can do
         public void ApproveBid(int memberId, int bidId)
         {
@@ -718,30 +741,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             {
                 approvebidLock.WaitOne();
                 bid.approveBid(memberId);
-                IList<int> approved = bid.aprovingIds;
-
-                IList<int> owners = GetMembersInRole(Role.Owner);
-                foreach (int i in owners)
-                    if (!approved.Contains(i))
-                    {
-                        approvebidLock.ReleaseMutex();
-                        return;
-                    }
-
-                IList<int> managers = GetMembersInRole(Role.Manager);
-                foreach (int i in managers)
-                    if (IsManagerWithPermission(memberId, Permission.handlingBids) && !approved.Contains(i))
-                    {
-                        approvebidLock.ReleaseMutex();
-                        return;
-                    }
                 approvebidLock.ReleaseMutex();
 
-                //TODO: add pruchse for the product with the bid price for the member that asked
+                if (!checkAllApproved(bid))
+                    return;
 
                 Member m = membersGetter.Invoke(bid.memberId);
                 m.Notify($"The bid you placed for the product {products[bid.productId].name} was approved for the cost of {bid.bid}");
-
+             
             }
         }
 
@@ -773,6 +780,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (IsCoOwner(memberId) || IsManagerWithPermission(memberId, Permission.handlingBids))
                 return bid.aprovingIds;
             return null;
+        }
+
+        public Bid GetBid(int bidId)
+        {
+            return bids[bidId];
         }
 
         // actions for a member on his own bid

@@ -291,7 +291,7 @@ namespace TestMarketBackend.Acceptance
         {
             SetUpShoppingCarts();
             
-            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
             ServiceCart cart = cartResponse.Value;
@@ -306,7 +306,7 @@ namespace TestMarketBackend.Acceptance
         {
             IList<string> notificationsBefore = member2Notifications.ToList(); 
 
-            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
             Assert.IsTrue(response.IsErrorOccured());
 
             // member2 is logged in, checking that there wasn't a notification
@@ -320,11 +320,11 @@ namespace TestMarketBackend.Acceptance
             // A user purchases all iphones in the store
             buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
             buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, iphoneProductAmount);
-            Response<ServicePurchase> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id);
+            Response<ServicePurchase> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id, paymentDetails, supplyDetails);
             Assert.True(!firstUserResponse.IsErrorOccured());
 
             IList<string> notificationsBefore = member3Notifications.ToList();
-            Response<ServicePurchase> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id);
+            Response<ServicePurchase> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
 
             Assert.IsTrue(secondUserResponse.IsErrorOccured() );
 

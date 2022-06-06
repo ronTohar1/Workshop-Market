@@ -104,5 +104,14 @@ namespace MarketBackend.BusinessLayer.Admins
 
         public bool MemberExists(int memberId)
         => membersController.GetMember(memberId) != null;
+
+        public double GetSystemDailyProfit(int requestingId)
+        {
+            VerifyAdmin(requestingId);
+            double total = 0;
+            foreach (Store store in storeController.GetOpenStores().Values)
+                total += store.GetDailyProfit();
+            return total;
+        }
     }
 }

@@ -696,6 +696,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return discountManager.GetDescriptions();
         }
+
         // ------------------------------- Bids --------------------------------
 
         //every member can add a bid
@@ -808,6 +809,34 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (bid.memberId != memberId)
                 throw new MarketException("The counter offer cant be denied because it is not your bid!");
             bids.Remove(bidId);
+        }
+
+        // ------------------------------ Daily profit -------------------------
+        public virtual double GetDailyProfit(int memberId)
+        {
+            string permissionError = CheckAtLeastCoOwnerPermission(memberId);
+            if (permissionError != null)
+            {
+                throw new MarketException("Could not get the store daily profit: " + permissionError);
+            }
+            return GetDailyProfit();
+        }
+        public virtual double GetDailyProfit()
+        {
+            double total = 0;
+            int day = DateTime.Now.Day;
+            int month = DateTime.Now.Month;
+            int year = DateTime.Now.Year;
+
+            foreach (Purchase p in purchaseHistory)
+            {
+                DateTime date = p.purchaseDate;
+                if ((date.Day == day) && (date.Month == month) && (date.Year == year))
+                {
+                    total += p.purchasePrice;
+                }
+            }
+            return total;
         }
 
         // ------------------------------ General ------------------------------

@@ -278,7 +278,7 @@ namespace MarketBackend.ServiceLayer
         }
 
         //done
-        public Response<IDictionary<int, IList<ServiceProduct>>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null, int? productId = null, IList<int> productIds = null)
+        public Response<IDictionary<int, IList<ServiceProduct>>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null, int? productId = null, IList<int> productIds = null, ServiceMemberInRole memberInRole = null, bool storesWithProductsThatPassedFilter = true)
         {
             try
             {
@@ -295,18 +295,20 @@ namespace MarketBackend.ServiceLayer
                     filter.FilterProductId((int)productId); // right after check that is not null
                 if (productIds != null)
                     filter.FilterProductIds(productIds);
-                IDictionary<int, IList<Product>> prods = storeController.SearchProductsInOpenStores(filter);
-                logger.Info($"ProductsSearch was called with parameters [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}]");
+                if (memberInRole != null)
+                    filter.FilterStoreOfMemberInRole(memberInRole.MemberId, memberInRole.RoleInStore);
+                IDictionary<int, IList<Product>> prods = storeController.SearchProductsInOpenStores(filter, storesWithProductsThatPassedFilter); 
+                logger.Info($"ProductsSearch was called with parameters [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}, is memberInRole null ? = {memberInRole == null}, storesWithProductsThatPassedFilter: {storesWithProductsThatPassedFilter}]");
                 return new Response<IDictionary<int, IList<ServiceProduct>>>(mapToServiceMap(prods));
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}]");
+                logger.Error(mex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}, is memberInRole null ? = {memberInRole == null}, storesWithProductsThatPassedFilter: {storesWithProductsThatPassedFilter}]");
                 return new Response<IDictionary<int, IList<ServiceProduct>>>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}]");
+                logger.Error(ex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}, is memberInRole null ? = {memberInRole == null}, storesWithProductsThatPassedFilter: {storesWithProductsThatPassedFilter}]");
                 return new Response<IDictionary<int, IList<ServiceProduct>>>("Sorry, an unexpected error occured. Please try again");
             }
         }

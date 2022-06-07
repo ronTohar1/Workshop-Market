@@ -1514,5 +1514,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             store.AddPurchaseRecord(founder.Id, p2.Object);
             Assert.Throws<MarketException>(() => store.GetDailyProfit(founder.Id + 1));
         }
+
+        // -------------------------- Bid tests ----------------------------------
     }
 }

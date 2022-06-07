@@ -1,46 +1,73 @@
-import * as React from "react";
+import * as React from "react"
 import {
   DataGrid,
   GridCellEditCommitParams,
   GridColDef,
-} from "@mui/x-data-grid";
-import {
-  alpha,
-  Box,
-  Button,
-  createTheme,
-  Fab,
-  Stack,
-  Toolbar,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import Navbar from "../Componentss/Navbar";
-import Product from "../DTOs/Product";
-import { AddShoppingCart } from "@mui/icons-material";
-import AddProductForm from "../Componentss/Forms/AddProductForm";
-import * as storeService from "../services/StoreService";
-import SearchPage from "./Search";
-import Store from "../DTOs/Store";
+} from "@mui/x-data-grid"
+import { Box, Stack } from "@mui/material"
+import Navbar from "../Componentss/Navbar"
+import Product from "../DTOs/Product"
+import AddProductForm from "../Componentss/Forms/AddProductForm"
+import Store from "../DTOs/Store"
+import { NumberParam, StringParam, useQueryParam } from "use-query-params"
+import { serverGetStore } from "../services/StoreService"
+import { pathHome } from "../Paths"
+import { useNavigate } from "react-router-dom"
+import { fetchResponse } from "../services/GeneralService"
+import toolBar from "../Componentss/StorePageToolbar"
+import { serverAddToCart } from "../services/BuyersService"
+import { getBuyerId } from "../services/SessionService"
+import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
 
-export default function StorePageById(store: Store) {
-  const startingPageSize: number = 10;
-  const [pageSize, setPageSize] = React.useState<number>(startingPageSize);
-  const [numSelected, setNumSelected] = React.useState<number>(0);
+const fields = {
+  name: "name",
+  price: "price",
+  available_quantity: "availableQuantity",
+  category: "category",
+}
+
+const handleFailToAdd = (products: Product[]) => {
+  const failString: string =
+    "Failed to add the following products to your cart:\n" +
+    products.map((product: Product) => product.name)
+  alert(failString)
+}
+
+const handleSucceedToAdd = (products: Product[]) => {
+  const success: string =
+    "Successfully added the following products to your cart:\n" +
+    products.map((product: Product) => product.name)
+}
+
+export default function StorePage() {
+  const startingPageSize: number = 10
+
+  const navigate = useNavigate()
+  const [pageSize, setPageSize] = React.useState<number>(startingPageSize)
+  const [selectionModel, setSelectionModel] = React.useState<number[]>([])
   const [selectedProductsIds, setSelectedProductsIds] = React.useState<
     number[]
-  >([]);
-  const storeProducts: Product[] = store.products;
-  const isManager: boolean = true; //TODO: change to real value. storeService.getMemberInRole(...)
-  const [rows, setRows] = React.useState<Product[]>(storeProducts);
+  >([])
+  const isManager: boolean = true //TODO: change to real value. storeService.getMemberInRole(...)
+  const [products, setProducts] = React.useState<Product[]>([])
+  const [storeId] = useQueryParam("id", NumberParam)
+  const [store, setStore] = React.useState<Store | null>(null)
+  const [openSnack, setOpenSnack] = React.useState<boolean>(false)
+  const [addToCartMsg, setAddToCartMsg] = React.useState<string>("")
 
-  const fields = {
-    name: "name",
-    price: "price",
-    available_quantity: "available_quantity",
-    category: "category",
-  };
+  React.useEffect(() => {
+    fetchResponse(serverGetStore(storeId))
+      .then((store) => {
+        setStore(store)
+        setProducts(store.products)
+      })
+      .catch((e) => {
+        alert(e)
+        navigate(pathHome)
+      })
+  }, [storeId])
 
+ 
   const columns: GridColDef[] = [
     {
       field: fields.name,
@@ -81,143 +108,72 @@ export default function StorePageById(store: Store) {
       // valueGetter: (params: GridValueGetterParams) =>
       //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
     },
-  ];
+  ]
 
-  const toolBar = (numSelected: number, handleAddToCart: () => void) => {
-    return (
-      <Toolbar
-        sx={{
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 },
-          ...(numSelected > 0 && {
-            bgcolor: (theme) =>
-              alpha(
-                theme.palette.primary.main,
-                theme.palette.action.activatedOpacity
-              ),
-          }),
-        }}>
-        {numSelected > 0 && isManager ? (
-          <Typography
-            sx={{ flex: "1 1 100%" }}
-            color='inherit'
-            variant='subtitle1'
-            component='div'>
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography
-            sx={{ flex: "1 1 100%" }}
-            variant='h4'
-            id='tableTitle'
-            component='div'>
-            {store.name}
-          </Typography>
-        )}
-        {numSelected > 0 && isManager ? (
-          <Tooltip title='Add To Cart'>
-            <Fab
-              size='medium'
-              color='primary'
-              aria-label='add'
-              onClick={() => handleAddToCart()}>
-              <AddShoppingCart />
-            </Fab>
-          </Tooltip>
-        ) : (
-          <Box></Box>
-        )}
-      </Toolbar>
-    );
-  };
-
-  function updatePrice(product: Product, price: number) {
-    if (price != null) product.price = price;
-  }
-  function updateAvailableQuantity(
-    product: Product,
-    available_quantity: number
-  ) {
-    if (available_quantity != null)
-      product.available_quantity = available_quantity;
-  }
-  function updateCategory(product: Product, category: string) {
-    if (category != null) product.category = category;
+  const updateSelection = (newSelection: any) => {
+    const chosenIds: number[] = newSelection
+    setSelectionModel(newSelection)
+    setSelectedProductsIds(chosenIds)
   }
 
   const handleNewSelection = (newSelectionModel: any) => {
-    const chosenIds: number[] = newSelectionModel;
-    setNumSelected(chosenIds.length);
-    setSelectedProductsIds(chosenIds);
-  };
+    updateSelection(newSelectionModel)
+  }
 
   const handleAddToCart = () => {
-    rows.forEach((prod) => {
+    const failedToAdd: Product[] = []
+    const succeedToAdd: Product[] = []
+    products.forEach((prod: Product) => {
       if (selectedProductsIds.includes(prod.id)) {
-        console.log("Adding to cart: " + prod.name);
+        fetchResponse(serverAddToCart(getBuyerId(), prod.id, prod.storeId, 1))
+          .then((success: boolean) => {
+            success ? succeedToAdd.push(prod) : failedToAdd.push(prod)
+          })
+          .catch((e) => {
+            failedToAdd.push(prod)
+            alert(e)
+          })
       }
-    });
-  };
+    })
 
-  const handleCellEdit = (e: GridCellEditCommitParams) => {
-    const newRows = rows.map((row) => {
-      if (row.id === e.id) {
-        switch (e.field) {
-          case fields.price:
-            updatePrice(row, e.value);
-            break;
-          case fields.available_quantity:
-            updateAvailableQuantity(row, e.value);
-            break;
-          case fields.category:
-            updateCategory(row, e.value);
-            break;
-        }
-      }
-      return row;
-    });
-    setRows(newRows);
-    // alert(e.field + " Changed into "+ e.value + " id "+ e.id)
-  };
-
-  const handleAddProduct = (productToAdd: Product) => {
-    setRows([...rows, productToAdd]);
-    console.log(rows.map((r)=>r.name))
-  };
+    if (failedToAdd.length === 0) {
+      setAddToCartMsg("Added "  + " products to cart")
+      setOpenSnack(true)
+    } else handleFailToAdd(failedToAdd)
+    updateSelection([])
+  }
 
   return (
     <Box>
       <Navbar />
-      {toolBar(numSelected, handleAddToCart)}
-      <Stack direction='row'>{}</Stack>
-      <div>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          sx={{
-            width: "100vw",
-            height: "80vh",
-            "& .MuiDataGrid-cell:hover": {
-              ...(isManager && {
-                color: "primary.main",
-                border: 1,
-              }),
-            },
-          }}
-          // Paging:
-          pageSize={pageSize}
-          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[10, 20, 25]}
-          pagination
-          // Selection:
-          checkboxSelection
-          disableSelectionOnClick
-          onSelectionModelChange={handleNewSelection}
-          isCellEditable={(params) => isManager}
-          onCellEditCommit={handleCellEdit}
-        />
-        {isManager ? AddProductForm(handleAddProduct) : null}
+      {toolBar(selectedProductsIds.length, store, handleAddToCart)}
+      <Stack direction="row">{}</Stack>
+      <div style={{ height: "50vh", width: "100%" }}>
+        <div style={{ display: "flex", height: "100%" }}>
+          <div style={{ flexGrow: 1 }}>
+            <DataGrid
+              rows={products}
+              columns={columns}
+              sx={{
+                width: "100vw",
+                // height: "100vh",
+              }}
+              // Paging:
+              pageSize={pageSize}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={[10, 20, 25]}
+              pagination
+              // Selection:
+              checkboxSelection
+              disableSelectionOnClick
+              onSelectionModelChange={handleNewSelection}
+              selectionModel={selectionModel}
+              isCellEditable={(params) => false}
+            />
+          </div>
+        </div>
       </div>
+      {SuccessSnackbar(addToCartMsg, openSnack, () => setOpenSnack(false))}
     </Box>
-  );
+  )
 }

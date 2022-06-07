@@ -147,8 +147,8 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpPost("OpenStore")]
-        public ActionResult<Response<int>> OpenStore([FromBody] OpenStoreRequest request)
+        [HttpPost("OpenNewStore")]
+        public ActionResult<Response<int>> OpenNewStore([FromBody] OpenStoreRequest request)
         {
             Response<int> response = storeManagementFacade.OpenStore(
                 request.UserId, request.StoreName);

@@ -11,13 +11,19 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
     {
         public int Id { get; }
         public string Name { get; }
-        public IList<int> ProductsIds { get; }
 
-        public ServiceStore(int id, string name, IList<int> productsIds)
+        public bool IsOpen { get; }
+        public ServiceMember Founder { get; }
+        public IList<ServiceProduct> Products { get; private set; }
+
+        public ServiceStore(int id, Store store, IList<ServiceProduct> productsIds)
         {
             Id = id;
-            Name = name;
-            ProductsIds = productsIds;
+            Name = store.name;
+            Products = productsIds;
+            IsOpen = store.isOpen;
+            Founder = new ServiceMember(store.founder);
+
         }
 
         public override bool Equals(Object? other)
@@ -25,14 +31,14 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             if (other == null || !(other is ServiceStore))
                 return false;
             ServiceStore otherStore = (ServiceStore)other;
-            if (otherStore.ProductsIds == null)
+            if (otherStore.Products == null)
                 return false;
-            return this.Id == otherStore.Id && this.Name.Equals(otherStore.Name) && SameElements(this.ProductsIds, otherStore.ProductsIds);
+            return this.Id == otherStore.Id && this.Name.Equals(otherStore.Name) && SameElements(this.Products, otherStore.Products);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, Name, ProductsIds.GetHashCode()); // todo: make sure this is okay
+            return HashCode.Combine(Id, Name, Products.GetHashCode()); // todo: make sure this is okay
         }
 
         private bool SameElements<T>(IList<T> list1, IList<T> list2)

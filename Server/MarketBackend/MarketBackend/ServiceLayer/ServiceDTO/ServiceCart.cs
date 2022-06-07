@@ -9,7 +9,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     public class ServiceCart
     {
-        internal IDictionary<int, ServiceShoppingBag> ShoppingBags { get; }
+        public IDictionary<int, ServiceShoppingBag> ShoppingBags { get; }
 
         public ServiceCart() =>
             ShoppingBags = new Dictionary<int, ServiceShoppingBag>();

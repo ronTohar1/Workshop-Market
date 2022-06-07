@@ -1,51 +1,53 @@
-import { serverEnter } from "./BuyersService";
+import { useNavigate } from "react-router-dom"
+import { pathHome } from "../Paths"
+import { serverEnter } from "./BuyersService"
+import { fetchResponse } from "./GeneralService"
 
-const isInitOccured = "isInitOccured";
+const storage = sessionStorage
+const isInitOccured = "isInitOccured"
 
-const isGuest = "isGuest";
-const buyerId = "memberId";
+const isGuest = "isGuest"
+const buyerId = "buyerId"
 
 export async function initSession() {
-  const response = serverEnter();
-  try {
-    console.log(response)
-    const didInit = localStorage.getItem(isInitOccured);
-    console.log("dafsf" + didInit)
-    if (didInit === null) {
-      const id = await response;
-
-      localStorage.setItem(buyerId, String(id));
-      localStorage.setItem(isGuest, "true");
-      localStorage.setItem(isInitOccured, "true");
-      console.log("initiated")
-      
-    }
-  } catch (e) {
-    alert("Sorry, an unkown error has occured!");
-    window.close();
+  const didInit = storage.getItem(isInitOccured)
+  while (didInit === null) {
+    fetchResponse(serverEnter())
+      .then((guestId: number) => {
+        initFields(guestId)
+        alert("Hello, new guest!")
+      })
+      .catch((e) => {
+        alert("Sorry, dear visitor, an unkown error has occured!")
+      })
   }
-
-  
 }
 
-type Primitive = string | number | boolean;
-function createGetter<T extends Primitive>(
-  convert: (value: string | null | undefined) => T,
-  field: string
-): () => T {
-  return () => convert(localStorage.getItem(field));
+function initFields(id: number) {
+  storage.setItem(buyerId, String(id))
+  storage.setItem(isGuest, "true")
+  storage.setItem(isInitOccured, "true")
 }
 
-function createSetter<T extends Primitive>(field: string): (v: T) => void {
-  return (newValue: T) => localStorage.setItem(field, String(newValue));
+export function clearSession() {
+  storage.clear()
+}
+
+function createGetter<T>(field: string): () => T {
+  const val = storage.getItem(field)
+  return () => (val === null ? val : JSON.parse(val))
+}
+
+function createSetter<T>(field: string): (v: T) => void {
+  return (newValue: T) => storage.setItem(field, JSON.stringify(newValue))
 }
 
 // Guest setter Getter
-export const getIsGuest = createGetter(Boolean, isGuest);
+export const getIsGuest: () => boolean = createGetter(isGuest)
 
-export const setIsGuest: (v: boolean) => void = createSetter(isGuest);
+export const setIsGuest: (v: boolean) => void = createSetter(isGuest)
 
 // member setter Getter
-export const getBuyerId = createGetter(Number, buyerId);
+export const getBuyerId: () => number = createGetter(buyerId)
 
-export const setBuyerId: (v: number) => void = createSetter(buyerId);
+export const setBuyerId: (v: number) => void = createSetter(buyerId)

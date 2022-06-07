@@ -7,18 +7,31 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO
 {
-    internal class ServiceShoppingBag
+    public class ServiceShoppingBag
     {
-        private IDictionary<ServiceProductInBag, int> productsAmounts;
-        internal IDictionary<ServiceProductInBag, int> ProductsAmounts { get { return productsAmounts; } }
+        //public IDictionary<ServiceProductInBag, int> ProductsAmounts { get; private set; }
+        public IDictionary<int, int> ProductsAmounts { get; private set; } // product id to amount
+
+        public int StoreId { get; private set; }
+        //public ServiceShoppingBag(ShoppingBag sb)
+        //{
+        //    this.StoreId = sb.StoreId;
+        //    IDictionary<ProductInBag, int> pam = sb.ProductsAmounts;
+
+        //    ProductsAmounts = new Dictionary<ServiceProductInBag, int>();
+        //    foreach (ProductInBag pib in pam.Keys)
+        //        ProductsAmounts.Add(new ServiceProductInBag(pib), pam[pib]);
+
+        //}
         public ServiceShoppingBag(ShoppingBag sb)
         {
+            this.StoreId = sb.StoreId;
             IDictionary<ProductInBag, int> pam = sb.ProductsAmounts;
 
-            productsAmounts = new Dictionary<ServiceProductInBag, int>();
+            ProductsAmounts = new Dictionary<int, int>();
             foreach (ProductInBag pib in pam.Keys)
-                productsAmounts.Add(new ServiceProductInBag(pib), pam[pib]);
-     
+                ProductsAmounts.Add(pib.ProductId, pam[pib]);
+
         }
 
         public override bool Equals(object? obj)
@@ -31,23 +44,38 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             return IsEqualProductAmounts(other);
 
         }
-
         private bool IsEqualProductAmounts(ServiceShoppingBag other)
         {
 
-            foreach (KeyValuePair<ServiceProductInBag, int> item in other.productsAmounts)
+            foreach (KeyValuePair<int, int> item in other.ProductsAmounts)
             {
-                ServiceProductInBag productInBag = item.Key;
+              
                 int amount = item.Value;
 
-                if (!this.productsAmounts.ContainsKey(productInBag))
+                if (!this.ProductsAmounts.ContainsKey(item.Key))
                     return false;
-                if (!this.productsAmounts[productInBag].Equals(amount))
+                if (!this.ProductsAmounts[item.Key].Equals(amount))
                     return false;
             }
 
             return true;
         }
+        //private bool IsEqualProductAmounts(ServiceShoppingBag other)
+        //{
+
+        //    foreach (KeyValuePair<ServiceProductInBag, int> item in other.ProductsAmounts)
+        //    {
+        //        ServiceProductInBag productInBag = item.Key;
+        //        int amount = item.Value;
+
+        //        if (!this.ProductsAmounts.ContainsKey(productInBag))
+        //            return false;
+        //        if (!this.ProductsAmounts[productInBag].Equals(amount))
+        //            return false;
+        //    }
+
+        //    return true;
+        //}
     }
 
     

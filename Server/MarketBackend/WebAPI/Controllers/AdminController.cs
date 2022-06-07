@@ -52,9 +52,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("LoggedInUsers")]
-        public ActionResult<Response<bool>> GetLoggedInMembers([FromBody] UserRequest request)
+        public ActionResult<Response<IList<ServiceMember>>> GetLoggedInMembers([FromBody] UserRequest request)
         {
-            Response<IList<int>> response = adminFacade.GetLoggedInMembers(request.UserId);
+            Response<IList<ServiceMember>> response = adminFacade.GetLoggedInMembers(request.UserId);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
@@ -63,7 +63,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("MemberInfo")]
-        public ActionResult<Response<bool>> GetMemberInfo([FromBody] AdminRequest request)
+        public ActionResult<Response<ServiceMember>> GetMemberInfo([FromBody] AdminRequest request)
         {
             Response<ServiceMember> response = adminFacade.GetMemberInfo(request.UserId, request.TargetId);
 

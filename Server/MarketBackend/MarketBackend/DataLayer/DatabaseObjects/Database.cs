@@ -1,4 +1,5 @@
 ﻿using MarketBackend.DataLayer.DataDTOs;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 {
     public class Database : DbContext
     {
-        public DbSet<DataProduct> Products { get; set; }
+        public DbSet<DataMember> Members { get; set; }
 
         private const string databaseName = "MarketDatabase";
         private const string instanceName = "SQLEXPRESS"; 

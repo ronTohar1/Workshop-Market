@@ -174,7 +174,7 @@ public class StoreController
 
     // r 2.2, r 4.9
     // returns the search results from open stores by their ids
-    public IDictionary<int, IList<Product>> SearchProductsInOpenStores(ProductsSearchFilter filter)
+    public IDictionary<int, IList<Product>> SearchProductsInOpenStores(ProductsSearchFilter filter, bool storesWithProductsThatPassedFilter = true)
     {
         IEnumerable<KeyValuePair<int, Store>> passedStoresFilter = openStores.Where(pair => filter.FilterStore(pair.Value));
 
@@ -184,7 +184,7 @@ public class StoreController
         foreach (KeyValuePair<int, Store> idStorepair in passedStoresFilter)
         {
             passedProductsFilter = idStorepair.Value.SerachProducts(filter);
-            if (passedProductsFilter.Count > 0)
+            if (!storesWithProductsThatPassedFilter || passedProductsFilter.Count > 0)
             {
                 result[idStorepair.Key] = passedProductsFilter;
             }

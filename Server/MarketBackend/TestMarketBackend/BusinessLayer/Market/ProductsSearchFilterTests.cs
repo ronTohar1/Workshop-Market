@@ -18,6 +18,8 @@ namespace TestMarketBackend.BusinessLayer.Market
         private static Predicate<Object> returnsTrue = input => true;
         private static Predicate<Object> returnsFalse = input => false;
 
+        private const string storeDefualtName = "theStore1"; 
+
         private const string productDefaultName = "productName";
         private const double productDefaultPrice = 3.3;
         private const string productDefaultCategory = "productCategory";
@@ -30,7 +32,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             productsSearchFilter = new ProductsSearchFilter();
         }
 
-        private Mock<Store> MakeStoreWithMockFields(string name)
+        private Mock<Store> MakeStoreWithMockFields(string name = storeDefualtName)
         {
             Mock<Security> securityMock = new Mock<Security>();
             Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object);
@@ -46,6 +48,26 @@ namespace TestMarketBackend.BusinessLayer.Market
             storeMcok.Setup(store =>
                     store.GetName()).
                         Returns(name);
+
+            return storeMcok.Object;
+        }
+
+        private Store MakeStoreMockGetMembersInRole(int[] membersInRole, Role role)
+        {
+            Mock<Store> storeMcok = MakeStoreWithMockFields();
+
+            IList<int> membersInRoleList; 
+            foreach (Role roleToMock in Enum.GetValues(typeof(Role)))
+            {
+                if (roleToMock == role)
+                    membersInRoleList = membersInRole.ToList();
+                else
+                    membersInRoleList = new List<int>();
+
+                storeMcok.Setup(store =>
+                    store.GetMembersInRoleNoPermissionsCheck(It.Is<Role>(roleArgument => roleArgument == roleToMock))).
+                        Returns(membersInRoleList); 
+            }
 
             return storeMcok.Object;
         }
@@ -132,6 +154,24 @@ namespace TestMarketBackend.BusinessLayer.Market
         {
             productsSearchFilter.FilterStoreName(filterStoreName);
             Store store = MakeStoreMockGetName(actualStoreName);
+            Assert.AreEqual(expectedResult, productsSearchFilter.FilterStore(store));
+        }
+
+        // ----------- FilterStoreOfMemberInRole() -----------------------------
+
+        [Test]
+        [TestCase(new int[] { }, Role.Owner, 1, Role.Owner, false)]
+        [TestCase(new int[] { 1 }, Role.Owner, 2, Role.Owner, false)]
+        [TestCase(new int[] { 1 }, Role.Manager, 1, Role.Owner, false)]
+        [TestCase(new int[] { 1 }, Role.Owner, 1, Role.Manager, false)]
+        [TestCase(new int[] { 1 }, Role.Owner, 1, Role.Owner, true)]
+        [TestCase(new int[] { 1, 2 }, Role.Owner, 2, Role.Owner, true)]
+        [TestCase(new int[] { 1, 2 }, Role.Manager, 2, Role.Manager, true)]
+
+        public void TestFilterStoreOfMemberInRole(int[] actualMembersInRole, Role actualRole, int filterMemberInRole, Role filterRole, bool expectedResult)
+        {
+            productsSearchFilter.FilterStoreOfMemberInRole(filterMemberInRole, filterRole); 
+            Store store = MakeStoreMockGetMembersInRole(actualMembersInRole, actualRole);
             Assert.AreEqual(expectedResult, productsSearchFilter.FilterStore(store));
         }
 

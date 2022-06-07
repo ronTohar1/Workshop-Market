@@ -232,9 +232,14 @@ namespace MarketBackend.ServiceLayer
         {
             // try and catch is in calling functions 
 
-            IList<int> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => product.id).ToList();
+            IList<ServiceProduct> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => CreateServiceProduct(product, storeId, store.name)).ToList();
 
-            return new ServiceStore(storeId, store.GetName(), productsIds);
+            return new ServiceStore(storeId, store, productsIds);
+        }
+
+        private ServiceProduct CreateServiceProduct(Product product, int storeId, string storeName)
+        {
+            return new ServiceProduct(product, storeId, storeName);
         }
 
         //done
@@ -264,21 +269,24 @@ namespace MarketBackend.ServiceLayer
         private IDictionary<int, IList<ServiceProduct>> mapToServiceMap(IDictionary<int, IList<Product>> map)
         {
             IDictionary<int, IList<ServiceProduct>> result = new Dictionary<int, IList<ServiceProduct>>();
-            foreach (int key in map.Keys)
+            foreach (int storeId in map.Keys)
             {
-                IList<Product> products = map[key];
+                IList<Product> products = map[storeId];
                 IList<ServiceProduct> l = new List<ServiceProduct>();
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    throw new Exception("Store cannot be found !");
                 foreach (Product product in products)
                 {
-                    l.Add(new ServiceProduct(product));
+                    l.Add(CreateServiceProduct(product,storeId,s.name));
                 }
-                result[key] = l;
+                result[storeId] = l;
             }
             return result;
         }
 
         //done
-        public Response<IDictionary<int, IList<ServiceProduct>>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null, int? productId = null, IList<int> productIds = null)
+        public Response<IDictionary<int, IList<ServiceProduct>>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null, int? productId = null, IList<int> productIds = null, ServiceMemberInRole memberInRole = null, bool storesWithProductsThatPassedFilter = true)
         {
             try
             {
@@ -295,18 +303,20 @@ namespace MarketBackend.ServiceLayer
                     filter.FilterProductId((int)productId); // right after check that is not null
                 if (productIds != null)
                     filter.FilterProductIds(productIds);
-                IDictionary<int, IList<Product>> prods = storeController.SearchProductsInOpenStores(filter);
-                logger.Info($"ProductsSearch was called with parameters [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}]");
+                if (memberInRole != null)
+                    filter.FilterStoreOfMemberInRole(memberInRole.MemberId, memberInRole.RoleInStore);
+                IDictionary<int, IList<Product>> prods = storeController.SearchProductsInOpenStores(filter, storesWithProductsThatPassedFilter); 
+                logger.Info($"ProductsSearch was called with parameters [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}, is memberInRole null ? = {memberInRole == null}, storesWithProductsThatPassedFilter: {storesWithProductsThatPassedFilter}]");
                 return new Response<IDictionary<int, IList<ServiceProduct>>>(mapToServiceMap(prods));
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}]");
+                logger.Error(mex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}, is memberInRole null ? = {memberInRole == null}, storesWithProductsThatPassedFilter: {storesWithProductsThatPassedFilter}]");
                 return new Response<IDictionary<int, IList<ServiceProduct>>>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}]");
+                logger.Error(ex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}, is memberInRole null ? = {memberInRole == null}, storesWithProductsThatPassedFilter: {storesWithProductsThatPassedFilter}]");
                 return new Response<IDictionary<int, IList<ServiceProduct>>>("Sorry, an unexpected error occured. Please try again");
             }
         }

@@ -1,11 +1,11 @@
-import Product from "./Product";
-class ShoppingBag {
-    productsAmouns: Map<Product, number>
-  
-    constructor(productsAmouns:  Map<Product, number>,) {
-      this.productsAmouns = productsAmouns;
-    }
+
+export default class ShoppingBag {
+  productsAmounts: Map<number, number> // Map of product id --> quantity
+  storeId: number
+  constructor(productsAmounts: Map<number, number>, storeId: number) {
+    this.storeId = storeId
+    this.productsAmounts = productsAmounts
   }
-  
-  export default ShoppingBag;
-  
+}
+
+

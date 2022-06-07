@@ -546,14 +546,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
 
         // r 4.11, r 5
-        public IList<int> GetMembersInRole(int memberId, Role role) {
+        public virtual IList<int> GetMembersInRole(int memberId, Role role) {
             string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.RecieiveRolesInfo); 
             if (permissionError != null)
                 throw new MarketException("Error in getting members in role: " + role.ToString() + " " + permissionError);
-            return GetMembersInRole(role);
+            return GetMembersInRoleNoPermissionsCheck(role); 
         }
 
-        private IList<int> GetMembersInRole(Role role)
+        public virtual IList<int> GetMembersInRoleNoPermissionsCheck(Role role)
         {
             lock (isOpenMutex)
             {
@@ -648,7 +648,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             //TODO check if permission alows to handle discounts
             string permissionError = CheckAtLeastManagerWithPermission(memberId,Permission.DiscountPolicyManagement);
             if (permissionError != null)
-                throw new MarketException("Could not add discount policy: " + permissionError);
+                throw new MarketException("Could not add discount policy: \n" + permissionError);
             
             int id = discountManager.AddDiscount(descrption, exp);
             return id;
@@ -659,7 +659,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             //TODO check if permission alows to handle discounts
             string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.DiscountPolicyManagement);
             if (permissionError != null)
-                throw new MarketException("Could not remove discount policy: " + permissionError);
+                throw new MarketException("Could not remove discount policy: \n" + permissionError);
 
             discountManager.RemoveDiscount(disId);
         }
@@ -671,7 +671,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             //TODO check if permission alows to handle discounts
             string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.purchasePolicyManagement);
             if (permissionError != null)
-                throw new MarketException("Could not add purchase policy: " + permissionError);
+                throw new MarketException("Could not add purchase policy: \n" + permissionError);
 
             int id = purchaseManager.AddPurchasePolicy(descrption, exp);
             return id;
@@ -682,7 +682,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             //TODO check if permission alows to handle discounts
             string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.purchasePolicyManagement);
             if (permissionError != null)
-                throw new MarketException("Could not add purchase policy: " + permissionError);
+                throw new MarketException("Could not add purchase policy: \n" + permissionError);
 
             purchaseManager.RemovePurchasePolicy(policyId);
         }
@@ -714,7 +714,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             approvebidLock.WaitOne();
             IList<int> approved = bid.aprovingIds;
 
-            IList<int> owners = GetMembersInRole(Role.Owner);
+            IList<int> owners = GetMembersInRoleNoPermissionsCheck(Role.Owner);
             foreach (int i in owners)
                 if (!approved.Contains(i))
                 {
@@ -722,13 +722,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                     return false;
                 }
 
-            IList<int> managers = GetMembersInRole(Role.Manager);
+            IList<int> managers = GetMembersInRoleNoPermissionsCheck(Role.Manager);
             foreach (int i in managers)
+            {
                 if (IsManagerWithPermission(i, Permission.handlingBids) && !approved.Contains(i))
                 {
                     approvebidLock.ReleaseMutex();
                     return false;
                 }
+            }
             approvebidLock.ReleaseMutex();
             return true;
         }

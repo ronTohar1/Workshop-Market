@@ -76,8 +76,8 @@ public class MembersController : IBuyersController
             members.Remove(memberId);
         }
     }
-    public IList<int> GetLoggedInMembers()
-       => members.Where(member =>member.Value.LoggedIn).Select(member=>member.Key).ToList();
+    public IDictionary<int, Member> GetLoggedInMembers()
+       => members.Where(member =>member.Value.LoggedIn).ToDictionary(mem =>mem.Key,mem=>mem.Value);
     
     private Member createNewMember(string username,string password)
     {

@@ -8,6 +8,7 @@ using Moq;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer.Buyers;
 using Autofac.Extras.Moq;
+using MarketBackend.BusinessLayer;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -107,8 +108,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestChangeProductAmount_ToZero(ProductInBag product, int storeId, int newAmount)
         {
             Assert.AreNotEqual(newAmount, cart.ShoppingBags[storeId].ProductsAmounts[product]);
-            cart.ChangeProductAmount(product, newAmount);
-            Assert.IsFalse(cart.ShoppingBags[storeId].ProductsAmounts.ContainsKey(product));
+            Assert.Throws<MarketException>(() => cart.ChangeProductAmount(product, newAmount));
         }
         #endregion
     }

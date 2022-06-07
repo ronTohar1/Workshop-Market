@@ -37,6 +37,12 @@ namespace MarketBackend.BusinessLayer.Market
             storePred = And(storePred, newFilter); 
         }
 
+        public void FilterStoreOfMemberInRole(int memberId, Role role)
+        {
+            Predicate<Store> newFilter = store => store.GetMembersInRoleNoPermissionsCheck(role).Contains(memberId);
+            storePred = And(storePred, newFilter);
+        }
+
         public void FilterProductName(string name)
         {
             Predicate<Product> newFilter = product => CheckStrings(product.name, name);

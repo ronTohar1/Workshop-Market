@@ -16,6 +16,9 @@ import StorePageOfManager from "./Pages/StorePageOfManager"
 import Checkout from "./Pages/Checkout"
 import Admin from "./Pages/Admin"
 import Product from "./DTOs/Product"
+import SimpleDiscount from "./Componentss/DiscountComponent.tsx/SimpleDiscount"
+import Store from "./DTOs/Store"
+import Member from "./DTOs/Member"
 
 const App = () => {
   // window.onunload = () => clearSession()
@@ -50,6 +53,7 @@ const App = () => {
           <Route path={Paths.pathCart} element={<CartPage />} />
           <Route path={Paths.pathLogin} element={<Login />} />
           <Route path={Paths.pathSearch} element={<SearchPage />} />
+          <Route path={Paths.pathDiscount} element={<SimpleDiscount store = {new Store(0,"",[],new Member(0, "moshe", true), true)} />} />
           {/* <Route
             path={Paths.pathStorePageOfManager}
             element={<StorePageOfManager />}

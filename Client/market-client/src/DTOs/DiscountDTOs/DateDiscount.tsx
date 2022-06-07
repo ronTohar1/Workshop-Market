@@ -14,6 +14,44 @@ class DateDiscount extends StoreDiscount {
         this.month = month;
         this.day = day;
     }
+    public toString = () : string => {
+        if (this.year==0){
+            if (this.month==0){
+                if (this.day==0){
+                    return `there isn't a date discount`;
+                }
+                else{
+                    return `each ${this.day}th day there is a ${this.discount}% discount at the store!`;
+                }
+            }
+            else{
+                if (this.day==0){
+                    return `each ${this.month}th there is a ${this.discount}% discount at the store!`;
+                }
+                else{
+                    return `once a year, at the ${this.day}/${this.month} there is a ${this.discount}% discount at the store!`;
+                }
+            }
+        }
+        else{
+            if (this.month==0){
+                if (this.day==0){
+                    return `at ${this.year} there is a ${this.discount}% discount at the store!`;
+                }
+                else{
+                    return `at ${this.year}, at each month at the ${this.day} there is a ${this.discount}% discount at the store!`;
+                }
+            }
+            else{
+                if (this.day==0){
+                    return `at the ${this.month}/${this.year} there is a ${this.discount}% discount at the store!`;
+                }
+                else{
+                    return `at the ${this.day}/${this.month}/${this.year} there is a ${this.discount}% discount !`;
+                }
+            }
+        }
+    }
   }
   
   export default DateDiscount

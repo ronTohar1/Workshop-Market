@@ -53,8 +53,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public void CounterOffer(double offer)
         {
             offerLock.WaitOne();
-            if (counterOffer)
+            if (counterOffer) {
+                offerLock.ReleaseMutex();
                 throw new MarketException("a counter offer has already been made to approve!");
+            }
             counterOffer = true;
             this.offer = offer;
             offerLock.ReleaseMutex();
@@ -63,8 +65,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public void approveCounterOffer()
         {
             offerLock.WaitOne();
-            if (!counterOffer)
+            if (!counterOffer) { 
+                offerLock.ReleaseMutex();
                 throw new MarketException("No counter offer made to approve!");
+            }
             counterOffer = false;
             this.bid = offer;
             offerLock.ReleaseMutex();

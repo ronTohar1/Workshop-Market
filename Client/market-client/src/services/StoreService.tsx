@@ -1,30 +1,29 @@
-import Store from "../DTOs/Store";
-import Member from "../DTOs/Member";
-import Product from "../DTOs/Product";
-import  {groupByStore } from "../services/ProductsService";
-import { serverPort } from "../Utils";
-import ClientResponse from "../services/Response";
-import List from "@mui/material/List";
-import Purchase from "../DTOs/Purchase";
+import Store from "../DTOs/Store"
+import Member from "../DTOs/Member"
+import Product from "../DTOs/Product"
+import { groupByStore } from "../services/ProductsService"
+import { serverPort } from "../Utils"
+import ClientResponse from "../services/Response"
+import List from "@mui/material/List"
+import Purchase from "../DTOs/Purchase"
 
 const stores = [
-  new Store(0, "Ronto's", [],new Member(0,"ron",true),true),
-  new Store(1, "Mithcell's", [],new Member(0,"ron",true),true),
-];
-export const dummyStore1 = stores[0];
-export const dummyStore2 = stores[1];
+  new Store(0, "Ronto's", [], new Member(0, "ron", true), true),
+  new Store(1, "Mithcell's", [], new Member(0, "ron", true), true),
+]
+export const dummyStore1 = stores[0]
+export const dummyStore2 = stores[1]
 
-
-export enum Roles{
+export enum Roles {
   Manager,
-  Owner
+  Owner,
 }
 
-
-
-export const serverGetStore = async (id: number |null | undefined): Promise<ClientResponse<Store>> => {
-  if (id === undefined || id === null || id < 0) return Promise.reject();
-  const uri = serverPort + "/api/Buyers/StoreInfo";
+export const serverGetStore = async (
+  id: number | null | undefined
+): Promise<ClientResponse<Store>> => {
+  if (id === undefined || id === null || id < 0) return Promise.reject()
+  const uri = serverPort + "/api/Buyers/StoreInfo"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -35,15 +34,18 @@ export const serverGetStore = async (id: number |null | undefined): Promise<Clie
     body: JSON.stringify({
       storeId: id,
     }),
-  });
-  return jsonResponse.json();
-};
+  })
+  return jsonResponse.json()
+}
 
-export async function addNewProduct(
+export async function serverAddNewProduct(
   userId: number,
-  product: Product
+  storeId: number,
+  productName: string,
+  price: number,
+  category: string
 ): Promise<ClientResponse<number>> {
-  const uri = serverPort + "/api/Stores/AddNewProduct";
+  const uri = serverPort + "/api/Stores/AddNewProduct"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -53,22 +55,44 @@ export async function addNewProduct(
     // body: '{\n  "userId": 0,\n  "storeId": 0,\n  "productName": "string",\n  "price": 0,\n  "category": "string"\n}',
     body: JSON.stringify({
       userId: userId,
-      storeId: product.storeId,
-      productName: product.name,
-      price: product.price,
-      category: product.category,
+      storeId: storeId,
+      productName: productName,
+      price: price,
+      category: category,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
-export async function addToProductInventory(
+export async function serverChangeProductAmountInInventory(
+  userId: number,
+  storeId: number,
+  productId: number,
+  newAmount: number,
+  oldAmount: number
+) {
+  if (newAmount < oldAmount)
+    return serverDecreaseProductAmount(
+      userId,
+      storeId,
+      productId,
+      oldAmount - newAmount
+    )
+  return serverIncreaseProductAmount(
+    userId,
+    storeId,
+    productId,
+    newAmount - oldAmount
+  )
+}
+
+export async function serverIncreaseProductAmount(
   userId: number,
   storeId: number,
   productId: number,
   amount: number
 ): Promise<ClientResponse<boolean>> {
-  const uri = serverPort + "/api/Stores/AddProduct";
+  const uri = serverPort + "/api/Stores/IncreaseProductAmount"
   const jsonResponse = await fetch(uri, {
     method: "PUT",
     headers: {
@@ -82,17 +106,17 @@ export async function addToProductInventory(
       productId: productId,
       amount: amount,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
-export async function removeFromProductInventory(
+export async function serverDecreaseProductAmount(
   userId: number,
   storeId: number,
   productId: number,
   amount: number
 ): Promise<ClientResponse<boolean>> {
-  const uri = serverPort + "/api/Stores/DecreaseProduct";
+  const uri = serverPort + "/api/Stores/DecreaseProductAmount"
   const jsonResponse = await fetch(uri, {
     method: "PUT",
     headers: {
@@ -106,8 +130,8 @@ export async function removeFromProductInventory(
       productId: productId,
       amount: amount,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
 export async function makeCoOwner(
@@ -115,7 +139,7 @@ export async function makeCoOwner(
   storeId: number,
   targetUserId: number
 ): Promise<ClientResponse<boolean>> {
-  const uri = serverPort + "/api/Stores/MakeCoOwner";
+  const uri = serverPort + "/api/Stores/MakeCoOwner"
   const jsonResponse = await fetch(uri, {
     method: "PUT",
     headers: {
@@ -128,8 +152,8 @@ export async function makeCoOwner(
       storeId: storeId,
       targetUserId: targetUserId,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
 export async function removeCoOwner(
@@ -137,7 +161,7 @@ export async function removeCoOwner(
   storeId: number,
   targetUserId: number
 ): Promise<ClientResponse<boolean>> {
-  const uri = serverPort + "/api/Stores/RemoveCoOwner";
+  const uri = serverPort + "/api/Stores/RemoveCoOwner"
   const jsonResponse = await fetch(uri, {
     method: "PUT",
     headers: {
@@ -150,8 +174,8 @@ export async function removeCoOwner(
       storeId: storeId,
       targetUserId: targetUserId,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
 export async function makeCoManager(
@@ -159,7 +183,7 @@ export async function makeCoManager(
   storeId: number,
   targetUserId: number
 ): Promise<ClientResponse<boolean>> {
-  const uri = serverPort + "/api/Stores/MakeCoManager";
+  const uri = serverPort + "/api/Stores/MakeCoManager"
   const jsonResponse = await fetch(uri, {
     method: "PUT",
     headers: {
@@ -172,8 +196,8 @@ export async function makeCoManager(
       storeId: storeId,
       targetUserId: targetUserId,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
 export async function serverGetMembersInRoles(
@@ -181,7 +205,7 @@ export async function serverGetMembersInRoles(
   storeId: number,
   role: Roles
 ): Promise<ClientResponse<number[]>> {
-  const uri = serverPort + "/api/Stores/MembersInRole";
+  const uri = serverPort + "/api/Stores/MembersInRole"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -194,15 +218,15 @@ export async function serverGetMembersInRoles(
       storeId: storeId,
       role: role,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
 export async function getFounder(
   userId: number,
   storeId: number
 ): Promise<ClientResponse<Member>> {
-  const uri = serverPort + "/api/Stores/Founder";
+  const uri = serverPort + "/api/Stores/Founder"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -214,8 +238,8 @@ export async function getFounder(
       userId: userId,
       storeId: storeId,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
 export async function getManagerPermission(
@@ -223,7 +247,7 @@ export async function getManagerPermission(
   storeId: number,
   targetUserId: number
 ): Promise<ClientResponse<number[]>> {
-  const uri = serverPort + "/api/Stores/ManagerPermissions";
+  const uri = serverPort + "/api/Stores/ManagerPermissions"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -236,8 +260,8 @@ export async function getManagerPermission(
       storeId: storeId,
       targetUserId: targetUserId,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
 export async function setManagerPermission(
@@ -246,7 +270,7 @@ export async function setManagerPermission(
   targetUserId: number,
   newPermissions: number[]
 ): Promise<ClientResponse<boolean>> {
-  const uri = serverPort + "/api/Stores/ChangeManagerPermission";
+  const uri = serverPort + "/api/Stores/ChangeManagerPermission"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -260,15 +284,15 @@ export async function setManagerPermission(
       targetUserId: targetUserId,
       permissions: newPermissions,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
 export async function getPurchaseHistory(
   userId: number,
   storeId: number
 ): Promise<ClientResponse<Purchase[]>> {
-  const uri = serverPort + "/api/Stores/PurchaseHistory";
+  const uri = serverPort + "/api/Stores/PurchaseHistory"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -280,15 +304,15 @@ export async function getPurchaseHistory(
       userId: userId,
       storeId: storeId,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
-export async function openStore(
+export async function serverOpenNewStore(
   userId: number,
   storeName: string
 ): Promise<ClientResponse<number>> {
-  const uri = serverPort + "/api/Stores/OpenStore";
+  const uri = serverPort + "/api/Stores/OpenNewStore"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -300,16 +324,16 @@ export async function openStore(
       userId: userId,
       storeName: storeName,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 
 //.then(response=>Promise.resolve(response.json().then((data)=>data)))
-export async function closeStore(
+export async function serverCloseStore(
   userId: number,
   storeId: number
 ): Promise<ClientResponse<boolean>> {
-  const uri = serverPort + "/api/Stores/CloseStore";
+  const uri = serverPort + "/api/Stores/CloseStore"
   const jsonResponse = await fetch(uri, {
     method: "DELETE",
     headers: {
@@ -321,8 +345,8 @@ export async function closeStore(
       userId: userId,
       storeId: storeId,
     }),
-  });
-  return jsonResponse.json();
+  })
+  return jsonResponse.json()
 }
 //////////////////////////////// ---  ADD FREAKING DISCOUNTS AND PURCHASES ---- ///////
 

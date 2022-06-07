@@ -14,7 +14,7 @@ namespace MarketBackend.ServiceLayer
         Response<bool> Leave(int userId);
         Response<int> Login(string userName, string password, Func<string[], bool> notifier);
         Response<bool> Logout(int memberId);
-        Response<IDictionary<int, IList<ServiceProduct>>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null, int? productId = null, IList<int> productIds = null);
+        Response<IDictionary<int, IList<ServiceProduct>>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null, int? productId = null, IList<int> productIds = null, ServiceMemberInRole memberInRole = null, bool storesWithProductsThatPassedFilter = true);
         Response<ServicePurchase> PurchaseCartContent(int userId, ServicePaymentDetails paymentDetails, ServiceSupplyDetails supplyDetails);
         Response<int> Register(string userName, string password);
         Response<bool> RemoveProductFromCart(int userId, int storeId, int productId);

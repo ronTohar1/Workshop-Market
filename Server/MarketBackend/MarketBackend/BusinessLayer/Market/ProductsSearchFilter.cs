@@ -22,7 +22,8 @@ namespace MarketBackend.BusinessLayer.Market
 
         public bool FilterStore(Store store)
         {
-            return storePred(store);
+            bool passedFilter =  storePred(store);
+            return passedFilter;
         }
 
         public bool FilterProduct(Product product)
@@ -34,6 +35,12 @@ namespace MarketBackend.BusinessLayer.Market
         {
             Predicate<Store> newFilter = store => CheckStrings(store.GetName(), name); 
             storePred = And(storePred, newFilter); 
+        }
+
+        public void FilterStoreOfMemberInRole(int memberId, Role role)
+        {
+            Predicate<Store> newFilter = store => store.GetMembersInRoleNoPermissionsCheck(role).Contains(memberId);
+            storePred = And(storePred, newFilter);
         }
 
         public void FilterProductName(string name)

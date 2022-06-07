@@ -17,6 +17,7 @@ import ShowLoggedInMembers from "../Componentss/AdminComponents/ShowLoggedInMemb
 import DisplayMemberAccount from "../Componentss/AdminComponents/DisplayMemberAccount"
 import RemoveAMember from "../Componentss/AdminComponents/RemoveAMember"
 import { Stack } from "@mui/material"
+import { useNavigate } from "react-router-dom"
 
 const backgroundImage =
   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
@@ -42,6 +43,7 @@ const theme = createTheme({
 })
 
 export default function Admin() {
+  const navigate = useNavigate()
   return (
     <ThemeProvider theme={theme}>
       <main>

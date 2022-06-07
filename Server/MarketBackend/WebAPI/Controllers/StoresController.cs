@@ -28,8 +28,8 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpPut("AddProduct")]
-        public ActionResult<Response<bool>> AddProductToInventory([FromBody] ChangeProductAmountInStoreRequest request)
+        [HttpPut("IncreaseProductAmount")]
+        public ActionResult<Response<bool>> IncreaseProductAmountInInventory([FromBody] ChangeProductAmountInStoreRequest request)
         {
             Response<bool> response = storeManagementFacade.AddProductToInventory(
                 request.UserId, request.StoreId, request.ProductId, request.Amount);
@@ -40,7 +40,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpPut("DecreaseProduct")]
+        [HttpPut("DecreaseProductAmount")]
         public ActionResult<Response<bool>> DecreaseProductInInventory([FromBody] ChangeProductAmountInStoreRequest request)
         {
             Response<bool> response = storeManagementFacade.DecreaseProduct(
@@ -147,8 +147,8 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpPost("OpenStore")]
-        public ActionResult<Response<int>> OpenStore([FromBody] OpenStoreRequest request)
+        [HttpPost("OpenNewStore")]
+        public ActionResult<Response<int>> OpenNewStore([FromBody] OpenStoreRequest request)
         {
             Response<int> response = storeManagementFacade.OpenStore(
                 request.UserId, request.StoreName);

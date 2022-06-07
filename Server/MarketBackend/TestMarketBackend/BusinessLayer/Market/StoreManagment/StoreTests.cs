@@ -1526,8 +1526,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupProductsWithAmounts();
             int id = store.AddBid(productId1, memberId1, storeId, bid);
-            Assert.AreEqual(id, bidId);
-            bidId++;
+            Assert.IsTrue(store.bids.ContainsKey(id));
         }
 
         [Test]
@@ -1558,7 +1557,6 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupProductsWithAmounts();
             int id = store.AddBid(productId1, memberId1, storeId, bid);
-            bidId++;
             store.ApproveBid(founderMemberId, id);
             Assert.IsTrue(store.GetApproveForBid(founderMemberId, id).Contains(founderMemberId));
         }
@@ -1570,7 +1568,6 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupProductsWithAmounts();
             int id = store.AddBid(productId1, memberId1, storeId, bid);
-            bidId++;
             store.DenyBid(founderMemberId, id);
             Assert.IsTrue(!store.bids.ContainsKey(id));
         }
@@ -1582,7 +1579,6 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupProductsWithAmounts();
             int id = store.AddBid(productId1, memberId1, storeId, 50);
-            bidId++;
             store.MakeCounterOffer(founderMemberId, id, offer);
             Assert.IsTrue(store.GetBid(id).counterOffer);
         }
@@ -1594,7 +1590,6 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupProductsWithAmounts();
             int id = store.AddBid(productId1, memberId1, storeId, 50);
-            bidId++;
             Assert.IsTrue(!store.GetBid(id).counterOffer);
         }
 
@@ -1605,7 +1600,6 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupProductsWithAmounts();
             int id = store.AddBid(productId1, memberId1, storeId, 50);
-            bidId++;
             store.MakeCounterOffer(founderMemberId, id, offer);
             store.ApproveCounterOffer(memberId1, id);
             Bid bid = store.GetBid(id);
@@ -1619,7 +1613,6 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupProductsWithAmounts();
             int id = store.AddBid(productId1, memberId1, storeId, 50);
-            bidId++;
             store.MakeCounterOffer(founderMemberId, id, offer);
             store.DenyCounterOffer(memberId1, id);
             Assert.IsTrue(!store.bids.ContainsKey(id));

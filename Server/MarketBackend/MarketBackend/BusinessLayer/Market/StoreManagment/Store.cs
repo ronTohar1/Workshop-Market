@@ -709,7 +709,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return bid.id;
         }
 
-        public bool checkAllApproved(Bid bid)
+        public bool CheckAllApproved(Bid bid)
         {
             approvebidLock.WaitOne();
             IList<int> approved = bid.aprovingIds;
@@ -746,7 +746,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 bid.approveBid(memberId);
                 approvebidLock.ReleaseMutex();
 
-                if (!checkAllApproved(bid))
+                if (!CheckAllApproved(bid))
                     return;
 
                 Member m = membersGetter.Invoke(bid.memberId);
@@ -803,6 +803,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (bid.memberId != memberId)
                 throw new MarketException("The counter offer cant be approved because it is not your bid!");
             bid.approveCounterOffer();
+            notifyAllStoreOwners($"A counter offer on a bid has been made for the product {products[bid.productId].name} for the price of {bid.bid}");
+            notifyAllMembersWithRoleAndPermission($"A bid has been made for the product {products[bid.productId].name} for the price of {bid.bid}", Role.Manager, Permission.handlingBids);
         }
 
         public void DenyCounterOffer(int memberId, int bidId)

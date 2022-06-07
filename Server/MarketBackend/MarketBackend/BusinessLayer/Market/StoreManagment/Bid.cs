@@ -10,6 +10,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
     {
         private static int idCounter = 1;
         private static Mutex counterLock = new Mutex(false);
+        private static Mutex offerLock = new Mutex(false);
         public int id { get; }
         public int storeId { get; set; }
         public int productId { get; set; }
@@ -51,16 +52,22 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         public void CounterOffer(double offer)
         {
+            offerLock.WaitOne();
+            if (counterOffer)
+                throw new MarketException("a counter offer has already been made to approve!");
             counterOffer = true;
             this.offer = offer;
+            offerLock.ReleaseMutex();
         }
 
         public void approveCounterOffer()
         {
+            offerLock.WaitOne();
             if (!counterOffer)
                 throw new MarketException("No counter offer made to approve!");
             counterOffer = false;
             this.bid = offer;
+            offerLock.ReleaseMutex();
         }
 
 

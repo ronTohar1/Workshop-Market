@@ -11,7 +11,7 @@ class If extends Discount {
         thenDis: Discount,
         elseDis: Discount | null
     ) {
-        super();
+        super('ifDiscount');
         this.test = test;
         this.thenDis = thenDis;
         this.elseDis = elseDis;

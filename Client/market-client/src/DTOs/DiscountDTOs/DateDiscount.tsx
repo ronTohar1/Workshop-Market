@@ -1,6 +1,8 @@
+import Discount from "./Discount";
 import StoreDiscount from "./StoreDiscount";
 
-class DateDiscount extends StoreDiscount {
+class DateDiscount extends Discount {
+    discount : number;
     year : number;
     month : number;
     day : number;
@@ -9,7 +11,8 @@ class DateDiscount extends StoreDiscount {
         year : number,
         month : number,
         day : number) {
-        super(discount);
+        super('DateDiscount');
+        this.discount=discount;
         this.year = year;
         this.month = month;
         this.day = day;

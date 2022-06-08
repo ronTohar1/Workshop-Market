@@ -9,7 +9,7 @@ class Max extends Discount {
     constructor(
         discounts: Discount[]
     ) {
-        super();
+        super("maxDiscount");
         this.discounts = discounts;
     }
     public toString = (store:Store) : string => {

@@ -79,9 +79,9 @@ export default function AddativeDiscountForm({store,discountAdder,discounts}: {s
           <Box textAlign='center'>
              <Button onClick={()=>{discountAdder(
                logOp==='AND'?
-             new AndDiscount(discounts.get(selectedId1)??new Discount(),discounts.get(selectedId2)??new Discount()):
-             (logOp==='OR'? new OrDiscount(discounts.get(selectedId1)??new Discount(),discounts.get(selectedId2)??new Discount()):
-             new XorDiscount(discounts.get(selectedId1)??new Discount(),discounts.get(selectedId2)??new Discount())))}} disabled={selectedId1==-1 ||logOp==''|| selectedId2==-1}>add to discount pool</Button>
+             new AndDiscount(discounts.get(selectedId1)??new Discount(''),discounts.get(selectedId2)??new Discount('')):
+             (logOp==='OR'? new OrDiscount(discounts.get(selectedId1)??new Discount(''),discounts.get(selectedId2)??new Discount('')):
+             new XorDiscount(discounts.get(selectedId1)??new Discount(''),discounts.get(selectedId2)??new Discount(''))))}} disabled={selectedId1==-1 ||logOp==''|| selectedId2==-1}>add to discount pool</Button>
              </Box>
     </React.Fragment>
   );

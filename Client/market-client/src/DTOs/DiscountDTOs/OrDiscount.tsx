@@ -4,12 +4,12 @@ import Store from "../Store";
 
 class OrDiscount extends LogicalDiscount {
     constructor(
-        firstDiscount : Discount,
-        secondDiscount : Discount) {
-        super(firstDiscount,secondDiscount);
+        firstExpression : Discount,
+        secondExpression : Discount) {
+        super(firstExpression,secondExpression, 'OrDiscount');
     }
     public toString = (store:Store) : string => {
-        return `${this.firstDiscount}     OR     ${this.secondDiscount}`;
+        return `${this.firstExpression.toString(store)}     OR     ${this.secondExpression.toString(store)}`;
     }
   }
   

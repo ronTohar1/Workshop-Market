@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    public interface IServiceExpression
+    public class ServiceExpression
     {
+        public string tag { get; set ; }
+
+        public ServiceExpression(string tag = "") {
+            this.tag = tag;
+        }
     }
 }

@@ -56,7 +56,7 @@ export default function MaxDiscountForm({store,discountAdder,discounts}: {store 
           </Grid>
           </Grid>
           <Box textAlign='center'>
-             <Button onClick={()=>{discountAdder(new Max([discounts.get(selectedId1)??new Discount(),discounts.get(selectedId2)??new Discount()]))}} disabled={selectedId1==-1 || selectedId2==-1}>add to discount pool</Button>
+             <Button onClick={()=>{discountAdder(new Max([discounts.get(selectedId1)??new Discount(''),discounts.get(selectedId2)??new Discount('')]))}} disabled={selectedId1==-1 || selectedId2==-1}>add to discount pool</Button>
              </Box>
     </React.Fragment>
   );

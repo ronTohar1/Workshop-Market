@@ -77,9 +77,9 @@ export default function LogicalPredicate({store,predicateAdder, predicates}: {st
           <Box textAlign='center'>
              <Button onClick={()=>{predicateAdder(
                logOp==='AND'?
-             new And(predicates.get(selectedId1)??new Predicate(),predicates.get(selectedId2)??new Predicate()):
-             (logOp==='OR'? new Or(predicates.get(selectedId1)??new Predicate(),predicates.get(selectedId2)??new Predicate()):
-             new Xor(predicates.get(selectedId1)??new Discount(),predicates.get(selectedId2)??new Discount())))}} disabled={selectedId1==-1 ||logOp==''|| selectedId2==-1}>add to predicates pool</Button>
+             new And(predicates.get(selectedId1)??new Predicate(''),predicates.get(selectedId2)??new Predicate('')):
+             (logOp==='OR'? new Or(predicates.get(selectedId1)??new Predicate(''),predicates.get(selectedId2)??new Predicate('')):
+             new Xor(predicates.get(selectedId1)??new Discount(''),predicates.get(selectedId2)??new Discount(''))))}} disabled={selectedId1==-1 ||logOp==''|| selectedId2==-1}>add to predicates pool</Button>
              </Box>
     </React.Fragment>
   );

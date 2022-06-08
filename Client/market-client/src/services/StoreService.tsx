@@ -343,7 +343,7 @@ export async function AddDiscountPolicy(
     body: JSON.stringify({
         'userId': userId,
         'storeId': store.id,
-        'expression': discount,
+        'expression': JSON.stringify(discount),
         'description': discount.toString(store)
     })
 });

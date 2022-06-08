@@ -12,7 +12,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
         public int month { get; set; }
         public int day { get; set; }
 
-        public ServiceDateDiscount(int discount, int year = -1, int month = -1, int day = -1) : base(discount)
+        public ServiceDateDiscount(int discount, int year = -1, int month = -1, int day = -1, string tag = "") : base(discount, tag)
         {
             this.year = year;
             this.month = month;

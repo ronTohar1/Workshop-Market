@@ -27,7 +27,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
             pred1.Setup(x => x.EvaluatePredicate(It.IsAny<ShoppingBag>(), It.IsAny<Store>())).Returns(first);
             pred2.Setup(x => x.EvaluatePredicate(It.IsAny<ShoppingBag>(), It.IsAny<Store>())).Returns(second);
 
-            OrExpression and = new OrExpression(pred1.Object, pred2.Object);
+            OrDiscount and = new OrExpression(pred1.Object, pred2.Object);
             Assert.IsTrue(and.EvaluatePredicate(It.IsAny<ShoppingBag>(), It.IsAny<Store>()) == expected);
         }
     }

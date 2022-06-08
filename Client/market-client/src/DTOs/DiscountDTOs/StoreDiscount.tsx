@@ -8,7 +8,7 @@ class StoreDiscount extends Discount {
     constructor(
         discount : number,
         ) {
-        super();
+        super("storeDiscount");
         this.discount = discount;
     }
     public toString = (store:Store) : string => {

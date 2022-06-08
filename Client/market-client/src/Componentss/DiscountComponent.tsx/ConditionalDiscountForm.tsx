@@ -76,7 +76,7 @@ export default function ConditionalDiscountForm({store,discountAdder,discounts,p
        </Grid>
           </Grid>
           <Box textAlign='center'>
-             <Button onClick={()=>{discountAdder(new If(predicates.get(selectedId2)??new Predicate(),discounts.get(selectedId1)??new Discount(),selectedId3!=-1?(discounts.get(selectedId3)??null):null))}} disabled={selectedId1==-1}>add to discounts pool</Button>
+             <Button onClick={()=>{discountAdder(new If(predicates.get(selectedId2)??new Predicate(''),discounts.get(selectedId1)??new Discount(''),selectedId3!=-1?(discounts.get(selectedId3)??null):null))}} disabled={selectedId1==-1}>add to discounts pool</Button>
              </Box>
     </React.Fragment>
   );

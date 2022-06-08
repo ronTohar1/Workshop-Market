@@ -4,12 +4,12 @@ import Store from "../Store";
 
 class XorDiscount extends LogicalDiscount {
     constructor(
-        firstDiscount : Discount,
-        secondDiscount : Discount) {
-        super(firstDiscount,secondDiscount);
+        firstExpression : Discount,
+        secondExpression : Discount) {
+        super(firstExpression,secondExpression,'XorDiscount');
     }
     public toString = (store:Store) : string => {
-        return `only ONE of the discounts is supplied, not both: ${this.firstDiscount}     OR     ${this.secondDiscount}`;
+        return `only ONE of the discounts is supplied, not both: ${this.firstExpression.toString(store)}     OR     ${this.secondExpression.toString(store)}`;
     }
   }
   

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceLogical : ServicePredicate
+    internal class ServiceLogicalDiscount : ServiceDiscount
     {
-        public ServicePredicate firstExpression { get; set; }
-        public ServicePredicate secondExpression { get; set; }
+        public ServiceDiscount firstExpression { get; set; }
+        public ServiceDiscount secondExpression { get; set; }
 
-        public ServiceLogical(ServicePredicate firstExpression, ServicePredicate secondExpression, string tag = "") : base(tag)
+        public ServiceLogicalDiscount(ServiceDiscount firstExpression, ServiceDiscount secondExpression, string tag = "") :base(tag)
         {
             this.firstExpression = firstExpression;
             this.secondExpression = secondExpression;

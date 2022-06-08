@@ -18,6 +18,9 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Purchase
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.RestrictionPolicies;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PredicatePolicies;
+using Newtonsoft.Json;
+using System.Text.Json.Nodes;
+using Newtonsoft.Json.Linq;
 
 namespace MarketBackend.ServiceLayer
 {
@@ -335,7 +338,7 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        private BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces.IPredicateExpression ServicePredicateToPredicate(ServiceDTO.DiscountDTO.IServicePredicate spred, StoreDiscountPolicyManager manager)
+        private BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces.IPredicateExpression ServicePredicateToPredicate(ServiceDTO.DiscountDTO.ServicePredicate spred, StoreDiscountPolicyManager manager)
         {
             if (spred is ServiceLogical)
             {
@@ -370,23 +373,96 @@ namespace MarketBackend.ServiceLayer
 
             }
         }
-        private IDiscountExpression ServiceDiscountToDiscount(IServiceDiscount discount, StoreDiscountPolicyManager manager)
+        private IDiscountExpression ServiceDiscountToDiscount(dynamic discount, StoreDiscountPolicyManager manager, string json = "")
         {
-            if (discount is ServiceDateDiscount)
+            if (discount.tag == "DateDiscount")
             {
-                ServiceDateDiscount dis = (ServiceDateDiscount)discount;
-                return manager.NewDateDiscount(dis.discount, dis.year, dis.month, dis.day);
+                if (json != "")
+                {
+                    var result = JsonConvert.DeserializeObject<ServiceDateDiscount>(json);
+                    return manager.NewDateDiscount(result.discount, result.year, result.month, result.day);
+                }
+                
+                return manager.NewDateDiscount(discount.discount, discount.year, discount.month, discount.day);
             }
-            else if (discount is ServiceProductDiscount)
+            else if (discount.tag == "productDiscount")
             {
+                if (json != "")
+                {
+                    var result = JsonConvert.DeserializeObject<ServiceProductDiscount>(json);
+                    return manager.NewProductDiscount(result.productId, result.discount);
+                }
                 ServiceProductDiscount dis = (ServiceProductDiscount)discount;
                 return manager.NewProductDiscount(dis.productId, dis.discount);
             }
-            else if (discount is ServiceMax)
+            else if (discount.tag == "XorDiscount")
             {
-                ServiceMax dis = (ServiceMax)discount;
+                if (json != "")
+                {
+                    JObject rss = JObject.Parse(json);
+                    var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["firstExpression"].ToString());
+                    var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["secondExpression"].ToString());
+                    return manager.NewXorDiscount(ServiceDiscountToDiscount(discount1, manager, rss["firstExpression"].ToString()), ServiceDiscountToDiscount(discount2, manager, rss["secondExpression"].ToString()));
+                }
+                ServiceXorDiscount dis = (ServiceXorDiscount)discount;
+                return manager.NewXorDiscount(ServiceDiscountToDiscount(dis.firstExpression, manager), ServiceDiscountToDiscount(dis.secondExpression, manager));
+
+            }
+            else if (discount.tag == "AndDiscount")
+            {
+                if (json != "")
+                {
+                    JObject rss = JObject.Parse(json);
+                    var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["firstExpression"].ToString());
+                    var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["secondExpression"].ToString());
+                    return manager.NewAndDiscount(ServiceDiscountToDiscount(discount1, manager, rss["firstExpression"].ToString()), ServiceDiscountToDiscount(discount2, manager, rss["secondExpression"].ToString()));
+                }
+               ServiceAndDiscount dis = (ServiceAndDiscount)discount;
+               return manager.NewAndDiscount(ServiceDiscountToDiscount(dis.firstExpression, manager), ServiceDiscountToDiscount(dis.secondExpression, manager));
+            }
+            else if (discount.tag == "AddativeDiscount")
+            {
+                IList<IDiscountExpression> disList = new List<IDiscountExpression>(); 
+                if (json != "")
+                {
+                    JObject rss = JObject.Parse(json);
+                    int length = rss["discounts"].Count();
+                    for (int i=0; i<length;i++)
+                    {
+                        var currDiscount = JsonConvert.DeserializeObject<ServiceExpression>(rss["discounts"][i].ToString());
+                        disList.Add(ServiceDiscountToDiscount(currDiscount, manager, rss["discounts"][i].ToString()));
+                    }
+                    return manager.NewAddativeExpression(disList);
+                }
+                ServiceAddative dis = (ServiceAddative)discount;
+                foreach (ServiceDiscount d in dis.discounts)
+                {
+                    disList.Add(ServiceDiscountToDiscount(d, manager));
+                }
+                return manager.NewAddativeExpression(disList);
+            }
+            else if (discount.tag == "storeDiscount")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceStoreDiscount>(json);
+                //  ServiceStoreDiscount dis = (ServiceStoreDiscount)discount;
+                return manager.NewStoreDiscount(result.discount);
+            }
+            else if (discount.tag == "maxDiscount")
+            {
                 IList<IDiscountExpression> disList = new List<IDiscountExpression>();
-                foreach (IServiceDiscount d in dis.discounts)
+                if (json != "")
+                {
+                    JObject rss = JObject.Parse(json);
+                    int length = rss["discounts"].Count();
+                    for (int i = 0; i < length; i++)
+                    {
+                        var currDiscount = JsonConvert.DeserializeObject<ServiceExpression>(rss["discounts"][i].ToString());
+                        disList.Add(ServiceDiscountToDiscount(currDiscount, manager, rss["discounts"][i].ToString()));
+                    }
+                    return manager.NewMaxExpression(disList);
+                }
+                ServiceMax dis = (ServiceMax)discount;
+                foreach (ServiceDiscount d in dis.discounts)
                 {
                     disList.Add(ServiceDiscountToDiscount(d, manager));
                 }
@@ -395,19 +471,27 @@ namespace MarketBackend.ServiceLayer
             }
             else
             {
-                ServiceStoreDiscount dis = (ServiceStoreDiscount)discount;
-                return manager.NewStoreDiscount(dis.discount);
+                if (json != "")
+                {
+                    JObject rss = JObject.Parse(json);
+                    var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["firstExpression"].ToString());
+                    var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["secondExpression"].ToString());
+                    return manager.NewOrDiscount(ServiceDiscountToDiscount(discount1, manager, rss["firstExpression"].ToString()), ServiceDiscountToDiscount(discount2, manager, rss["secondExpression"].ToString()));
+                }
+                ServiceOrDiscount dis = (ServiceOrDiscount)discount;
+                return manager.NewOrDiscount(ServiceDiscountToDiscount(dis.firstExpression, manager), ServiceDiscountToDiscount(dis.secondExpression, manager));
+
             }
         }
-        private IExpression ServiceExpressionToExpression(IServiceExpression sexp, StoreDiscountPolicyManager manager)
+        private IExpression ServiceExpressionToExpression(dynamic sexp, StoreDiscountPolicyManager manager, string json = "")
         {
-            if (sexp is IServiceDiscount)
+            if (sexp.tag.Contains("Discount"))
             {
-                return ServiceDiscountToDiscount((IServiceDiscount)sexp, manager);
+                return ServiceDiscountToDiscount(sexp, manager,json);
             }
             else // IServiceConditional
             {
-                if (sexp is ServiceConditionDiscount)
+                if (sexp.tag.Contains("Discount"))
                 {
                     ServiceConditionDiscount dis = (ServiceConditionDiscount)sexp;
                     return manager.NewConditionalDiscount(ServicePredicateToPredicate(dis.pred, manager), ServiceDiscountToDiscount(dis.then, manager));
@@ -420,14 +504,14 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<int> AddDiscountPolicy(IServiceExpression expression, string description, int storeId, int memberId)
+        public Response<int> AddDiscountPolicy(ServiceExpression expression, string description, int storeId, int memberId, string json = "")
         {
             try
             {
                 Store? s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<int>($"There isn't a store with an id {storeId}");
-                IExpression exp = ServiceExpressionToExpression(expression, s.discountManager);
+                IExpression exp = ServiceExpressionToExpression(expression, s.discountManager, json);
                 int id = s.AddDiscountPolicy(exp, description, memberId);
                 logger.Info($"AddDiscountPolicy was called with parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<int>(id);

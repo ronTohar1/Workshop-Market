@@ -8,7 +8,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
     internal class ServiceXor : ServiceLogical
     {
-        public ServiceXor(IServicePredicate firstExpression, IServicePredicate secondExpression) : base(firstExpression, secondExpression)
+        public ServiceXor(ServicePredicate firstExpression, ServicePredicate secondExpression, string tag = "") : base(firstExpression, secondExpression, tag)
         {
 
         }

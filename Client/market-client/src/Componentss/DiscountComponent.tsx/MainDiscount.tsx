@@ -116,7 +116,7 @@ export default function MainDiscount({store}: {store : Store}) {
   };
   const handleSubmit = () =>{
     const buyerId = getBuyerId()
-    const responsePromise = AddDiscountPolicy(buyerId,store, discounts.get(selectedId)??new Discount())
+    const responsePromise = AddDiscountPolicy(buyerId,store, discounts.get(selectedId)??new Discount(''))
     console.log(responsePromise)
     fetchResponse(responsePromise).then((newPurchases)=>{
       alert('Discount policy was added successfully to the store!')

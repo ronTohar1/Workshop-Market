@@ -6,8 +6,9 @@ class Logical extends Predicate {
     secondExpression : Predicate;
     constructor(
         firstExpression : Predicate,
-        secondExpression : Predicate) {
-        super();
+        secondExpression : Predicate,
+        tag:string) {
+        super(tag);
         this.firstExpression = firstExpression;
         this.secondExpression = secondExpression;
     }

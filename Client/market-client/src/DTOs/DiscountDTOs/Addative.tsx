@@ -9,7 +9,7 @@ class Addative extends Discount {
     constructor(
         discounts: Discount[]
     ) {
-        super();
+        super('AddativeDiscount');
         this.discounts = discounts;
     }
     public toString = (store:Store) : string => {

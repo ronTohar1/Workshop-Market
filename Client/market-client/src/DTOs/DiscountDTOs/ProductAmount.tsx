@@ -9,7 +9,7 @@ class ProductAmount extends Predicate {
         pid : number,
         quantity : number
         ) {
-        super();
+        super("productAmountPredicate");
         this.pid = pid;
         this.quantity = quantity;
     }

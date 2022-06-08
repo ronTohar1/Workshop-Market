@@ -10,7 +10,7 @@ class ConditionDiscount extends Conditional {
         pred: Predicate,
         then: Discount
     ) {
-        super();
+        super('ConditionDiscount');
         this.pred = pred;
         this.then = then;
     }

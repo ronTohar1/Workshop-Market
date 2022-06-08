@@ -1,8 +1,10 @@
 ﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
+using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using WebAPI.Requests;
 
 namespace WebAPI.Controllers
@@ -174,8 +176,9 @@ namespace WebAPI.Controllers
         [HttpPost("AddDiscountPolicy")]
         public ActionResult<Response<int>> AddDiscountPolicy([FromBody] AddDiscountPolicyRequest request)
         {
+            var result = JsonConvert.DeserializeObject<ServiceExpression>(request.Expression);
             Response<int> response = storeManagementFacade.AddDiscountPolicy(
-                request.Expression, request.Description, request.StoreId, request.UserId);
+                result ,request.Description, request.StoreId, request.UserId, request.Expression);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);

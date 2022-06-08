@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceConditionDiscount : IServiceConditional
+    internal class ServiceConditionDiscount : ServiceConditional
     {
-        public IServicePredicate pred { get; set; }
-        public IServiceDiscount then { get; set; }
+        public ServicePredicate pred { get; set; }
+        public ServiceDiscount then { get; set; }
 
-        public ServiceConditionDiscount(IServicePredicate pred, IServiceDiscount then)
+        public ServiceConditionDiscount(ServicePredicate pred, ServiceDiscount then, string tag = "") : base(tag)
         {
             this.pred = pred;
             this.then = then;

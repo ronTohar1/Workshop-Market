@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceIf : IServiceExpression
+    internal class ServiceIf : ServiceExpression
     {
-        public IServicePredicate test { get; set; }
-        public IServiceDiscount thenDis { get; set; }
-        public IServiceDiscount elseDis { get; set; }
+        public ServicePredicate test { get; set; }
+        public ServiceDiscount thenDis { get; set; }
+        public ServiceDiscount elseDis { get; set; }
 
-        public ServiceIf(IServicePredicate test, IServiceDiscount thenDis, IServiceDiscount elseDis)
+        public ServiceIf(ServicePredicate test, ServiceDiscount thenDis, ServiceDiscount elseDis, string tag = "") : base(tag)
         {
             this.test = test;
             this.thenDis = thenDis;

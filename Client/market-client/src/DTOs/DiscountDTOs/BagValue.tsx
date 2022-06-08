@@ -6,7 +6,7 @@ class BagValue extends Predicate {
     worth : number;
     constructor(
         worth : number,) {
-        super();
+        super('BagValuePredicate');
         this.worth = worth;
     }
     public toString = (store:Store) : string => {

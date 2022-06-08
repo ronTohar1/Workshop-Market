@@ -7,7 +7,7 @@ class Xor extends Logical {
     constructor(
         firstExpression : Predicate,
         secondExpression : Predicate) {
-        super(firstExpression, secondExpression);
+        super(firstExpression, secondExpression,'XorPredicate');
     }
     public toString = (store:Store) : string => {
         return `${this.firstExpression.toString(store)} OR ${this.secondExpression.toString(store)} BUT NOT BOTH!`;

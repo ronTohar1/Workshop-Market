@@ -3,17 +3,18 @@ import Discount from "./Discount";
 import Store from "../Store";
 
 class LogicalDiscount extends Discount {
-    firstDiscount : Discount;
-    secondDiscount : Discount;
+    firstExpression : Discount;
+    secondExpression : Discount;
     constructor(
-        firstDiscount : Discount,
-        secondDiscount : Discount) {
-        super();
-        this.firstDiscount = firstDiscount;
-        this.secondDiscount = secondDiscount;
+        firstExpression : Discount,
+        secondExpression : Discount,
+        tag:string) {
+        super(tag);
+        this.firstExpression = firstExpression;
+        this.secondExpression = secondExpression;
     }
     public toString = (store:Store) : string => {
-        return `${this.firstDiscount} , ${this.secondDiscount}`;
+        return `${this.firstExpression} , ${this.secondExpression}`;
     }
   }
   

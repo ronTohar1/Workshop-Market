@@ -10,7 +10,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
     {
         public int productId { get; set; }
 
-        public ServiceProductDiscount(int productId, int discount) : base(discount)
+        public ServiceProductDiscount(int productId, int discount,string tag = "") : base(discount, tag)
         {
             this.productId = productId;
         }

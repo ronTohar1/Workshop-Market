@@ -111,7 +111,7 @@ public class PurchasesManager
         double bidPrice = bid.bid;
 
         Store? s = storeController.GetStore(storeId);
-        if (!s.checkAllApproved(bid))
+        if (!s.CheckAllApproved(bid))
             throw new MarketException("Cant purchase bid until all owners and managers approve");
 
         Buyer buyer = this.GetBuyerOrThrowException(buyerId);

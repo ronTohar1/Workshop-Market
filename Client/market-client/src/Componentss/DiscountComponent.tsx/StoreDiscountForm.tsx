@@ -10,6 +10,10 @@ import Discount from '../../DTOs/DiscountDTOs/Discount';
 import StoreDiscount from '../../DTOs/DiscountDTOs/StoreDiscount';
 
 export default function StoreDiscountForm({store,discountAdder}: {store : Store,discountAdder:(discount:Discount)=>void}) {
+  const [percentage, setPercentage] = React.useState(-1);
+  const handleDiscount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPercentage(parseInt(e.currentTarget.value));
+  }
   const handleAddDiscount = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
@@ -30,11 +34,12 @@ export default function StoreDiscountForm({store,discountAdder}: {store : Store,
             name="discount"
             label="discount percentage"
             type="number"
+            onChange={handleDiscount}
             fullWidth
             variant="standard"
           />
            <Box textAlign='center'>
-             <Button type="submit">Add to discount pool</Button>
+             <Button type="submit"  disabled={percentage==-1}>Add to discount pool</Button>
              </Box>
           </form>
         </Grid>

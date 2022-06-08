@@ -18,3 +18,4 @@ class ProductDiscount extends StoreDiscount {
   }
   
   export default ProductDiscount
+  

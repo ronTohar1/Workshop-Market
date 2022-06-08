@@ -16,7 +16,7 @@ import StorePageOfManager from "./Pages/StorePageOfManager"
 import Checkout from "./Pages/Checkout"
 import Admin from "./Pages/Admin"
 import Product from "./DTOs/Product"
-import SimpleDiscount from "./Componentss/DiscountComponent.tsx/SimpleDiscount"
+import SimpleDiscount from "./Componentss/DiscountComponent.tsx/MainDiscount"
 import Store from "./DTOs/Store"
 import Member from "./DTOs/Member"
 
@@ -38,7 +38,7 @@ const App = () => {
   const products = new Map([
     [new Product(0, "Milk", 12.9, "Dairy", 1, "Kaldo", 10), 1],
     [new Product(1, "Bread", 5, "Bakery", 1, "Kaldo", 10), 2],
-    [new Product(2, "Wine", 50.5, "Alchohol", 1, "Kaldo", 10), 3],
+    [new Product(0,"cheese", 12.3, "dairy", 0,"David's",5), 3],
     [new Product(3, "Apple", 4, "Fruits", 1, "Shufersal", 10), 1],
     [new Product(4, "Cheese", 13.9, "Dairy", 1, "Shufersal", 10), 5],
     [new Product(5, "Tommato", 1.9, "Vegtables", 1, "Shufersal", 10), 1],
@@ -53,7 +53,7 @@ const App = () => {
           <Route path={Paths.pathCart} element={<CartPage />} />
           <Route path={Paths.pathLogin} element={<Login />} />
           <Route path={Paths.pathSearch} element={<SearchPage />} />
-          <Route path={Paths.pathDiscount} element={<SimpleDiscount store = {new Store(0,"",[],new Member(0, "moshe", true), true)} />} />
+          <Route path={Paths.pathDiscount} element={<SimpleDiscount store = {new Store(0,"",Array.from( products.keys() ),new Member(0, "moshe", true), true)} />} />
           {/* <Route
             path={Paths.pathStorePageOfManager}
             element={<StorePageOfManager />}

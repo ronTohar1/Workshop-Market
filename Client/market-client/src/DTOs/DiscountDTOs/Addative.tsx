@@ -4,7 +4,7 @@ import Discount from "./Discount";
 import Expression from "./Expression";
 import Predicate from "./Predicate";
 
-class Max extends Discount {
+class Addative extends Discount {
     discounts: Discount[];
     constructor(
         discounts: Discount[]
@@ -13,8 +13,8 @@ class Max extends Discount {
         this.discounts = discounts;
     }
     public toString = (store:Store) : string => {
-        return `THE DISCOUNT IS THE MAXIMUM DISCOUNT FROM THE NEXT DISCOUNTS:\n ${this.discounts.reduce((currStr, discount)=>currStr+discount.toString(store)+ ", ","")} `;
+        return `THE DISCOUNT IS THE SUM OF THE NEXT DISCOUNTS:\n ${this.discounts.reduce((currStr, discount)=>currStr+discount.toString(store)+ ", ","")} `;
     }
   }
   
-  export default Max
+  export default Addative

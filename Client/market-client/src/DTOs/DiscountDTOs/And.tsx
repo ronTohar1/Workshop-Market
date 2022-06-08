@@ -1,3 +1,4 @@
+import Store from "../Store";
 import Expression from "./Expression";
 import Logical from "./Logical";
 import Predicate from "./Predicate";
@@ -5,9 +6,12 @@ import Predicate from "./Predicate";
 class And extends Logical {
 
     constructor(
-        firstExpression : Expression,
-        secondExpression : Expression) {
+        firstExpression : Predicate,
+        secondExpression : Predicate) {
         super(firstExpression, secondExpression);
+    }
+    public toString = (store:Store) : string => {
+        return `${this.firstExpression.toString(store)} AND ${this.secondExpression.toString(store)}`;
     }
   }
   

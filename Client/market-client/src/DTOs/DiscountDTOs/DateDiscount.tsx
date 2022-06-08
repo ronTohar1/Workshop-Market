@@ -15,9 +15,9 @@ class DateDiscount extends StoreDiscount {
         this.day = day;
     }
     public toString = () : string => {
-        if (this.year==0){
-            if (this.month==0){
-                if (this.day==0){
+        if (this.year==-1){
+            if (this.month==-1){
+                if (this.day==-1){
                     return `there isn't a date discount`;
                 }
                 else{
@@ -25,8 +25,8 @@ class DateDiscount extends StoreDiscount {
                 }
             }
             else{
-                if (this.day==0){
-                    return `each ${this.month}th there is a ${this.discount}% discount at the store!`;
+                if (this.day==-1){
+                    return `each ${this.month}th month there is a ${this.discount}% discount at the store!`;
                 }
                 else{
                     return `once a year, at the ${this.day}/${this.month} there is a ${this.discount}% discount at the store!`;
@@ -34,8 +34,8 @@ class DateDiscount extends StoreDiscount {
             }
         }
         else{
-            if (this.month==0){
-                if (this.day==0){
+            if (this.month==-1){
+                if (this.day==-1){
                     return `at ${this.year} there is a ${this.discount}% discount at the store!`;
                 }
                 else{
@@ -43,7 +43,7 @@ class DateDiscount extends StoreDiscount {
                 }
             }
             else{
-                if (this.day==0){
+                if (this.day==-1){
                     return `at the ${this.month}/${this.year} there is a ${this.discount}% discount at the store!`;
                 }
                 else{

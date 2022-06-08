@@ -9,51 +9,54 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEve
 import Discount from '../../DTOs/DiscountDTOs/Discount';
 import StoreDiscount from '../../DTOs/DiscountDTOs/StoreDiscount';
 import Max from '../../DTOs/DiscountDTOs/Max';
-import ProductDiscount from '../../DTOs/DiscountDTOs/ProductDiscount';
 
-export default function ProductDiscountForm({store,discountAdder}: {store : Store,discountAdder:(discount:Discount)=>void}) {
-  const [selectedId, setId] = React.useState(-1);
-  const [discount, setDiscount] = React.useState(-1);
+export default function MaxDiscountForm({store,discountAdder,discounts}: {store : Store,discountAdder:(discount:Discount)=>void,discounts:Map<number,Discount>}) {
+  const [selectedId1, setId1] = React.useState(-1);
+  const [selectedId2, setId2] = React.useState(-1);
  
   return ( 
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Product Discount
+        Max Discount
       </Typography>
       <Grid container  justifyContent="left" spacing={-100}>
       <Grid item xs={4}>
-      <InputLabel id="demo-simple-select-standard-label">Product</InputLabel>
+      <InputLabel id="demo-simple-select-standard-label">First Discount Id</InputLabel>
       <FormControl sx={{ m: 1, minWidth: 240 }} id="myform">
         <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select1"
         type="number"
         label="Discount Id"
-        onChange={(event: SelectChangeEvent) => {setId(parseInt(event.target.value))}}
+        onChange={(event: SelectChangeEvent) => {setId1(parseInt(event.target.value))}}
       >
 
-        {store.products .map((product) => (
-           <MenuItem value={product.id}>{product.name}</MenuItem>
+        {Array.from( discounts ).map(([id, discount]) => (
+           <MenuItem value={id}>{id}</MenuItem>
         ))}
        </Select>  
        </FormControl>
        </Grid>
        <Grid item xs={4}>
-       <InputLabel id="demo-simple-select-standard-label">Discount Percentage</InputLabel>
+       <InputLabel id="demo-simple-select-standard-label">Second Discount Id</InputLabel>
        <FormControl sx={{ m: 1, minWidth: 240 }} id="myform">
-       <TextField
-            required
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setDiscount(parseInt(e.currentTarget.value));}} 
-            id="address"
-            name="number"
-            type="number"
-            label="discount percentage "
-            fullWidth/>
+       <Select
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        type="number"
+        label="Discount Id 2"
+        onChange={(event: SelectChangeEvent) => {setId2(parseInt(event.target.value))}}
+      >
+
+        {Array.from( discounts ).map(([id, discount]) => (
+           <MenuItem value={id}>{id}</MenuItem>
+        ))}
+       </Select>
           </FormControl>
           </Grid>
           </Grid>
           <Box textAlign='center'>
-             <Button onClick={()=>{discountAdder(new ProductDiscount(selectedId,discount))}} disabled={selectedId==-1 || discount==-1}>add to discount pool</Button>
+             <Button onClick={()=>{discountAdder(new Max([discounts.get(selectedId1)??new Discount(),discounts.get(selectedId2)??new Discount()]))}} disabled={selectedId1==-1 || selectedId2==-1}>add to discount pool</Button>
              </Box>
     </React.Fragment>
   );

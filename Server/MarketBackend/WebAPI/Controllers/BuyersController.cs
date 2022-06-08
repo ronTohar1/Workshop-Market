@@ -21,7 +21,8 @@ namespace WebAPI.Controllers
 
         }
 
-        public BuyersController(IBuyerFacade buyerFacade, WebSocketServer notificationServer) {
+        public BuyersController(IBuyerFacade buyerFacade, WebSocketServer notificationServer)
+        {
             this.buyerFacade = buyerFacade;
             buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
             this.notificationServer = notificationServer;
@@ -126,7 +127,7 @@ namespace WebAPI.Controllers
         public ActionResult<Response<IDictionary<int, IList<ServiceProduct>>>> ProductsSearch([FromBody] SearchProductsRequest request)
         {
             Response<IDictionary<int, IList<ServiceProduct>>> response =
-                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword,request.ProductId, request.ProductIds);
+                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword, request.ProductId, request.ProductIds);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
@@ -152,22 +153,25 @@ namespace WebAPI.Controllers
             try
             {
                 notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
-            }catch (ArgumentException ex) { } // in case the client tries to login again
+            }
+            catch (ArgumentException ex) { } // in case the client tries to login again
             Func<string[], bool> notifier = (msgs) =>
             {
-                Action<string[]> send = (msgs) =>
-                {
-                    while (notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
-                        Thread.Sleep(1000);
-                    foreach (string msg in msgs)
-                        notificationServer.WebSocketServices[relativeServicePath].Sessions.Broadcast(msg);
-                };
+                if (notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
+                    return false;
+                //Action<string[]> send = (msgs) =>
+                //{
+                //while (notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
+                //    Thread.Sleep(1000);
+                foreach (string msg in msgs)
+                    notificationServer.WebSocketServices[relativeServicePath].Sessions.Broadcast(msg);
+                //};
 
-                Task task = new Task(() => send(msgs));
-                task.Start();
+                //Task task = new Task(() => send(msgs));
+                //task.Start();
                 return true;
             };
-            Response<int> response  = buyerFacade.Login(request.UserName, request.Password, notifier);
+            Response<int> response = buyerFacade.Login(request.UserName, request.Password, notifier);
 
             if (response.IsErrorOccured())
             {
@@ -187,7 +191,7 @@ namespace WebAPI.Controllers
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
-            notificationServer.RemoveWebSocketService("ws://127.0.0.1:" + port + 
+            notificationServer.RemoveWebSocketService("ws://127.0.0.1:" + port +
                 buyerIdToRelativeNotificationPath[request.UserId]);
             return Ok(response);
         }

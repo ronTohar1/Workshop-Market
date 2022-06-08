@@ -66,25 +66,30 @@ export default function Login() {
     const password = data.get("password")?.toString()
     const result = serverLogin(username, password)
 
-    fetchResponse(result).then((memberId: number) => {
-      alert("Logged in successfully!")
-      sessionService.setIsGuest(false)
-      sessionService.setBuyerId(memberId)
+    try {
 
-      // WEB SOCKETS
-      const address = `ws://127.0.0.1:7890/${username}-notifications`
-      const ws = new WebSocket(address)
-      ws.addEventListener('open', () => alert(username + " logged in"))
-      ws.addEventListener('message', function (event) {
-        alert("Message from server " + event.data);
-      });
-      // ws.on('open', function () {
-      //   alert("opened websocket! of " + username)
-      // })
+      fetchResponse(result).then((memberId: number) => {
+        alert("Logged in successfully!")
+        sessionService.setIsGuest(false)
+        sessionService.setBuyerId(memberId)
 
+        const address = `ws://127.0.0.1:7890/${username}-notifications`
+        const ws = new WebSocket(address)
+        ws.addEventListener('open', () => alert(username + " logged in"))
+        ws.addEventListener('message', function (event) {
+          alert("Message from server " + event.data);
+        });
+        
+        navigate(pathHome)
+      }).catch((e) => {
+        alert(e)
+      })
+    }
+    catch (e) {
+      alert("whoops web")
+      alert(e)
+    }
 
-      navigate(pathHome)
-    }).catch(alert)
   }
 
   return (

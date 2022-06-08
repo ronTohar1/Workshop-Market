@@ -119,16 +119,16 @@ export default function Navbar() {
     React.useState<MarketNotification[]>(currentNotifications)
   const [numItemsInCart, setNumItemsInCart] = React.useState<number>(0)
 
-  React.useEffect(() => {
-    fetchResponse(serverGetCart(getBuyerId()))
-      .then((cart: Cart) => {
-        const [prodsIds, prodsToQuantity] = getCartProducts(cart)
-        setNumItemsInCart(prodsIds.length)
-      })
-      .catch((e) => {
-        alert("Couldn't load some of your information")
-      })
-  })
+  // React.useEffect(() => {
+  //   fetchResponse(serverGetCart(getBuyerId()))
+  //     .then((cart: Cart) => {
+  //       const [prodsIds, prodsToQuantity] = getCartProducts(cart)
+  //       setNumItemsInCart(prodsIds.length)
+  //     })
+  //     .catch((e) => {
+  //       alert("Couldn't load some of your information")
+  //     })
+  // })
 
   const handleClickHome = () => {
     navigate(`${pathHome}`)

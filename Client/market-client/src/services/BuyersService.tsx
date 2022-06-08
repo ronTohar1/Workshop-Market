@@ -41,6 +41,28 @@ export async function serverLogin(
   }
 }
 
+export async function serverGetPendingMessages(
+  username: string 
+): Promise<ClientResponse<string[]>> {
+  const uri = serverPort + "/api/Buyers/GetUnsentMessages"
+  const jsonResponse = await fetch(uri, {
+    method: "POST",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "http",
+    },
+    // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+    body: JSON.stringify({
+      userName: username,
+    }),
+  })
+
+  const response = jsonResponse.json()
+  return response
+}
+
+
 //.then(response=>Promise.resolve(response.json().then((data)=>data)))
 
 export async function logout(userId: number): Promise<any> {

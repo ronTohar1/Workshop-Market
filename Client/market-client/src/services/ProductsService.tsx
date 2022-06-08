@@ -115,7 +115,7 @@ export async function serverSearchProducts(
   productId: number | null = null,
   productIds: number[] | null = null,
   memberInRole: MemberInRole | null = null,
-  storesWithProductsThatPassedFilter: boolean | null = null,
+  storesWithProductsThatPassedFilter: boolean = true,
 ): Promise<ClientResponse<Map<number, Product[]>>> {
   const uri = serverPort + "/api/Buyers/SerachProducts"
   const jsonResponse = await fetch(uri, {
@@ -124,7 +124,6 @@ export async function serverSearchProducts(
       accept: "text/plain",
       "Content-Type": "application/json",
     },
-    // body: '{\n  "userId": 0,\n  "productId": 0,\n  "storeId": 0\n}',
     body: JSON.stringify({
       storeName: storeName,
       productName: productName,

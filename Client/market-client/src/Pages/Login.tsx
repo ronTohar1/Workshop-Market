@@ -12,7 +12,7 @@ import Grid from "@mui/material/Grid"
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
-import { serverLogin } from "../services/BuyersService"
+import { serverGetPendingMessages, serverLogin } from "../services/BuyersService"
 import { useNavigate } from "react-router-dom"
 import { pathHome } from "../Paths"
 import * as sessionService from "../services/SessionService"
@@ -65,13 +65,18 @@ export default function Login() {
     const username = data.get("username")?.toString()
     const password = data.get("password")?.toString()
     const result = serverLogin(username, password)
-
-    try {
+    if (username === undefined) // Not going to happen but
+    {
+      alert("Please enter username")
+      return;
+    }
 
       fetchResponse(result).then((memberId: number) => {
         alert("Logged in successfully!")
         sessionService.setIsGuest(false)
         sessionService.setBuyerId(memberId)
+        //@ts-ignore
+        sessionService.setUsername(username)
 
         const address = `ws://127.0.0.1:7890/${username}-notifications`
         const ws = new WebSocket(address)
@@ -79,16 +84,15 @@ export default function Login() {
         ws.addEventListener('message', function (event) {
           alert("Message from server " + event.data);
         });
-        
+
+        fetchResponse(serverGetPendingMessages(username))
+        .then((messages:string[]) => messages.forEach(alert))
+        .catch(alert)
+
         navigate(pathHome)
       }).catch((e) => {
         alert(e)
       })
-    }
-    catch (e) {
-      alert("whoops web")
-      alert(e)
-    }
 
   }
 

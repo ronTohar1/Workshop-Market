@@ -62,7 +62,7 @@ export default function SearchPage() {
   //Send function to navbar that activates the setProductsByStore here when pushin search
   React.useEffect(() => {
     fetchProductsByStore(
-      serverSearchProducts(null, query || null, null, null, null, null)
+      serverSearchProducts(null, query || null,null,null,null,null,null)
     )
       .then((prods: Product[][]) => {
         setProductsByStore(prods)

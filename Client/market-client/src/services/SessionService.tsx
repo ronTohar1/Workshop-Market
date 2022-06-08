@@ -3,9 +3,13 @@ import { pathHome } from "../Paths"
 import { serverEnter } from "./BuyersService"
 import { fetchResponse } from "./GeneralService"
 
+interface Iuser {
+  username: string
+}
+
 const storage = sessionStorage
 const isInitOccured = "isInitOccured"
-
+const userName = "userName"
 const isGuest = "isGuest"
 const buyerId = "buyerId"
 
@@ -14,7 +18,7 @@ export async function initSession() {
     fetchResponse(serverEnter())
       .then((guestId: number) => {
         initFields(guestId)
-        alert("Hello, new guest!")
+        // alert("Hello, new guest!")
       })
       .catch((e) => {
         alert("Sorry, dear visitor, an unkown error has occured!")
@@ -23,9 +27,10 @@ export async function initSession() {
 }
 
 function initFields(id: number) {
-  storage.setItem(buyerId, String(id))
-  storage.setItem(isGuest, "true")
   storage.setItem(isInitOccured, "true")
+  setBuyerId(id)
+  setIsGuest(true)
+  setUsername("guest")
 }
 
 export function clearSession() {
@@ -34,7 +39,13 @@ export function clearSession() {
 
 function createGetter<T>(field: string): () => T {
   const val = storage.getItem(field)
-  return () => (val === null ? val : JSON.parse(val))
+  return () => {
+    if (val === null || val === undefined)
+      return null
+    else {
+      return JSON.parse(val)
+    }
+  }
 }
 
 function createSetter<T>(field: string): (v: T) => void {
@@ -50,3 +61,9 @@ export const setIsGuest: (v: boolean) => void = createSetter(isGuest)
 export const getBuyerId: () => number = createGetter(buyerId)
 
 export const setBuyerId: (v: number) => void = createSetter(buyerId)
+
+// username setter getter
+
+export const getUsername: () => string = () => { return storage.getItem(userName) || "" }
+
+export const setUsername: (v: string) => void = (v) => storage.setItem(userName, v)

@@ -24,16 +24,9 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
       serverSearchProducts(null, null, null, null, null, null, memberManager, false) // Want all stores without products
     )
 
-    console.log("managedStoresDict:")
-    console.log(managedStoresDict)
-
     const ownedStoresDict: Map<number, Product[]> = await fetchResponse(
       serverSearchProducts(null, null, null, null, null, null, memberOwner, false) // Want all stores without products
     )
-
-    console.log("ownedStoresDict")
-    console.log(ownedStoresDict)
-
 
     const managedStoresPromise: Promise<Store>[] = Object.keys(managedStoresDict).map((storeId: string) => fetchResponse(serverGetStore(Number(storeId))))
     const ownedStoresPromise: Promise<Store>[] = Object.keys(ownedStoresDict).map((storeId: string) => fetchResponse(serverGetStore(Number(storeId))))
@@ -42,10 +35,6 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
     const memberStores: Promise<Store[]> = memberStoresPromise.reduce(
       async (stores: Promise<Store[]>, currStore: Promise<Store>) => (await stores).concat((await currStore))
       , Promise.resolve([]))
-
-    console.log("managedStores:")
-    console.log(memberStores)
-
 
     return memberStores
   } catch (e) {

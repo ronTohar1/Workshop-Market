@@ -41,8 +41,7 @@ import {
   serverCloseStore,
   serverOpenNewStore,
 } from "../services/StoreService"
-import ExitToAppIcon from "@mui/icons-material/ExitToApp"
-import { dummyMember1, fetchStoresManagedBy } from "../services/MemberService"
+import { fetchStoresManagedBy } from "../services/MemberService"
 import Grid from "@mui/material/Grid"
 import Store from "../DTOs/Store"
 
@@ -51,7 +50,7 @@ import CloseIcon from "@mui/icons-material/Close"
 import StoreDialog from "../Componentss/ManagerEditStore/StoreManagerStoreDialog"
 import StorePage from "./StorePage"
 import { fetchResponse } from "../services/GeneralService"
-import { getBuyerId, getIsGuest } from "../services/SessionService"
+import { getBuyerId, getIsGuest, getUsername } from "../services/SessionService"
 import { useNavigate } from "react-router-dom"
 import { pathHome } from "../Paths"
 import LoadingCircle from "../Componentss/LoadingCircle"
@@ -59,7 +58,7 @@ import AddStoreForm from "../Componentss/Forms/AddStoreForm"
 import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
 import FailureSnackbar from "../Componentss/Forms/FailureSnackbar"
 
-const UserInfoCard = (numOfManagedStores: number) => {
+const UserInfoCard = (numOfManagedStores: number,username:string) => {
   return (
     <Card elevation={5}>
       <CardContent>
@@ -67,7 +66,7 @@ const UserInfoCard = (numOfManagedStores: number) => {
           Account Information
         </Typography>
 
-        <Typography variant="h6">Hello Dear User</Typography>
+        <Typography variant="h6">Hello {username}</Typography>
         <Typography variant="h6">
           <b>Number Of Managed Stores</b>: {numOfManagedStores}
         </Typography>
@@ -236,6 +235,7 @@ export default function StoreManagerPage() {
   const [successProductMsg, setSuccessProductMsg] = React.useState<string>("")
   const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false)
   const [failureProductMsg, setFailureProductMsg] = React.useState<string>("")
+  const [username,setUsername] = React.useState<string>("");
   const showFailureSnack = (msg: string) => {
     setOpenFailSnack(true)
     setFailureProductMsg(msg)
@@ -263,6 +263,8 @@ export default function StoreManagerPage() {
   }
 
   React.useEffect(() => {
+    // alert(getUsername())
+    setUsername(getUsername())
     fetchStoresManagedBy(getBuyerId()).then((managedStores: Store[]) => {
       setStores(managedStores)
     })
@@ -308,7 +310,7 @@ export default function StoreManagerPage() {
                   width: "100%",
                 }}
               > */}
-            {UserInfoCard(stores.length)}
+            {UserInfoCard(stores.length, username)}
             {/* </Box> */}
           </Grid>
           {ManagedStores(stores, handleChangedStore, () =>

@@ -16,6 +16,7 @@ namespace WebAPI.Controllers
         private const int port = 7890;
         private WebSocketServer notificationServer;
         private IDictionary<int, string> buyerIdToRelativeNotificationPath;
+        private IDictionary<string, IList<string>> buyerUnsentMessages;
         private class NotificationsService : WebSocketBehavior
         {
 
@@ -23,8 +24,10 @@ namespace WebAPI.Controllers
 
         public BuyersController(IBuyerFacade buyerFacade, WebSocketServer notificationServer)
         {
+            Console.WriteLine("new user?");
             this.buyerFacade = buyerFacade;
             buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
+            buyerUnsentMessages = new Dictionary<string, IList<string>>();
             this.notificationServer = notificationServer;
         }
 
@@ -127,7 +130,7 @@ namespace WebAPI.Controllers
         public ActionResult<Response<IDictionary<int, IList<ServiceProduct>>>> ProductsSearch([FromBody] SearchProductsRequest request)
         {
             Response<IDictionary<int, IList<ServiceProduct>>> response =
-                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword, request.ProductId, request.ProductIds);
+                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword, request.ProductId, request.ProductIds, request.memberInRole, request.storesWithProductsThatPassedFilter);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
@@ -146,7 +149,28 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpPost("Login")]
+        [HttpPost("GetUnsentMessages")]
+        public ActionResult<Response<IList<string>>> GetUnsentMessage([FromBody] UsernameRequest request)
+        {
+            int b = buyerUnsentMessages.GetHashCode();
+            string username = request.Username;
+            if (this.buyerUnsentMessages.ContainsKey(username))
+                return  Ok(new Response<IList<string>>(buyerUnsentMessages[username]));
+            return  Ok(new Response<IList<string>>(new List<string>()));
+        }
+
+        private void AddUnsentMessage(string username, IList<string> messages)
+        {
+            int a = buyerUnsentMessages.GetHashCode();
+            this.buyerUnsentMessages[username] = messages;
+        }
+
+        private void GetUnsentMessages(string username)
+        {
+
+        }
+
+    [HttpPost("Login")]
         public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
         {
             string relativeServicePath = "/" + request.UserName + "-notifications";
@@ -154,11 +178,27 @@ namespace WebAPI.Controllers
             {
                 notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
             }
-            catch (ArgumentException ex) { } // in case the client tries to login again
+            catch (ArgumentException ex)
+            {
+                return new Response<int>("Sorry, but it seems that we cant connect you");
+            } // in case the client tries to login again
             Func<string[], bool> notifier = (msgs) =>
             {
+                string username = request.UserName;
                 if (notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
+                {
+                    IList<string> unsentMsgs = new List<string>();
+                    if (this.buyerUnsentMessages.ContainsKey(username))
+                        unsentMsgs = this.buyerUnsentMessages[username];
+
+                    // Adding new unsent messages
+                    foreach (string msg in msgs)
+                        unsentMsgs.Add(msg);
+
+                    //this.buyerUnsentMessages[username] = unsentMsgs;
+                    AddUnsentMessage(username, unsentMsgs);
                     return false;
+                }
                 //Action<string[]> send = (msgs) =>
                 //{
                 //while (notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
@@ -175,7 +215,7 @@ namespace WebAPI.Controllers
 
             if (response.IsErrorOccured())
             {
-                notificationServer.RemoveWebSocketService("ws://127.0.0.1:" + port + relativeServicePath);
+                notificationServer.RemoveWebSocketService(relativeServicePath);
                 return BadRequest(response);
             }
 

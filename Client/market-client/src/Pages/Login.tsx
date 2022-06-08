@@ -17,6 +17,9 @@ import { useNavigate } from "react-router-dom"
 import { pathHome } from "../Paths"
 import * as sessionService from "../services/SessionService"
 import HomeIcon from "@mui/icons-material/Home"
+import { fetchResponse } from '../services/GeneralService'
+// import WebSocket from 'ws'
+
 const theme = createTheme({
   typography: {
     fontFamily: [
@@ -51,12 +54,11 @@ const randBackgroundImage = () =>
 export default function Login() {
   const navigate = useNavigate()
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     if (!sessionService.getIsGuest()) {
       alert("You are already logged in!\nLog out before you try to log in")
       return
     }
-    console.log(sessionService.getIsGuest())
 
     event.preventDefault()
     const data = new FormData(event.currentTarget)
@@ -64,27 +66,26 @@ export default function Login() {
     const password = data.get("password")?.toString()
     const result = serverLogin(username, password)
 
-    try {
-      const response = await result
-      if (response.errorOccured) {
-        alert(response.errorMessage)
-      } else {
-        alert("Logged in successfully!")
-        sessionService.setIsGuest(false)
-        sessionService.setBuyerId(response.value)
-        navigate(pathHome)
-      }
-    } catch (e) {
-      alert("Sorry, an unkown error occured")
-    }
+    fetchResponse(result).then((memberId: number) => {
+      alert("Logged in successfully!")
+      sessionService.setIsGuest(false)
+      sessionService.setBuyerId(memberId)
+
+      // WEB SOCKETS
+      const address = `ws://127.0.0.1:7890/${username}-notifications`
+      const ws = new WebSocket(address)
+      ws.addEventListener('open', () => alert(username + " logged in"))
+      ws.addEventListener('message', function (event) {
+        alert("Message from server " + event.data);
+      });
+      // ws.on('open', function () {
+      //   alert("opened websocket! of " + username)
+      // })
+
+
+      navigate(pathHome)
+    }).catch(alert)
   }
-  // sx={{
-  //   position: "absolute",
-  //   top: "0px",
-  //   right: "0px",
-  //   fontsize: 50,
-  //   color: "primary",
-  // }}
 
   return (
     <ThemeProvider theme={theme}>

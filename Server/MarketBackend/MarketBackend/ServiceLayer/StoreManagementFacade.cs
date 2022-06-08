@@ -338,40 +338,70 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        private BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces.IPredicateExpression ServicePredicateToPredicate(ServiceDTO.DiscountDTO.ServicePredicate spred, StoreDiscountPolicyManager manager)
+        private BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces.IPredicateExpression ServicePredicateToPredicate(ServicePredicate spred, StoreDiscountPolicyManager manager, string json = "")
         {
-            if (spred is ServiceLogical)
-            {
-                if (spred is ServiceDTO.DiscountDTO.ServiceAnd)
+            
+                if (spred.tag== "AndPredicate")
                 {
+                    if (json != "")
+                    {
+                        JObject rss = JObject.Parse(json);
+                        var pred1 = JsonConvert.DeserializeObject<ServicePredicate>(rss["firstExpression"].ToString());
+                        var pred2 = JsonConvert.DeserializeObject<ServicePredicate>(rss["secondExpression"].ToString());
+                        return manager.NewAndExpression(ServicePredicateToPredicate(pred1, manager, rss["firstExpression"].ToString()), ServicePredicateToPredicate(pred2, manager, rss["secondExpression"].ToString()));
+                    }
                     ServiceDTO.DiscountDTO.ServiceAnd pred = (ServiceDTO.DiscountDTO.ServiceAnd)spred;
                     return manager.NewAndExpression(ServicePredicateToPredicate(pred.firstExpression, manager), ServicePredicateToPredicate(pred.secondExpression, manager));
                 }
-                else if (spred is ServiceDTO.DiscountDTO.ServiceOr)
+                else if (spred.tag == "OrPredicate")
                 {
+                    if (json != "")
+                    {
+                        JObject rss = JObject.Parse(json);
+                        var pred1 = JsonConvert.DeserializeObject<ServicePredicate>(rss["firstExpression"].ToString());
+                        var pred2 = JsonConvert.DeserializeObject<ServicePredicate>(rss["secondExpression"].ToString());
+                        return manager.NewOrExpression(ServicePredicateToPredicate(pred1, manager, rss["firstExpression"].ToString()), ServicePredicateToPredicate(pred2, manager, rss["secondExpression"].ToString()));
+                    }
                     ServiceDTO.DiscountDTO.ServiceOr pred = (ServiceDTO.DiscountDTO.ServiceOr)spred;
                     return manager.NewOrExpression(ServicePredicateToPredicate(pred.firstExpression, manager), ServicePredicateToPredicate(pred.secondExpression, manager));
                 }
-                else // Xor
+                else if (spred.tag == "XorPredicate")// Xor
                 {
+                    if (json != "")
+                    {
+                        JObject rss = JObject.Parse(json);
+                        var pred1 = JsonConvert.DeserializeObject<ServicePredicate>(rss["firstExpression"].ToString());
+                        var pred2 = JsonConvert.DeserializeObject<ServicePredicate>(rss["secondExpression"].ToString());
+                        return manager.NewXorExpression(ServicePredicateToPredicate(pred1, manager, rss["firstExpression"].ToString()), ServicePredicateToPredicate(pred2, manager, rss["secondExpression"].ToString()));
+                    }
                     ServiceXor pred = (ServiceXor)spred;
                     return manager.NewXorExpression(ServicePredicateToPredicate(pred.firstExpression, manager), ServicePredicateToPredicate(pred.secondExpression, manager));
                 }
-            }
-            else // Basic predicate
-            {
-                if (spred is ServiceBagValue)
+        
+           
+               else if (spred.tag == "BagValuePredicate")
                 {
+                    if (json != "")
+                    {
+                        var result = JsonConvert.DeserializeObject<ServiceBagValue>(json);
+                        //  ServiceStoreDiscount dis = (ServiceStoreDiscount)discount;
+                        return manager.NewBagValuePredicate(result.worth);
+                    }
                     ServiceBagValue pred = (ServiceBagValue)spred;
                     return manager.NewBagValuePredicate(pred.worth);
                 }
                 else // ServiceProductAmount
                 {
+                    if (json != "")
+                    {
+                        var result = JsonConvert.DeserializeObject<ServiceProductAmount>(json);
+                        return manager.NewProductAmountPredicate(result.pid,result.quantity);
+                    }
                     ServiceProductAmount pred = (ServiceProductAmount)spred;
                     return manager.NewProductAmountPredicate(pred.pid, pred.quantity);
                 }
 
-            }
+            
         }
         private IDiscountExpression ServiceDiscountToDiscount(dynamic discount, StoreDiscountPolicyManager manager, string json = "")
         {
@@ -491,16 +521,23 @@ namespace MarketBackend.ServiceLayer
             }
             else // IServiceConditional
             {
-                if (sexp.tag.Contains("Discount"))
-                {
-                    ServiceConditionDiscount dis = (ServiceConditionDiscount)sexp;
-                    return manager.NewConditionalDiscount(ServicePredicateToPredicate(dis.pred, manager), ServiceDiscountToDiscount(dis.then, manager));
-                }
-                else // ServiceIf
-                {
-                    ServiceIf dis = (ServiceIf)sexp;
-                    return manager.NewIfDiscount(ServicePredicateToPredicate(dis.test, manager), ServiceDiscountToDiscount(dis.thenDis, manager), ServiceDiscountToDiscount(dis.elseDis, manager));
-                }
+                JObject rss = JObject.Parse(json);
+                var test = JsonConvert.DeserializeObject<ServicePredicate>(rss["test"].ToString());
+                var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["thenDis"].ToString());
+                var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["elseDis"].ToString());
+                if (discount2 != null)
+                    return manager.NewIfDiscount(ServicePredicateToPredicate(test, manager, rss["test"].ToString()), ServiceDiscountToDiscount(discount1, manager, rss["thenDis"].ToString()), ServiceDiscountToDiscount(discount2, manager, rss["elseDis"].ToString()));
+                return manager.NewConditionalDiscount(ServicePredicateToPredicate(test, manager, rss["test"].ToString()), ServiceDiscountToDiscount(discount1, manager, rss["thenDis"].ToString()));
+                //if (sexp.tag.Contains("Discount"))
+                //{
+                //  ServiceConditionDiscount dis = (ServiceConditionDiscount)sexp;
+                //    return manager.NewConditionalDiscount(ServicePredicateToPredicate(dis.pred, manager), ServiceDiscountToDiscount(dis.then, manager));
+                //}
+                //else // ServiceIf
+                //{
+                //    ServiceIf dis = (ServiceIf)sexp;
+                //    return manager.NewIfDiscount(ServicePredicateToPredicate(dis.test, manager), ServiceDiscountToDiscount(dis.thenDis, manager), ServiceDiscountToDiscount(dis.elseDis, manager));
+                //}
             }
         }
 

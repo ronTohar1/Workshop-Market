@@ -6,11 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MarketBackend.DataLayer.DataDTOs.Buyers.Carts
+namespace MarketBackend.DataLayer.DataDTOs.Buyers
 {
-    public class DataCart
+    public class DataNotification
     {
-        public int Id { get; set; }
-        public IList<DataShoppingBag> ShoppingBags { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string Notification { get; set; }
     }
 }

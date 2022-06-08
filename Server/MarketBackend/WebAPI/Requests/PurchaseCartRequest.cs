@@ -22,7 +22,7 @@
             string holder,
             string ccv, 
             string id,
-            string supplyName,
+            string receiverName,
             string address,
             string city,
             string country,
@@ -34,7 +34,7 @@
             Holder = holder;
             Ccv = ccv;
             Id = id;
-            ReceiverName = supplyName;
+            ReceiverName = receiverName;
             Address = address;
             City = city;
             Country = country;

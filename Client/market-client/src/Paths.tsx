@@ -5,3 +5,6 @@ export const pathStore: string = "/store";
 export const pathCart: string = "/cart";
 export const pathSearch: string = "/search";
 export const pathStoreManager: string = "/storeManager";
+// export const pathStorePageOfManager: string = "/storeDashboard"
+export const pathAdmin: string = "/admin"
+export const pathCheckout: string = "/checkout"

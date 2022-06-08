@@ -97,6 +97,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private const string description_discount = "A banana's discount will be given when bought in sets of 4 or more!";
         private Mock<ShoppingBag>? shoppingBagMock;
         private Mock<ProductInBag>? productInBagMock;
+
+        private int bidId = 1;
         // ----------- Setup helping functions -----------------------------
 
         private Member setupMcokedMember(int memberId)
@@ -1078,6 +1080,20 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
                 , new List<int>(expectedMembersIds)));
         }
 
+        // ------- GetMembersInRoleNoPermissionsCheck() ----------------------------------------
+
+        [Test]
+        [TestCase(Role.Manager, new int[] { managerId1, managerId2 })]
+        [TestCase(Role.Owner, new int[] { coOwnerId1, coOwnerId2, founderMemberId })]
+        [TestCase(Role.Manager, new int[] { managerId1, managerId2 })]
+        public void TestGetMembersInRoleNoPermissionsCheckShouldPass(Role role, int[] expectedMembersIds)
+        {
+            SetupStoreFull();
+
+            Assert.IsTrue(SameElements(store.GetMembersInRoleNoPermissionsCheck(role)
+                , new List<int>(expectedMembersIds)));
+        }
+
         // ------- GetFounder() ----------------------------------------
 
         [Test]
@@ -1499,6 +1515,107 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             store.AddPurchaseRecord(founder.Id, p1.Object);
             store.AddPurchaseRecord(founder.Id, p2.Object);
             Assert.Throws<MarketException>(() => store.GetDailyProfit(founder.Id + 1));
+        }
+
+        // -------------------------- Bid tests ----------------------------------
+
+        [Test]
+        [TestCase(100)]
+        [TestCase(0)]
+        public void TestAddBid(double bid)
+        {
+            SetupProductsWithAmounts();
+            int id = store.AddBid(productId1, memberId1, storeId, bid);
+            Assert.IsTrue(store.bids.ContainsKey(id));
+        }
+
+        [Test]
+        [TestCase(100)]
+        [TestCase(0)]
+        public void TestAllApprovedSucess(double bid)
+        {
+            SetupStoreNoRoles();
+            Bid b = new Bid(productId1, memberId1, storeId, bid);
+            b.approveBid(founderMemberId);
+            store.CheckAllApproved(b);
+        }
+
+        [Test]
+        [TestCase(100)]
+        [TestCase(0)]
+        public void TestAllApprovedFail(double bid)
+        {
+            SetupStoreNoRoles();
+            Bid b = new Bid(productId1, memberId1, storeId, bid);
+            store.CheckAllApproved(b);
+        }
+
+        [Test]
+        [TestCase(100)]
+        [TestCase(0)]
+        public void TestApproveBids(double bid)
+        {
+            SetupProductsWithAmounts();
+            int id = store.AddBid(productId1, memberId1, storeId, bid);
+            store.ApproveBid(founderMemberId, id);
+            Assert.IsTrue(store.GetApproveForBid(founderMemberId, id).Contains(founderMemberId));
+        }
+
+        [Test]
+        [TestCase(100)]
+        [TestCase(0)]
+        public void TestDenyBids(double bid)
+        {
+            SetupProductsWithAmounts();
+            int id = store.AddBid(productId1, memberId1, storeId, bid);
+            store.DenyBid(founderMemberId, id);
+            Assert.IsTrue(!store.bids.ContainsKey(id));
+        }
+
+        [Test]
+        [TestCase(100)]
+        [TestCase(0)]
+        public void TestMakeCounterOfferWithOffer(int offer)
+        {
+            SetupProductsWithAmounts();
+            int id = store.AddBid(productId1, memberId1, storeId, 50);
+            store.MakeCounterOffer(founderMemberId, id, offer);
+            Assert.IsTrue(store.GetBid(id).counterOffer);
+        }
+
+        [Test]
+        [TestCase(100)]
+        [TestCase(0)]
+        public void TestMakeCounterOfferWithoutOffer(int offer)
+        {
+            SetupProductsWithAmounts();
+            int id = store.AddBid(productId1, memberId1, storeId, 50);
+            Assert.IsTrue(!store.GetBid(id).counterOffer);
+        }
+
+        [Test]
+        [TestCase(100)]
+        [TestCase(0)]
+        public void TestApproveCounterOfferWithOffer(int offer)
+        {
+            SetupProductsWithAmounts();
+            int id = store.AddBid(productId1, memberId1, storeId, 50);
+            store.MakeCounterOffer(founderMemberId, id, offer);
+            store.ApproveCounterOffer(memberId1, id);
+            Bid bid = store.GetBid(id);
+            Assert.IsTrue((!bid.counterOffer) && (bid.bid == offer));
+        }
+
+        [Test]
+        [TestCase(100)]
+        [TestCase(0)]
+        public void TestDenyCounterOfferWithOffer(int offer)
+        {
+            SetupProductsWithAmounts();
+            int id = store.AddBid(productId1, memberId1, storeId, 50);
+            store.MakeCounterOffer(founderMemberId, id, offer);
+            store.DenyCounterOffer(memberId1, id);
+            Assert.IsTrue(!store.bids.ContainsKey(id));
         }
     }
 }

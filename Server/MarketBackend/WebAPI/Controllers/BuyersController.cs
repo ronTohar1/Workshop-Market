@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
             this.notificationServer = notificationServer;
         }
 
-        [HttpPost]
+        [HttpPost("GetBuyerCart")]
         public ActionResult<Response<ServiceCart>> GetCart([FromBody] UserRequest request)
         {
             Response<ServiceCart> response = buyerFacade.GetCart(request.UserId);
@@ -107,13 +107,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("StoreInfo")]
-        public ActionResult<Response<bool>> GetStoreInfo([FromBody] StoreRequest request)
+        public ActionResult<Response<ServiceStore>> GetStoreInfo([FromBody] StoreRequest request)
         {
             Response<ServiceStore> response;
-            if (request.StoreId > 0)
-                response = buyerFacade.GetStoreInfo(request.StoreId);
-            else
-                response = buyerFacade.GetStoreInfo(request.StoreName);
+            //if (request.StoreId > 0)
+            response = buyerFacade.GetStoreInfo(request.StoreId);
+            //else if (request.StoreName != null)
+            //response = buyerFacade.GetStoreInfo(request.StoreName);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
@@ -121,11 +121,12 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+
         [HttpPost("SerachProducts")]
-        public ActionResult<Response<bool>> ProductsSearch([FromBody] SearchProductsRequest request)
+        public ActionResult<Response<IDictionary<int, IList<ServiceProduct>>>> ProductsSearch([FromBody] SearchProductsRequest request)
         {
             Response<IDictionary<int, IList<ServiceProduct>>> response =
-                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword);
+                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword,request.ProductId, request.ProductIds);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);

@@ -90,7 +90,7 @@ namespace MarketBackend.BusinessLayer.Admins
             membersController.RemoveMember(memberToRemoveId);
             return true;
         }
-        public IList<int> GetLoggedInMembers(int requestingId)
+        public IDictionary<int, Member> GetLoggedInMembers(int requestingId)
         {
             VerifyAdmin(requestingId);
             return membersController.GetLoggedInMembers();

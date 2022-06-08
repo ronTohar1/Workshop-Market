@@ -15,6 +15,13 @@ namespace MarketBackend.DataLayer.DatabaseObjects
     {
         public DbSet<DataMember> Members { get; set; }
         public DbSet<DataStore> Stores { get; set; }
+        public DbSet<DataProduct> Products { get; set; }
+        public DbSet<DataBid> Bids { get; set; }
+        public DbSet<DataCart> Carts { get; set; }
+        public DbSet<DataManagerPermission> ManagerPermissions { get; set; }
+        public DbSet<DataPurchaseOption> PurchaseOptions { get; set; }
+        public DbSet<DataStoreMemberRoles> StoreMemberRoles { get; set; }
+        public DbSet<DataProductReview> ProductReview { get; set; }
 
         private const string databaseName = "MarketDatabase";
         private const string instanceName = "SQLEXPRESS"; 

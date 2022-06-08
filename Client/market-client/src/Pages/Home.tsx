@@ -72,11 +72,10 @@ const theme = createTheme({
 const styles = {
   paperContainer: {
     height: 1356,
-    // backgroundImage: `url(${"https://images.unsplash.com/photo-1630326120534-9619533ba0d3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"})`,
+    backgroundImage: `url(${"https://images.unsplash.com/photo-1630326120534-9619533ba0d3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"})`,
   },
 }
 export default function Home() {
-  const bar = Navbar()
   return (
     <ThemeProvider theme={theme}>
       <main>

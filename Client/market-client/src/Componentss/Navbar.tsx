@@ -17,7 +17,13 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { BadgeProps, List, ListItem, ListItemText } from "@mui/material"
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"
 import Stack from "@mui/material/Stack"
-import { pathCart, pathHome, pathLogin, pathSearch, pathStoreManager } from "../Paths"
+import {
+  pathCart,
+  pathHome,
+  pathLogin,
+  pathSearch,
+  pathStoreManager,
+} from "../Paths"
 import { Link, Navigate } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { Tooltip } from "@mui/material"
@@ -120,7 +126,7 @@ export default function Navbar() {
         setNumItemsInCart(prodsIds.length)
       })
       .catch((e) => {
-        alert(e)
+        alert("Couldn't load some of your information")
       })
   })
 
@@ -155,11 +161,8 @@ export default function Navbar() {
 
   const handleMyAccountClick = () => {
     setAnchorEl(null)
-    if(getIsGuest())
-      navigate(`${pathLogin}`)
-    else
-      navigate(`${pathStoreManager}`)
-
+    if (getIsGuest()) navigate(`${pathLogin}`)
+    else navigate(`${pathStoreManager}`)
   }
 
   const menuId = "primary-search-account-menu"

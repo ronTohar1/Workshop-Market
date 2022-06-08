@@ -14,7 +14,7 @@ import Product from "../DTOs/Product"
 import ShoppingBag from "../DTOs/ShoppingBag"
 import { pathHome } from "../Paths"
 import {
-  serverChangeProductAmount,
+  serverChangeProductAmountInCart,
   serverGetCart,
   serverRemoveFromCart,
 } from "../services/BuyersService"
@@ -144,7 +144,7 @@ export default function CartPage() {
 
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
     fetchResponse(
-      serverChangeProductAmount(
+      serverChangeProductAmountInCart(
         getBuyerId(),
         product.id,
         product.storeId,

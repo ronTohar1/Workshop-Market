@@ -7,7 +7,7 @@ import {
   GridColDef,
 } from "@mui/x-data-grid"
 import Box from "@mui/material/Box"
-
+import AddBusinessIcon from "@mui/icons-material/AddBusiness"
 // import CustomToolbarGrid  from '../components/ProductsList'
 // import * as React from 'react';
 
@@ -38,8 +38,8 @@ import Product from "../DTOs/Product"
 import { Card, CardActions, CardContent } from "@mui/material"
 import {
   serverGetStore,
-  serverOpenStore,
   serverCloseStore,
+  serverOpenNewStore,
 } from "../services/StoreService"
 import ExitToAppIcon from "@mui/icons-material/ExitToApp"
 import { dummyMember1, fetchStoresManagedBy } from "../services/MemberService"
@@ -55,29 +55,34 @@ import { getBuyerId, getIsGuest } from "../services/SessionService"
 import { useNavigate } from "react-router-dom"
 import { pathHome } from "../Paths"
 import LoadingCircle from "../Componentss/LoadingCircle"
+import AddStoreForm from "../Componentss/Forms/AddStoreForm"
+import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
+import FailureSnackbar from "../Componentss/Forms/FailureSnackbar"
 
-
-const UserInfoCard = ( numOfManagedStores:number, ) => {
+const UserInfoCard = (numOfManagedStores: number) => {
   return (
-    <Card>
+    <Card elevation={5}>
       <CardContent>
         <Typography variant="h4" component="div">
           Account Information
         </Typography>
 
+        <Typography variant="h6">Hello Dear User</Typography>
         <Typography variant="h6">
-          <b>Username</b>: Hello Dear User
-        </Typography>
-        <Typography variant="h6">
-          <b>Number Of Managed Stores</b>:
-          {numOfManagedStores}
+          <b>Number Of Managed Stores</b>: {numOfManagedStores}
         </Typography>
       </CardContent>
     </Card>
   )
 }
 
-const StoreCard = ({ store }: { store: Store }) => {
+const StoreCard = ({
+  store,
+  handleChangedStore,
+}: {
+  store: Store
+  handleChangedStore: (s: Store) => void
+}) => {
   const [openDialog, setOpenDialog] = React.useState(false)
   const [isStoreOpen, setIsStoreOpen] = React.useState(store.isOpen)
 
@@ -99,6 +104,7 @@ const StoreCard = ({ store }: { store: Store }) => {
         .then((closed: boolean) => {
           if (closed) alert("Closed store successfuly!")
           setIsStoreOpen(false)
+          handleChangedStore(store)
         })
         .catch((e) => {
           alert(e)
@@ -108,7 +114,11 @@ const StoreCard = ({ store }: { store: Store }) => {
   return (
     <div>
       {openDialog && (
-        <StoreDialog store={store} handleCloseDialog={handleCloseDialog} />
+        <StoreDialog
+          store={store}
+          handleCloseDialog={handleCloseDialog}
+          handleChangedStore={handleChangedStore}
+        />
       )}
       <Card sx={{ display: "flex" }} elevation={6} component={Paper}>
         <CardContent sx={{ display: "flex", flexDirection: "column" }}>
@@ -162,33 +172,125 @@ const Item = styled("div")(({ theme }) => ({
   color: theme.palette.text.secondary,
 }))
 
+const ManagedStores = (
+  stores: Store[],
+  handleChangedStore: (store: Store) => void,
+  handleOpenStoreForm: () => void
+) => {
+  return (
+    <Grid>
+      <Box
+        sx={{
+          justifyContent: "center",
+          display: "flex",
+          width: "100%",
+          mt: 3,
+          mb: 3,
+          ml: 3,
+          mr: 3,
+        }}
+      >
+        <Stack>
+          <Typography variant="h3" component="div">
+            Stores You Manage
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{
+              width: "100%",
+              mt: 2,
+              display: "flex",
+              justifyContent: "center",
+            }}
+            endIcon={<AddBusinessIcon />}
+            onClick={handleOpenStoreForm}
+          >
+            Add A Store
+          </Button>
+        </Stack>
+      </Box>
+      <Grid
+        sx={{ ml: 2 }}
+        container
+        flex={1}
+        rowSpacing={1}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+      >
+        {stores.map((s) => (
+          <Item>
+            <StoreCard store={s} handleChangedStore={handleChangedStore} />
+          </Item>
+        ))}
+      </Grid>
+    </Grid>
+  )
+}
+
 export default function StoreManagerPage() {
   const startingPageSize = 5
   const [pageSize, setPageSize] = React.useState<number>(startingPageSize)
   const [stores, setStores] = React.useState<Store[] | null>(null) // sotres managed by current member
-  const navigate = useNavigate();
 
-  if(getIsGuest())
-    {
-      alert("You are not allowed to visit this page!")
-      navigate(`${pathHome}`)
-    }
+  const [openStoreForm, setOpenStoreForm] = React.useState<boolean>(false)
+  const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false)
+  const [successProductMsg, setSuccessProductMsg] = React.useState<string>("")
+  const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false)
+  const [failureProductMsg, setFailureProductMsg] = React.useState<string>("")
+  const showFailureSnack = (msg: string) => {
+    setOpenFailSnack(true)
+    setFailureProductMsg(msg)
+  }
+
+  const navigate = useNavigate()
+  const showSuccessSnack = (msg: string) => {
+    setOpenSuccSnack(true)
+    setSuccessProductMsg(msg)
+    setOpenStoreForm(false)
+  }
+  const handleAddStore = (storeName: string) => {
+    fetchResponse(serverOpenNewStore(getBuyerId(), storeName))
+      .then((storeId: number) => fetchResponse(serverGetStore(storeId)))
+      .then((newStore: Store) =>
+        setStores(stores === null ? [newStore] : stores.concat(newStore))
+      )
+      .then(() => showSuccessSnack("Added " + storeName + " Successfully"))
+      .catch(showFailureSnack)
+  }
+
+  if (getIsGuest()) {
+    alert("You are not allowed to visit this page!")
+    navigate(`${pathHome}`)
+  }
 
   React.useEffect(() => {
-    fetchStoresManagedBy(getBuyerId()).then((managedStores: Store[]) => {  
+    fetchStoresManagedBy(getBuyerId()).then((managedStores: Store[]) => {
       setStores(managedStores)
     })
-  },[])
+  }, [])
 
- 
+  const handleChangedStore = (changedStore: Store) => {
+    fetchResponse(serverGetStore(changedStore.id))
+      .then((loadedStore: Store) => {
+        const newStores = stores?.map((currStore) => {
+          if (currStore.id === loadedStore.id) return loadedStore
+          return currStore
+        })
+        console.log(newStores)
+        setStores(newStores || null)
+      })
+      .catch((e) => {
+        alert(e)
+        setStores([])
+      })
+  }
 
-  return stores !== null? (
+  return stores !== null ? (
     <ThemeProvider theme={theme}>
       <Box>
         <Box>
           <Navbar />
         </Box>
-        <Box>
+        <Box sx={{ ml: 3, mr: 3 }}>
           <Grid
             item
             xs={2}
@@ -209,38 +311,26 @@ export default function StoreManagerPage() {
             {UserInfoCard(stores.length)}
             {/* </Box> */}
           </Grid>
-          <Grid>
-            <Box
-              sx={{
-                justifyContent: "center",
-                display: "flex",
-                width: "100%",
-                mt: 3,
-                mb: 3,
-              }}
-            >
-              <Typography variant="h3" component="div">
-                Stores You Manage
-              </Typography>
-            </Box>
-            {/* {productsByStore.map((prodsOfStore: Product[]) => {
-                  return storeGrid(prodsOfStore, pageSize, setPageSize);
-                })} */}
-            <Grid
-              container
-              flex={1}
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
-              {stores.map((s) => (
-                <Item>
-                  <StoreCard store={s} />
-                </Item>
-              ))}
-            </Grid>
-          </Grid>
+          {ManagedStores(stores, handleChangedStore, () =>
+            setOpenStoreForm(true)
+          )}
         </Box>
       </Box>
+
+      {/* Unrelated dialogs: */}
+      <AddStoreForm
+        open={openStoreForm}
+        handleAddStore={handleAddStore}
+        handleClose={() => setOpenStoreForm(false)}
+      />
+      <Dialog open={openFailSnack}>
+        {FailureSnackbar(failureProductMsg, openFailSnack, () =>
+          setOpenFailSnack(false)
+        )}
+      </Dialog>
+      {SuccessSnackbar(successProductMsg, openSuccSnack, () =>
+        setOpenSuccSnack(false)
+      )}
     </ThemeProvider>
   ) : (
     LoadingCircle()

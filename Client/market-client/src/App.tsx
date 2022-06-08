@@ -4,7 +4,6 @@ import "./index.css"
 import Register from "./Pages/Register"
 import Home from "./Pages/Home"
 import Login from "./Pages/Login"
-import Navbar from "./Componentss/Navbar"
 import SearchPage from "./Pages/Search"
 import StorePage from "./Pages/StorePage"
 import CartPage from "./Pages/Cart"
@@ -12,10 +11,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import * as Paths from "./Paths"
 import { QueryParamProvider } from "use-query-params"
 import StoreManagerPage from "./Pages/StoreManager"
-import StorePageOfManager from "./Pages/StorePageOfManager"
+import StorePageOfManager from "./Componentss/ManagerEditStore/StorePageOfManager"
 import Checkout from "./Pages/Checkout"
 import Admin from "./Pages/Admin"
 import Product from "./DTOs/Product"
+import { createTheme, ThemeProvider } from "@mui/material"
 
 const App = () => {
   // window.onunload = () => clearSession()
@@ -40,29 +40,51 @@ const App = () => {
     [new Product(4, "Cheese", 13.9, "Dairy", 1, "Shufersal", 10), 5],
     [new Product(5, "Tommato", 1.9, "Vegtables", 1, "Shufersal", 10), 1],
   ])
+
+  const theme = createTheme({
+    typography: {
+      fontFamily: [
+        "-apple-system",
+        "BlinkMacSystemFont",
+        '"Segoe UI"',
+        "Roboto",
+        '"Helvetica Neue"',
+        "Arial",
+        "sans-serif",
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(","),
+    },
+  })
   return (
-    <Router>
-      <QueryParamProvider>
-        <Routes>
-          <Route index element={<Home />} />
-          <Route path={Paths.pathRegister} element={<Register />} />
-          <Route path={Paths.pathStore} element={<StorePage />} />
-          <Route path={Paths.pathCart} element={<CartPage />} />
-          <Route path={Paths.pathLogin} element={<Login />} />
-          <Route path={Paths.pathSearch} element={<SearchPage />} />
-          {/* <Route
+    <ThemeProvider theme={theme}>
+      <Router>
+        <QueryParamProvider>
+          <Routes>
+            <Route index element={<Home />} />
+            <Route path={Paths.pathRegister} element={<Register />} />
+            <Route path={Paths.pathStore} element={<StorePage />} />
+            <Route path={Paths.pathCart} element={<CartPage />} />
+            <Route path={Paths.pathLogin} element={<Login />} />
+            <Route path={Paths.pathSearch} element={<SearchPage />} />
+            {/* <Route
             path={Paths.pathStorePageOfManager}
             element={<StorePageOfManager />}
           /> */}
-          <Route path={Paths.pathStoreManager} element={<StoreManagerPage />} />
-          <Route path={Paths.pathAdmin} element={<Admin />} />
-          <Route
-            path={Paths.pathCheckout}
-            element={<Checkout productsAmount={products} />}
-          />
-        </Routes>
-      </QueryParamProvider>
-    </Router>
+            <Route
+              path={Paths.pathStoreManager}
+              element={<StoreManagerPage />}
+            />
+            <Route path={Paths.pathAdmin} element={<Admin />} />
+            <Route
+              path={Paths.pathCheckout}
+              element={<Checkout productsAmount={products} />}
+            />
+          </Routes>
+        </QueryParamProvider>
+      </Router>
+    </ThemeProvider>
   )
 }
 

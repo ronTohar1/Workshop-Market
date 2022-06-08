@@ -9,38 +9,28 @@ import DialogTitle from "@mui/material/DialogTitle"
 import Product from "../../DTOs/Product"
 import { Currency, makeSetStateFromEvent } from "../../Utils"
 
-export default function AddProductForm({
-  handleAddProduct,
+export default function AddStoreForm({
+  handleAddStore,
   open,
   handleClose,
-  handleOpen,
 }: {
-  handleAddProduct: (
-    productName: string,
-    price: number,
-    category: string
-  ) => void
+  handleAddStore: (storeName: string) => void
   open: boolean
   handleClose: () => void
-  handleOpen: () => void
 }) {
   const [name, setName] = React.useState("")
-  const [category, setCategory] = React.useState("")
-  const [price, setPrice] = React.useState(0)
 
   const resetFields = () => {
     setName("")
-    setCategory("")
-    setPrice(0)
   }
 
-  const handleOpenClick = () => {
+  const handleCloseClick = () => {
     resetFields()
-    handleOpen()
+    handleClose()
   }
 
   const handleSubmit = async () => {
-    handleAddProduct(name, price, category)
+    handleAddStore(name)
   }
 
   const makeTextField = (
@@ -67,33 +57,14 @@ export default function AddProductForm({
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleOpenClick}>
-        Add New Product To Store
-      </Button>
-      <Dialog open={open} onClose={handleClose} fullWidth>
+      <Dialog open={open} onClose={handleCloseClick} fullWidth>
         <DialogTitle>Add Product</DialogTitle>
         <DialogContent>
-          {makeTextField("productName", "Product name", name, "text", setName)}
-          {makeTextField(
-            "category",
-            "Category of the product",
-            category,
-            "text",
-            setCategory
-          )}
-          {makeTextField(
-            "price",
-            `Price (in ${Currency})`,
-            price,
-            "number",
-            setPrice
-          )}
+          {makeTextField("storeName", "Store name", name, "text", setName)}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit} >
-            Submit
-          </Button>
+          <Button onClick={handleSubmit}>Submit</Button>
         </DialogActions>
       </Dialog>
     </div>

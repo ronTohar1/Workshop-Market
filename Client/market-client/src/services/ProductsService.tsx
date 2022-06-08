@@ -1,4 +1,5 @@
 import Cart from "../DTOs/Cart"
+import MemberInRole from "../DTOs/MemberInRole"
 import Product from "../DTOs/Product"
 import ShoppingBag from "../DTOs/ShoppingBag"
 import Store from "../DTOs/Store"
@@ -107,12 +108,14 @@ export function groupByStore(products: Product[]): Product[][] {
 //                        Server Communication
 
 export async function serverSearchProducts(
-  storeName: string | null,
-  productName: string | null,
-  category: string | null,
-  keyword: string | null,
-  productId: number | null,
-  productIds: number[] | null
+  storeName: string | null = null,
+  productName: string | null = null,
+  category: string | null = null,
+  keyword: string | null = null,
+  productId: number | null = null,
+  productIds: number[] | null = null,
+  memberInRole: MemberInRole | null = null,
+  storesWithProductsThatPassedFilter: boolean | null = null,
 ): Promise<ClientResponse<Map<number, Product[]>>> {
   const uri = serverPort + "/api/Buyers/SerachProducts"
   const jsonResponse = await fetch(uri, {
@@ -129,6 +132,9 @@ export async function serverSearchProducts(
       keyword: keyword,
       productId: productId,
       productIds: productIds,
+      memberInRole: memberInRole,
+      storesWithProductsThatPassedFilter: storesWithProductsThatPassedFilter,
+
     }),
   })
 

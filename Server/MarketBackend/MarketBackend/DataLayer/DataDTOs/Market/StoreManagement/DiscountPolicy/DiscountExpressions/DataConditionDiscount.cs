@@ -9,7 +9,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy
 {
     public class DataConditionExpression : DataConditionalExpression
     {
-        public DataPredicateExpression Predicate { get; set; }
-        public DataDiscountExpression DiscountExpression { get; set; }
+        public DataPredicateExpression? Predicate { get; set; }
+        public DataDiscountExpression? DiscountExpression { get; set; }
     }
 }

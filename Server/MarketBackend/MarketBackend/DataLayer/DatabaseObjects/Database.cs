@@ -31,7 +31,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataMember> Members { get; set; }
         public DbSet<DataStore> Stores { get; set; }
 
-        // discounts hierarchy
+        // discounts hierarchies
 
         public DbSet<DataDateDiscount> DateDiscounts { get; set; }
         public DbSet<DataOneProductDiscount> OneProductDiscounts { get; set; }
@@ -75,5 +75,10 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             modelBuilder.Entity<DataStoreMemberRoles>()
                 .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
         }
+
+        //private void DiscountsWithoutCascades(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<DataDiscount>().OnD
+        //}
     }
 }

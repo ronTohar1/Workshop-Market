@@ -1,5 +1,7 @@
 ﻿using MarketBackend.DataLayer.DataDTOs;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
     public class Database : DbContext
     {
         public DbSet<DataMember> Members { get; set; }
+        public DbSet<DataStore> Stores { get; set; }
 
         private const string databaseName = "MarketDatabase";
         private const string instanceName = "SQLEXPRESS"; 
@@ -34,6 +37,14 @@ namespace MarketBackend.DataLayer.DatabaseObjects
                 "MultipleActiveResultSets = True";  // todo: check if need more security 
 
             optionsBuilder.UseSqlServer(localVMConnectionString); 
+        }
+
+        // setting (not defualt) primary keys
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DataStoreMemberRoles>()
+                .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
         }
     }
 }

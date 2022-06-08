@@ -4,6 +4,7 @@ using MarketBackend.DataLayer.DatabaseObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarketBackend.Migrations
 {
     [DbContext(typeof(Database))]
-    partial class DatabaseModelSnapshot : ModelSnapshot
+    [Migration("20220608111656_AddedMostOfProduct")]
+    partial class AddedMostOfProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,9 +95,6 @@ namespace MarketBackend.Migrations
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DataBidId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Password")
                         .HasColumnType("int");
 
@@ -106,8 +105,6 @@ namespace MarketBackend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CartId");
-
-                    b.HasIndex("DataBidId");
 
                     b.ToTable("Members");
                 });
@@ -152,9 +149,6 @@ namespace MarketBackend.Migrations
                     b.Property<double>("PricePerUnit")
                         .HasColumnType("float");
 
-                    b.Property<double>("Productdicount")
-                        .HasColumnType("float");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DataStoreId");
@@ -176,10 +170,6 @@ namespace MarketBackend.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Review")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MemberId");
@@ -187,27 +177,6 @@ namespace MarketBackend.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("DataProductReview");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.DataPurchaseOption", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("DataProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PurchaseOption")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DataProductId");
-
-                    b.ToTable("DataPurchaseOption");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.DataPurchase", b =>
@@ -243,88 +212,6 @@ namespace MarketBackend.Migrations
                     b.ToTable("DataPurchase");
                 });
 
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataAppointmentsNode", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("DataAppointmentsNodeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MemberId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DataAppointmentsNodeId");
-
-                    b.ToTable("DataAppointmentsNode");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataBid", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<double>("Bid")
-                        .HasColumnType("float");
-
-                    b.Property<bool>("CounterOffer")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("DataStoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MemberId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Offer")
-                        .HasColumnType("float");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DataStoreId");
-
-                    b.HasIndex("MemberId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("DataBid");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataManagerPermission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("DataStoreMemberRolesMemberId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DataStoreMemberRolesStoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Permission")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DataStoreMemberRolesMemberId", "DataStoreMemberRolesStoreId");
-
-                    b.ToTable("DataManagerPermission");
-                });
-
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", b =>
                 {
                     b.Property<int>("Id")
@@ -332,9 +219,6 @@ namespace MarketBackend.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AppointmentsId")
-                        .HasColumnType("int");
 
                     b.Property<int>("FounderMemberId")
                         .HasColumnType("int");
@@ -348,30 +232,7 @@ namespace MarketBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppointmentsId");
-
                     b.ToTable("Stores");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", b =>
-                {
-                    b.Property<int>("MemberId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DataStoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
-
-                    b.HasKey("MemberId", "StoreId");
-
-                    b.HasIndex("DataStoreId");
-
-                    b.ToTable("DataStoreMemberRoles");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Buyers.Carts.DataProductInBag", b =>
@@ -403,10 +264,6 @@ namespace MarketBackend.Migrations
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataBid", null)
-                        .WithMany("Approving")
-                        .HasForeignKey("DataBidId");
 
                     b.Navigation("Cart");
                 });
@@ -444,13 +301,6 @@ namespace MarketBackend.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.DataPurchaseOption", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.DataProduct", null)
-                        .WithMany("PurchaseOptions")
-                        .HasForeignKey("DataProductId");
-                });
-
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.DataPurchase", b =>
                 {
                     b.HasOne("MarketBackend.DataLayer.DataDTOs.Buyers.DataMember", "Member")
@@ -468,61 +318,6 @@ namespace MarketBackend.Migrations
                     b.Navigation("Member");
 
                     b.Navigation("Store");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataAppointmentsNode", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataAppointmentsNode", null)
-                        .WithMany("Children")
-                        .HasForeignKey("DataAppointmentsNodeId");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataBid", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", null)
-                        .WithMany("Bids")
-                        .HasForeignKey("DataStoreId");
-
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Buyers.DataMember", "Member")
-                        .WithMany()
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.DataProduct", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Member");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataManagerPermission", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", null)
-                        .WithMany("ManagerPermissions")
-                        .HasForeignKey("DataStoreMemberRolesMemberId", "DataStoreMemberRolesStoreId");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataAppointmentsNode", "Appointments")
-                        .WithMany()
-                        .HasForeignKey("AppointmentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Appointments");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", null)
-                        .WithMany("MembersPermissions")
-                        .HasForeignKey("DataStoreId");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Buyers.Carts.DataCart", b =>
@@ -544,35 +339,14 @@ namespace MarketBackend.Migrations
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.DataProduct", b =>
                 {
-                    b.Navigation("PurchaseOptions");
-
                     b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataAppointmentsNode", b =>
-                {
-                    b.Navigation("Children");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataBid", b =>
-                {
-                    b.Navigation("Approving");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", b =>
                 {
-                    b.Navigation("Bids");
-
-                    b.Navigation("MembersPermissions");
-
                     b.Navigation("Products");
 
                     b.Navigation("PurchaseHistory");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", b =>
-                {
-                    b.Navigation("ManagerPermissions");
                 });
 #pragma warning restore 612, 618
         }

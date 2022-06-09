@@ -83,7 +83,7 @@ export default function StorePurchaseHourForm({store,purchasesAdder}: {store : S
              <Button onClick={()=>{purchasesAdder(
                logOp==='Before'?
              new BeforeHour(hour):
-             new AfterHour(hour))}} disabled={hour==-1 || logOp==''}>add to policies pool</Button>
+             new AfterHour(hour))}} variant="contained"  disabled={hour==-1 || logOp==''}>add to policies pool</Button>
              </Box>
     </React.Fragment>
   );

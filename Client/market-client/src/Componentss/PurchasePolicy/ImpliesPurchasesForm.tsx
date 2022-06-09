@@ -59,7 +59,7 @@ export default function ImpliesPurchasesForm({store,purchasesAdder,predicates}: 
        </Grid>
           </Grid>
           <Box textAlign='center'>
-             <Button onClick={()=>{purchasesAdder(new Implies(predicates.get(selectedId1)??new Predicate(''),predicates.get(selectedId2)??new Predicate('')))}} disabled={selectedId1==-1}>add to policies pool</Button>
+             <Button variant="contained" onClick={()=>{purchasesAdder(new Implies(predicates.get(selectedId1)??new Predicate(''),predicates.get(selectedId2)??new Predicate('')))}} disabled={selectedId1==-1}>add to policies pool</Button>
              </Box>
     </React.Fragment>
   );

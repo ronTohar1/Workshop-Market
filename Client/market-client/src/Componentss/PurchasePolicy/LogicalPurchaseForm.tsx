@@ -81,7 +81,7 @@ export default function LogicalPurchaseForm({store,purchasesAdder, restrictions}
              <Button onClick={()=>{purchasesAdder(
                logOp==='AND'?
              new AndPolicy(restrictions.get(selectedId1)??new Restriction(''),restrictions.get(selectedId2)??new Restriction('')):
-             new OrPolicy(restrictions.get(selectedId1)??new Restriction(''),restrictions.get(selectedId2)??new Restriction('')))}} disabled={selectedId1==-1 ||logOp==''|| selectedId2==-1}>add to policies pool</Button>
+             new OrPolicy(restrictions.get(selectedId1)??new Restriction(''),restrictions.get(selectedId2)??new Restriction('')))}} variant="contained"  disabled={selectedId1==-1 ||logOp==''|| selectedId2==-1}>add to policies pool</Button>
              </Box>
     </React.Fragment>
   );

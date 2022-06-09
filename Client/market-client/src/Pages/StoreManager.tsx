@@ -67,6 +67,8 @@ const UserInfoCard = (numOfManagedStores: number,username:string) => {
         </Typography>
 
         <Typography variant="h6">Hello {username}</Typography>
+        <Typography variant="h6">website-ID: {getBuyerId()}</Typography>
+
         <Typography variant="h6">
           <b>Number Of Managed Stores</b>: {numOfManagedStores}
         </Typography>

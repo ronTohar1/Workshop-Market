@@ -376,7 +376,7 @@ export async function AddDiscountPolicy(
 });
   return jsonResponse.json();
 }
-export async function AddPurchasePolicy(
+export async function serverAddPurchasePolicy(
   userId: number,
   store: Store, 
   purchase:PurchasePolicy

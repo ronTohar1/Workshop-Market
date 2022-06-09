@@ -54,7 +54,7 @@ export default function MaximumProductForm({store,purchasesAdder}: {store : Stor
           </Grid>
           </Grid>
           <Box textAlign='center'>
-             <Button onClick={()=>{purchasesAdder(new AtMostAmount(selectedId,store.products.find(p=>p.id==selectedId)?.name,amount))}} disabled={selectedId==-1 || amount==-1}>add to policies pool</Button>
+             <Button variant="contained"  onClick={()=>{purchasesAdder(new AtMostAmount(selectedId,store.products.find(p=>p.id==selectedId)?.name,amount))}} disabled={selectedId==-1 || amount==-1}>add to policies pool</Button>
              </Box>
     </React.Fragment>
  

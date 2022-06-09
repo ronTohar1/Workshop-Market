@@ -204,7 +204,7 @@ namespace WebAPI.Controllers
         [HttpPost("AddPurchasePolicy")]
         public ActionResult<Response<int>> AddPurchasePolicy([FromBody] AddPurchasePolicyRequest request)
         {
-            ServicePurchasePolicy policy = ConvertPolicyFromJson(request.Expression);
+            MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchasePolicy policy = ConvertPolicyFromJson(request.Expression);
             Response<int> response = storeManagementFacade.AddPurchasePolicy(
                 policy, request.Description, request.StoreId, request.UserId);
             if (response.IsErrorOccured())
@@ -410,7 +410,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        private ServicePurchasePolicy convertPurchaseFromJaon(dynamic expression, string json)
+        private MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchasePolicy convertPurchaseFromJaon(dynamic expression, string json)
         {
        
             if (expression.tag== "AndPurchase")
@@ -438,9 +438,9 @@ namespace WebAPI.Controllers
 
 
         }
-        private ServicePurchasePolicy ConvertPolicyFromJson(string json)
+        private MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchasePolicy ConvertPolicyFromJson(string json)
         {
-            var sexp = JsonConvert.DeserializeObject<ServicePurchasePolicy>(json);
+            var sexp = JsonConvert.DeserializeObject<MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchasePolicy>(json);
             if (sexp.tag.Contains("Restriction"))
                 return convertRestrictionFromJaon(sexp, json);
             else

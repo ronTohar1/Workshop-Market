@@ -55,7 +55,7 @@ export default function MinimumProductForm({store,purchasesAdder}: {store : Stor
           </Grid>
           </Grid>
           <Box textAlign='center'>
-             <Button onClick={()=>{purchasesAdder(new AtLeastAmount(selectedId,store.products.find(p=>p.id==selectedId)?.name,amount))}} disabled={selectedId==-1 || amount==-1}>add to policies pool</Button>
+             <Button variant="contained"  onClick={()=>{purchasesAdder(new AtLeastAmount(selectedId,store.products.find(p=>p.id==selectedId)?.name,amount))}} disabled={selectedId==-1 || amount==-1}>add to policies pool</Button>
              </Box>
     </React.Fragment>
  

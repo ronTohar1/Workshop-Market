@@ -67,7 +67,7 @@ export default function AddProductForm({
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleOpenClick}>
+      <Button variant="contained" sx={{mt:1}} onClick={handleOpenClick}>
         Add New Product To Store
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth>

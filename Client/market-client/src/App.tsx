@@ -72,8 +72,8 @@ const App = () => {
             <Route path={Paths.pathCart} element={<CartPage />} />
             <Route path={Paths.pathLogin} element={<Login />} />
             <Route path={Paths.pathSearch} element={<SearchPage />} />
-            <Route path={Paths.pathDiscount} element={<MainDiscount store = {, true)} />} />
-            <Route path={Paths.pathPolicy} element={<MainPolicy store = {, true)} />} />
+            <Route path={Paths.pathDiscount} element={<MainDiscount  />} />
+            <Route path={Paths.pathPolicy} element={<MainPolicy/>} />
 
             {/* <Route
             path={Paths.pathStorePageOfManager}

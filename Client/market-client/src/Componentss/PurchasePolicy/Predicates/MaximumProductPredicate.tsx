@@ -49,7 +49,7 @@ export default function MaximumProductPredicate({store,predicateAdder}: {store :
           </Grid>
           </Grid>
           <Box textAlign='center'>
-             <Button onClick={()=>{predicateAdder(new CheckProductLess(selectedId,store.products.find(p=>p.id==selectedId)?.name,amount))}} disabled={selectedId==-1 || amount==-1}>add to policies pool</Button>
+             <Button variant="contained"  onClick={()=>{predicateAdder(new CheckProductLess(selectedId,store.products.find(p=>p.id==selectedId)?.name,amount))}} disabled={selectedId==-1 || amount==-1}>add to policies pool</Button>
              </Box>
     </React.Fragment>
   );

@@ -4,7 +4,7 @@ import {
     GridCellEditCommitParams,
     GridColDef,
 } from "@mui/x-data-grid"
-import { Box, Dialog, Stack, Typography } from "@mui/material"
+import { Box, Button, Dialog, Stack, Typography } from "@mui/material"
 import Product from "../../DTOs/Product"
 import Store from "../../DTOs/Store"
 import {
@@ -15,7 +15,7 @@ import {
     serverGetPurchaseHistory,
     serverGetStore,
 } from "../../services/StoreService"
-import { pathHome } from "../../Paths"
+import { pathHome, pathPolicy } from "../../Paths"
 import { useNavigate } from "react-router-dom"
 import { fetchResponse } from "../../services/GeneralService"
 import { getBuyerId } from "../../services/SessionService"
@@ -50,7 +50,7 @@ const columns: GridColDef[] = [
     },
 ]
 
-export default function StorePolicies({
+export default function StorePurchasePolicies({
     store,
     handleChangedStore,
 }: {
@@ -59,13 +59,12 @@ export default function StorePolicies({
 }) {
     const initSize: number = 5
 
+    const navigate= useNavigate()
     const [pageSize, setPageSize] = React.useState<number>(initSize)
     const [rows, setRows] = React.useState<PurchasePolicy[]>([])
 
     React.useEffect(() => {
         setRows(store.purchasePolicies)
-        console.log("purchasePolicies")
-        console.log(store.purchasePolicies)
     }, [store])
 
 
@@ -106,6 +105,9 @@ export default function StorePolicies({
                         </div>
                     </div>
                 </div>
+                <Button variant="contained" onClick={()=>navigate(pathPolicy,{state: store})}>
+                    Add New Policies
+                </Button>
             </Box>
         )
     }

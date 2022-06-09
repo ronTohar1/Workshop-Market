@@ -67,7 +67,7 @@ export default function DatePurchaseForm({store,purchasesAdder}: {store : Store,
         </Grid>
       </Grid>
           <Box textAlign='center'>
-             <Button onClick={()=>{purchasesAdder(new DateRestriction(selectedYear,selectedMonth,selectedDay))}} disabled={(selectedYear==-1 && selectedMonth==-1 && selectedDay==-1 )}>add to policies pool</Button>
+             <Button variant="contained" onClick={()=>{purchasesAdder(new DateRestriction(selectedYear,selectedMonth,selectedDay))}} disabled={(selectedYear==-1 && selectedMonth==-1 && selectedDay==-1 )}>add to policies pool</Button>
              </Box>
     </React.Fragment>
   );

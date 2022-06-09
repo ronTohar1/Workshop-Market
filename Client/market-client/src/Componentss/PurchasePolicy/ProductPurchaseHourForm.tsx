@@ -115,7 +115,7 @@ export default function ProductPurchaseHourForm({store,purchasesAdder}: {store :
              <Button onClick={()=>{purchasesAdder(
                logOp==='Before'?
              new BeforeHourProduct(hour,store.products.find(p=>p.id==selectedId)?.name,selectedId,amount):
-             new AfterHourProduct(hour,store.products.find(p=>p.id==selectedId)?.name,selectedId,amount))}} disabled={hour==-1 || amount==-1 || selectedId==-1|| logOp==''}>add to policies pool</Button>
+             new AfterHourProduct(hour,store.products.find(p=>p.id==selectedId)?.name,selectedId,amount))}} variant="contained"  disabled={hour==-1 || amount==-1 || selectedId==-1|| logOp==''}>add to policies pool</Button>
              </Box>
     </React.Fragment>
   );

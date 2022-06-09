@@ -13,14 +13,14 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { blue, indigo, red } from '@mui/material/colors';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getBuyerId } from '../../services/SessionService';
 import { fetchResponse } from '../../services/GeneralService';
 import Store from '../../DTOs/Store';
 import { ButtonGroup, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 import Predicate from '../../DTOs/DiscountDTOs/Predicate';
 import PredicateCard from './Predicates/PredicateCard';
-import { AddDiscountPolicy, AddPurchasePolicy } from '../../services/StoreService';
+import { AddDiscountPolicy, serverAddPurchasePolicy } from '../../services/StoreService';
 import PurchasePolicy from '../../DTOs/PurchaseDTOs/PurchasePolicy';
 import StorePurchaseHourForm from './StorePurchaseHourForm';
 import ProductPurchaseHourForm from './ProductPurchaseHourForm';
@@ -35,6 +35,7 @@ import MinimumProductPredicate from './Predicates/MinimumProductPredicate';
 import DiscountCard from './PolicyCard';
 import PolicyCard from './PolicyCard';
 import Restriction from '../../DTOs/PurchaseDTOs/Restriction';
+import Navbar from '../Navbar';
 
 
 //Logical was removed
@@ -52,7 +53,9 @@ const theme = createTheme({
   },
 });
 
-export default function MainPolicy({store}: {store : Store}) {
+export default function MainPolicy() {
+  const store: Store = useLocation().state as Store
+  console.log(store)
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
   const [lastPurchaseIndex, setLastPurchaseIndex] = React.useState<number>(0);
@@ -113,10 +116,11 @@ export default function MainPolicy({store}: {store : Store}) {
   };
   const handleSubmit = () =>{
     const buyerId = getBuyerId()
-    const responsePromise = AddPurchasePolicy(buyerId,store, purchases.get(selectedId)??new PurchasePolicy(''))
+    const responsePromise = serverAddPurchasePolicy(buyerId,store, purchases.get(selectedId)??new PurchasePolicy(''))
     console.log(responsePromise)
-    fetchResponse(responsePromise).then((newPurchases)=>{
-      alert('Discount policy was added successfully to the store!')
+    fetchResponse(responsePromise).then((success: boolean)=>{
+      if (success) alert('Purchase policy was added successfully to the store!')
+      else alert("Couldnt add purchase policy")
     })
     .catch((e) => {
       alert(e)
@@ -124,7 +128,7 @@ export default function MainPolicy({store}: {store : Store}) {
   }
   return (
     <ThemeProvider theme={theme}>
-       
+       <Navbar/>
       <CssBaseline />
       <Container component="main" maxWidth={false} sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
@@ -248,7 +252,7 @@ export default function MainPolicy({store}: {store : Store}) {
         ))}
        </Select>
            <Box textAlign='center'>
-             <Button type="submit" onClick={handleSubmit} disabled={selectedId==-1}>Submit </Button>
+             <Button type="submit" variant="contained" sx={{mt:1}} onClick={handleSubmit} disabled={selectedId==-1}>Submit </Button>
              </Box>
           </FormControl>
         </Grid>

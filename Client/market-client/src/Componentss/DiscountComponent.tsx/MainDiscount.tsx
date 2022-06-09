@@ -13,10 +13,9 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { blue, indigo, red } from '@mui/material/colors';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { pathHome } from '../../Paths';
 import { getBuyerId } from '../../services/SessionService';
-import { purchaseCart } from '../../services/BuyersService';
 import { fetchResponse } from '../../services/GeneralService';
 import StoreDiscountForm from './StoreDiscountForm';
 import ProductDiscountForm from './ProductDiscountForm';
@@ -41,6 +40,7 @@ import LogicalPredicate from './Predicates/LogicalPredicate';
 import Predicate from '../../DTOs/DiscountDTOs/Predicate';
 import PredicateCard from './Predicates/PredicateCard';
 import { AddDiscountPolicy } from '../../services/StoreService';
+import Navbar from '../Navbar';
 
 
 //Logical was removed
@@ -58,7 +58,8 @@ const theme = createTheme({
   },
 });
 
-export default function MainDiscount({store}: {store : Store}) {
+export default function MainDiscount() {
+  const store: Store = useLocation().state as Store
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
   const [lastDiscountIndex, setLastDiscountIndex] = React.useState<number>(0);
@@ -127,7 +128,7 @@ export default function MainDiscount({store}: {store : Store}) {
   }
   return (
     <ThemeProvider theme={theme}>
-       
+       <Navbar/>
       <CssBaseline />
       <Container component="main" maxWidth={false} sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>

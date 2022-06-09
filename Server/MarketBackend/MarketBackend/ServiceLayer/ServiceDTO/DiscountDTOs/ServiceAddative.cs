@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceAddative : ServiceDiscount
+    public class ServiceAddative : ServiceDiscount
     {
         public IList<ServiceDiscount> discounts { get; set; }
         public ServiceAddative(string tag = "") : base(tag)

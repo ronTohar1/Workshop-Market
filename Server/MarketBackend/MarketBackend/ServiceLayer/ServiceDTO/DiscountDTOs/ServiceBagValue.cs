@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceBagValue : ServicePredicate
+    public class ServiceBagValue : ServicePredicate
     {
         public int worth { get; set; }
 

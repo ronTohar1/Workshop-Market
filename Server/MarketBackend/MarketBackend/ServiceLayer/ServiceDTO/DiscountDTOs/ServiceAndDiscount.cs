@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceAndDiscount : ServiceLogicalDiscount
+    public class ServiceAndDiscount : ServiceLogicalDiscount
     {
         public ServiceAndDiscount(ServiceDiscount firstExpression, ServiceDiscount secondExpression,string tag = "") : base(firstExpression, secondExpression, tag)
         {

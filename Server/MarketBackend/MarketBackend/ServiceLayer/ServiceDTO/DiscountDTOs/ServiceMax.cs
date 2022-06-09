@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceMax : ServiceDiscount
+    public class ServiceMax : ServiceDiscount
     {
         public IList<ServiceDiscount> discounts { get; set; }
         public ServiceMax(string tag = "") : base(tag)

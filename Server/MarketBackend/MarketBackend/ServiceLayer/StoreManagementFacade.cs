@@ -18,9 +18,6 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Purchase
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.RestrictionPolicies;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PredicatePolicies;
-using Newtonsoft.Json;
-using System.Text.Json.Nodes;
-using Newtonsoft.Json.Linq;
 
 namespace MarketBackend.ServiceLayer
 {
@@ -338,161 +335,58 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        private BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces.IPredicateExpression ServicePredicateToPredicate(ServicePredicate spred, StoreDiscountPolicyManager manager, string json = "")
+        private BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces.IPredicateExpression ServicePredicateToPredicate(ServiceDTO.DiscountDTO.IServicePredicate spred, StoreDiscountPolicyManager manager)
         {
-            
-                if (spred.tag== "AndPredicate")
+            if (spred is ServiceLogical)
+            {
+                if (spred is ServiceDTO.DiscountDTO.ServiceAnd)
                 {
-                    if (json != "")
-                    {
-                        JObject rss = JObject.Parse(json);
-                        var pred1 = JsonConvert.DeserializeObject<ServicePredicate>(rss["firstExpression"].ToString());
-                        var pred2 = JsonConvert.DeserializeObject<ServicePredicate>(rss["secondExpression"].ToString());
-                        return manager.NewAndExpression(ServicePredicateToPredicate(pred1, manager, rss["firstExpression"].ToString()), ServicePredicateToPredicate(pred2, manager, rss["secondExpression"].ToString()));
-                    }
                     ServiceDTO.DiscountDTO.ServiceAnd pred = (ServiceDTO.DiscountDTO.ServiceAnd)spred;
                     return manager.NewAndExpression(ServicePredicateToPredicate(pred.firstExpression, manager), ServicePredicateToPredicate(pred.secondExpression, manager));
                 }
-                else if (spred.tag == "OrPredicate")
+                else if (spred is ServiceDTO.DiscountDTO.ServiceOr)
                 {
-                    if (json != "")
-                    {
-                        JObject rss = JObject.Parse(json);
-                        var pred1 = JsonConvert.DeserializeObject<ServicePredicate>(rss["firstExpression"].ToString());
-                        var pred2 = JsonConvert.DeserializeObject<ServicePredicate>(rss["secondExpression"].ToString());
-                        return manager.NewOrExpression(ServicePredicateToPredicate(pred1, manager, rss["firstExpression"].ToString()), ServicePredicateToPredicate(pred2, manager, rss["secondExpression"].ToString()));
-                    }
                     ServiceDTO.DiscountDTO.ServiceOr pred = (ServiceDTO.DiscountDTO.ServiceOr)spred;
                     return manager.NewOrExpression(ServicePredicateToPredicate(pred.firstExpression, manager), ServicePredicateToPredicate(pred.secondExpression, manager));
                 }
-                else if (spred.tag == "XorPredicate")// Xor
+                else // Xor
                 {
-                    if (json != "")
-                    {
-                        JObject rss = JObject.Parse(json);
-                        var pred1 = JsonConvert.DeserializeObject<ServicePredicate>(rss["firstExpression"].ToString());
-                        var pred2 = JsonConvert.DeserializeObject<ServicePredicate>(rss["secondExpression"].ToString());
-                        return manager.NewXorExpression(ServicePredicateToPredicate(pred1, manager, rss["firstExpression"].ToString()), ServicePredicateToPredicate(pred2, manager, rss["secondExpression"].ToString()));
-                    }
                     ServiceXor pred = (ServiceXor)spred;
                     return manager.NewXorExpression(ServicePredicateToPredicate(pred.firstExpression, manager), ServicePredicateToPredicate(pred.secondExpression, manager));
                 }
-        
-           
-               else if (spred.tag == "BagValuePredicate")
+            }
+            else // Basic predicate
+            {
+                if (spred is ServiceBagValue)
                 {
-                    if (json != "")
-                    {
-                        var result = JsonConvert.DeserializeObject<ServiceBagValue>(json);
-                        //  ServiceStoreDiscount dis = (ServiceStoreDiscount)discount;
-                        return manager.NewBagValuePredicate(result.worth);
-                    }
                     ServiceBagValue pred = (ServiceBagValue)spred;
                     return manager.NewBagValuePredicate(pred.worth);
                 }
                 else // ServiceProductAmount
                 {
-                    if (json != "")
-                    {
-                        var result = JsonConvert.DeserializeObject<ServiceProductAmount>(json);
-                        return manager.NewProductAmountPredicate(result.pid,result.quantity);
-                    }
                     ServiceProductAmount pred = (ServiceProductAmount)spred;
                     return manager.NewProductAmountPredicate(pred.pid, pred.quantity);
                 }
 
-            
-        }
-        private IDiscountExpression ServiceDiscountToDiscount(dynamic discount, StoreDiscountPolicyManager manager, string json = "")
-        {
-            if (discount.tag == "DateDiscount")
-            {
-                if (json != "")
-                {
-                    var result = JsonConvert.DeserializeObject<ServiceDateDiscount>(json);
-                    return manager.NewDateDiscount(result.discount, result.year, result.month, result.day);
-                }
-                
-                return manager.NewDateDiscount(discount.discount, discount.year, discount.month, discount.day);
             }
-            else if (discount.tag == "productDiscount")
+        }
+        private IDiscountExpression ServiceDiscountToDiscount(IServiceDiscount discount, StoreDiscountPolicyManager manager)
+        {
+            if (discount is ServiceDateDiscount)
             {
-                if (json != "")
-                {
-                    var result = JsonConvert.DeserializeObject<ServiceProductDiscount>(json);
-                    return manager.NewProductDiscount(result.productId, result.discount);
-                }
+                ServiceDateDiscount dis = (ServiceDateDiscount)discount;
+                return manager.NewDateDiscount(dis.discount, dis.year, dis.month, dis.day);
+            }
+            else if (discount is ServiceProductDiscount)
+            {
                 ServiceProductDiscount dis = (ServiceProductDiscount)discount;
                 return manager.NewProductDiscount(dis.productId, dis.discount);
             }
-            else if (discount.tag == "XorDiscount")
+            else if (discount is ServiceMax)
             {
-                if (json != "")
-                {
-                    JObject rss = JObject.Parse(json);
-                    var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["firstExpression"].ToString());
-                    var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["secondExpression"].ToString());
-                    return manager.NewXorDiscount(ServiceDiscountToDiscount(discount1, manager, rss["firstExpression"].ToString()), ServiceDiscountToDiscount(discount2, manager, rss["secondExpression"].ToString()));
-                }
-                ServiceXorDiscount dis = (ServiceXorDiscount)discount;
-                return manager.NewXorDiscount(ServiceDiscountToDiscount(dis.firstExpression, manager), ServiceDiscountToDiscount(dis.secondExpression, manager));
-
-            }
-            else if (discount.tag == "AndDiscount")
-            {
-                if (json != "")
-                {
-                    JObject rss = JObject.Parse(json);
-                    var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["firstExpression"].ToString());
-                    var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["secondExpression"].ToString());
-                    return manager.NewAndDiscount(ServiceDiscountToDiscount(discount1, manager, rss["firstExpression"].ToString()), ServiceDiscountToDiscount(discount2, manager, rss["secondExpression"].ToString()));
-                }
-               ServiceAndDiscount dis = (ServiceAndDiscount)discount;
-               return manager.NewAndDiscount(ServiceDiscountToDiscount(dis.firstExpression, manager), ServiceDiscountToDiscount(dis.secondExpression, manager));
-            }
-            else if (discount.tag == "AddativeDiscount")
-            {
-                IList<IDiscountExpression> disList = new List<IDiscountExpression>(); 
-                if (json != "")
-                {
-                    JObject rss = JObject.Parse(json);
-                    int length = rss["discounts"].Count();
-                    for (int i=0; i<length;i++)
-                    {
-                        var currDiscount = JsonConvert.DeserializeObject<ServiceExpression>(rss["discounts"][i].ToString());
-                        disList.Add(ServiceDiscountToDiscount(currDiscount, manager, rss["discounts"][i].ToString()));
-                    }
-                    return manager.NewAddativeExpression(disList);
-                }
-                ServiceAddative dis = (ServiceAddative)discount;
-                foreach (ServiceDiscount d in dis.discounts)
-                {
-                    disList.Add(ServiceDiscountToDiscount(d, manager));
-                }
-                return manager.NewAddativeExpression(disList);
-            }
-            else if (discount.tag == "storeDiscount")
-            {
-                var result = JsonConvert.DeserializeObject<ServiceStoreDiscount>(json);
-                //  ServiceStoreDiscount dis = (ServiceStoreDiscount)discount;
-                return manager.NewStoreDiscount(result.discount);
-            }
-            else if (discount.tag == "maxDiscount")
-            {
-                IList<IDiscountExpression> disList = new List<IDiscountExpression>();
-                if (json != "")
-                {
-                    JObject rss = JObject.Parse(json);
-                    int length = rss["discounts"].Count();
-                    for (int i = 0; i < length; i++)
-                    {
-                        var currDiscount = JsonConvert.DeserializeObject<ServiceExpression>(rss["discounts"][i].ToString());
-                        disList.Add(ServiceDiscountToDiscount(currDiscount, manager, rss["discounts"][i].ToString()));
-                    }
-                    return manager.NewMaxExpression(disList);
-                }
                 ServiceMax dis = (ServiceMax)discount;
-                foreach (ServiceDiscount d in dis.discounts)
+                IList<IDiscountExpression> disList = new List<IDiscountExpression>();
+                foreach (IServiceDiscount d in dis.discounts)
                 {
                     disList.Add(ServiceDiscountToDiscount(d, manager));
                 }
@@ -501,54 +395,39 @@ namespace MarketBackend.ServiceLayer
             }
             else
             {
-                if (json != "")
-                {
-                    JObject rss = JObject.Parse(json);
-                    var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["firstExpression"].ToString());
-                    var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["secondExpression"].ToString());
-                    return manager.NewOrDiscount(ServiceDiscountToDiscount(discount1, manager, rss["firstExpression"].ToString()), ServiceDiscountToDiscount(discount2, manager, rss["secondExpression"].ToString()));
-                }
-                ServiceOrDiscount dis = (ServiceOrDiscount)discount;
-                return manager.NewOrDiscount(ServiceDiscountToDiscount(dis.firstExpression, manager), ServiceDiscountToDiscount(dis.secondExpression, manager));
-
+                ServiceStoreDiscount dis = (ServiceStoreDiscount)discount;
+                return manager.NewStoreDiscount(dis.discount);
             }
         }
-        private IExpression ServiceExpressionToExpression(dynamic sexp, StoreDiscountPolicyManager manager, string json = "")
+        private IExpression ServiceExpressionToExpression(IServiceExpression sexp, StoreDiscountPolicyManager manager)
         {
-            if (sexp.tag.Contains("Discount"))
+            if (sexp is IServiceDiscount)
             {
-                return ServiceDiscountToDiscount(sexp, manager,json);
+                return ServiceDiscountToDiscount((IServiceDiscount)sexp, manager);
             }
             else // IServiceConditional
             {
-                JObject rss = JObject.Parse(json);
-                var test = JsonConvert.DeserializeObject<ServicePredicate>(rss["test"].ToString());
-                var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["thenDis"].ToString());
-                var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["elseDis"].ToString());
-                if (discount2 != null)
-                    return manager.NewIfDiscount(ServicePredicateToPredicate(test, manager, rss["test"].ToString()), ServiceDiscountToDiscount(discount1, manager, rss["thenDis"].ToString()), ServiceDiscountToDiscount(discount2, manager, rss["elseDis"].ToString()));
-                return manager.NewConditionalDiscount(ServicePredicateToPredicate(test, manager, rss["test"].ToString()), ServiceDiscountToDiscount(discount1, manager, rss["thenDis"].ToString()));
-                //if (sexp.tag.Contains("Discount"))
-                //{
-                //  ServiceConditionDiscount dis = (ServiceConditionDiscount)sexp;
-                //    return manager.NewConditionalDiscount(ServicePredicateToPredicate(dis.pred, manager), ServiceDiscountToDiscount(dis.then, manager));
-                //}
-                //else // ServiceIf
-                //{
-                //    ServiceIf dis = (ServiceIf)sexp;
-                //    return manager.NewIfDiscount(ServicePredicateToPredicate(dis.test, manager), ServiceDiscountToDiscount(dis.thenDis, manager), ServiceDiscountToDiscount(dis.elseDis, manager));
-                //}
+                if (sexp is ServiceConditionDiscount)
+                {
+                    ServiceConditionDiscount dis = (ServiceConditionDiscount)sexp;
+                    return manager.NewConditionalDiscount(ServicePredicateToPredicate(dis.pred, manager), ServiceDiscountToDiscount(dis.then, manager));
+                }
+                else // ServiceIf
+                {
+                    ServiceIf dis = (ServiceIf)sexp;
+                    return manager.NewIfDiscount(ServicePredicateToPredicate(dis.test, manager), ServiceDiscountToDiscount(dis.thenDis, manager), ServiceDiscountToDiscount(dis.elseDis, manager));
+                }
             }
         }
 
-        public Response<int> AddDiscountPolicy(ServiceExpression expression, string description, int storeId, int memberId, string json = "")
+        public Response<int> AddDiscountPolicy(IServiceExpression expression, string description, int storeId, int memberId)
         {
             try
             {
                 Store? s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<int>($"There isn't a store with an id {storeId}");
-                IExpression exp = ServiceExpressionToExpression(expression, s.discountManager, json);
+                IExpression exp = ServiceExpressionToExpression(expression, s.discountManager);
                 int id = s.AddDiscountPolicy(exp, description, memberId);
                 logger.Info($"AddDiscountPolicy was called with parameters: [description {description}, storeId = {storeId}, memberId = {memberId}]");
                 return new Response<int>(id);
@@ -717,6 +596,183 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
+        public Response<int> AddBid(int storeId, int productId, int memberId, double bidPrice)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<int>($"There isn't a store with an id {storeId}");
+                int id = s.AddBid(productId, memberId, storeId, bidPrice);
+                logger.Info($"AddBid was called with parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
+                return new Response<int>(id);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: AddBid, parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
+                return new Response<int>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: AddBid, parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
+                return new Response<int>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> ApproveBid(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.ApproveBid(memberId, bidId);
+                logger.Info($"ApproveBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: ApproveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: ApproveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> DenyBid(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.DenyBid(memberId, bidId);
+                logger.Info($"DenyBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: DenyBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: DenyBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> MakeCounterOffer(int storeId, int memberId, int bidId, double offer)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.MakeCounterOffer(memberId, bidId, offer);
+                logger.Info($"MakeCounterOffer was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}, offer = {offer}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: MakeCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}, offer = {offer}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: MakeCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}, offer = {offer}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<IList<int>> GetApproveForBid(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<IList<int>>($"There isn't a store with an id {storeId}");
+                IList<int> approving = s.GetApproveForBid(memberId, bidId);
+                logger.Info($"GetApproveForBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<IList<int>>(approving);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetApproveForBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<IList<int>>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetApproveForBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<IList<int>>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> RemoveBid(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.RemoveBid(memberId, bidId);
+                logger.Info($"RemoveBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: RemoveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: RemoveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> ApproveCounterOffer(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.ApproveCounterOffer(memberId, bidId);
+                logger.Info($"ApproveCounterOffer was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: ApproveCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: ApproveCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> DenyCounterOffer(int storeId, int memberId, int bidId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.DenyCounterOffer(memberId, bidId);
+                logger.Info($"DenyCounterOffer was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: DenyCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: DenyCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
         public Response<double> GetStoreDailyProfit(int storeId, int memberId)
         {
             try
@@ -739,6 +795,5 @@ namespace MarketBackend.ServiceLayer
                 return new Response<double>("Sorry, an unexpected error occured. Please try again");
             }
         }
-
     }
 }

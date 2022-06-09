@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceDateDiscount : ServiceStoreDiscount
+    public class ServiceDateDiscount : ServiceStoreDiscount
     {
         public int year { get; set; }
         public int month { get; set; }

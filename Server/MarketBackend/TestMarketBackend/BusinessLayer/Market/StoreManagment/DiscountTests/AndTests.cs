@@ -9,6 +9,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterf
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalOperators;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalDiscounts;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
 {
@@ -27,7 +28,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
             pred1.Setup(x => x.EvaluatePredicate(It.IsAny<ShoppingBag>(), It.IsAny<Store>())).Returns(first);
             pred2.Setup(x => x.EvaluatePredicate(It.IsAny<ShoppingBag>(), It.IsAny<Store>())).Returns(second);
 
-            AndDiscount and = new AndExpression(pred1.Object, pred2.Object);
+            AndExpression and = new AndExpression(pred1.Object, pred2.Object);
             Assert.IsTrue(and.EvaluatePredicate(It.IsAny<ShoppingBag>(), It.IsAny<Store>()) == expected);
         }
     }

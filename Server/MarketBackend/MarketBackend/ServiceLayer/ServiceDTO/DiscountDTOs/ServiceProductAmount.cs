@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceProductAmount : ServicePredicate
+    public class ServiceProductAmount : ServicePredicate
     {
         public int pid { get; set; }
         public int quantity { get; set; }

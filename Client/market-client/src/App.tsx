@@ -24,7 +24,7 @@ import { initSession } from "./services/SessionService"
 
 const App = () => {
   // window.onunload = () => clearSession()
-  initSession()
+  // initSession()
   useEffect(() => {
     const handleTabClose = (event: any) => {
       event.preventDefault()

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    internal class ServiceOr : IServicePurchase
+    public class ServicePurchaseOr : ServicePurchasePolicy
     {
-        public IServiceRestriction firstPred { get; set; }
-        public IServiceRestriction secondPred { get; set; }
+        public ServiceRestriction firstPred { get; set; }
+        public ServiceRestriction secondPred { get; set; }
 
-        public ServiceOr(IServiceRestriction firstPred, IServiceRestriction secondPred)
+        public ServicePurchaseOr(ServiceRestriction firstPred, ServiceRestriction secondPred, string tag = "") : base(tag)
         {
             this.firstPred = firstPred;
             this.secondPred = secondPred;

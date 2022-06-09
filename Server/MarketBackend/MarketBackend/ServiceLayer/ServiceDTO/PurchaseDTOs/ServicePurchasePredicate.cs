@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    internal interface IServiceRestriction : IServicePurchase
+    public class ServicePurchasePredicate
     {
+        public string tag { get; set; }
+        public ServicePurchasePredicate(string tag = "")
+        {
+            this.tag = tag;
+        }
     }
 }

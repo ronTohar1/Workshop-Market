@@ -7,10 +7,10 @@ namespace MarketBackend.ServiceLayer
 {
     public interface IStoreManagementFacade
     {
-        Response<int> AddDiscountPolicy(IServiceExpression expression, string description, int storeId, int memberId);
+        Response<int> AddDiscountPolicy(ServiceExpression expression, string description, int storeId, int memberId);
         Response<int> AddNewProduct(int userId, int storeId, string productName, double price, string category);
         Response<bool> AddProductToInventory(int userId, int storeId, int productId, int amount);
-        Response<int> AddPurchasePolicy(IServicePurchase expression, string description, int storeId, int memberId);
+        Response<int> AddPurchasePolicy(ServiceDTO.PurchaseDTOs.ServicePurchasePolicy expression, string description, int storeId, int memberId);
         Response<bool> ChangeManagerPermission(int userId, int targetUserId, int storeId, IList<Permission> permissions);
         Response<bool> CloseStore(int userId, int storeId);
         Response<bool> DecreaseProduct(int userId, int storeId, int productId, int amount);

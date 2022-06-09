@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    internal class ServiceCheckProductMore : ServiceCheckProductLess
+    public class ServiceCheckProductMore : ServiceCheckProductLess
     {
-        public ServiceCheckProductMore(int productId, int amount) : base(productId, amount) { }
+        public ServiceCheckProductMore(int productId, int amount, string tag = "") : base(productId, amount, tag) { }
     }
 }

@@ -1,9 +1,14 @@
 ﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
+using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
+using MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using WebAPI.Requests;
+using ServicePurchase = MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchasePolicy;
 
 namespace WebAPI.Controllers
 {
@@ -174,8 +179,9 @@ namespace WebAPI.Controllers
         [HttpPost("AddDiscountPolicy")]
         public ActionResult<Response<int>> AddDiscountPolicy([FromBody] AddDiscountPolicyRequest request)
         {
+            ServiceExpression exp = ConvertDiscountFromJson(request.Expression);
             Response<int> response = storeManagementFacade.AddDiscountPolicy(
-                request.Expression, request.Description, request.StoreId, request.UserId);
+                exp, request.Description, request.StoreId, request.UserId);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
@@ -198,9 +204,9 @@ namespace WebAPI.Controllers
         [HttpPost("AddPurchasePolicy")]
         public ActionResult<Response<int>> AddPurchasePolicy([FromBody] AddPurchasePolicyRequest request)
         {
+            ServicePurchasePolicy policy = ConvertPolicyFromJson(request.Expression);
             Response<int> response = storeManagementFacade.AddPurchasePolicy(
-                request.Expression, request.Description, request.StoreId, request.UserId);
-
+                policy, request.Description, request.StoreId, request.UserId);
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
@@ -217,6 +223,228 @@ namespace WebAPI.Controllers
                 return BadRequest(response);
 
             return Ok(response);
+        }
+        private ServicePredicate JsonToServicePredicate(dynamic spred, string json)
+        {
+
+            if (spred.tag == "AndPredicate")
+            {
+
+                JObject rss = JObject.Parse(json);
+                var pred1 = JsonConvert.DeserializeObject<ServicePredicate>(rss["firstExpression"].ToString());
+                var pred2 = JsonConvert.DeserializeObject<ServicePredicate>(rss["secondExpression"].ToString());
+                return new ServiceAnd(JsonToServicePredicate(pred1, rss["firstExpression"].ToString()), JsonToServicePredicate(pred2, rss["secondExpression"].ToString()));
+
+            }
+            else if (spred.tag == "OrPredicate")
+            {
+                JObject rss = JObject.Parse(json);
+                var pred1 = JsonConvert.DeserializeObject<ServicePredicate>(rss["firstExpression"].ToString());
+                var pred2 = JsonConvert.DeserializeObject<ServicePredicate>(rss["secondExpression"].ToString());
+                return new ServiceOr(JsonToServicePredicate(pred1, rss["firstExpression"].ToString()), JsonToServicePredicate(pred2, rss["secondExpression"].ToString()));
+            }
+            else if (spred.tag == "XorPredicate")// Xor
+            {
+                JObject rss = JObject.Parse(json);
+                var pred1 = JsonConvert.DeserializeObject<ServicePredicate>(rss["firstExpression"].ToString());
+                var pred2 = JsonConvert.DeserializeObject<ServicePredicate>(rss["secondExpression"].ToString());
+                return new ServiceXor(JsonToServicePredicate(pred1, rss["firstExpression"].ToString()), JsonToServicePredicate(pred2, rss["secondExpression"].ToString()));
+             }
+
+
+            else if (spred.tag == "BagValuePredicate")
+            {
+               
+                var result = JsonConvert.DeserializeObject<ServiceBagValue>(json);
+                return new ServiceBagValue(result.worth);
+               
+            }
+            else // ServiceProductAmount
+            {
+                var result = JsonConvert.DeserializeObject<ServiceProductAmount>(json);
+                return new ServiceProductAmount(result.pid, result.quantity);
+                
+            }
+
+
+        }
+        private ServiceDiscount JsonToServiceDiscount(dynamic discount, string json)
+        {
+            if (discount.tag == "DateDiscount")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceDateDiscount>(json);
+                return new ServiceDateDiscount(result.discount, result.year, result.month, result.day);
+            }
+            else if (discount.tag == "productDiscount")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceProductDiscount>(json);
+                return new ServiceProductDiscount(result.productId, result.discount);
+            }
+            else if (discount.tag == "XorDiscount")
+            {
+                JObject rss = JObject.Parse(json);
+                var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["firstExpression"].ToString());
+                var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["secondExpression"].ToString());
+                return new ServiceXorDiscount(JsonToServiceDiscount(discount1, rss["firstExpression"].ToString()), JsonToServiceDiscount(discount2, rss["secondExpression"].ToString()));
+      
+            }
+            else if (discount.tag == "OrDiscount")
+            {
+                JObject rss = JObject.Parse(json);
+                var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["firstExpression"].ToString());
+                var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["secondExpression"].ToString());
+                return new ServiceOrDiscount(JsonToServiceDiscount(discount1, rss["firstExpression"].ToString()), JsonToServiceDiscount(discount2, rss["secondExpression"].ToString()));
+
+            }
+            else if (discount.tag == "AndDiscount")
+            {
+                JObject rss = JObject.Parse(json);
+                var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["firstExpression"].ToString());
+                var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["secondExpression"].ToString());
+                return new ServiceAndDiscount(JsonToServiceDiscount(discount1, rss["firstExpression"].ToString()), JsonToServiceDiscount(discount2, rss["secondExpression"].ToString()));
+            
+            }
+            else if (discount.tag == "AddativeDiscount")
+            {
+                IList<ServiceDiscount> disList = new List<ServiceDiscount>();
+                ServiceAddative sa = new ServiceAddative();
+                JObject rss = JObject.Parse(json);
+                int length = rss["discounts"].Count();
+                for (int i = 0; i < length; i++)
+                {
+                    var currDiscount = JsonConvert.DeserializeObject<ServiceExpression>(rss["discounts"][i].ToString());
+                    sa.AddDiscount(JsonToServiceDiscount(currDiscount, rss["discounts"][i].ToString()));
+                }
+                return sa;
+            }
+            else if (discount.tag == "maxDiscount")
+            {
+                IList<ServiceDiscount> disList = new List<ServiceDiscount>();
+                ServiceMax sm = new ServiceMax();
+                JObject rss = JObject.Parse(json);
+                int length = rss["discounts"].Count();
+                for (int i = 0; i < length; i++)
+                {
+                    var currDiscount = JsonConvert.DeserializeObject<ServiceExpression>(rss["discounts"][i].ToString());
+                    sm.AddDiscount(JsonToServiceDiscount(currDiscount, rss["discounts"][i].ToString()));
+                }
+                return sm;
+            }
+            else
+            {
+                var result = JsonConvert.DeserializeObject<ServiceStoreDiscount>(json);
+                return new ServiceStoreDiscount(result.discount);
+            }
+           
+        }
+        private ServiceExpression ConvertDiscountFromJson(string json)
+        {
+            var sexp = JsonConvert.DeserializeObject<ServiceExpression>(json);
+            if (sexp.tag.Contains("Discount"))
+            {
+                return JsonToServiceDiscount(sexp, json);
+            }
+            else // IServiceConditional
+            {
+                JObject rss = JObject.Parse(json);
+                var test = JsonConvert.DeserializeObject<ServicePredicate>(rss["test"].ToString());
+                var discount1 = JsonConvert.DeserializeObject<ServiceExpression>(rss["thenDis"].ToString());
+                var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["elseDis"].ToString());
+                if (discount2 != null)
+                    return new ServiceIf(JsonToServicePredicate(test, rss["test"].ToString()), JsonToServiceDiscount(discount1, rss["thenDis"].ToString()), JsonToServiceDiscount(discount2, rss["elseDis"].ToString()));
+                return new ServiceConditionDiscount(JsonToServicePredicate(test, rss["test"].ToString()), JsonToServiceDiscount(discount1, rss["thenDis"].ToString()));
+
+            }
+        }
+        private ServiceRestriction convertRestrictionFromJaon(dynamic expression, string json)
+        {
+            if (expression.tag== "AfterHourAmountRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceAfterHourProduct>(json);
+                return new ServiceAfterHourProduct(result.hour, result.productId, result.amount);
+            }
+            else if (expression.tag== "BeforeHourProductRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceBeforeHourProduct>(json);
+                return new ServiceBeforeHourProduct(result.hour, result.productId, result.amount);
+            }
+            else if (expression.tag == "BeforeHourRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceBeforeHour>(json);
+                return new ServiceBeforeHour(result.hour);
+            }
+            else if (expression.tag == "AfterHourRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceAfterHour>(json);
+                return new ServiceAfterHour(result.hour);
+            }
+            else if (expression.tag == "AtMostAmountRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceAtMostAmount>(json);
+                return new ServiceAtMostAmount(result.productId, result.amount);
+            }
+            else if (expression.tag == "AtLeastAmountRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceAtlestAmount>(json);
+                return new ServiceAtlestAmount(result.productId, result.amount);
+            }
+            else // date restriction
+            {
+                var result = JsonConvert.DeserializeObject<ServiceDateRestriction>(json);
+                return new ServiceDateRestriction(result.year, result.month, result.day);
+            }
+
+
+        }
+        private ServicePurchasePredicate convertPredicateFromJaon(dynamic pred, string json)
+        {
+            if (pred.tag== "CheckProductMorePredicate")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceCheckProductMore>(json);
+                return new ServiceCheckProductMore(result.productId, result.amount);
+            }
+            else // product less
+            {
+                var result = JsonConvert.DeserializeObject<ServiceCheckProductLess>(json);
+                return new ServiceCheckProductMore(result.productId, result.amount);
+            }
+        }
+
+        private ServicePurchasePolicy convertPurchaseFromJaon(dynamic expression, string json)
+        {
+       
+            if (expression.tag== "AndPurchase")
+            {
+                JObject rss = JObject.Parse(json);
+                var firstPred = JsonConvert.DeserializeObject<ServiceRestriction>(rss["firstPred"].ToString());
+                var secondPred = JsonConvert.DeserializeObject<ServiceRestriction>(rss["secondPred"].ToString());
+                return new ServicePurchaseAnd(convertRestrictionFromJaon(firstPred, rss["firstPred"].ToString()), convertRestrictionFromJaon(secondPred, rss["secondPred"].ToString()));
+            }
+            else if (expression.tag == "OrPurchase")
+            {
+
+                JObject rss = JObject.Parse(json);
+                var firstPred = JsonConvert.DeserializeObject<ServiceRestriction>(rss["firstPred"].ToString());
+                var secondPred = JsonConvert.DeserializeObject<ServiceRestriction>(rss["secondPred"].ToString());
+                return new ServicePurchaseOr(convertRestrictionFromJaon(firstPred, rss["firstPred"].ToString()), convertRestrictionFromJaon(secondPred, rss["secondPred"].ToString()));
+            }
+            else // implies
+            {
+                JObject rss = JObject.Parse(json);
+                var firstPred = JsonConvert.DeserializeObject<ServicePredicate>(rss["condition"].ToString());
+                var secondPred = JsonConvert.DeserializeObject<ServicePredicate>(rss["allowing"].ToString());
+                return new ServiceImplies(convertPredicateFromJaon(firstPred, rss["condition"].ToString()), convertPredicateFromJaon(secondPred, rss["allowing"].ToString()));
+            }
+
+
+        }
+        private ServicePurchasePolicy ConvertPolicyFromJson(string json)
+        {
+            var sexp = JsonConvert.DeserializeObject<ServicePurchasePolicy>(json);
+            if (sexp.tag.Contains("Restriction"))
+                return convertRestrictionFromJaon(sexp, json);
+            else
+                return convertPurchaseFromJaon(sexp, json);
         }
 
     }

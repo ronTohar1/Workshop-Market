@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    public interface IServicePurchase
+    public class ServiceRestriction : ServicePurchasePolicy
     {
+        public ServiceRestriction( string tag = "") : base(tag){
+            
+        }
     }
 }

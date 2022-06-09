@@ -481,7 +481,7 @@ namespace TestMarketBackend.Acceptance
 
         [Test]
         [TestCaseSource("DataFailedAddDiscount")]
-        public void FailedAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId)
+        public void FailedAddDiscount(Func<ServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId)
         {
             Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
             Assert.IsTrue(response.IsErrorOccured());
@@ -531,7 +531,7 @@ namespace TestMarketBackend.Acceptance
             };
         }
 
-        private static TestCaseData AddDiscountTestCase(Func<IServiceExpression> getDiscount, IList<TestAddDiscountProductArguments> arguments, string description, int generalDiscount = 0)
+        private static TestCaseData AddDiscountTestCase(Func<ServiceExpression> getDiscount, IList<TestAddDiscountProductArguments> arguments, string description, int generalDiscount = 0)
         {
             return new TestCaseData(
 
@@ -983,7 +983,7 @@ namespace TestMarketBackend.Acceptance
 
         [Test]
         [TestCaseSource("DataSuccessfulAddDiscount")]
-        public void SuccessfulAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase, double expectedPrice)
+        public void SuccessfulAddDiscount(Func<ServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase, double expectedPrice)
         {
             Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
             Assert.IsTrue(!response.IsErrorOccured());
@@ -1040,7 +1040,7 @@ namespace TestMarketBackend.Acceptance
 
         [Test]
         [TestCaseSource("DataFailedAddPurchasePolicy")]
-        public void FailedAddPurchasePolicy(Func<IServicePurchase> purchasePolicy, string description, Func<int> storeId, Func<int> memberId)
+        public void FailedAddPurchasePolicy(Func<ServicePurchasePolicy> purchasePolicy, string description, Func<int> storeId, Func<int> memberId)
         {
             Response<int> response = storeManagementFacade.AddPurchasePolicy(purchasePolicy(), description, storeId(), memberId());
             Assert.IsTrue(response.IsErrorOccured());
@@ -1067,7 +1067,7 @@ namespace TestMarketBackend.Acceptance
         // helping functions for adding discount tests 
         // helping functions for adding discount tests 
 
-        private static TestCaseData AddPurchasePolicyTestCase(Func<IServicePurchase> getPolicy, IList<AddProductToCartArguments> arguments, string description, bool shouldSucceedBuying)
+        private static TestCaseData AddPurchasePolicyTestCase(Func<ServicePurchasePolicy> getPolicy, IList<AddProductToCartArguments> arguments, string description, bool shouldSucceedBuying)
         {
             return new TestCaseData(
 
@@ -1553,7 +1553,7 @@ namespace TestMarketBackend.Acceptance
                 // true and true
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
-                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchaseAnd(
                         new ServiceAtlestAmount(iphoneProductId, 2),
                         new ServiceAtlestAmount(iphoneProductId, 2)
                     ), 
@@ -1573,7 +1573,7 @@ namespace TestMarketBackend.Acceptance
                 // true and false
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
-                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchaseAnd(
                         new ServiceAtlestAmount(iphoneProductId, 3),
                         new ServiceAtlestAmount(iphoneProductId, 2)
                     ),
@@ -1593,7 +1593,7 @@ namespace TestMarketBackend.Acceptance
                 // false and false
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
-                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceAnd(
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchaseAnd(
                         new ServiceAtlestAmount(iphoneProductId, 2),
                         new ServiceAtlestAmount(iphoneProductId, 2)
                     ),
@@ -1615,7 +1615,7 @@ namespace TestMarketBackend.Acceptance
                 // true or true
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
-                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchaseOr(
                         new ServiceAtlestAmount(iphoneProductId, 2),
                         new ServiceAtlestAmount(iphoneProductId, 2)
                     ),
@@ -1635,7 +1635,7 @@ namespace TestMarketBackend.Acceptance
                 // true or false
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
-                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchaseOr(
                         new ServiceAtlestAmount(iphoneProductId, 3),
                         new ServiceAtlestAmount(iphoneProductId, 2)
                     ),
@@ -1655,7 +1655,7 @@ namespace TestMarketBackend.Acceptance
                 // false or false
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
-                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServiceOr(
+                    () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchaseOr(
                         new ServiceAtlestAmount(iphoneProductId, 2),
                         new ServiceAtlestAmount(iphoneProductId, 2)
                     ),
@@ -1683,7 +1683,7 @@ namespace TestMarketBackend.Acceptance
 
         [Test]
         [TestCaseSource("DataSuccessfulAddPurchasePolicy")]
-        public void SuccessfulAddPurchasePolicy(Func<IServicePurchase> purchasePolicy, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase)
+        public void SuccessfulAddPurchasePolicy(Func<ServicePurchasePolicy> purchasePolicy, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase)
         {
             Response<int> response = storeManagementFacade.AddPurchasePolicy(purchasePolicy(), description, storeId(), memberId());
             Assert.IsTrue(!response.IsErrorOccured());

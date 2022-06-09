@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal interface IServicePredicate
+    public class ServiceDiscount : ServiceExpression
     {
+        public ServiceDiscount(string tag = "") :base(tag) {
+        }
     }
 }

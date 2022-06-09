@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal interface IServiceConditional : IServiceExpression
+    public class ServicePredicate : ServiceExpression
     {
+        public ServicePredicate(string tag = "") : base(tag) {
+        
+        }
     }
 }

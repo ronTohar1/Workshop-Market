@@ -4,6 +4,7 @@ using MarketBackend.DataLayer.DatabaseObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarketBackend.Migrations
 {
     [DbContext(typeof(Database))]
-    partial class DatabaseModelSnapshot : ModelSnapshot
+    [Migration("20220609084934_AddedIsAdminToMember")]
+    partial class AddedIsAdminToMember
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,20 +119,13 @@ namespace MarketBackend.Migrations
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Buyers.DataNotification", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("Notification")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("DataMemberId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Notification")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("Notification");
 
                     b.HasIndex("DataMemberId");
 

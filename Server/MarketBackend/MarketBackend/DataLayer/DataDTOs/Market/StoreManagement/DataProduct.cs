@@ -13,7 +13,7 @@ namespace MarketBackend.DataLayer.DataDTOs
 		public int AmountInInventory { get; set; }
 		public double PricePerUnit { get; set; }
 		public string Category { get; set; }
-		public double Productdicount { get; set; }
+		public double ProductDiscount { get; set; }
 		public IList<DataProductReview> Reviews { get; set; }
 		public IList<DataPurchaseOption> PurchaseOptions { get; set; }
 	}

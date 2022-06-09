@@ -14,10 +14,12 @@ namespace MarketBackend.DataLayer.DataDTOs.Buyers
         public string Username { get; set; }
         public int Password { get; set; }
         public IList<DataNotification> PendingNotifications { get; set; }
+
+        public bool IsAdmin { get; set; }
         
         // buyer data
 
-        public DataCart Cart { get; set; }
+        public DataCart? Cart { get; set; }
         public IList<DataPurchase> PurchaseHistory { get; set; }
     }
 }

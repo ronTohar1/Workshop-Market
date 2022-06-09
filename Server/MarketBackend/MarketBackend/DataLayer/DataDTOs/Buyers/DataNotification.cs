@@ -10,8 +10,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Buyers
 {
     public class DataNotification
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; set; }
         public string Notification { get; set; }
     }
 }

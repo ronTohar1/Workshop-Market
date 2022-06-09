@@ -12,6 +12,6 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement
     public class DataManagerPermission
     {
         public int Id { get; set; }
-        public Permission Permission { get; set; }
+        public Permission? Permission { get; set; }
     }
 }

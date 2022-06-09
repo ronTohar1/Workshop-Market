@@ -398,3 +398,51 @@ export async function serverAddPurchasePolicy(
 });
   return jsonResponse.json();
 }
+
+
+export async function serverRemovePurchasePolicy(
+  userId: number,
+  storeId: number, 
+  policyId:number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/RemovePurchasePolicy";
+  const jsonResponse = await fetch(uri, {
+    method: 'DELETE',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+     body: JSON.stringify({
+        userId: userId,
+        storeId: storeId,
+        policyId: policyId,
+    })
+});
+
+  const response = jsonResponse.json();
+  return response
+}
+
+
+export async function serverRemoveDiscountPolicy(
+  userId: number,
+  storeId: number, 
+  policyId:number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/RemoveDiscountPolicy";
+  const jsonResponse = await fetch(uri, {
+    method: 'DELETE',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+     body: JSON.stringify({
+        userId: userId,
+        storeId: storeId,
+        policyId: policyId,
+    })
+});
+
+  const response = jsonResponse.json();
+  return response
+}

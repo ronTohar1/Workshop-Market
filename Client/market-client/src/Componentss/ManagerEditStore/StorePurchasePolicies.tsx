@@ -14,6 +14,7 @@ import {
     serverGetMembersInRoles,
     serverGetPurchaseHistory,
     serverGetStore,
+    serverRemovePurchasePolicy,
 } from "../../services/StoreService"
 import { pathHome, pathPolicy } from "../../Paths"
 import { useNavigate } from "react-router-dom"
@@ -36,7 +37,7 @@ const columns: GridColDef[] = [
         field: fields.id,
         headerName: "Policy ID",
         type: "number",
-        flex: 2,
+        flex: 1,
         align: "left",
         headerAlign: "left",
     },
@@ -44,7 +45,7 @@ const columns: GridColDef[] = [
         field: fields.description,
         headerName: "Policy Description",
         type: "string",
-        flex: 1,
+        flex: 3,
         align: "left",
         headerAlign: "left",
     },
@@ -59,9 +60,34 @@ export default function StorePurchasePolicies({
 }) {
     const initSize: number = 5
 
-    const navigate= useNavigate()
+    const navigate = useNavigate()
     const [pageSize, setPageSize] = React.useState<number>(initSize)
     const [rows, setRows] = React.useState<PurchasePolicy[]>([])
+    const [selectionModel, setSelectionModel] = React.useState<number[]>([])
+    const [chosenIds, setChosenIds] = React.useState<number[]>([])
+
+    const handleSelectionChanged = (newSelection: any) => {
+        const chosenIds: number[] = newSelection.map((id:number)=>rows[id].id)
+        setSelectionModel(newSelection)
+        setChosenIds(chosenIds)
+    }
+
+    const handleRemovePolicy = () => {
+        console.log("chosenIds")
+        console.log(chosenIds)
+
+        if (chosenIds.length === 0) {
+            alert("Please select a policy to remove")
+        }
+        else {
+            fetchResponse(serverRemovePurchasePolicy(getBuyerId(), store.id, chosenIds[0]))
+            .then((success:boolean)=>{
+                if (success) handleChangedStore(store)
+                else alert("Coludnt remove this policy")
+            })
+            .catch(alert)
+        }
+    }
 
     React.useEffect(() => {
         setRows(store.purchasePolicies)
@@ -71,7 +97,6 @@ export default function StorePurchasePolicies({
     const storePolicies = () => {
         return (
             <Box sx={{ mr: 3 }}>
-                <Stack direction="row">{ }</Stack>
                 <Typography
                     sx={{ flex: "1 1 100%" }}
                     variant="h4"
@@ -80,7 +105,7 @@ export default function StorePurchasePolicies({
                 >
                     {store != null ? store.name + "'s Purchase Policy" : "Error- store not exist"}
                 </Typography>
-                <div style={{ height: "40vh", width: "100%" }}>
+                <div style={{ height: "40vh", width: "100%", marginRight: 3 }}>
                     <div style={{ display: "flex", height: "100%" }}>
                         <div style={{ flexGrow: 1 }}>
                             <DataGrid
@@ -100,15 +125,27 @@ export default function StorePurchasePolicies({
                                 rowsPerPageOptions={[initSize, initSize + 5, initSize + 10]}
                                 pagination
                                 // Selection:
-                                disableSelectionOnClick
+                                onSelectionModelChange={handleSelectionChanged}
                             />
                         </div>
                     </div>
                 </div>
-                <Button variant="contained" onClick={()=>navigate(pathPolicy,{state: store})}>
-                    Add New Policies
-                </Button>
+                <Stack direction='row' justifyContent='space-between'>
+
+                    <Box>
+                        <Button variant="contained" sx={{ml : 1}} onClick={() => navigate(pathPolicy, { state: store })}>
+                            Add New Policies
+                        </Button>
+
+                    </Box>
+                    <Box>
+                        <Button sx={{ ml: 'auto', mr: '1vw' }} color="error" variant="contained" onClick={handleRemovePolicy}>
+                            Remove Selected Policy
+                        </Button>
+                    </Box>
+                </Stack>
             </Box>
+
         )
     }
     return <div>{store === null ? LoadingCircle() : storePolicies()}</div> // return  store === null ? LoadingComponent() : storePreview()

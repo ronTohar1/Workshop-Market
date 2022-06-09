@@ -10,6 +10,7 @@ import ButtonGroup from "@mui/material/ButtonGroup"
 import Box from "@mui/material/Box"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { pathLogin, pathRegister, pathSearch } from "../Paths"
+import { getIsGuest } from "../services/SessionService"
 
 const cards = [1, 2, 3]
 
@@ -72,12 +73,14 @@ const theme = createTheme({
 const styles = {
   paperContainer: {
     height: 1356,
-    backgroundImage: `url(${"https://images.unsplash.com/photo-1630326120534-9619533ba0d3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"})`,
+    backgroundImage: "url(../HomeScreen.jpeg)",
   },
 }
 export default function Home() {
   return (
     <ThemeProvider theme={theme}>
+    {/* {!getIsGuest() && <Navbar/> } */}
+      
       <main>
         <div style={styles.paperContainer}>
         {/* Increase the network loading priority of the background image. */}

@@ -31,10 +31,11 @@ import MarketNotification from "../DTOs/MarketNotification"
 import { clearNotifications, dummyNotificaitons, noteConn } from "../services/NotificationsService"
 import { getCartProducts } from "../services/ProductsService"
 import { fetchResponse } from "../services/GeneralService"
-import { getBuyerId, getIsGuest, storage } from "../services/SessionService"
-import { serverGetCart } from "../services/BuyersService"
+import { clearSession, getBuyerId, getIsGuest, getUsername, initSession, storage } from "../services/SessionService"
+import { serverGetCart, serverLogout } from "../services/BuyersService"
 import Cart from "../DTOs/Cart"
-import {addNotificationListener} from '../services/NotificationsService'
+import { addNotificationListener } from '../services/NotificationsService'
+import { Logout } from "@mui/icons-material"
 
 const currentNotifications = dummyNotificaitons
 
@@ -213,25 +214,62 @@ export default function Navbar() {
       ].join(","),
     },
   })
+
+  const handleLogout = () => {
+    if (getIsGuest()) {
+      alert("First Login Before Logging Out!")
+    }
+    else {
+      fetchResponse(serverLogout(getBuyerId()))
+        .then(
+          (success: boolean) => {
+            alert("Good Bye " + getUsername())
+
+            clearSession()
+            initSession().then(() => navigate(pathHome))
+          }
+        )
+        .catch(alert)
+    }
+  }
   return (
     <ThemeProvider theme={theme}>
       <AppBar position="sticky">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <div>
-            <Typography
-              onClick={handleClickHome}
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{
-                display: { xs: "none", sm: "block" },
-                "&:hover": {
-                  cursor: "pointer",
-                },
-              }}
-            >
-              Workshop Market
-            </Typography>
+            <Stack direction='row' spacing={8}>
+              <Typography
+                onClick={handleClickHome}
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
+              >
+                Ronto's Market
+              </Typography>
+
+              <Typography
+                onClick={handleMyAccountClick}
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                  ml: '10'
+                }}
+              >
+                {getIsGuest() ? "Hello Guest" : "Hello " + getUsername()}
+              </Typography>
+            </Stack>
+
             <Box sx={{}} />
           </div>
           <div>
@@ -304,6 +342,19 @@ export default function Navbar() {
                   <ShoppingCartIcon />
                 </StyledBadge>
               </IconButton>
+              <Tooltip title="Logout from your account">
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleLogout}
+                  color="inherit"
+                >
+                  <Logout />
+                </IconButton>
+              </Tooltip>
               <IconButton
                 size="large"
                 edge="end"

@@ -65,9 +65,9 @@ export async function serverGetPendingMessages(
 
 //.then(response=>Promise.resolve(response.json().then((data)=>data)))
 
-export async function logout(userId: number): Promise<any> {
+export async function serverLogout(userId: number): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Buyers/Logout"
-  return await fetch(uri, {
+  return (await fetch(uri, {
     method: "POST",
     headers: {
       accept: "text/plain",
@@ -77,7 +77,7 @@ export async function logout(userId: number): Promise<any> {
     body: JSON.stringify({
       userId: userId,
     }),
-  })
+  })).json()
 }
 
 export async function serverRegister(

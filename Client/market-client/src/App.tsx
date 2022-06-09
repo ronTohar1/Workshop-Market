@@ -20,9 +20,11 @@ import Store from "./DTOs/Store"
 import Member from "./DTOs/Member"
 import { createTheme, ThemeProvider } from "@mui/material"
 import MainPolicy from "./Componentss/PurchasePolicy/MainPolicy"
+import { initSession } from "./services/SessionService"
 
 const App = () => {
   // window.onunload = () => clearSession()
+  initSession()
   useEffect(() => {
     const handleTabClose = (event: any) => {
       event.preventDefault()

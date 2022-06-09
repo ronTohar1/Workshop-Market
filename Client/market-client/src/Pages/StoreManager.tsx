@@ -80,9 +80,12 @@ const UserInfoCard = (numOfManagedStores: number,username:string) => {
 const StoreCard = ({
   store,
   handleChangedStore,
+  showSuccess 
 }: {
   store: Store
   handleChangedStore: (s: Store) => void
+  showSuccess: (m:string)=>void 
+
 }) => {
   const [openDialog, setOpenDialog] = React.useState(false)
   const [isStoreOpen, setIsStoreOpen] = React.useState(store.isOpen)
@@ -103,7 +106,7 @@ const StoreCard = ({
     else
       fetchResponse(serverCloseStore(getBuyerId(), store.id))
         .then((closed: boolean) => {
-          if (closed) alert("Closed store successfuly!")
+          if (closed) showSuccess("Store "+ store.name +" Closed Successfully")
           setIsStoreOpen(false)
           handleChangedStore(store)
         })
@@ -177,7 +180,8 @@ const Item = styled("div")(({ theme }) => ({
 const ManagedStores = (
   stores: Store[],
   handleChangedStore: (store: Store) => void,
-  handleOpenStoreForm: () => void
+  handleOpenStoreForm: () => void,
+  showSuccessSnack: (m:string)=>void
 ) => {
   return (
     <Grid>
@@ -220,7 +224,7 @@ const ManagedStores = (
       >
         {stores.map((s) => (
           <Item>
-            <StoreCard store={s} handleChangedStore={handleChangedStore} />
+            <StoreCard store={s} handleChangedStore={handleChangedStore} showSuccess={showSuccessSnack} />
           </Item>
         ))}
       </Grid>
@@ -317,7 +321,7 @@ export default function StoreManagerPage() {
             {/* </Box> */}
           </Grid>
           {ManagedStores(stores, handleChangedStore, () =>
-            setOpenStoreForm(true)
+            setOpenStoreForm(true),showSuccessSnack
           )}
         </Box>
       </Box>

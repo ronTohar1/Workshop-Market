@@ -14,14 +14,14 @@ import { getBuyerId } from '../../services/SessionService';
 import { fetchResponse } from '../../services/GeneralService';
 
 export const purchasesDummy= [
-  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
-  new Purchase("10/10/2021",10, "bought 3 apples", 0),
-  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
-  new Purchase("10/10/2021",10, "bought 3 apples", 0),
-  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
+  // new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
+  // new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
+  // new Purchase("10/10/2021",10, "bought 3 apples", 0),
+  // new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
+  // new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
+  // new Purchase("10/10/2021",10, "bought 3 apples", 0),
+  // new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
+  // new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
 
 ]
 

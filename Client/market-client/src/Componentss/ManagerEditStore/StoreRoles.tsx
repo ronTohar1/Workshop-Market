@@ -19,6 +19,19 @@ import { fetchResponse } from "../../services/GeneralService"
 import { getBuyerId } from "../../services/SessionService"
 import LoadingCircle from "../LoadingCircle"
 
-export default function StoreRoles(){
+export default function StoreRoles({
+  store,
+  handleChangedStore,
+}: {
+  store: Store
+  handleChangedStore: (s: Store) => void
+}){
+  return (
+    <Box sx={{display:'flex', justifyContent:'center'}}>
+      <Typography variant="h1" component="div">
+        Feature will be available soon....
+      </Typography>
+    </Box>
+  )
     
 }

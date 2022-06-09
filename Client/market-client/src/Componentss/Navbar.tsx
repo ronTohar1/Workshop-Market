@@ -28,14 +28,16 @@ import { Link, Navigate } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { Tooltip } from "@mui/material"
 import MarketNotification from "../DTOs/MarketNotification"
-import { dummyNotificaitons } from "../services/NotificationsService"
+import { clearNotifications, dummyNotificaitons, noteConn } from "../services/NotificationsService"
 import { getCartProducts } from "../services/ProductsService"
 import { fetchResponse } from "../services/GeneralService"
-import { getBuyerId, getIsGuest } from "../services/SessionService"
+import { getBuyerId, getIsGuest, storage } from "../services/SessionService"
 import { serverGetCart } from "../services/BuyersService"
 import Cart from "../DTOs/Cart"
+import {addNotificationListener} from '../services/NotificationsService'
 
 const currentNotifications = dummyNotificaitons
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -108,6 +110,7 @@ const notificationsMenu = (
 
 export default function Navbar() {
   // const navigate = (x: any) => {};
+
   const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [searchValue, setSearchValue] = React.useState("")
@@ -129,6 +132,14 @@ export default function Navbar() {
   //       alert("Couldn't load some of your information")
   //     })
   // })
+
+  // React.useEffect(()=>{
+  //   console.log(noteConn.notifications)
+  //   if (noteConn.notifications.length > 0)
+  //     alert("new message!")
+  //   clearNotifications()
+  // },[noteConn.notifications])
+
 
   const handleClickHome = () => {
     navigate(`${pathHome}`)

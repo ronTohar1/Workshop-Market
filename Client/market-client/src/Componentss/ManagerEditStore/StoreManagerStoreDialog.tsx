@@ -53,6 +53,9 @@ import CloseIcon from "@mui/icons-material/Close"
 import { Label } from "@mui/icons-material"
 import StorePage from "../../Pages/StorePage"
 import StorePageOfManager from "./StorePageOfManager"
+import StoreRoles from "./StoreRoles"
+import StorePurchases from "./StorePurchases"
+import StorePolicies from "./StorePolicies"
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -130,13 +133,22 @@ export function StoreTabs({
         />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        <StoreRoles
+          store={store}
+          handleChangedStore={handleChangedStore}
+        />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        <StorePurchases
+          store={store}
+          handleChangedStore={handleChangedStore}
+        />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        Not Exist yet
+      <StorePolicies
+          store={store}
+          handleChangedStore={handleChangedStore}
+        />
       </TabPanel>
     </Box>
   )

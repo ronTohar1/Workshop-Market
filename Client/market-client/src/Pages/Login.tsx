@@ -18,6 +18,7 @@ import { pathHome } from "../Paths"
 import * as sessionService from "../services/SessionService"
 import HomeIcon from "@mui/icons-material/Home"
 import { fetchResponse } from '../services/GeneralService'
+import { noteConn, setUpConnection } from "../services/NotificationsService"
 // import WebSocket from 'ws'
 
 const theme = createTheme({
@@ -72,18 +73,22 @@ export default function Login() {
     }
 
       fetchResponse(result).then((memberId: number) => {
+        
+
+        const address = `ws://127.0.0.1:7890/${username}-notifications`
+        // const ws = setUpConnection(address,memberId)
+        const ws = new WebSocket(address)
+        // ws.addEventListener('open', () => alert(username + " logged in"))
+        ws.addEventListener('message', function (event) {
+          alert("Message from server:\n" + event.data);
+          // noteConn.notifications = ["another one"].concat(noteConn.notifications)
+        });
+
         alert("Logged in successfully!")
         sessionService.setIsGuest(false)
         sessionService.setBuyerId(memberId)
         //@ts-ignore
         sessionService.setUsername(username)
-
-        const address = `ws://127.0.0.1:7890/${username}-notifications`
-        const ws = new WebSocket(address)
-        ws.addEventListener('open', () => alert(username + " logged in"))
-        ws.addEventListener('message', function (event) {
-          alert("Message from server " + event.data);
-        });
 
         fetchResponse(serverGetPendingMessages(username))
         .then((messages:string[]) => messages.forEach(alert))
@@ -175,7 +180,7 @@ export default function Login() {
                   <Button
                     variant="contained"
                     href={pathHome}
-                    color="secondary"
+                    color="primary"
                     // sx={{ position: "absolute", top: "0px", right: "0px" }}
                     endIcon={<HomeIcon />}
                   >

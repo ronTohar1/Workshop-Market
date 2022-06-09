@@ -130,6 +130,7 @@ const StoreCard = ({
             endIcon={<StoreIcon />}
             sx={{ mb: 3 }}
             onClick={handleClickOpenDialog}
+            disabled={!isStoreOpen}
           >
             To the store
           </Button>
@@ -138,7 +139,7 @@ const StoreCard = ({
               <Typography>
                 Store is now {isStoreOpen ? "Open" : "Closed"}
               </Typography>
-              <Switch checked={isStoreOpen} onChange={handleChangeStoreOpen} />
+              <Switch checked={isStoreOpen} disabled={!isStoreOpen} onChange={handleChangeStoreOpen} />
             </Stack>
           </FormGroup>
         </CardContent>

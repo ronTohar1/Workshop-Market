@@ -16,7 +16,7 @@ export default function PurchaseCard({purchase}: {purchase: Purchase}) {
       <Card elevation={1}>
         <CardHeader
           title={ `Buyer id: ${purchase.buyerId}`}
-          subheader={purchase.purchaseDate}
+          subheader={purchase.purchaseDate.toDateString()}
         />
         <CardContent>
           {/* <Typography variant="body2" color="textSecondary">

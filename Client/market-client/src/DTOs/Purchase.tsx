@@ -1,12 +1,12 @@
 
 class Purchase {
-    purchaseDate: string;
+    purchaseDate: Date;
     purchasePrice: number;
     purchaseDescription: string;
     buyerId: number;
   
     constructor(
-        purchaseDate: string,
+        purchaseDate: Date,
         purchasePrice: number,
         purchaseDescription: string,
         buyerId: number

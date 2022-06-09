@@ -122,8 +122,8 @@ export default function StorePage() {
   const handleAddToCart = () => {
     // const failedToAdd: Product[] = []
     // const succeedToAdd: Product[] = []
-
-    const failedToAdd: Promise<Product[]> = products.reduce(
+    const chosenProducts = products.filter(p=>selectedProductsIds.includes(p.id))
+    const failedToAdd: Promise<Product[]> = chosenProducts.reduce(
       (failedProducts: Promise<Product[]>, currProd: Product) => {
         return fetchResponse(
           serverAddToCart(getBuyerId(), currProd.id, currProd.storeId, 1)
@@ -132,10 +132,15 @@ export default function StorePage() {
             return success
               ? failedProducts
               : failedProducts.then((failedProducts: Product[]) =>
-                  failedProducts.concat(currProd)
-                )
+                failedProducts.concat(currProd)
+              )
           })
-          .catch((e) => failedProducts)
+          .catch((e) => {
+            // alert(e)
+            return failedProducts.then((failedProducts: Product[]) =>
+              failedProducts.concat(currProd)
+            )
+          })
       },
       Promise.resolve([])
     )
@@ -144,6 +149,7 @@ export default function StorePage() {
       .then((failedToAdd: Product[]) => {
         if (failedToAdd.length === 0) {
           //Didnt fail to add
+          // console.log(failedToAdd)
           setAddToCartMsg("Added products to cart")
           setOpenSnack(true)
         } else handleFailToAdd(failedToAdd)
@@ -156,7 +162,7 @@ export default function StorePage() {
     <Box>
       <Navbar />
       {toolBar(selectedProductsIds.length, store, handleAddToCart)}
-      <Stack direction="row">{}</Stack>
+      <Stack direction="row">{ }</Stack>
       <div style={{ height: "50vh", width: "100%" }}>
         <div style={{ display: "flex", height: "100%" }}>
           <div style={{ flexGrow: 1 }}>

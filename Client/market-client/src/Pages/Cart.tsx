@@ -12,7 +12,7 @@ import Navbar from "../Componentss/Navbar"
 import Cart from "../DTOs/Cart"
 import Product from "../DTOs/Product"
 import ShoppingBag from "../DTOs/ShoppingBag"
-import { pathHome } from "../Paths"
+import { pathCheckout, pathHome } from "../Paths"
 import {
   serverChangeProductAmountInCart,
   serverGetCart,
@@ -180,7 +180,13 @@ export default function CartPage() {
     setOpenRemoveDialog(true)
   }
 
-  const handlePurchase = () => alert("Purchasing.....")
+  const handlePurchase = () => {
+    const productToAmount : Map<Product,number> = cartProducts.reduce((map: Map<Product,number>, cartProduct:CartProduct)=>{
+      map[cartProduct.product] = cartProduct.quantity
+      return map;
+    }, new Map<Product,number>())
+    navigate(pathCheckout,{productsAmount: })
+  }
 
   return (
     <ThemeProvider theme={theme}>

@@ -67,8 +67,12 @@ function ProductContent(product: Product, quantity: number) {
       </Typography>
       <Typography variant="h6">
         Price ({Currency}): {product.price}
+
       </Typography>
-      <Typography variant="h6">Quantity: {quantity}</Typography>
+      <Typography variant="h6">
+        Quantity: {quantity}
+        <br></br>
+        Store : {product.storeName}</Typography>
     </div>
   )
 }
@@ -85,7 +89,7 @@ export default function ProductCard(
       <CardActions disableSpacing>
         {UpdateQuantityComponent(product, handleUpdateQuantity)}
 
-        <Box sx={{ ml: "auto",mt:"auto" }}>
+        <Box sx={{ ml: "auto", mt: "auto" }}>
           {RemoveProductCan(product, handleRemoveProductClick)}
         </Box>
       </CardActions>

@@ -107,6 +107,7 @@ export default function Register() {
                   <Button
                     variant="contained"
                     href={pathHome}
+                    color="secondary"
                     // sx={{ position: "absolute", top: "0px", right: "0px" }}
                     endIcon={<HomeIcon />}
                   >

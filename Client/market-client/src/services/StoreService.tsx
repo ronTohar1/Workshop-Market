@@ -8,11 +8,11 @@ import List from "@mui/material/List"
 import Purchase from "../DTOs/Purchase"
 
 const stores = [
-  new Store(0, "Ronto's", [], new Member(0, "ron", true), true),
-  new Store(1, "Mithcell's", [], new Member(0, "ron", true), true),
+  // new Store(0, "Ronto's", [], new Member(0, "ron", true), true),
+  // new Store(1, "Mithcell's", [], new Member(0, "ron", true), true),
 ]
-export const dummyStore1 = stores[0]
-export const dummyStore2 = stores[1]
+export const dummyStore1 = null
+export const dummyStore2 = null
 
 export enum Roles {
   Manager,
@@ -288,7 +288,7 @@ export async function setManagerPermission(
   return jsonResponse.json()
 }
 
-export async function getPurchaseHistory(
+export async function serverGetPurchaseHistory(
   userId: number,
   storeId: number
 ): Promise<ClientResponse<Purchase[]>> {

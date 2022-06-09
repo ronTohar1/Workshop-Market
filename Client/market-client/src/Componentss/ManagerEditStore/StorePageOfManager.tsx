@@ -137,9 +137,9 @@ export default function StorePageOfManager({
   //   verifyIsManagerOrOwner(store) // Verifying this is user is allowed to watch the page
   // }, [store])
 
-  React.useEffect(() => {
-    if (hasPermission) setRows(store.products)
-  }, [hasPermission])
+  React.useEffect(()=>{
+    setRows(store.products)
+  },[store.products])
 
   function updateAvailableQuantity(product: Product, newQuantity: number) {
     fetchResponse(
@@ -165,7 +165,7 @@ export default function StorePageOfManager({
   }
 
   const handleCellEdit = (e: GridCellEditCommitParams) => {
-    const newRows = rows.map((row) => {
+    rows.forEach((row) => {
       if (row.id === e.id) {
         switch (e.field) {
           case fields.available_quantity:
@@ -173,7 +173,6 @@ export default function StorePageOfManager({
             break
         }
       }
-      return row
     })
   }
 
@@ -195,7 +194,7 @@ export default function StorePageOfManager({
   const storePreview = () => {
     return (
       <Box sx={{ mr: 3 }}>
-        <Stack direction="row">{}</Stack>
+        <Stack direction="row">{ }</Stack>
         <Typography
           sx={{ flex: "1 1 100%" }}
           variant="h4"

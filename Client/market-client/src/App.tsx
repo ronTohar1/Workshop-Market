@@ -16,7 +16,7 @@ import Checkout from "./Pages/Checkout"
 import Admin from "./Pages/Admin"
 import Product from "./DTOs/Product"
 import { createTheme, ThemeProvider } from "@mui/material"
-import Navbar from "./Componentss/Navbar"
+// import Navbar from "./Componentss/Navbar"
 
 const App = () => {
   // window.onunload = () => clearSession()

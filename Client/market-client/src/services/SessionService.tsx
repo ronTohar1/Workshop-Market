@@ -7,7 +7,7 @@ interface Iuser {
   username: string
 }
 
-const storage = sessionStorage
+export const storage = sessionStorage
 const isInitOccured = "isInitOccured"
 const userName = "userName"
 const isGuest = "isGuest"

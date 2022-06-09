@@ -1,5 +1,6 @@
 ﻿using MarketBackend.DataLayer.DataDTOs.Buyers;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement
         public DataAppointmentsNode? Appointments { get; set; }
 
         public DataStoreDiscountPolicyManager DiscountManager { get; set; }
-        // public StorePurchasePolicyManager purchaseManager { get; set; }
+        public DataStorePurchasePolicyManager PurchaseManager { get; set; }
 
         public IList<DataBid> Bids { get; set; }
     }

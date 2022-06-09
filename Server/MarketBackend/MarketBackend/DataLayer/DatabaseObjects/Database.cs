@@ -9,6 +9,11 @@ using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.Dis
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.NumericExpressions;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.PredicatesExpressions;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PredicatePolicies;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -36,8 +41,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataDateDiscount> DateDiscounts { get; set; }
         public DbSet<DataOneProductDiscount> OneProductDiscounts { get; set; }
         public DbSet<DataStoreDiscount> StoreDiscounts { get; set; }
-        public DbSet<DataAndExpression> AndExpressions { get; set; }
-        public DbSet<DataOrExpression> OrExpressions { get; set; }
+        public DbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression> DiscountAndExpressions { get; set; }
+        public DbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression> DiscountOrExpressions { get; set; }
         public DbSet<DataXorExpression> XorExpressions { get; set; }
         public DbSet<DataMaxExpression> MaxExpressions { get; set; }
         public DbSet<DataBagValuePredicate> BagValuePredicates { get; set; }
@@ -48,8 +53,26 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataConditionExpression> ConditionExpressions { get; set; }
         public DbSet<DataDiscountExpression> DiscountExpressions { get; set; }
         public DbSet<DataExpression> Expressions { get; set; }
-        public DbSet<DataPredicateExpression> PredicateExpressions { get; set; }
+        public DbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression> DiscountPredicateExpressions { get; set; }
         public DbSet<DataDiscount> Discounts { get; set; }
+
+        // purchase policies hierarchy
+
+        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression> PurchaseAndExpressions { get; set; }
+        public DbSet<DataImpliesExpression> ImpliesExpressions { get; set; }
+        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression> PurchaseOrExpressions { get; set; }
+        public DbSet<DataCheckProductLessPredicate> CheckProductLessPredicates { get; set; }
+        public DbSet<DataCheckProductMoreEqualsPredicate> CheckProductMoreEqualsPredicates { get; set; }
+        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression> PruchasePredicateExpressions { get; set; }
+        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPurchasePolicy> InterfacesPurchasePolicies { get; set; }
+        public DbSet<DataRestrictionExpression> RestrictionExpressions { get; set; }
+        public DbSet<DataAfterHourProductRestriction> DataAfterHourProductRestrictions { get; set; }
+        public DbSet<DataAfterHourRestriction> AfterHourRestrictions { get; set; }
+        public DbSet<DataAtLeastAmountRestriction> AtLeastAmountRestrictions { get; set; }
+        public DbSet<DataAtMostAmountRestriction> AtMostAmountRestrictions { get; set; }
+        public DbSet<DataBeforeHourProductRestriction> BeforeHourProductRestrictions { get; set; }
+        public DbSet<DataBeforeHourRestriction> BeforeHourRestrictions { get; set; }
+        public DbSet<DataDateRestriction> DateRestrictions { get; set; }
 
 
         // connection setup functions

@@ -1,11 +1,14 @@
-import Store from "../DTOs/Store"
-import Member from "../DTOs/Member"
-import Product from "../DTOs/Product"
-import { groupByStore } from "../services/ProductsService"
-import { serverPort } from "../Utils"
-import ClientResponse from "../services/Response"
-import List from "@mui/material/List"
-import Purchase from "../DTOs/Purchase"
+
+import Store from "../DTOs/Store";
+import Member from "../DTOs/Member";
+import Product from "../DTOs/Product";
+import  {groupByStore } from "../services/ProductsService";
+import { serverPort } from "../Utils";
+import ClientResponse from "../services/Response";
+import List from "@mui/material/List";
+import Purchase from "../DTOs/Purchase";
+import Discount from "../DTOs/DiscountDTOs/Discount";
+
 
 const stores = [
   new Store(0, "Ronto's", [], new Member(0, "ron", true), true),
@@ -350,19 +353,25 @@ export async function serverCloseStore(
 }
 //////////////////////////////// ---  ADD FREAKING DISCOUNTS AND PURCHASES ---- ///////
 
-// export async function addDiscountPolicy(userId: number, storeId: number,,description:string):Promise<any> {
-//   const uri = serverPort+'/api/Stores/AddDiscountPolicy';
-//   return await fetch(uri, {
-//     method: 'POST',
-//     headers: {
-//         'accept': 'text/plain',
-//         'Content-Type': 'application/json'
-//     },
-//     // body: '{\n  "userId": 0,\n  "storeId": 0,\n  "expression": {},\n  "description": "string"\n}',
-//     body: JSON.stringify({
-//         'userId': userId,
-//         'storeId': storeId,
-//         'expression': {},
-//         'description': description
-//     })
-// });}
+export async function AddDiscountPolicy(
+  userId: number,
+  store: Store, 
+  discount:Discount
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/AddDiscountPolicy";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "userId": 0,\n  "storeId": 0,\n  "expression": {},\n  "description": "string"\n}',
+    body: JSON.stringify({
+        'userId': userId,
+        'storeId': store.id,
+        'expression': JSON.stringify(discount),
+        'description': discount.toString(store)
+    })
+});
+  return jsonResponse.json();
+}

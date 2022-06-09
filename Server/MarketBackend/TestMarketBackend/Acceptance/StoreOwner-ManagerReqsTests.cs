@@ -481,7 +481,7 @@ namespace TestMarketBackend.Acceptance
 
         [Test]
         [TestCaseSource("DataFailedAddDiscount")]
-        public void FailedAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId)
+        public void FailedAddDiscount(Func<ServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId)
         {
             Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
             Assert.IsTrue(response.IsErrorOccured());
@@ -531,7 +531,7 @@ namespace TestMarketBackend.Acceptance
             };
         }
 
-        private static TestCaseData AddDiscountTestCase(Func<IServiceExpression> getDiscount, IList<TestAddDiscountProductArguments> arguments, string description, int generalDiscount = 0)
+        private static TestCaseData AddDiscountTestCase(Func<ServiceExpression> getDiscount, IList<TestAddDiscountProductArguments> arguments, string description, int generalDiscount = 0)
         {
             return new TestCaseData(
 
@@ -983,7 +983,7 @@ namespace TestMarketBackend.Acceptance
 
         [Test]
         [TestCaseSource("DataSuccessfulAddDiscount")]
-        public void SuccessfulAddDiscount(Func<IServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase, double expectedPrice)
+        public void SuccessfulAddDiscount(Func<ServiceExpression> discountExpression, string description, Func<int> storeId, Func<int> memberId, Func<StoreOwner_ManagerReqsTests, ServicePurchase> purchase, double expectedPrice)
         {
             Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
             Assert.IsTrue(!response.IsErrorOccured());

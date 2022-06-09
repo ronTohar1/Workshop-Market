@@ -1,9 +1,13 @@
+import Store from "../Store";
 import Expression from "./Expression";
 
 class Discount extends Expression {
 
-    constructor() {
-        super();
+    constructor(tag: string) {
+        super(tag);
+    }
+    public toString = (store:Store) : string => {
+        return `discount`;
     }
   }
   

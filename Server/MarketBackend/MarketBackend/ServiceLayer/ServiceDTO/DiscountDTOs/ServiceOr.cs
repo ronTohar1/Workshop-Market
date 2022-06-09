@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceOr : ServiceLogical
+    public class ServiceOr : ServiceLogical
     {
-        public ServiceOr(IServicePredicate firstExpression, IServicePredicate secondExpression) : base(firstExpression, secondExpression)
+        public ServiceOr(ServicePredicate firstExpression, ServicePredicate secondExpression, string tag = "")  : base(firstExpression, secondExpression, tag)
         {
 
         }

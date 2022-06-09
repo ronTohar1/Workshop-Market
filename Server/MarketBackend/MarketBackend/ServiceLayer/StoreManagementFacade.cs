@@ -335,7 +335,7 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        private BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces.IPredicateExpression ServicePredicateToPredicate(ServiceDTO.DiscountDTO.IServicePredicate spred, StoreDiscountPolicyManager manager)
+        private BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces.IPredicateExpression ServicePredicateToPredicate(ServiceDTO.DiscountDTO.ServicePredicate spred, StoreDiscountPolicyManager manager)
         {
             if (spred is ServiceLogical)
             {
@@ -370,7 +370,7 @@ namespace MarketBackend.ServiceLayer
 
             }
         }
-        private IDiscountExpression ServiceDiscountToDiscount(IServiceDiscount discount, StoreDiscountPolicyManager manager)
+        private IDiscountExpression ServiceDiscountToDiscount(ServiceDiscount discount, StoreDiscountPolicyManager manager)
         {
             if (discount is ServiceDateDiscount)
             {
@@ -386,7 +386,7 @@ namespace MarketBackend.ServiceLayer
             {
                 ServiceMax dis = (ServiceMax)discount;
                 IList<IDiscountExpression> disList = new List<IDiscountExpression>();
-                foreach (IServiceDiscount d in dis.discounts)
+                foreach (ServiceDiscount d in dis.discounts)
                 {
                     disList.Add(ServiceDiscountToDiscount(d, manager));
                 }
@@ -399,11 +399,11 @@ namespace MarketBackend.ServiceLayer
                 return manager.NewStoreDiscount(dis.discount);
             }
         }
-        private IExpression ServiceExpressionToExpression(IServiceExpression sexp, StoreDiscountPolicyManager manager)
+        private IExpression ServiceExpressionToExpression(ServiceExpression sexp, StoreDiscountPolicyManager manager)
         {
-            if (sexp is IServiceDiscount)
+            if (sexp is ServiceDiscount)
             {
-                return ServiceDiscountToDiscount((IServiceDiscount)sexp, manager);
+                return ServiceDiscountToDiscount((ServiceDiscount)sexp, manager);
             }
             else // IServiceConditional
             {
@@ -420,7 +420,7 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<int> AddDiscountPolicy(IServiceExpression expression, string description, int storeId, int memberId)
+        public Response<int> AddDiscountPolicy(ServiceExpression expression, string description, int storeId, int memberId)
         {
             try
             {
@@ -773,27 +773,204 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<double> GetStoreDailyProfit(int storeId, int memberId)
-        {
-           try
-           {
-                Store? s = storeController.GetStore(storeId);
-                if (s == null)
-                    return new Response<double>($"There isn't a store with an id {storeId}");
-                double total = s.GetDailyProfit(memberId);
-                logger.Info($"GetStoreDailyProfit was called with parameters: [storeId = {storeId}, memberId = {memberId}]");
-                return new Response<double>(total);
-            }
-            catch (MarketException mex)
-            {
-                logger.Error(mex, $"method: GetStoreDailyProfit, parameters: [storeId = {storeId}, memberId = {memberId}]");
-                return new Response<double>(mex.Message);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, $"method: GetStoreDailyProfit, parameters: [storeId = {storeId}, memberId = {memberId}]");
-                return new Response<double>("Sorry, an unexpected error occured. Please try again");
-            }
-        }
+        //public Response<double> GetStoreDailyProfit(int storeId, int memberId)
+        //{
+        //    try
+        //    {
+        //        Store? s = storeController.GetStore(storeId);
+        //        if (s == null)
+        //            return new Response<int>($"There isn't a store with an id {storeId}");
+        //        int id = s.AddBid(productId, memberId, storeId, bidPrice);
+        //        logger.Info($"AddBid was called with parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
+        //        return new Response<int>(id);
+        //    }
+        //    catch (MarketException mex)
+        //    {
+        //        logger.Error(mex, $"method: AddBid, parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
+        //        return new Response<int>(mex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, $"method: AddBid, parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
+        //        return new Response<int>("Sorry, an unexpected error occured. Please try again");
+        //    }
+        //}
+        //public Response<bool> ApproveBid(int storeId, int memberId, int bidId)
+        //{
+        //    try
+        //    {
+        //        Store? s = storeController.GetStore(storeId);
+        //        if (s == null)
+        //            return new Response<bool>($"There isn't a store with an id {storeId}");
+        //        s.ApproveBid(memberId, bidId);
+        //        logger.Info($"ApproveBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(true);
+        //    }
+        //    catch (MarketException mex)
+        //    {
+        //        logger.Error(mex, $"method: ApproveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(mex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, $"method: ApproveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+        //    }
+        //}
+        //public Response<bool> DenyBid(int storeId, int memberId, int bidId)
+        //{
+        //    try
+        //    {
+        //        Store? s = storeController.GetStore(storeId);
+        //        if (s == null)
+        //            return new Response<bool>($"There isn't a store with an id {storeId}");
+        //        s.DenyBid(memberId, bidId);
+        //        logger.Info($"DenyBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(true);
+        //    }
+        //    catch (MarketException mex)
+        //    {
+        //        logger.Error(mex, $"method: DenyBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(mex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, $"method: DenyBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+        //    }
+        //}
+        //public Response<bool> MakeCounterOffer(int storeId, int memberId, int bidId, double offer)
+        //{
+        //    try
+        //    {
+        //        Store? s = storeController.GetStore(storeId);
+        //        if (s == null)
+        //            return new Response<bool>($"There isn't a store with an id {storeId}");
+        //        s.MakeCounterOffer(memberId, bidId, offer);
+        //        logger.Info($"MakeCounterOffer was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}, offer = {offer}]");
+        //        return new Response<bool>(true);
+        //    }
+        //    catch (MarketException mex)
+        //    {
+        //        logger.Error(mex, $"method: MakeCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}, offer = {offer}]");
+        //        return new Response<bool>(mex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, $"method: MakeCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}, offer = {offer}]");
+        //        return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+        //    }
+        //}
+        //public Response<IList<int>> GetApproveForBid(int storeId, int memberId, int bidId)
+        //{
+        //    try
+        //    {
+        //        Store? s = storeController.GetStore(storeId);
+        //        if (s == null)
+        //            return new Response<IList<int>>($"There isn't a store with an id {storeId}");
+        //        IList<int> approving = s.GetApproveForBid(memberId, bidId);
+        //        logger.Info($"GetApproveForBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<IList<int>>(approving);
+        //    }
+        //    catch (MarketException mex)
+        //    {
+        //        logger.Error(mex, $"method: GetApproveForBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<IList<int>>(mex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, $"method: GetApproveForBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<IList<int>>("Sorry, an unexpected error occured. Please try again");
+        //    }
+        //}
+        //public Response<bool> RemoveBid(int storeId, int memberId, int bidId)
+        //{
+        //    try
+        //    {
+        //        Store? s = storeController.GetStore(storeId);
+        //        if (s == null)
+        //            return new Response<bool>($"There isn't a store with an id {storeId}");
+        //        s.RemoveBid(memberId, bidId);
+        //        logger.Info($"RemoveBid was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(true);
+        //    }
+        //    catch (MarketException mex)
+        //    {
+        //        logger.Error(mex, $"method: RemoveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(mex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, $"method: RemoveBid, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+        //    }
+        //}
+        //public Response<bool> ApproveCounterOffer(int storeId, int memberId, int bidId)
+        //{
+        //    try
+        //    {
+        //        Store? s = storeController.GetStore(storeId);
+        //        if (s == null)
+        //            return new Response<bool>($"There isn't a store with an id {storeId}");
+        //        s.ApproveCounterOffer(memberId, bidId);
+        //        logger.Info($"ApproveCounterOffer was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(true);
+        //    }
+        //    catch (MarketException mex)
+        //    {
+        //        logger.Error(mex, $"method: ApproveCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(mex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, $"method: ApproveCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+        //    }
+        //}
+        //public Response<bool> DenyCounterOffer(int storeId, int memberId, int bidId)
+        //{
+        //    try
+        //    {
+        //        Store? s = storeController.GetStore(storeId);
+        //        if (s == null)
+        //            return new Response<bool>($"There isn't a store with an id {storeId}");
+        //        s.DenyCounterOffer(memberId, bidId);
+        //        logger.Info($"DenyCounterOffer was called with parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(true);
+        //    }
+        //    catch (MarketException mex)
+        //    {
+        //        logger.Error(mex, $"method: DenyCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>(mex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, $"method: DenyCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+        //        return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+        //    }
+        //}
+
+        //public Response<double> GetStoreDailyProfit(int storeId, int memberId)
+        //{
+        //   try
+        //   {
+        //        Store? s = storeController.GetStore(storeId);
+        //        if (s == null)
+        //            return new Response<double>($"There isn't a store with an id {storeId}");
+        //        double total = s.GetDailyProfit(memberId);
+        //        logger.Info($"GetStoreDailyProfit was called with parameters: [storeId = {storeId}, memberId = {memberId}]");
+        //        return new Response<double>(total);
+        //    }
+        //    catch (MarketException mex)
+        //    {
+        //        logger.Error(mex, $"method: GetStoreDailyProfit, parameters: [storeId = {storeId}, memberId = {memberId}]");
+        //        return new Response<double>(mex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, $"method: GetStoreDailyProfit, parameters: [storeId = {storeId}, memberId = {memberId}]");
+        //        return new Response<double>("Sorry, an unexpected error occured. Please try again");
+        //    }
+        //}
     }
 }

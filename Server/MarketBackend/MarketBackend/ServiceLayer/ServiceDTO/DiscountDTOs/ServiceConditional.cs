@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal interface IServiceDiscount : IServiceExpression
+    public class ServiceConditional : ServiceExpression
     {
+        public ServiceConditional(string tag = "") :base(tag) {}
     }
 }

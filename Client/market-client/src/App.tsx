@@ -15,7 +15,7 @@ import StorePageOfManager from "./Componentss/ManagerEditStore/StorePageOfManage
 import Checkout from "./Pages/Checkout"
 import Admin from "./Pages/Admin"
 import Product from "./DTOs/Product"
-import SimpleDiscount from "./Componentss/DiscountComponent.tsx/MainDiscount"
+import MainDiscount from "./Componentss/DiscountComponent.tsx/MainDiscount"
 import Store from "./DTOs/Store"
 import Member from "./DTOs/Member"
 import { createTheme, ThemeProvider } from "@mui/material"
@@ -71,6 +71,7 @@ const App = () => {
             <Route path={Paths.pathCart} element={<CartPage />} />
             <Route path={Paths.pathLogin} element={<Login />} />
             <Route path={Paths.pathSearch} element={<SearchPage />} />
+            <Route path={Paths.pathDiscount} element={<MainDiscount store = {new Store(0,"",Array.from( products.keys() ),new Member(0, "moshe", true), true)} />} />
             {/* <Route
             path={Paths.pathStorePageOfManager}
             element={<StorePageOfManager />}

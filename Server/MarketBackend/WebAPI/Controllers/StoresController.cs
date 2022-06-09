@@ -179,7 +179,7 @@ namespace WebAPI.Controllers
         {
             ServiceExpression exp = ConvertDiscountFromJson(request.Expression);
             Response<int> response = storeManagementFacade.AddDiscountPolicy(
-                exp, request.Description, request.StoreId, request.UserId, request.Expression);
+                exp, request.Description, request.StoreId, request.UserId);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);

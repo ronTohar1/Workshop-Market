@@ -19,11 +19,15 @@ import CheckoutDTO from '../DTOs/CheckoutDTO';
 import Product from '../DTOs/Product';
 import { pathCart, pathHome, pathStore } from '../Paths';
 import { getBuyerId } from '../services/SessionService';
-import { purchaseCart } from '../services/BuyersService';
+import { purchaseCart, serverGetCart } from '../services/BuyersService';
 import { fetchResponse } from '../services/GeneralService';
 import Purchase from '../DTOs/Purchase';
 import { blue, indigo, red } from '@mui/material/colors';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { fetchProducts, getCartProducts, serverSearchProducts } from '../services/ProductsService';
+import { CartProduct, convertToCartProduct } from './Cart';
+import LoadingCircle from '../Componentss/LoadingCircle';
+import Cart from '../DTOs/Cart';
 
 const backgroundImage =
   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf";
@@ -43,14 +47,14 @@ function Copyright() {
 
 const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
-function getStepContent(step: number, checkout:CheckoutDTO,productsAmount:Map<Product,number>) {
+function getStepContent(step: number, checkout: CheckoutDTO, productsAmount: Map<Product, number>) {
   switch (step) {
     case 0:
-      return <AddressForm checkout={checkout}/>;
+      return <AddressForm checkout={checkout} />;
     case 1:
-      return <PaymentForm  checkout={checkout}/>;
+      return <PaymentForm checkout={checkout} />;
     case 2:
-      return <Review  checkout={checkout} productsAmounts={productsAmount}/>;
+      return <Review checkout={checkout} productsAmounts={productsAmount} />;
     default:
       throw new Error('Unknown step');
   }
@@ -64,13 +68,15 @@ const theme = createTheme({
     background: {
       default: "#008394"
     }
-    
+
   },
 });
 const checkout = new CheckoutDTO();
+// {productsAmount}:{productsAmount:Map<Product,number>}
+export default function Checkout() {
 
-export default function Checkout({productsAmount}:{productsAmount:Map<Product,number>}) {
   const navigate = useNavigate();
+  const [productsAmount, setProductsAmount] = React.useState<Map<Product, number> | null>(null);
   const [activeStep, setActiveStep] = React.useState(0);
   const [succeeded, setSucceeded] = React.useState<boolean>(false);
   const [purchase, setPurchase] = React.useState<Purchase>();
@@ -79,6 +85,33 @@ export default function Checkout({productsAmount}:{productsAmount:Map<Product,nu
     setActiveStep(activeStep + 1);
   };
 
+  React.useEffect(() => {
+    // Set ProductsAmount map 
+
+    const buyerId = getBuyerId()
+    fetchResponse(serverGetCart(buyerId))
+      .then((cart: Cart) => {
+        const [prodsIds, prodsToQuantity] = getCartProducts(cart)
+        fetchProducts(
+          serverSearchProducts(null, null, null, null, null, prodsIds)
+        ).then((products: Product[]) => {
+          const cartProducts: CartProduct[] = convertToCartProduct(products, prodsToQuantity)
+          
+          const productToAmount: Map<Product, number> = cartProducts.reduce((map: Map<Product, number>, cartProduct: CartProduct) => {
+            map.set(cartProduct.product, cartProduct.quantity)
+            return map;
+          }, new Map<Product, number>())
+
+          setProductsAmount(productToAmount)
+        }
+        )
+      })
+      .catch((e) => {
+        alert(e)
+        navigate(pathHome)
+      })
+  }, [])
+
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
@@ -86,25 +119,25 @@ export default function Checkout({productsAmount}:{productsAmount:Map<Product,nu
   const handleClickHome = () => {
     navigate(`${pathHome}`);
   };
- function placeOrder(){
+  function placeOrder() {
     const buyerId = getBuyerId()
     const responsePromise = purchaseCart(buyerId, checkout)
     console.log(responsePromise)
-    
-    fetchResponse(responsePromise).then((purchase)=>{
+
+    fetchResponse(responsePromise).then((purchase) => {
       setPurchase(purchase)
       setSucceeded(true)
     })
-    .catch((e) => {
-      setErrorMessage(e)
-      setSucceeded(false)
-    })
+      .catch((e) => {
+        setErrorMessage(e)
+        setSucceeded(false)
+      })
     return succeeded
- 
+
   };
-  return (
+  return productsAmount == null ? (LoadingCircle()): (
     <ThemeProvider theme={theme}>
-       
+
       <CssBaseline />
       <AppBar
         position="sticky"
@@ -116,20 +149,20 @@ export default function Checkout({productsAmount}:{productsAmount:Map<Product,nu
         }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography
-              onClick={handleClickHome}
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{
-                display: { xs: "none", sm: "block" },
-                "&:hover": {
-                  cursor: "pointer",
-                },
-              }}
-            >
-              Workshop Market
-            </Typography>
+          <Typography
+            onClick={handleClickHome}
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{
+              display: { xs: "none", sm: "block" },
+              "&:hover": {
+                cursor: "pointer",
+              },
+            }}
+          >
+            Workshop Market
+          </Typography>
         </Toolbar>
       </AppBar>
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
@@ -154,36 +187,36 @@ export default function Checkout({productsAmount}:{productsAmount:Map<Product,nu
                   {purchase?.purchaseDescription}
                 </Typography>
                 <Box textAlign='center'>
-                <Button
-                    href = {pathStore}
+                  <Button
+                    href={pathStore}
                     variant="contained"
                     sx={{ mt: 3, ml: 1 }}
                   >
                     Back To store
                   </Button>
-                  </Box>
+                </Box>
               </React.Fragment>
-            ) :(
+            ) : (
               <React.Fragment>
                 <Typography variant="h5" gutterBottom>
-                 Couldn't complete the order.
+                  Couldn't complete the order.
                 </Typography>
                 <Typography variant="subtitle1">
                   {errorMessage}
                 </Typography>
                 <Box textAlign='center'>
-                <Button
-                    href = {pathCart}
+                  <Button
+                    href={pathCart}
                     variant="contained"
                     sx={{ mt: 3, ml: 1 }}
                   >
                     Back To my cart
                   </Button>
-                  </Box>
+                </Box>
               </React.Fragment>
             )) : (
               <React.Fragment>
-                {getStepContent(activeStep,checkout,productsAmount)}
+                {getStepContent(activeStep, checkout, productsAmount)}
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   {activeStep !== 0 && (
                     <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>

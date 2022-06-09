@@ -63,7 +63,7 @@ const getProductQuantity = (
   return quantity
 }
 
-function convertToCartProduct(
+export function convertToCartProduct(
   products: Product[],
   quantities: Map<number, number>
 ): CartProduct[] {
@@ -181,11 +181,7 @@ export default function CartPage() {
   }
 
   const handlePurchase = () => {
-    const productToAmount : Map<Product,number> = cartProducts.reduce((map: Map<Product,number>, cartProduct:CartProduct)=>{
-      map[cartProduct.product] = cartProduct.quantity
-      return map;
-    }, new Map<Product,number>())
-    navigate(pathCheckout,{productsAmount: })
+    navigate(pathCheckout)
   }
 
   return (

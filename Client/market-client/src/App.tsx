@@ -80,7 +80,7 @@ const App = () => {
             <Route path={Paths.pathAdmin} element={<Admin />} />
             <Route
               path={Paths.pathCheckout}
-              element={<Checkout productsAmount={products} />}
+              element={<Checkout />}
             />
           </Routes>
         </QueryParamProvider>

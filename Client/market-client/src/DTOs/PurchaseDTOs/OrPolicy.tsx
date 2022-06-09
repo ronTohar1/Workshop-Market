@@ -1,16 +1,19 @@
-import Purchase from "./Purchase";
+import PurchasePolicy from "./PurchasePolicy";
 import Restriction from "./Restriction";
 
-class Or extends Purchase {
+class OrPolicy extends PurchasePolicy {
     firstPred: Restriction;
     secondPred: Restriction;
     constructor(
         firstPred: Restriction,
         secondPred: Restriction) {
-        super();
+        super('OrPurchase');
         this.firstPred = firstPred;
         this.secondPred = secondPred;
     }
+    public toString = () : string => {
+        return `${this.firstPred.toString()} OR ${this.secondPred.toString()}`;
+    }
   }
   
-  export default Or
+  export default OrPolicy

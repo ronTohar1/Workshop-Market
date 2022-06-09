@@ -14,38 +14,32 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { blue, indigo, red } from '@mui/material/colors';
 import { useNavigate } from "react-router-dom";
-import { pathHome } from '../../Paths';
 import { getBuyerId } from '../../services/SessionService';
-import { purchaseCart } from '../../services/BuyersService';
 import { fetchResponse } from '../../services/GeneralService';
-import StoreDiscountForm from './StoreDiscountForm';
-import ProductDiscountForm from './ProductDiscountForm';
-import CategoryDiscountForm from './MaxDiscountForm';
 import Store from '../../DTOs/Store';
 import { ButtonGroup, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
-import DateDiscount from '../../DTOs/DiscountDTOs/DateDiscount';
-import BagValue from '../../DTOs/DiscountDTOs/BagValue';
-import ProductDiscount from '../../DTOs/DiscountDTOs/ProductDiscount';
-import If from '../../DTOs/DiscountDTOs/If';
-import StoreDiscount from '../../DTOs/DiscountDTOs/StoreDiscount';
-import Discount from '../../DTOs/DiscountDTOs/Discount';
-import DiscountCard from './DiscountCard';
-import AddativeDiscountForm from './AddativeDiscountForm';
-import MaxDiscountForm from './MaxDiscountForm';
-import DateDiscountForm from './DateDiscountForm';
-import ConditionalDiscount from './ConditionalDiscountForm';
-import LogicalDiscount from './LogicalDiscount';
-import AmountInBag from './Predicates/AmountInBag';
-import BagMinimalCost from './Predicates/BagMinimalCost';
-import LogicalPredicate from './Predicates/LogicalPredicate';
 import Predicate from '../../DTOs/DiscountDTOs/Predicate';
 import PredicateCard from './Predicates/PredicateCard';
-import { AddDiscountPolicy } from '../../services/StoreService';
+import { AddDiscountPolicy, AddPurchasePolicy } from '../../services/StoreService';
+import PurchasePolicy from '../../DTOs/PurchaseDTOs/PurchasePolicy';
+import StorePurchaseHourForm from './StorePurchaseHourForm';
+import ProductPurchaseHourForm from './ProductPurchaseHourForm';
+import MinimumProductForm from './MinimumProductForm';
+import MaximumProductForm from './MaximumProductForm';
+import DatePurchaseForm from './DatePurchaseForm';
+import { Discount } from '@mui/icons-material';
+import ImpliesPurchasesForm from './ImpliesPurchasesForm';
+import LogicalPurchaseForm from './LogicalPurchaseForm';
+import MaximumProductPredicate from './Predicates/MaximumProductPredicate';
+import MinimumProductPredicate from './Predicates/MinimumProductPredicate';
+import DiscountCard from './PolicyCard';
+import PolicyCard from './PolicyCard';
+import Restriction from '../../DTOs/PurchaseDTOs/Restriction';
 
 
 //Logical was removed
-const discountSteps = ['Store', 'Product', 'Max','Addative','Date','Conditional'];
-const prdicateSteps = ['Amount in bag', 'Bag minimal cost','Logical'];
+const PoliciesSteps = ['Store Purchase Hour', 'Product Purchase Hour', 'Product Min Amount', 'Product Max Amount','Date', 'Logical','Implies'];
+const prdicateSteps = ['Product Min Amount','Product Max Amount'];
 const theme = createTheme({
   palette: {
     primary: {
@@ -58,10 +52,10 @@ const theme = createTheme({
   },
 });
 
-export default function MainDiscount({store}: {store : Store}) {
+export default function MainPolicy({store}: {store : Store}) {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
-  const [lastDiscountIndex, setLastDiscountIndex] = React.useState<number>(0);
+  const [lastPurchaseIndex, setLastPurchaseIndex] = React.useState<number>(0);
   const [lastPredicateIndex, setLastPredicateIndex] = React.useState<number>(0);
   const [selectedId, setId] = React.useState(-1);
   //const initDiscounts = new Map<number, Discount>();
@@ -69,11 +63,16 @@ export default function MainDiscount({store}: {store : Store}) {
   // initDiscounts.set(1, new StoreDiscount(68));
   // initDiscounts.set(2, new If(new BagValue(2),new StoreDiscount(56),new ProductDiscount(0, 0)));
 
-  const [discounts, setDiscounts] = React.useState<Map<number,Discount>>(new Map<number,Discount>());
-  function addDiscount (discount:Discount) {
-    setLastDiscountIndex(lastDiscountIndex + 1);
-    discounts.set(lastDiscountIndex, discount);
-    setDiscounts(discounts);
+  const [purchases, setPurchases] = React.useState<Map<number,PurchasePolicy>>(new Map<number,PurchasePolicy>());
+  const [restrictions, setRestriction] = React.useState<Map<number,Restriction>>(new Map<number,Restriction>());
+  function addPurchasePolicy (policy:PurchasePolicy) {
+    setLastPurchaseIndex(lastPurchaseIndex + 1);
+    purchases.set(lastPurchaseIndex, policy);
+    setPurchases(purchases);
+    if (policy.tag.includes('Restriction')){
+      restrictions.set(lastPurchaseIndex,policy);
+      setRestriction(restrictions);
+    }
   };
 
   const [predicates, setPredicates] = React.useState<Map<number,Predicate>>(new Map<number,Predicate>());
@@ -86,25 +85,23 @@ export default function MainDiscount({store}: {store : Store}) {
   function getStepContent(step: number, store:Store) {
     switch (step) {
       case 0:
-        return <StoreDiscountForm store={store} discountAdder={addDiscount}/>;
+        return <StorePurchaseHourForm store={store} purchasesAdder={addPurchasePolicy}/>;
       case 1:
-        return <ProductDiscountForm  store={store} discountAdder={addDiscount}/>;
+        return <ProductPurchaseHourForm  store={store} purchasesAdder={addPurchasePolicy}/>;
       case 2:
-        return <MaxDiscountForm  store={store}  discountAdder={addDiscount} discounts={discounts}/>;
+        return <MinimumProductForm  store={store}  purchasesAdder={addPurchasePolicy}/>;
       case 3:
-        return <AddativeDiscountForm  store={store}  discountAdder={addDiscount} discounts={discounts}/>;
+        return <MaximumProductForm  store={store}  purchasesAdder={addPurchasePolicy}/>;
       case 4:
-        return <DateDiscountForm  store={store}  discountAdder={addDiscount}/>;
-      // case 5:
-      //     return <LogicalDiscount  store={store}  discountAdder={addDiscount}  discounts={discounts}/>;
+        return <DatePurchaseForm  store={store}  purchasesAdder={addPurchasePolicy}/>
       case 5:
-          return <ConditionalDiscount  store={store}  discountAdder={addDiscount} discounts={discounts} predicates={predicates} />;
+          return <LogicalPurchaseForm  store={store}  purchasesAdder={addPurchasePolicy} restrictions={restrictions}/>;
       case 6:
-          return <AmountInBag  store={store}  predicateAdder={addPredicate}/>;
+          return <ImpliesPurchasesForm  store={store}  purchasesAdder={addPurchasePolicy} predicates={predicates}/>;
       case 7:
-          return <BagMinimalCost  store={store}  predicateAdder={addPredicate}/>;
+          return <MinimumProductPredicate  store={store}  predicateAdder={addPredicate}/>;
       case 8:
-          return <LogicalPredicate  store={store}  predicateAdder={addPredicate} predicates={predicates}/>;
+          return <MaximumProductPredicate  store={store}  predicateAdder={addPredicate}/>;
       default:
         throw new Error('Unknown step');
     }
@@ -116,7 +113,7 @@ export default function MainDiscount({store}: {store : Store}) {
   };
   const handleSubmit = () =>{
     const buyerId = getBuyerId()
-    const responsePromise = AddDiscountPolicy(buyerId,store, discounts.get(selectedId)??new Discount(''))
+    const responsePromise = AddPurchasePolicy(buyerId,store, purchases.get(selectedId)??new PurchasePolicy(''))
     console.log(responsePromise)
     fetchResponse(responsePromise).then((newPurchases)=>{
       alert('Discount policy was added successfully to the store!')
@@ -132,12 +129,12 @@ export default function MainDiscount({store}: {store : Store}) {
       <Container component="main" maxWidth={false} sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">
-            Discounts Editor
+            Purchase policies Editor
           </Typography>
           <div className="btn-group" role="group" aria-label="Basic example">
           <Grid container  justifyContent="center">
             {/* </Box><Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}> */}
-            {discountSteps.map((label) => (
+            {PoliciesSteps.map((label) => (
               <Box m={1} pt={3}>
               <Button key={label}  
               color="inherit"
@@ -147,12 +144,12 @@ export default function MainDiscount({store}: {store : Store}) {
                 backgroundColor: "#21b6ae",
                 padding:"16px",
                 fontSize: "12px",
-                maxWidth: '120px',
-                maxHeight: '50px',
-                minWidth: '120px',
-                minHeight: '50px'
+                maxWidth: '160px',
+                maxHeight: '60px',
+                minWidth: '160px',
+                minHeight: '60px'
             }}
-            onClick = {()=>{setActiveStep(discountSteps.indexOf(label))}}
+            onClick = {()=>{setActiveStep(PoliciesSteps.indexOf(label))}}
             >
                 {label}
               </Button>
@@ -168,12 +165,12 @@ export default function MainDiscount({store}: {store : Store}) {
                 backgroundColor: "#00e676",
                 padding:"16px",
                 fontSize: "12px",
-                maxWidth: '120px',
-                maxHeight: '50px',
-                minWidth: '120px',
-                minHeight: '50px'
+                maxWidth: '160px',
+                maxHeight: '60px',
+                minWidth: '160px',
+                minHeight: '60px'
             }}
-            onClick = {()=>{setActiveStep(discountSteps.length+prdicateSteps.indexOf(label))}}
+            onClick = {()=>{setActiveStep(PoliciesSteps.length+prdicateSteps.indexOf(label))}}
             >
                 {label}
               </Button>
@@ -196,16 +193,16 @@ export default function MainDiscount({store}: {store : Store}) {
       <Grid item xs={4}>
       <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}> 
       <Typography component="h1" variant="h4" align="center">
-          Discounts Pool
+          Policies Pool
           </Typography>
        <Grid
             sx={{ overflowY: "scroll",minHeight: "200px" , maxHeight: "200px" }}
             container
             spacing={2}
             >
-          {Array.from( discounts ).map(([id, discount]) => (
+          {Array.from( purchases ).map(([id, purchase]) => (
           <Grid item xs={6} md={6} lg={4}>
-            <DiscountCard id={id} discount={discount} store={store}/>
+            <PolicyCard id={id} purchase={purchase} />
           </Grid>
         ))}
         </Grid>
@@ -233,11 +230,11 @@ export default function MainDiscount({store}: {store : Store}) {
         <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
       <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 ,sm:6}, p: { xs: 2, md: 3 } }}> 
       <Typography variant="h6" gutterBottom>
-       Submit Discount
+       Submit Policy
       </Typography>
         <Grid item xs={12} sm={12}>
         <FormControl fullWidth id="myform" onSubmit={()=>{}} >
-        <InputLabel id="demo-simple-select-standard-label">Discount Id</InputLabel>
+        <InputLabel id="demo-simple-select-standard-label">Policy Id</InputLabel>
         <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
@@ -246,7 +243,7 @@ export default function MainDiscount({store}: {store : Store}) {
         onChange={handleChangeId}
       >
 
-        {Array.from( discounts ).map(([id, discount]) => (
+        {Array.from( purchases ).map(([id, purchase]) => (
            <MenuItem value={id}>{id}</MenuItem>
         ))}
        </Select>

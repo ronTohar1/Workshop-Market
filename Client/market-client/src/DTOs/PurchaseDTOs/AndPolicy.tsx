@@ -1,17 +1,20 @@
 import AfterHour from "./AfterHour";
-import Purchase from "./Purchase";
+import PurchasePolicy from "./PurchasePolicy";
 import Restriction from "./Restriction";
 
-class And extends Purchase {
+class AndPolicy extends PurchasePolicy {
     firstPred: Restriction;
     secondPred: Restriction;
     constructor(
         firstPred: Restriction,
         secondPred: Restriction) {
-        super();
+        super('AndPurchase');
         this.firstPred = firstPred;
         this.secondPred = secondPred;
     }
+    public toString = () : string => {
+        return `${this.firstPred.toString()} AND ${this.secondPred.toString()}`;
+    }
   }
   
-  export default And
+  export default AndPolicy

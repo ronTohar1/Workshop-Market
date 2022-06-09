@@ -1078,6 +1078,20 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
                 , new List<int>(expectedMembersIds)));
         }
 
+        // ------- GetMembersInRoleNoPermissionsCheck() ----------------------------------------
+
+        [Test]
+        [TestCase(Role.Manager, new int[] { managerId1, managerId2 })]
+        [TestCase(Role.Owner, new int[] { coOwnerId1, coOwnerId2, founderMemberId })]
+        [TestCase(Role.Manager, new int[] { managerId1, managerId2 })]
+        public void TestGetMembersInRoleNoPermissionsCheckShouldPass(Role role, int[] expectedMembersIds)
+        {
+            SetupStoreFull();
+
+            Assert.IsTrue(SameElements(store.GetMembersInRoleNoPermissionsCheck(role)
+                , new List<int>(expectedMembersIds)));
+        }
+
         // ------- GetFounder() ----------------------------------------
 
         [Test]
@@ -1500,5 +1514,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             store.AddPurchaseRecord(founder.Id, p2.Object);
             Assert.Throws<MarketException>(() => store.GetDailyProfit(founder.Id + 1));
         }
+
+        // -------------------------- Bid tests ----------------------------------
     }
 }

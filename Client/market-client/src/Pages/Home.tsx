@@ -13,8 +13,8 @@ import { pathLogin, pathRegister, pathSearch } from "../Paths"
 
 const cards = [1, 2, 3]
 
-const backgroundImage =
-  "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
+// const backgroundImage =
+//   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
 
 const createButton = (name: string, path: string) => {
   return (
@@ -76,17 +76,16 @@ const styles = {
   },
 }
 export default function Home() {
-  const bar = Navbar()
   return (
     <ThemeProvider theme={theme}>
       <main>
         <div style={styles.paperContainer}>
         {/* Increase the network loading priority of the background image. */}
-        <img
+        {/* <img
           style={{ display: "none" }}
           src={backgroundImage}
           alt="increase priority"
-        />
+        /> */}
         <Typography color="primary" align="center" variant="h2">
           Buy smart and cheap
         </Typography>

@@ -468,7 +468,7 @@ namespace MarketBackend.ServiceLayer
         }
 
 
-        private BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces.IPredicateExpression ServicePurchasePredicateToPurchasePredicate(ServiceDTO.PurchaseDTOs.IServicePredicate pred, StorePurchasePolicyManager manager)
+        private BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces.IPredicateExpression ServicePurchasePredicateToPurchasePredicate(ServiceDTO.PurchaseDTOs.ServicePurchasePredicate pred, StorePurchasePolicyManager manager)
         {
             if (pred is ServiceCheckProductMore)
             {
@@ -481,7 +481,7 @@ namespace MarketBackend.ServiceLayer
                 return manager.NewCheckProductLessPredicate(exp.productId, exp.amount);
             }
         }
-        private IRestrictionExpression ServiceRestrictionToRestriction(IServiceRestriction expression, StorePurchasePolicyManager manager)
+        private IRestrictionExpression ServiceRestrictionToRestriction(ServiceRestriction expression, StorePurchasePolicyManager manager)
         {
             if (expression is ServiceAfterHourProduct)
             {
@@ -522,22 +522,22 @@ namespace MarketBackend.ServiceLayer
 
         }
 
-        private IPurchasePolicy ServicePurchasePolicyToPurcahsePolicy(IServicePurchase expression, StorePurchasePolicyManager manager)
+        private IPurchasePolicy ServicePurchasePolicyToPurcahsePolicy(ServiceDTO.PurchaseDTOs.ServicePurchasePolicy expression, StorePurchasePolicyManager manager)
         {
-            if (expression is IServiceRestriction)
+            if (expression is ServiceRestriction)
             {
-                return ServiceRestrictionToRestriction((IServiceRestriction)expression, manager);
+                return ServiceRestrictionToRestriction((ServiceRestriction)expression, manager);
             }
             else // logical 
             {
-                if (expression is ServiceDTO.PurchaseDTOs.ServiceAnd)
+                if (expression is ServiceDTO.PurchaseDTOs.ServicePurchaseAnd)
                 {
-                    ServiceDTO.PurchaseDTOs.ServiceAnd exp = (ServiceDTO.PurchaseDTOs.ServiceAnd)expression;
+                    ServiceDTO.PurchaseDTOs.ServicePurchaseAnd exp = (ServiceDTO.PurchaseDTOs.ServicePurchaseAnd)expression;
                     return manager.NewAndExpression(ServiceRestrictionToRestriction(exp.firstPred, manager), ServiceRestrictionToRestriction(exp.secondPred, manager));
                 }
-                else if (expression is ServiceDTO.PurchaseDTOs.ServiceOr)
+                else if (expression is ServiceDTO.PurchaseDTOs.ServicePurchaseOr)
                 {
-                    ServiceDTO.PurchaseDTOs.ServiceOr exp = (ServiceDTO.PurchaseDTOs.ServiceOr)expression;
+                    ServiceDTO.PurchaseDTOs.ServicePurchaseOr exp = (ServiceDTO.PurchaseDTOs.ServicePurchaseOr)expression;
                     return manager.NewOrExpression(ServiceRestrictionToRestriction(exp.firstPred, manager), ServiceRestrictionToRestriction(exp.secondPred, manager));
                 }
                 else // implies
@@ -549,7 +549,7 @@ namespace MarketBackend.ServiceLayer
 
         }
 
-        public Response<int> AddPurchasePolicy(IServicePurchase expression, string description, int storeId, int memberId)
+        public Response<int> AddPurchasePolicy(ServiceDTO.PurchaseDTOs.ServicePurchasePolicy expression, string description, int storeId, int memberId)
         {
             try
             {

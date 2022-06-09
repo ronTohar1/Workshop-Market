@@ -43,8 +43,8 @@ import PredicateCard from './Predicates/PredicateCard';
 import { AddDiscountPolicy } from '../../services/StoreService';
 
 
-
-const discountSteps = ['Store', 'Product', 'Max','Addative','Date', 'Logical','Conditional'];
+//Logical was removed
+const discountSteps = ['Store', 'Product', 'Max','Addative','Date','Conditional'];
 const prdicateSteps = ['Amount in bag', 'Bag minimal cost','Logical'];
 const theme = createTheme({
   palette: {
@@ -95,15 +95,15 @@ export default function MainDiscount({store}: {store : Store}) {
         return <AddativeDiscountForm  store={store}  discountAdder={addDiscount} discounts={discounts}/>;
       case 4:
         return <DateDiscountForm  store={store}  discountAdder={addDiscount}/>;
+      // case 5:
+      //     return <LogicalDiscount  store={store}  discountAdder={addDiscount}  discounts={discounts}/>;
       case 5:
-          return <LogicalDiscount  store={store}  discountAdder={addDiscount}  discounts={discounts}/>;
-      case 6:
           return <ConditionalDiscount  store={store}  discountAdder={addDiscount} discounts={discounts} predicates={predicates} />;
-      case 7:
+      case 6:
           return <AmountInBag  store={store}  predicateAdder={addPredicate}/>;
-      case 8:
+      case 7:
           return <BagMinimalCost  store={store}  predicateAdder={addPredicate}/>;
-      case 9:
+      case 8:
           return <LogicalPredicate  store={store}  predicateAdder={addPredicate} predicates={predicates}/>;
       default:
         throw new Error('Unknown step');

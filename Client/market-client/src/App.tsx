@@ -19,6 +19,7 @@ import MainDiscount from "./Componentss/DiscountComponent.tsx/MainDiscount"
 import Store from "./DTOs/Store"
 import Member from "./DTOs/Member"
 import { createTheme, ThemeProvider } from "@mui/material"
+import MainPolicy from "./Componentss/PurchasePolicy/MainPolicy"
 
 const App = () => {
   // window.onunload = () => clearSession()
@@ -72,6 +73,8 @@ const App = () => {
             <Route path={Paths.pathLogin} element={<Login />} />
             <Route path={Paths.pathSearch} element={<SearchPage />} />
             <Route path={Paths.pathDiscount} element={<MainDiscount store = {new Store(0,"",Array.from( products.keys() ),new Member(0, "moshe", true), true)} />} />
+            <Route path={Paths.pathPolicy} element={<MainPolicy store = {new Store(0,"",Array.from( products.keys() ),new Member(0, "moshe", true), true)} />} />
+
             {/* <Route
             path={Paths.pathStorePageOfManager}
             element={<StorePageOfManager />}

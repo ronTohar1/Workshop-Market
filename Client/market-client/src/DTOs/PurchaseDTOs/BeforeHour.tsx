@@ -1,8 +1,13 @@
-import AfterHour from "./AfterHour";
+import Restriction from "./Restriction";
 
-class BeforeHour extends AfterHour {
+class BeforeHour extends Restriction {
+    hour: number;
     constructor(hour: number) {
-        super(hour);
+        super("BeforeHourRestriction");
+        this.hour = hour;
+    }
+    public toString = () : string => {
+        return `The store does suffice it's purchase services before: ${this.hour}:00`;
     }
   }
   

@@ -18534,3 +18534,27 @@ The product can't be bought:
 ]
 2022-06-09 03:37:00.1765|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2766, market exception: TheStore, the policy is violated: false or false
 ]
+2022-06-09 19:35:04.0679|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2, market exception: TheStore, the policy is violated: is after hour
+]
+2022-06-09 19:35:05.8762|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 32, market exception: TheStore, the policy is violated: product amount enough purchase after hour
+]
+2022-06-09 19:35:09.6104|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 92, market exception: TheStore, the policy is violated: is before hour
+]
+2022-06-09 19:35:10.8136|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 122, market exception: TheStore, the policy is violated: product amount enough purchase before hour
+]
+2022-06-09 19:35:14.6566|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 182, market exception: TheStore, the policy is violated: at least amount, product amount enough
+]
+2022-06-09 19:35:15.8758|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 212, market exception: TheStore, the policy is violated: product amount at most as needed
+]
+2022-06-09 19:35:17.0944|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 242, market exception: TheStore, the policy is violated: in the date
+]
+2022-06-09 19:35:20.8909|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 302, market exception: TheStore, the policy is violated: amount is equal or more, true does not imply false
+]
+2022-06-09 19:35:23.4854|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 347, market exception: TheStore, the policy is violated: less than amount, true does not imply false
+]
+2022-06-09 19:35:24.6881|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 377, market exception: TheStore, the policy is violated: true and false
+]
+2022-06-09 19:35:24.7195|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 392, market exception: TheStore, the policy is violated: false and false
+]
+2022-06-09 19:35:27.1726|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 437, market exception: TheStore, the policy is violated: false or false
+]

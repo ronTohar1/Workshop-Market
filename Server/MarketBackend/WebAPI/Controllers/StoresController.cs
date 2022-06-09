@@ -2,11 +2,13 @@
 using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
+using MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebAPI.Requests;
+using ServicePurchase = MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchasePolicy;
 
 namespace WebAPI.Controllers
 {
@@ -202,9 +204,9 @@ namespace WebAPI.Controllers
         [HttpPost("AddPurchasePolicy")]
         public ActionResult<Response<int>> AddPurchasePolicy([FromBody] AddPurchasePolicyRequest request)
         {
+            ServicePurchasePolicy policy = ConvertPolicyFromJson(request.Expression);
             Response<int> response = storeManagementFacade.AddPurchasePolicy(
-                request.Expression, request.Description, request.StoreId, request.UserId);
-
+                policy, request.Description, request.StoreId, request.UserId);
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
@@ -335,7 +337,8 @@ namespace WebAPI.Controllers
             }
            
         }
-        private ServiceExpression ConvertDiscountFromJson(string json) {
+        private ServiceExpression ConvertDiscountFromJson(string json)
+        {
             var sexp = JsonConvert.DeserializeObject<ServiceExpression>(json);
             if (sexp.tag.Contains("Discount"))
             {
@@ -349,9 +352,99 @@ namespace WebAPI.Controllers
                 var discount2 = JsonConvert.DeserializeObject<ServiceExpression>(rss["elseDis"].ToString());
                 if (discount2 != null)
                     return new ServiceIf(JsonToServicePredicate(test, rss["test"].ToString()), JsonToServiceDiscount(discount1, rss["thenDis"].ToString()), JsonToServiceDiscount(discount2, rss["elseDis"].ToString()));
-                return  new ServiceConditionDiscount(JsonToServicePredicate(test, rss["test"].ToString()), JsonToServiceDiscount(discount1, rss["thenDis"].ToString()));
-               
+                return new ServiceConditionDiscount(JsonToServicePredicate(test, rss["test"].ToString()), JsonToServiceDiscount(discount1, rss["thenDis"].ToString()));
+
             }
+        }
+        private ServiceRestriction convertRestrictionFromJaon(dynamic expression, string json)
+        {
+            if (expression.tag== "AfterHourAmountRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceAfterHourProduct>(json);
+                return new ServiceAfterHourProduct(result.hour, result.productId, result.amount);
+            }
+            else if (expression.tag== "BeforeHourProductRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceBeforeHourProduct>(json);
+                return new ServiceBeforeHourProduct(result.hour, result.productId, result.amount);
+            }
+            else if (expression.tag == "BeforeHourRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceBeforeHour>(json);
+                return new ServiceBeforeHour(result.hour);
+            }
+            else if (expression.tag == "AfterHourRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceAfterHour>(json);
+                return new ServiceAfterHour(result.hour);
+            }
+            else if (expression.tag == "AtMostAmountRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceAtMostAmount>(json);
+                return new ServiceAtMostAmount(result.productId, result.amount);
+            }
+            else if (expression.tag == "AtLeastAmountRestriction")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceAtlestAmount>(json);
+                return new ServiceAtlestAmount(result.productId, result.amount);
+            }
+            else // date restriction
+            {
+                var result = JsonConvert.DeserializeObject<ServiceDateRestriction>(json);
+                return new ServiceDateRestriction(result.year, result.month, result.day);
+            }
+
+
+        }
+        private ServicePurchasePredicate convertPredicateFromJaon(dynamic pred, string json)
+        {
+            if (pred.tag== "CheckProductMorePredicate")
+            {
+                var result = JsonConvert.DeserializeObject<ServiceCheckProductMore>(json);
+                return new ServiceCheckProductMore(result.productId, result.amount);
+            }
+            else // product less
+            {
+                var result = JsonConvert.DeserializeObject<ServiceCheckProductLess>(json);
+                return new ServiceCheckProductMore(result.productId, result.amount);
+            }
+        }
+
+        private ServicePurchasePolicy convertPurchaseFromJaon(dynamic expression, string json)
+        {
+       
+            if (expression.tag== "AndPurchase")
+            {
+                JObject rss = JObject.Parse(json);
+                var firstPred = JsonConvert.DeserializeObject<ServiceRestriction>(rss["firstPred"].ToString());
+                var secondPred = JsonConvert.DeserializeObject<ServiceRestriction>(rss["secondPred"].ToString());
+                return new ServicePurchaseAnd(convertRestrictionFromJaon(firstPred, rss["firstPred"].ToString()), convertRestrictionFromJaon(secondPred, rss["secondPred"].ToString()));
+            }
+            else if (expression.tag == "OrPurchase")
+            {
+
+                JObject rss = JObject.Parse(json);
+                var firstPred = JsonConvert.DeserializeObject<ServiceRestriction>(rss["firstPred"].ToString());
+                var secondPred = JsonConvert.DeserializeObject<ServiceRestriction>(rss["secondPred"].ToString());
+                return new ServicePurchaseOr(convertRestrictionFromJaon(firstPred, rss["firstPred"].ToString()), convertRestrictionFromJaon(secondPred, rss["secondPred"].ToString()));
+            }
+            else // implies
+            {
+                JObject rss = JObject.Parse(json);
+                var firstPred = JsonConvert.DeserializeObject<ServicePredicate>(rss["condition"].ToString());
+                var secondPred = JsonConvert.DeserializeObject<ServicePredicate>(rss["allowing"].ToString());
+                return new ServiceImplies(convertPredicateFromJaon(firstPred, rss["condition"].ToString()), convertPredicateFromJaon(secondPred, rss["allowing"].ToString()));
+            }
+
+
+        }
+        private ServicePurchasePolicy ConvertPolicyFromJson(string json)
+        {
+            var sexp = JsonConvert.DeserializeObject<ServicePurchasePolicy>(json);
+            if (sexp.tag.Contains("Restriction"))
+                return convertRestrictionFromJaon(sexp, json);
+            else
+                return convertPurchaseFromJaon(sexp, json);
         }
 
     }

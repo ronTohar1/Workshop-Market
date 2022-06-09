@@ -18,7 +18,7 @@ export default function PolicyCard({id,purchase}: {id:number, purchase: Purchase
     <div>
       <Card elevation={1}>
         <CardHeader
-          title={ `Discount id: ${id}`}
+          title={ `Policy id: ${id}`}
         />
         <CardContent>
           {/* <Typography variant="body2" color="textSecondary">

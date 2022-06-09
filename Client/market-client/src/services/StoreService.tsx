@@ -389,7 +389,7 @@ export async function AddPurchasePolicy(
         'Content-Type': 'application/json'
     },
     // body: '{\n  "userId": 0,\n  "storeId": 0,\n  "expression": {},\n  "description": "string"\n}',
-    body: JSON.stringify({
+     body: JSON.stringify({
         'userId': userId,
         'storeId': store.id,
         'expression': JSON.stringify(purchase),

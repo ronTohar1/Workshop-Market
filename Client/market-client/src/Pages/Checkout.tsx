@@ -19,7 +19,7 @@ import CheckoutDTO from '../DTOs/CheckoutDTO';
 import Product from '../DTOs/Product';
 import { pathCart, pathHome, pathStore } from '../Paths';
 import { getBuyerId } from '../services/SessionService';
-import { purchaseCart, serverGetCart } from '../services/BuyersService';
+import { serverPurchaseCart, serverGetCart } from '../services/BuyersService';
 import { fetchResponse } from '../services/GeneralService';
 import Purchase from '../DTOs/Purchase';
 import { blue, indigo, red } from '@mui/material/colors';
@@ -81,6 +81,7 @@ export default function Checkout() {
   const [succeeded, setSucceeded] = React.useState<boolean>(false);
   const [purchase, setPurchase] = React.useState<Purchase>();
   const [errorMessage, setErrorMessage] = React.useState<string>("");
+  const [orderPlaced, setOrderPlaced] = React.useState(false);
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -96,7 +97,7 @@ export default function Checkout() {
           serverSearchProducts(null, null, null, null, null, prodsIds)
         ).then((products: Product[]) => {
           const cartProducts: CartProduct[] = convertToCartProduct(products, prodsToQuantity)
-          
+
           const productToAmount: Map<Product, number> = cartProducts.reduce((map: Map<Product, number>, cartProduct: CartProduct) => {
             map.set(cartProduct.product, cartProduct.quantity)
             return map;
@@ -112,30 +113,108 @@ export default function Checkout() {
       })
   }, [])
 
+
+  React.useEffect(() => {
+    if (activeStep === steps.length)
+      placeOrder()
+  }, [activeStep])
+
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
   console.log(checkout)
   const handleClickHome = () => {
     navigate(`${pathHome}`);
   };
+
   function placeOrder() {
     const buyerId = getBuyerId()
-    const responsePromise = purchaseCart(buyerId, checkout)
-    console.log(responsePromise)
+    const responsePromise = serverPurchaseCart(buyerId, checkout)
+    // console.log(responsePromise)
 
-    fetchResponse(responsePromise).then((purchase) => {
-      setPurchase(purchase)
-      setSucceeded(true)
-    })
+    fetchResponse(responsePromise)
+      .then((purchase: Purchase) => {
+        setPurchase(purchase)
+        setSucceeded(true)
+        return true
+      })
+      .then(setOrderPlaced)
       .catch((e) => {
         setErrorMessage(e)
         setSucceeded(false)
-      })
-    return succeeded
+        setOrderPlaced(true)
 
+      })
   };
-  return productsAmount == null ? (LoadingCircle()): (
+
+  function thankForOrder() {
+    return (
+      <React.Fragment>
+        <Typography variant="h5" gutterBottom>
+          Thank you for your order.
+        </Typography>
+        <Typography variant="subtitle1">
+          <p>{purchase?.purchaseDescription}</p>
+        </Typography>
+        <Box textAlign='center'>
+          <Button
+            href={pathHome}
+            variant="contained"
+            sx={{ mt: 3, ml: 1 }}
+          >
+            Back To home page
+          </Button>
+        </Box>
+      </React.Fragment>
+    )
+  }
+
+  function orderError() {
+    return (
+      <React.Fragment>
+        <Typography variant="h5" gutterBottom>
+          Couldn't complete the order.
+        </Typography>
+        <Typography variant="subtitle1">
+          <p>{errorMessage}</p>
+        </Typography>
+        <Box textAlign='center'>
+          <Button
+            href={pathCart}
+            variant="contained"
+            sx={{ mt: 3, ml: 1 }}
+          >
+            Back To my cart
+          </Button>
+        </Box>
+      </React.Fragment>
+    )
+  }
+
+  function getCurrentStep(activeStep: number, checkout: CheckoutDTO, productsAmount: Map<Product, number>) {
+    return (
+      <React.Fragment>
+        {getStepContent(activeStep, checkout, productsAmount)}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          {activeStep !== 0 && (
+            <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+              Back
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            onClick={handleNext}
+            sx={{ mt: 3, ml: 1 }}
+          >
+            {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+          </Button>
+        </Box>
+      </React.Fragment>
+    )
+  }
+
+  return productsAmount == null ? (LoadingCircle()) : (
     <ThemeProvider theme={theme}>
 
       <CssBaseline />
@@ -178,61 +257,14 @@ export default function Checkout() {
             ))}
           </Stepper>
           <React.Fragment>
-            {activeStep === steps.length ? (placeOrder() ? (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
-                </Typography>
-                <Typography variant="subtitle1">
-                  {purchase?.purchaseDescription}
-                </Typography>
-                <Box textAlign='center'>
-                  <Button
-                    href={pathStore}
-                    variant="contained"
-                    sx={{ mt: 3, ml: 1 }}
-                  >
-                    Back To store
-                  </Button>
-                </Box>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Couldn't complete the order.
-                </Typography>
-                <Typography variant="subtitle1">
-                  {errorMessage}
-                </Typography>
-                <Box textAlign='center'>
-                  <Button
-                    href={pathCart}
-                    variant="contained"
-                    sx={{ mt: 3, ml: 1 }}
-                  >
-                    Back To my cart
-                  </Button>
-                </Box>
-              </React.Fragment>
-            )) : (
-              <React.Fragment>
-                {getStepContent(activeStep, checkout, productsAmount)}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                      Back
-                    </Button>
-                  )}
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    sx={{ mt: 3, ml: 1 }}
-                  >
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                  </Button>
-                </Box>
-              </React.Fragment>
-            )}
+            {orderPlaced
+              ? succeeded
+                ? thankForOrder()
+                : orderError()
+              : (activeStep === steps.length  // If its last step
+                ? (LoadingCircle())
+                : (getCurrentStep(activeStep, checkout, productsAmount)))
+            }
           </React.Fragment>
         </Paper>
         <Copyright />

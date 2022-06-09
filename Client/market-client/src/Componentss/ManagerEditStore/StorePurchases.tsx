@@ -33,6 +33,7 @@ const fields = {
 
 
 const columns: GridColDef[] = [
+
   {
     field: fields.date,
     headerName: "Purchase Date",
@@ -51,11 +52,16 @@ const columns: GridColDef[] = [
   },
   {
     field: fields.description,
-    headerName: "Purchase Description" ,
+    headerName: "Purchase Description",
     type: "string",
     flex: 1,
     align: "left",
     headerAlign: "left",
+    renderCell: ({ value }) => (
+      <span style={{ overflow: "scroll" }}>
+        {value}
+      </span>
+    )
   },
   {
     field: fields.buyerId,
@@ -77,26 +83,31 @@ export default function StorePurchases({
   store: Store
   handleChangedStore: (s: Store) => void
 }) {
+  let rowId = 0;
   const initSize: number = 5
 
   const [pageSize, setPageSize] = React.useState<number>(initSize)
   const [rows, setRows] = React.useState<Purchase[]>([])
 
-  React.useEffect(()=>{
-    fetchResponse(serverGetPurchaseHistory(getBuyerId(),store.id))
-    .then((purchases: Purchase[])=>{
+  React.useEffect(() => {
+    fetchResponse(serverGetPurchaseHistory(getBuyerId(), store.id))
+      .then((purchases: Purchase[]) => {
         console.log("purchases")
         console.log(purchases)
+        purchases.forEach(
+          (p: Purchase) => {
+            p.purchaseDate = new Date("12/12/2020")
+          })
         setRows(purchases)
-    })
-    .catch(alert)
-  },[])
-  
- 
+      })
+      .catch(alert)
+  }, [])
+
+
   const storePurchases = () => {
     return (
       <Box sx={{ mr: 3 }}>
-        <Stack direction="row">{}</Stack>
+        <Stack direction="row">{ }</Stack>
         <Typography
           sx={{ flex: "1 1 100%" }}
           variant="h4"
@@ -126,6 +137,7 @@ export default function StorePurchases({
                 pagination
                 // Selection:
                 disableSelectionOnClick
+                getRowId={() => rowId++}
               />
             </div>
           </div>

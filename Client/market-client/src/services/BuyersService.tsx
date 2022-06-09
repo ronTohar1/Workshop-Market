@@ -174,7 +174,7 @@ export async function serverChangeProductAmountInCart(
   return jsonResponse.json()
 }
 
-export async function purchaseCart(
+export async function serverPurchaseCart(
   userId: number,
   checkout: CheckoutDTO
 ): Promise<ClientResponse<Purchase>> {

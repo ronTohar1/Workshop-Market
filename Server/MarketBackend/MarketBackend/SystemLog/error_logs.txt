@@ -19176,3 +19176,723 @@ The product can't be bought:
 ]
 2022-06-08 00:47:37.5100|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2766, market exception: TheStore, the policy is violated: false or false
 ]
+2022-06-10 02:08:10.4740|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6394|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6394|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6394|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6394|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6496|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6496|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6496|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6496|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6496|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6496|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6496|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6496|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6496|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6655|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6655|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6655|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6655|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6655|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6655|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6655|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6655|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6655|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6806|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6806|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6806|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6806|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6806|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6806|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6806|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6974|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6974|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6974|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6974|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6974|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6974|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6974|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.6974|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7119|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7286|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7448|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7448|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7448|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7448|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7448|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7448|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7448|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7629|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7629|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7629|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7629|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7629|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7629|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7629|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7629|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7758|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.7913|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8071|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8221|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8374|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8527|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8694|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.8848|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9001|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9161|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9316|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9316|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9316|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9316|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:08:10.9316|ERROR|SystemLog.SystemLogger|method: OpenMarket, parameters: [username = admin, can not reveal password]
+2022-06-10 02:20:35.5977|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6214|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6214|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6214|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6214|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6214|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6349|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6349|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6349|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6349|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6349|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6349|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6349|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6505|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6505|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6505|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6505|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6505|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6505|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6505|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6653|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6653|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6653|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6653|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6653|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6653|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6808|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6808|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6808|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6808|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6808|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6808|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6808|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6991|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6991|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6991|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.6991|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7130|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7130|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7130|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7130|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7130|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7130|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7130|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7274|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7274|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7274|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7274|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7274|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7274|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7274|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7438|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7438|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7438|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7438|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7438|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7438|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7438|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7593|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7593|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7593|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7593|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7749|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7749|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7749|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7749|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7749|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7749|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7749|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7749|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7749|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7905|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7905|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7905|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7905|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7905|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7905|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7905|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.7905|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8054|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8054|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8054|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8054|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8054|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8054|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8054|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8054|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8054|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8218|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8218|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8218|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8218|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8218|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8218|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8218|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8218|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8218|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8370|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8535|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8535|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8535|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8535|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8535|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8535|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8535|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8535|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8690|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8690|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8690|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8690|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8690|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8690|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8690|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8690|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8690|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8838|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8838|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8838|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8838|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8838|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8838|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8838|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8838|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8838|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8998|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8998|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8998|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8998|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8998|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8998|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8998|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.8998|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9146|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9306|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9306|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9306|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9306|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9306|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9306|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9306|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9306|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9306|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9466|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9466|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9466|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9466|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9466|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9466|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9466|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9466|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9466|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9618|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9618|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9618|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9618|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9618|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9618|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9618|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9618|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9618|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9781|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9943|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9943|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:20:35.9943|ERROR|SystemLog.SystemLogger|Market is already open
+2022-06-10 02:38:28.8425|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 0, memberToRemoveId = 2]
+2022-06-10 02:38:28.9312|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
+2022-06-10 02:38:28.9503|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
+2022-06-10 02:38:28.9503|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
+2022-06-10 02:38:28.9503|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
+2022-06-10 02:38:28.9503|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
+2022-06-10 02:38:28.9503|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
+2022-06-10 02:38:28.9503|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
+2022-06-10 02:38:28.9503|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
+2022-06-10 02:38:28.9503|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 15, memberToRemoveId = 17]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:28.9939|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0089|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 30, memberToRemoveId = 32]
+2022-06-10 02:38:29.0552|ERROR|SystemLog.SystemLogger|method: GetStorePurchaseHistory, parameters: [currUserId = -1, storeId = 47]
+2022-06-10 02:38:29.0875|ERROR|SystemLog.SystemLogger|method: GetStorePurchaseHistory, parameters: [currUserId = 60, storeId = -1]
+2022-06-10 02:38:29.1184|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = -1]
+2022-06-10 02:38:29.1337|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = 91]
+2022-06-10 02:38:29.1660|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = 107]
+2022-06-10 02:38:29.1966|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = 124]
+2022-06-10 02:38:29.2275|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = -1, memberId = 137]
+2022-06-10 02:38:29.2585|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = 151, memberId = 152]
+2022-06-10 02:38:29.2917|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = 167, memberId = 167]
+2022-06-10 02:38:29.3209|ERROR|SystemLog.SystemLogger|method: GetLoggedInMembers, parameters: [requestingId = 184, memberId = 182]
+2022-06-10 02:38:29.3999|ERROR|SystemLog.SystemLogger|method: GetStorePurchaseHistory, parameters: [currUserId = -1, storeId = 30]
+2022-06-10 02:38:29.4315|ERROR|SystemLog.SystemLogger|method: GetStorePurchaseHistory, parameters: [currUserId = 240, storeId = -1]
+2022-06-10 02:38:29.4621|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 261, memberToRemoveId = 259]
+2022-06-10 02:38:29.4929|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 276, memberToRemoveId = 274]
+2022-06-10 02:38:29.5085|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 285, memberToRemoveId = 286]
+2022-06-10 02:38:29.5398|ERROR|SystemLog.SystemLogger|method: RemoveMember, parameters: [requestingId = 300, memberToRemoveId = -1]
+2022-06-10 02:38:39.8993|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 501, market exception: Your cart is empty!]
+2022-06-10 02:38:41.1106|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 516, market exception: Cant buy the following products in TheStore:
+The product can't be bought: 
+     there arn't any Iphone13 currently at the inventory]
+2022-06-10 02:38:42.9772|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:42.9934|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:42.9934|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:42.9934|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:42.9934|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:42.9934|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:42.9934|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:42.9934|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:42.9934|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0090|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0240|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = userName, password undisclosed]
+2022-06-10 02:38:43.0552|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = ValidName, password undisclosed]
+2022-06-10 02:38:43.0714|ERROR|SystemLog.SystemLogger|method: Login, parameters: [userName = userName1, password undisclosed]
+2022-06-10 02:38:43.1023|ERROR|SystemLog.SystemLogger|method: Register, parameters: [userName = #@@#@#....InValidName, password undisclosed]
+2022-06-10 02:38:43.1808|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1168, storeName = BestStoreEver]
+2022-06-10 02:38:43.2117|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1187, storeName = BestStoreEver]
+2022-06-10 02:38:43.2117|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1189, storeName = BestStoreEver]
+2022-06-10 02:38:43.2117|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1191, storeName = BestStoreEver]
+2022-06-10 02:38:43.2117|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1193, storeName = BestStoreEver]
+2022-06-10 02:38:43.2117|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1195, storeName = BestStoreEver]
+2022-06-10 02:38:43.2117|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1197, storeName = BestStoreEver]
+2022-06-10 02:38:43.2117|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1199, storeName = BestStoreEver]
+2022-06-10 02:38:43.2117|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1201, storeName = BestStoreEver]
+2022-06-10 02:38:43.2117|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1203, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1222, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1224, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1226, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1242, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1228, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1230, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1232, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1272, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1234, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1236, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1238, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1240, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1244, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1246, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1248, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1250, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1252, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1254, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1256, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1258, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1260, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1262, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1264, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1266, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1268, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1270, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1274, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1276, storeName = BestStoreEver]
+2022-06-10 02:38:43.2583|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1278, storeName = BestStoreEver]
+2022-06-10 02:38:43.2746|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1285, storeName = TheStore]
+2022-06-10 02:38:43.3058|ERROR|SystemLog.SystemLogger|method: OpenStore, parameters: [userId = 1300, storeName = ]
+2022-06-10 02:38:43.3209|ERROR|SystemLog.SystemLogger|method: addproductreview, parameters: [memberid = 1315, storeid = 165, productid = 567, review = ]
+2022-06-10 02:38:43.3372|ERROR|SystemLog.SystemLogger|method: addproductreview, parameters: [memberid = 1330, storeid = 167, productid = 574, review =    ]
+2022-06-10 02:38:46.1967|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1523, targetUserId = 1529, storeId = 194]
+2022-06-10 02:38:46.2277|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1538, targetUserId = 1544, storeId = 196]
+2022-06-10 02:38:46.2277|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1538, targetUserId = 1544, storeId = 196]
+2022-06-10 02:38:46.2277|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1538, targetUserId = 1544, storeId = 196]
+2022-06-10 02:38:46.2277|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1538, targetUserId = 1544, storeId = 196]
+2022-06-10 02:38:46.2277|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1538, targetUserId = 1544, storeId = 196]
+2022-06-10 02:38:46.2277|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1538, targetUserId = 1544, storeId = 196]
+2022-06-10 02:38:46.2277|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1538, targetUserId = 1544, storeId = 196]
+2022-06-10 02:38:46.2277|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1538, targetUserId = 1544, storeId = 196]
+2022-06-10 02:38:46.2277|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1538, targetUserId = 1544, storeId = 196]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2587|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1553, targetUserId = 1559, storeId = 198]
+2022-06-10 02:38:46.2901|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1568, targetUserId = 1566, storeId = 200]
+2022-06-10 02:38:46.3060|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1583, targetUserId = 1581, storeId = 202]
+2022-06-10 02:38:46.3060|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1583, targetUserId = 1581, storeId = 202]
+2022-06-10 02:38:46.3060|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1583, targetUserId = 1581, storeId = 202]
+2022-06-10 02:38:46.3060|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1583, targetUserId = 1581, storeId = 202]
+2022-06-10 02:38:46.3060|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1583, targetUserId = 1581, storeId = 202]
+2022-06-10 02:38:46.3060|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1583, targetUserId = 1581, storeId = 202]
+2022-06-10 02:38:46.3060|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1583, targetUserId = 1581, storeId = 202]
+2022-06-10 02:38:46.3060|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1583, targetUserId = 1581, storeId = 202]
+2022-06-10 02:38:46.3060|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1583, targetUserId = 1581, storeId = 202]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3363|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1598, targetUserId = 1596, storeId = 204]
+2022-06-10 02:38:46.3849|ERROR|SystemLog.SystemLogger|method: AddDiscountPolicy, parameters: [description two iphones discount, storeId = 206, memberId = -1]
+2022-06-10 02:38:46.3997|ERROR|SystemLog.SystemLogger|method: AddDiscountPolicy, parameters: [description two iphones discount, storeId = 208, memberId = 1625]
+2022-06-10 02:38:46.4158|ERROR|SystemLog.SystemLogger|method: AddDiscountPolicy, parameters: [description two iphones discount, storeId = 210, memberId = 1641]
+2022-06-10 02:38:46.4306|ERROR|SystemLog.SystemLogger|method: AddDiscountPolicy, parameters: [description two iphones discount, storeId = 212, memberId = 1662]
+2022-06-10 02:38:46.4463|ERROR|SystemLog.SystemLogger|method: AddDiscountPolicy, parameters: [description two iphones discount, storeId = 215, memberId = 1679]
+2022-06-10 02:38:46.4786|ERROR|SystemLog.SystemLogger|method: AddPurchasePolicy, parameters: [description amount should be ta least one, storeId = 218, memberId = -1]
+2022-06-10 02:38:46.5086|ERROR|SystemLog.SystemLogger|method: AddPurchasePolicy, parameters: [description amount should be ta least one, storeId = 220, memberId = 1715]
+2022-06-10 02:38:46.5249|ERROR|SystemLog.SystemLogger|method: AddPurchasePolicy, parameters: [description amount should be ta least one, storeId = 222, memberId = 1731]
+2022-06-10 02:38:46.5394|ERROR|SystemLog.SystemLogger|method: AddPurchasePolicy, parameters: [description amount should be ta least one, storeId = 224, memberId = 1752]
+2022-06-10 02:38:46.5557|ERROR|SystemLog.SystemLogger|method: AddPurchasePolicy, parameters: [description amount should be ta least one, storeId = 227, memberId = 1769]
+2022-06-10 02:38:46.5867|ERROR|SystemLog.SystemLogger|method: AddNewProduct, parameters: [userId = 1793, storeId = 230, productName = Gaming Chair, price = -400, category = Gaming]
+2022-06-10 02:38:46.6492|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1838, targetUserId = -1, storeId = 236]
+2022-06-10 02:38:46.6654|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1853, targetUserId = 1850, storeId = 238]
+2022-06-10 02:38:46.6808|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1868, targetUserId = 1866, storeId = 240]
+2022-06-10 02:38:46.6965|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1883, targetUserId = 1887, storeId = 242]
+2022-06-10 02:38:46.7276|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1900, targetUserId = 1898, storeId = 244]
+2022-06-10 02:38:46.7429|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = -1, targetUserId = 1913, storeId = 246]
+2022-06-10 02:38:46.7747|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1925, targetUserId = 1928, storeId = 248]
+2022-06-10 02:38:46.7899|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1941, targetUserId = 1943, storeId = 250]
+2022-06-10 02:38:46.8056|ERROR|SystemLog.SystemLogger|method: RemoveCoOwner, parameters: [userId = 1962, targetUserId = 1958, storeId = 252]
+2022-06-10 02:38:46.8368|ERROR|SystemLog.SystemLogger|method: MakeCoManager, parameters: [userId = 1973, targetUserId = 1977, storeId = 254]
+2022-06-10 02:38:46.8527|ERROR|SystemLog.SystemLogger|method: MakeCoOwner, parameters: [userId = 1988, targetUserId = 1990, storeId = 256]
+2022-06-10 02:39:13.8526|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2331, market exception: TheStore, the policy is violated: is after hour
+]
+2022-06-10 02:39:15.1494|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2361, market exception: TheStore, the policy is violated: product amount enough purchase after hour
+]
+2022-06-10 02:39:18.8679|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2421, market exception: TheStore, the policy is violated: is before hour
+]
+2022-06-10 02:39:20.0400|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2451, market exception: TheStore, the policy is violated: product amount enough purchase before hour
+]
+2022-06-10 02:39:23.6181|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2511, market exception: TheStore, the policy is violated: at least amount, product amount enough
+]
+2022-06-10 02:39:24.7747|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2541, market exception: TheStore, the policy is violated: product amount at most as needed
+]
+2022-06-10 02:39:25.9309|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2571, market exception: TheStore, the policy is violated: in the date
+]
+2022-06-10 02:39:29.5713|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2631, market exception: TheStore, the policy is violated: amount is equal or more, true does not imply false
+]
+2022-06-10 02:39:31.9309|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2676, market exception: TheStore, the policy is violated: less than amount, true does not imply false
+]
+2022-06-10 02:39:33.2750|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2706, market exception: TheStore, the policy is violated: true and false
+]
+2022-06-10 02:39:33.2898|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2721, market exception: TheStore, the policy is violated: false and false
+]
+2022-06-10 02:39:35.8528|ERROR|SystemLog.SystemLogger|method: PurchaseCartContent, parameters: [userId = 2766, market exception: TheStore, the policy is violated: false or false
+]

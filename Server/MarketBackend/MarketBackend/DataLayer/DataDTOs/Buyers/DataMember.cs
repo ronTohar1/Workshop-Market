@@ -17,7 +17,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Buyers
         
         // buyer data
 
-        public DataCart Cart { get; set; }
+        public DataCart? Cart { get; set; }
         public IList<DataPurchase> PurchaseHistory { get; set; }
     }
 }

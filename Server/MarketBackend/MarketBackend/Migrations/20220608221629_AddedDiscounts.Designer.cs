@@ -4,6 +4,7 @@ using MarketBackend.DataLayer.DatabaseObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarketBackend.Migrations
 {
     [DbContext(typeof(Database))]
-    partial class DatabaseModelSnapshot : ModelSnapshot
+    [Migration("20220608221629_AddedDiscounts")]
+    partial class AddedDiscounts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,9 +351,6 @@ namespace MarketBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PurchaseManagerId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AppointmentsId");
@@ -359,8 +358,6 @@ namespace MarketBackend.Migrations
                     b.HasIndex("DiscountManagerId");
 
                     b.HasIndex("FounderId");
-
-                    b.HasIndex("PurchaseManagerId");
 
                     b.ToTable("Stores");
                 });
@@ -459,93 +456,9 @@ namespace MarketBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DiscountPredicateExpressions");
+                    b.ToTable("PredicateExpressions");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("DataPredicateExpression");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataPurchasePolicy", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("DataStorePurchasePolicyManagerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PolicyId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DataStorePurchasePolicyManagerId");
-
-                    b.HasIndex("PolicyId");
-
-                    b.ToTable("DataPurchasePolicy");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("DataPurchasePolicy");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataStorePurchasePolicyManager", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DataStorePurchasePolicyManager");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PruchasePredicateExpressions");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("DataPredicateExpression");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPurchasePolicy", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("InterfacesPurchasePolicies");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("DataPurchasePolicy");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.DataConditionExpression", b =>
@@ -639,79 +552,6 @@ namespace MarketBackend.Migrations
                     b.HasDiscriminator().HasValue("DataDiscountExpression");
                 });
 
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataPurchasePolicy");
-
-                    b.Property<int?>("FirstPredId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SecondPredId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("FirstPredId");
-
-                    b.HasIndex("SecondPredId");
-
-                    b.HasDiscriminator().HasValue("DataAndExpression");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataImpliesExpression", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataPurchasePolicy");
-
-                    b.Property<int?>("AllowingId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ConditionId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("AllowingId");
-
-                    b.HasIndex("ConditionId");
-
-                    b.HasDiscriminator().HasValue("DataImpliesExpression");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataPurchasePolicy");
-
-                    b.Property<int?>("FirstPredId")
-                        .HasColumnType("int")
-                        .HasColumnName("DataOrExpression_FirstPredId");
-
-                    b.Property<int?>("SecondPredId")
-                        .HasColumnType("int")
-                        .HasColumnName("DataOrExpression_SecondPredId");
-
-                    b.HasIndex("FirstPredId");
-
-                    b.HasIndex("SecondPredId");
-
-                    b.HasDiscriminator().HasValue("DataOrExpression");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PredicatePolicies.DataCheckProductLessPredicate", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasDiscriminator().HasValue("DataCheckProductLessPredicate");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataRestrictionExpression", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPurchasePolicy");
-
-                    b.HasDiscriminator().HasValue("DataRestrictionExpression");
-                });
-
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.BasicDiscounts.DataStoreDiscount", b =>
                 {
                     b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataDiscountExpression");
@@ -750,61 +590,6 @@ namespace MarketBackend.Migrations
                     b.HasDiscriminator().HasValue("DataMaxExpression");
                 });
 
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PredicatePolicies.DataCheckProductMoreEqualsPredicate", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PredicatePolicies.DataCheckProductLessPredicate");
-
-                    b.HasDiscriminator().HasValue("DataCheckProductMoreEqualsPredicate");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataAfterHourRestriction", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataRestrictionExpression");
-
-                    b.Property<int>("Hour")
-                        .HasColumnType("int");
-
-                    b.HasDiscriminator().HasValue("DataAfterHourRestriction");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataAtLeastAmountRestriction", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataRestrictionExpression");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int")
-                        .HasColumnName("DataAtLeastAmountRestriction_Amount");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("DataAtLeastAmountRestriction_ProductId");
-
-                    b.HasDiscriminator().HasValue("DataAtLeastAmountRestriction");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataBeforeHourRestriction", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataRestrictionExpression");
-
-                    b.HasDiscriminator().HasValue("DataBeforeHourRestriction");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataDateRestriction", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataRestrictionExpression");
-
-                    b.Property<int>("Day")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasDiscriminator().HasValue("DataDateRestriction");
-                });
-
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.BasicDiscounts.DataDateDiscount", b =>
                 {
                     b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.BasicDiscounts.DataStoreDiscount");
@@ -829,41 +614,6 @@ namespace MarketBackend.Migrations
                         .HasColumnType("int");
 
                     b.HasDiscriminator().HasValue("DataOneProductDiscount");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataAfterHourProductRestriction", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataAfterHourRestriction");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasDiscriminator().HasValue("DataAfterHourProductRestriction");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataAtMostAmountRestriction", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataAtLeastAmountRestriction");
-
-                    b.HasDiscriminator().HasValue("DataAtMostAmountRestriction");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataBeforeHourProductRestriction", b =>
-                {
-                    b.HasBaseType("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies.DataBeforeHourRestriction");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int")
-                        .HasColumnName("DataBeforeHourProductRestriction_Amount");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("DataBeforeHourProductRestriction_ProductId");
-
-                    b.HasDiscriminator().HasValue("DataBeforeHourProductRestriction");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Buyers.Carts.DataProductInBag", b =>
@@ -999,19 +749,11 @@ namespace MarketBackend.Migrations
                         .WithMany()
                         .HasForeignKey("FounderId");
 
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataStorePurchasePolicyManager", "PurchaseManager")
-                        .WithMany()
-                        .HasForeignKey("PurchaseManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Appointments");
 
                     b.Navigation("DiscountManager");
 
                     b.Navigation("Founder");
-
-                    b.Navigation("PurchaseManager");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", b =>
@@ -1032,19 +774,6 @@ namespace MarketBackend.Migrations
                         .HasForeignKey("DiscountExpressionId");
 
                     b.Navigation("DiscountExpression");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataPurchasePolicy", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataStorePurchasePolicyManager", null)
-                        .WithMany("PurchasesPolicies")
-                        .HasForeignKey("DataStorePurchasePolicyManagerId");
-
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataPurchasePolicy", "Policy")
-                        .WithMany()
-                        .HasForeignKey("PolicyId");
-
-                    b.Navigation("Policy");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.DataConditionExpression", b =>
@@ -1105,51 +834,6 @@ namespace MarketBackend.Migrations
                         .HasForeignKey("DataMaxExpressionId");
                 });
 
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataRestrictionExpression", "FirstPred")
-                        .WithMany()
-                        .HasForeignKey("FirstPredId");
-
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataRestrictionExpression", "SecondPred")
-                        .WithMany()
-                        .HasForeignKey("SecondPredId");
-
-                    b.Navigation("FirstPred");
-
-                    b.Navigation("SecondPred");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataImpliesExpression", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression", "Allowing")
-                        .WithMany()
-                        .HasForeignKey("AllowingId");
-
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression", "Condition")
-                        .WithMany()
-                        .HasForeignKey("ConditionId");
-
-                    b.Navigation("Allowing");
-
-                    b.Navigation("Condition");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression", b =>
-                {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataRestrictionExpression", "FirstPred")
-                        .WithMany()
-                        .HasForeignKey("FirstPredId");
-
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataRestrictionExpression", "SecondPred")
-                        .WithMany()
-                        .HasForeignKey("SecondPredId");
-
-                    b.Navigation("FirstPred");
-
-                    b.Navigation("SecondPred");
-                });
-
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Buyers.Carts.DataCart", b =>
                 {
                     b.Navigation("ShoppingBags");
@@ -1203,11 +887,6 @@ namespace MarketBackend.Migrations
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DataStoreDiscountPolicyManager", b =>
                 {
                     b.Navigation("Discounts");
-                });
-
-            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataStorePurchasePolicyManager", b =>
-                {
-                    b.Navigation("PurchasesPolicies");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.NumericExpressions.DataMaxExpression", b =>

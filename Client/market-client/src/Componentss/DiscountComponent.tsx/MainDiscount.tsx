@@ -39,7 +39,7 @@ import BagMinimalCost from './Predicates/BagMinimalCost';
 import LogicalPredicate from './Predicates/LogicalPredicate';
 import Predicate from '../../DTOs/DiscountDTOs/Predicate';
 import PredicateCard from './Predicates/PredicateCard';
-import { AddDiscountPolicy } from '../../services/StoreService';
+import { serverAddDiscountPolicy } from '../../services/StoreService';
 import Navbar from '../Navbar';
 
 
@@ -117,9 +117,9 @@ export default function MainDiscount() {
   };
   const handleSubmit = () =>{
     const buyerId = getBuyerId()
-    const responsePromise = AddDiscountPolicy(buyerId,store, discounts.get(selectedId)??new Discount(''))
+    const responsePromise = serverAddDiscountPolicy(buyerId,store, discounts.get(selectedId)??new Discount(''))
     console.log(responsePromise)
-    fetchResponse(responsePromise).then((newPurchases)=>{
+    fetchResponse(responsePromise).then((id:number)=>{
       alert('Discount policy was added successfully to the store!')
     })
     .catch((e) => {

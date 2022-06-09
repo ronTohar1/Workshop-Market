@@ -17,7 +17,7 @@ import {
     serverRemoveDiscountPolicy,
     serverRemovePurchasePolicy,
 } from "../../services/StoreService"
-import { pathHome, pathPolicy } from "../../Paths"
+import { pathDiscount, pathHome, pathPolicy } from "../../Paths"
 import { useNavigate } from "react-router-dom"
 import { fetchResponse } from "../../services/GeneralService"
 import { getBuyerId } from "../../services/SessionService"
@@ -134,7 +134,7 @@ export default function StorePurchasePolicies({
                 <Stack direction='row' justifyContent='space-between'>
 
                     <Box>
-                        <Button variant="contained" sx={{ml : 1}} onClick={() => navigate(pathPolicy, { state: store })}>
+                        <Button variant="contained" sx={{ml : 1}} onClick={() => navigate(pathDiscount, { state: store })}>
                             Add New Policies
                         </Button>
 

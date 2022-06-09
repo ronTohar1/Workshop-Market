@@ -354,11 +354,11 @@ export async function serverCloseStore(
 }
 //////////////////////////////// ---  ADD FREAKING DISCOUNTS AND PURCHASES ---- ///////
 
-export async function AddDiscountPolicy(
+export async function serverAddDiscountPolicy(
   userId: number,
   store: Store, 
   discount:Discount
-): Promise<ClientResponse<boolean>> {
+): Promise<ClientResponse<number>> {
   const uri = serverPort + "/api/Stores/AddDiscountPolicy";
   const jsonResponse = await fetch(uri, {
     method: 'POST',
@@ -380,7 +380,7 @@ export async function serverAddPurchasePolicy(
   userId: number,
   store: Store, 
   purchase:PurchasePolicy
-): Promise<ClientResponse<boolean>> {
+): Promise<ClientResponse<number>> {
   const uri = serverPort + "/api/Stores/AddPurchasePolicy";
   const jsonResponse = await fetch(uri, {
     method: 'POST',

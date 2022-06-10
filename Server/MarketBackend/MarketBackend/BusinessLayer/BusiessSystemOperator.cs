@@ -17,7 +17,9 @@ namespace MarketBackend.BusinessLayer
     public class BusiessSystemOperator
     {
 
-        public bool marketOpen { get; private set;}
+        public bool MarketOpen { get; private set;}
+        public int MarketOpenerAdminId { get; private set; }
+
         public MembersController membersController{ get; private set;}
         public GuestsController guestsController{ get; private set;}
         public StoreController storeController{ get; private set;}
@@ -30,19 +32,19 @@ namespace MarketBackend.BusinessLayer
         private const string errorMsg = "Cannot give any facade when market is closed!";
 
 
-        public BusiessSystemOperator()
+        public BusiessSystemOperator(string username, string password)
         {
-            marketOpen = false;
+            MarketOpenerAdminId = -1;
+            OpenMarket(username, password);
         }
 
-        public int OpenMarket(string username, string password)
+        public void OpenMarket(string username, string password)
         {
-
-            if (adminManager != null && !VerifyAdmin(username, password))// if adminManager isn't initialized, it's the first boot of the system 
+            if (adminManager != null && !VerifyAdmin(username, password))   // if adminManager isn't initialized, it's the first boot of the system 
                 throw new MarketException($"User with username: {username} does not have permission to open the market!");
-            if (marketOpen)
+            if (MarketOpen)
                 throw new MarketException("the market is allready opened");
-            if (adminManager == null)//meaning first 
+            if (adminManager == null)   //meaning first 
             {
                 InitLogger();
                 membersController = new();
@@ -58,18 +60,18 @@ namespace MarketBackend.BusinessLayer
 
                 adminManager = new(storeController, buyersController, membersController);
                 adminManager.AddAdmin(adminId);
-                marketOpen = true;
-                return adminId;
+                MarketOpen = true;
+                MarketOpenerAdminId = adminId;
             }
-            marketOpen = true;
-            return -1;
+            MarketOpen = true;
         }
 
         public void CloseMarket()
         {
-            if (!marketOpen)
+            if (!MarketOpen)
                  throw new MarketException("Market already closed!");
-            marketOpen = false;
+            MarketOpen = false;
+            MarketOpenerAdminId = -1;
         }
 
         private void InitLogger()

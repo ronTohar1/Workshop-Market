@@ -19,9 +19,9 @@ namespace MarketBackend.DataLayer.DataManagementObjects
 
         protected Database db;
 
-        public ObjectDataManager(Database db)
+        public ObjectDataManager()
         {
-            this.db = db; 
+            this.db = Database.GetInstance();  
         }
 
         public void Add(T toAdd)
@@ -49,7 +49,10 @@ namespace MarketBackend.DataLayer.DataManagementObjects
             TryAction(() => UpdateThrows(id, action));
         }
 
-        protected abstract void UpdateThrows(U id, Action<T> action);
+        protected void UpdateThrows(U id, Action<T> action)
+        {
+            action(FindThrows(id));
+        }
 
         public T Remove(U id)
         {

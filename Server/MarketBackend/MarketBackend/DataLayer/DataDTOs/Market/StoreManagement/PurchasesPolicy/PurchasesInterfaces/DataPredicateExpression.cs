@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MarketBackend.DataLayer.DataDTOs
+namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces
 {
-    public class DataProduct
+    public abstract class DataPredicateExpression
     {
         public int Id { get; set; }
-        public string Name { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces
 {
-    public abstract class DataPurchasePolicy
+    public abstract class DataIPurchasePolicy
     {
         public int Id { get; set; }
     }

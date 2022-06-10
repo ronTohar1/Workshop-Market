@@ -1,4 +1,5 @@
 ﻿    using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
         {
             this.productId = productId;
             this.amount = amount;
+        }
+
+        public static BeforeHourProductRestriction DataBeforeHourProductRestrictionToBeforeHourProductRestriction(DataBeforeHourProductRestriction dataBeforeHourProductRestriction)
+        {
+            return new BeforeHourProductRestriction(dataBeforeHourProductRestriction.Hour,
+                dataBeforeHourProductRestriction.ProductId,
+                dataBeforeHourProductRestriction.Amount); 
         }
 
         public override bool IsSatisfied(ShoppingBag bag)

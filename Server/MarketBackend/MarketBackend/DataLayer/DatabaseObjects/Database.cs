@@ -71,10 +71,10 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataMaxExpression> MaxExpressions { get; set; }
         public DbSet<DataBagValuePredicate> BagValuePredicates { get; set; }
         public DbSet<DataProductAmountPredicate> ProductAmountPredicates { get; set; }
-        public DbSet<DataConditionExpression> ConditionDiscounts { get; set; }
+        public DbSet<DataConditionDiscount> ConditionDiscounts { get; set; }
         public DbSet<DataIfDiscount> IfDiscounts { get; set; }
         public DbSet<DataLogicalExpression> LogicalExpressions { get; set; }
-        public DbSet<DataConditionExpression> ConditionExpressions { get; set; }
+        public DbSet<DataConditionDiscount> ConditionExpressions { get; set; }
         public DbSet<DataDiscountExpression> DiscountExpressions { get; set; }
         public DbSet<DataExpression> Expressions { get; set; }
         public DbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression> DiscountPredicateExpressions { get; set; }

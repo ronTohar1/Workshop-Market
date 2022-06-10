@@ -128,7 +128,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 }
             }
 
-            StoreDiscountPolicyManager discountManager = null; // todo: use DiscountManager class
+            StoreDiscountPolicyManager discountManager = StoreDiscountPolicyManager.DataSDPMToSDPM(dataStore.DiscountManager); 
 
             StorePurchasePolicyManager purchaseManager = null; // todo: use PruchasePolicyManager class 
 

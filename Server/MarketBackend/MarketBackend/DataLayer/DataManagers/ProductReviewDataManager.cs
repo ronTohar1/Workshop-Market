@@ -1,6 +1,5 @@
 ﻿using MarketBackend.DataLayer.DatabaseObjects;
 using MarketBackend.DataLayer.DataDTOs;
-using MarketBackend.DataLayer.DataManagementObjects;
 
 namespace MarketBackend.DataLayer.DataManagers
 {

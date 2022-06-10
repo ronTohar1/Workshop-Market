@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using MarketBackend.DataLayer.DataManagers;
+using System;
 using System.Collections.Generic;
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -8,26 +10,37 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public IList<Hierarchy<T>> children { get; }
 		public Hierarchy<T> parent { get; }
 
-		private Mutex hierarchyMutex; 
+		private Mutex hierarchyMutex;
 
-		public Hierarchy(T value)
-		{
-			this.value = value;
-			this.children = new SynchronizedCollection<Hierarchy<T>>();
-			this.parent = null;
-			hierarchyMutex = new Mutex();
-		}
-		public Hierarchy(T value, Hierarchy<T> parent)
+		private HierarchyDataManager hierarchyDataManager; 
+
+		public Hierarchy(T value, Hierarchy<T> parent = null)
 		{
 			this.value = value;
 			this.children = new SynchronizedCollection<Hierarchy<T>>();
 			this.parent = parent;
 			hierarchyMutex = new Mutex();
+
+			this.hierarchyDataManager = HierarchyDataManager.GetInstance();
 		}
 
-		public static Hierarchy<T> LoadHierarchy()
+		// r S 8
+		public static Hierarchy<int> DataHierarchyToHierarchy(DataAppointmentsNode dataHierarchy, Hierarchy<int> parent = null)
         {
-			
+			Hierarchy<int> result = new Hierarchy<int>(dataHierarchy.MemberId, parent);
+			result.AddChildrenNoSave(dataHierarchy.Children.
+				Select(childDataHierarchy => 
+					DataHierarchyToHierarchy(childDataHierarchy, result))
+				.ToList());
+			return result; 
+	}
+
+		private void AddChildrenNoSave(IList<Hierarchy<T>> childrenToAdd)
+        {
+			foreach(Hierarchy<T> child in childrenToAdd)
+            {
+				this.children.Add(child);
+			}
         }
 
 		// r.4.4

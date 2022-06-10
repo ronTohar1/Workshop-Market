@@ -6,7 +6,24 @@ namespace MarketBackend.DataLayer.DataManagementObjects
 {
     public class ProductDataManager : ObjectDataManager<DataProduct, int>
     {
-        public ProductDataManager(Database db) : base(db)
+        private static ProductDataManager instance = null;
+
+        public static ProductDataManager GetInstance()
+        {
+            if (instance == null)
+                instance = new ProductDataManager();
+            return instance;
+        }
+
+        public static void ForTestingSetInstance(ProductDataManager argumentInstance)
+        {
+            if (argumentInstance == null)
+                throw new ArgumentException("this function is for testing, and needs to get a not null instance");
+            instance = argumentInstance;
+        }
+
+        // protected for testing
+        protected ProductDataManager()
         {
         }
 

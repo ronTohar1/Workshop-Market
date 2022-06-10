@@ -4,9 +4,26 @@ using MarketBackend.DataLayer.DataManagementObjects;
 
 namespace MarketBackend.DataLayer.DataManagers
 {
-    internal class StoreDataManager : ObjectDataManager<DataStore, int>
+    public class StoreDataManager : ObjectDataManager<DataStore, int>
     {
-        public StoreDataManager(Database db) : base(db)
+        private static StoreDataManager instance = null;
+
+        public static StoreDataManager GetInstance()
+        {
+            if (instance == null)
+                instance = new StoreDataManager();
+            return instance;
+        }
+
+        public static void ForTestingSetInstance(StoreDataManager argumentInstance)
+        {
+            if (argumentInstance == null)
+                throw new ArgumentException("this function is for testing, and needs to get a not null instance");
+            instance = argumentInstance;
+        }
+
+        // protected for testing
+        protected StoreDataManager()
         {
         }
 

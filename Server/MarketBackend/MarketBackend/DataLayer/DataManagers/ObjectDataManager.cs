@@ -49,7 +49,10 @@ namespace MarketBackend.DataLayer.DataManagementObjects
             TryAction(() => UpdateThrows(id, action));
         }
 
-        protected abstract void UpdateThrows(U id, Action<T> action);
+        protected void UpdateThrows(U id, Action<T> action)
+        {
+            action(FindThrows(id));
+        }
 
         public T Remove(U id)
         {

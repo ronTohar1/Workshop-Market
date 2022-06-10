@@ -19,6 +19,7 @@ import * as sessionService from "../services/SessionService"
 import HomeIcon from "@mui/icons-material/Home"
 import { fetchResponse } from '../services/GeneralService'
 import { noteConn, setUpConnection } from "../services/NotificationsService"
+import { addEventListener, alertFunc, initWebSocket } from "../App"
 // import WebSocket from 'ws'
 
 const theme = createTheme({
@@ -72,32 +73,48 @@ export default function Login() {
       return;
     }
 
-      fetchResponse(result).then((memberId: number) => {
-        
+    fetchResponse(result).then((memberId: number) => {
 
-        const address = `ws://127.0.0.1:7890/${username}-notifications`
-        // const ws = setUpConnection(address,memberId)
-        const ws = new WebSocket(address)
-        // ws.addEventListener('open', () => alert(username + " logged in"))
-        ws.addEventListener('message', function (event) {
-          alert("Message from server:\n" + event.data);
-          // noteConn.notifications = ["another one"].concat(noteConn.notifications)
-        });
 
-        alert("Logged in successfully!")
-        sessionService.setIsGuest(false)
-        sessionService.setBuyerId(memberId)
-        //@ts-ignore
-        sessionService.setUsername(username)
+      const address = `ws://127.0.0.1:7890/${username}-notifications`
+      // const ws = new WebSocket(address)
+      // ws.addEventListener('message', function (event) {
+      //   alertFunc("Message from server:\n" + event.data);
+      // });
 
-        fetchResponse(serverGetPendingMessages(username))
-        .then((messages:string[]) => messages.forEach(alert))
+      // ws.addEventListener('open', function (event) {
+      //   alertFunc("Opened")
+      // });
+
+      // ws.addEventListener('close', function (event) {
+      //   alertFunc("Closed")
+      // });
+      initWebSocket(address)
+      addEventListener('message', function (event:any) {
+        alertFunc("Message from server:\n" + event.data);
+      })
+
+      addEventListener('open', function (event:any) {
+        alertFunc("Opened");
+      })
+
+      addEventListener('close', function (event:any) {
+        alertFunc("Closed");
+      })
+      alert("Logged in successfully!")
+      sessionService.setIsGuest(false)
+      sessionService.setBuyerId(memberId)
+      //@ts-ignore
+      sessionService.setUsername(username)
+
+      fetchResponse(serverGetPendingMessages(username))
+        .then((messages: string[]) => messages.forEach(alertFunc))
         .catch(alert)
 
-        navigate(pathHome)
-      }).catch((e) => {
-        alert(e)
-      })
+      navigate(pathHome)
+    }).catch((e) => {
+      alert(e)
+    })
 
   }
 

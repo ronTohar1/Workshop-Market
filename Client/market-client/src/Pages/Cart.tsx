@@ -134,7 +134,7 @@ export default function CartPage() {
 
   const reloadCartProducts = () => setRenderProducts(!renderProducts)
 
-  const calulateTotal = (): number => {
+  const calulateTotal = (cartProducts: CartProduct[]): number => {
     return cartProducts.reduce(
       (total: number, cartProduct: CartProduct) =>
         total + cartProduct.product.price,
@@ -210,7 +210,7 @@ export default function CartPage() {
         </Box>
         <Box sx={{ width: "20%", mt: 2 }}>
           {CartSummary(
-            calulateTotal(),
+            calulateTotal(cartProducts),
             -1,
             cartProducts,
             expandSummary,

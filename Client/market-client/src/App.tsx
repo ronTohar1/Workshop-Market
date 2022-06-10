@@ -20,7 +20,39 @@ import Store from "./DTOs/Store"
 import Member from "./DTOs/Member"
 import { createTheme, ThemeProvider } from "@mui/material"
 import MainPolicy from "./Componentss/PurchasePolicy/MainPolicy"
-import { initSession } from "./services/SessionService"
+import { initSession, storage } from "./services/SessionService"
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+  },
+})
+
+const x = storage.getItem("websock")
+const conn: { ws: WebSocket | null } = { ws: x === null ? null : JSON.parse(x) }
+export function alertFunc(m: string) { alert(m) }
+export function initWebSocket(address: string) {
+  const ws = new WebSocket(address)
+  console.log(ws)
+  conn.ws = ws
+  console.log(JSON.stringify(ws))
+  storage.setItem("websock",JSON.stringify(ws))
+}
+export function addEventListener(listenTo: string, funcToExec: any) {
+  conn.ws?.addEventListener(listenTo, function (event) { funcToExec(event) })
+}
 
 const App = () => {
   // window.onunload = () => clearSession()
@@ -38,31 +70,7 @@ const App = () => {
       window.removeEventListener("beforeunload", handleTabClose)
     }
   }, [])
-  const products = new Map([
-    [new Product(0, "Milk", 12.9, "Dairy", 1, "Kaldo", 10), 1],
-    [new Product(1, "Bread", 5, "Bakery", 1, "Kaldo", 10), 2],
-    [new Product(0,"cheese", 12.3, "dairy", 0,"David's",5), 3],
-    [new Product(3, "Apple", 4, "Fruits", 1, "Shufersal", 10), 1],
-    [new Product(4, "Cheese", 13.9, "Dairy", 1, "Shufersal", 10), 5],
-    [new Product(5, "Tommato", 1.9, "Vegtables", 1, "Shufersal", 10), 1],
-  ])
 
-  const theme = createTheme({
-    typography: {
-      fontFamily: [
-        "-apple-system",
-        "BlinkMacSystemFont",
-        '"Segoe UI"',
-        "Roboto",
-        '"Helvetica Neue"',
-        "Arial",
-        "sans-serif",
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(","),
-    },
-  })
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -74,8 +82,8 @@ const App = () => {
             <Route path={Paths.pathCart} element={<CartPage />} />
             <Route path={Paths.pathLogin} element={<Login />} />
             <Route path={Paths.pathSearch} element={<SearchPage />} />
-            <Route path={Paths.pathDiscount} element={<MainDiscount  />} />
-            <Route path={Paths.pathPolicy} element={<MainPolicy/>} />
+            <Route path={Paths.pathDiscount} element={<MainDiscount />} />
+            <Route path={Paths.pathPolicy} element={<MainPolicy />} />
 
             {/* <Route
             path={Paths.pathStorePageOfManager}

@@ -1,4 +1,7 @@
-﻿namespace MarketBackend.BusinessLayer.Buyers
+﻿using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataManagers;
+
+namespace MarketBackend.BusinessLayer.Buyers
 {
     public class ShoppingBag
     {
@@ -62,7 +65,9 @@
             if (!productsAmounts.ContainsKey(product))
                 throw new ArgumentException(nameof(product) + "is not exist in cart");
             else
+            {
                 productsAmounts[product] = amount;
+            }
         }
 
         /// <summary>
@@ -78,5 +83,21 @@
         {
             return productsAmounts.Count == 0;
         }
+
+        public DataShoppingBag ShoppingBagToDataShoppingBag()
+        {
+            IList<DataProductInBag> dpib = new List<DataProductInBag>();
+            foreach (ProductInBag pib in productsAmounts.Keys)
+            {
+                DataProductInBag d = pib.ProductInBagToDataProductInBag();
+                d.Amount = productsAmounts[pib];
+                dpib.Add(d);
+            }
+            return new DataShoppingBag()
+            {
+                ProductsAmounts = dpib,
+                Store = StoreDataManager.GetInstance().Find(StoreId)
+            };
+        } 
     }
 }

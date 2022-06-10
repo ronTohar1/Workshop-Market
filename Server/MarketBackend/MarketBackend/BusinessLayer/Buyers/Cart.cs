@@ -4,6 +4,8 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataManagers;
 
 namespace MarketBackend.BusinessLayer.Buyers
 {
@@ -46,5 +48,33 @@ namespace MarketBackend.BusinessLayer.Buyers
         => ShoppingBags[storeId].ProductsAmounts.Keys.Where(p => p.ProductId == productId).First();
        public virtual bool isEmpty()
        => shoppingBags.Count==0 || shoppingBags.Values.Where(p=>p.ProductsAmounts.Count>0).Count()==0;
+
+       // r S 8 - database functions
+       public DataCart CartToDataCart()
+       {
+            IList<DataShoppingBag> dsp = new List<DataShoppingBag>();
+            foreach (ShoppingBag sb in shoppingBags.Values)
+            {
+                dsp.Add(sb.ShoppingBagToDataShoppingBag());
+            }
+
+            return new DataCart()
+            {
+                ShoppingBags = dsp
+            };
+       }
+
+        public void RemoveContentFromDB(DataCart c)
+        {
+            foreach (DataShoppingBag dsb in c.ShoppingBags)
+            {
+                foreach (DataProductInBag dpib in dsb.ProductsAmounts)
+                {
+                    ProductInBagDataManager.GetInstance().Remove(dpib.Id);
+                }
+                ShoppingBagDataManager.GetInstance().Remove(dsb.Id);
+            }
+
+        }
     }
 }

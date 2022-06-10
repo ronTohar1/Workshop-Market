@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataManagers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -97,6 +100,31 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         }
         public bool matchingPasswords(string password)
         => this.password == security.HashPassword(password);
+
+
+        // r S 8 - database functions
+        public DataMember MemberToDataMember()
+        {
+            DataMember dMember = new DataMember()
+            {
+                Id = Id,
+                Username = Username,
+                Password = password,
+                Cart = Cart.CartToDataCart(),
+                IsAdmin = false
+            };
+            return dMember;
+        }
+
+        public void RemoveCartFromDB(DataMember member)
+        {
+            DataCart? c = member.Cart;
+            if (c != null)
+            {
+                Cart.RemoveContentFromDB(c);
+                CartDataManager.GetInstance().Remove(c.Id);
+            }
+        }
             
     }
 }

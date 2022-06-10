@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Market;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
 
 namespace MarketBackend.BusinessLayer.Buyers.Members;
 
@@ -73,6 +76,8 @@ public class MembersController : IBuyersController
         {
             if (!members.Keys.Contains(memberId))
                 throw new MarketException($"Failed to remove, there isn't such member with id: {memberId}");
+            members[memberId].RemoveCartFromDB(MemberDataManager.GetInstance().Find(memberId));
+            MemberDataManager.GetInstance().Remove(memberId);
             members.Remove(memberId);
         }
     }
@@ -81,7 +86,7 @@ public class MembersController : IBuyersController
     
     private Member createNewMember(string username,string password)
     {
-        return new Member(username,password,new Security());
+        return new Member(username, password, new Security());
     }
 
     private bool IsUsernameExists(string username)
@@ -94,6 +99,7 @@ public class MembersController : IBuyersController
 
     private bool AddMember(Member member)
     {
+        MemberDataManager.GetInstance().Add(member.MemberToDataMember());
         return this.members.TryAdd(member.Id, member);
     }
 

@@ -30,6 +30,12 @@ public class StoreController
 		this.closedStoresMutex = new Mutex();
 	}
 
+	public static LoadStoreController(MembersController membersController)
+    {
+		StoreController storeController = new StoreController(membersController); 
+
+    }
+
 
 	public Store? GetStore(int storeId)
     {

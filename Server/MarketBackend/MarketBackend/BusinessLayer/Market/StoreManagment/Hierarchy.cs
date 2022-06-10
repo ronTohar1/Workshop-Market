@@ -25,6 +25,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			hierarchyMutex = new Mutex();
 		}
 
+		public static Hierarchy<T> LoadHierarchy()
+        {
+			
+        }
+
 		// r.4.4
 		// r.4.6
 		public void AddToHierarchy(T adder, T valueToAdd) 

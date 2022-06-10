@@ -26,6 +26,20 @@ namespace MarketBackend.DataLayer.DatabaseObjects
     public class Database : DbContext
     {
 
+        private static Database instance = null; 
+
+        public static Database GetInstance()
+        {
+            if (instance == null)
+                instance = new Database();  
+            return instance;
+        }
+
+        private Database() : base()
+        {
+
+        }
+
         private const string databaseName = "MarketDatabase";
         private const string instanceName = "SQLEXPRESS";
         private const string ip = "192.168.56.101";

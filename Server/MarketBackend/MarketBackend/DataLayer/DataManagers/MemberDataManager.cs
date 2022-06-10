@@ -5,7 +5,7 @@ using MarketBackend.DataLayer.DataManagementObjects;
 
 namespace MarketBackend.DataLayer.DataManagers
 {
-    internal class MemberDataManager : ObjectDataManager<DataMember, int>
+    public class MemberDataManager : ObjectDataManager<DataMember, int>
     {
 
         private static MemberDataManager instance = null;
@@ -13,7 +13,7 @@ namespace MarketBackend.DataLayer.DataManagers
         public static MemberDataManager GetInstance()
         {
             if (instance == null)
-                instance = new MemberDataManager(Database.GetInstance());
+                instance = new MemberDataManager();
             return instance; 
         }
 
@@ -25,7 +25,7 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected MemberDataManager(Database db) : base(db)
+        protected MemberDataManager()
         {
         }
 

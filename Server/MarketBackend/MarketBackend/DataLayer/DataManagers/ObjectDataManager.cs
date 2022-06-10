@@ -19,9 +19,9 @@ namespace MarketBackend.DataLayer.DataManagementObjects
 
         protected Database db;
 
-        public ObjectDataManager(Database db)
+        public ObjectDataManager()
         {
-            this.db = db; 
+            this.db = Database.GetInstance();  
         }
 
         public void Add(T toAdd)

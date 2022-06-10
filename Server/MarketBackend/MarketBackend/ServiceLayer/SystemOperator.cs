@@ -19,6 +19,7 @@ namespace MarketBackend.ServiceLayer
     {
 
         public bool MarketOpen { get; private set; }
+        public int MarketOpenerAdminId { get => bso.MarketOpenerAdminId;  }
         private BusiessSystemOperator bso;
         private AdminFacade adminFacade;
         private BuyerFacade buyerFacade;
@@ -28,21 +29,31 @@ namespace MarketBackend.ServiceLayer
         private const string facadeErrorMsg = "Cannot give any facade when market is closed!";
 
 
-        public SystemOperator()
+        public SystemOperator(string username, string password)
         {
             MarketOpen = false;
-            bso = new BusiessSystemOperator();
+            bso = new BusiessSystemOperator(username, password); // will initialize the controllers if it's the first boot;
             adminFacade = null;
             buyerFacade = null;
             externalSystemFacade = null;
             storeManagementFacade = null;
+            Response<int> response = OpenMarket(username, password);
+            if (response.IsErrorOccured())
+                throw new Exception(response.ErrorMessage);
         }
 
         public Response<int> OpenMarket(string username, string password)
         {
             try
             {
-                int adminId = bso.OpenMarket(username, password);// will initialize the controllers if it's the first boot
+                if (MarketOpen)
+                {
+                    bso.logger.Error("Market is already open", $"method: OpenMarket, parameters: [username = {username}, can not reveal password]");
+                    return new("Market is already open.");     
+                }
+                if (!bso.MarketOpen)
+                    bso.OpenMarket(username, password);
+                int adminId = bso.MarketOpenerAdminId;
                 InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
                 MarketOpen = true;
                 bso.logger.Info($"OpenMarket with parameters: [username = {username}, can not reveal password]");

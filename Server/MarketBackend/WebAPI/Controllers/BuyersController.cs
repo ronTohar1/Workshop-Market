@@ -3,6 +3,8 @@ using MarketBackend.ServiceLayer.ServiceDTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Requests;
+using WebSocketSharp;
+using WebSocketSharp.Server;
 
 namespace WebAPI.Controllers
 {
@@ -11,8 +13,19 @@ namespace WebAPI.Controllers
     public class BuyersController : Controller
     {
         private readonly IBuyerFacade buyerFacade;
+        private const int port = 7890;
+        private WebSocketServer notificationServer;
+        private IDictionary<int, string> buyerIdToRelativeNotificationPath;
+        private class NotificationsService : WebSocketBehavior
+        {
 
-        public BuyersController(IBuyerFacade buyerFacade) => this.buyerFacade = buyerFacade;
+        }
+
+        public BuyersController(IBuyerFacade buyerFacade, WebSocketServer notificationServer) {
+            this.buyerFacade = buyerFacade;
+            buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
+            this.notificationServer = notificationServer;
+        }
 
         [HttpPost("GetBuyerCart")]
         public ActionResult<Response<ServiceCart>> GetCart([FromBody] UserRequest request)
@@ -135,13 +148,34 @@ namespace WebAPI.Controllers
         [HttpPost("Login")]
         public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
         {
+            string relativeServicePath = "/" + request.UserName + "-notifications";
+            try
+            {
+                notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
+            }catch (ArgumentException ex) { } // in case the client tries to login again
+            Func<string[], bool> notifier = (msgs) =>
+            {
+                Action<string[]> send = (msgs) =>
+                {
+                    while (notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
+                        Thread.Sleep(1000);
+                    foreach (string msg in msgs)
+                        notificationServer.WebSocketServices[relativeServicePath].Sessions.Broadcast(msg);
+                };
 
-            Response<int> response  = buyerFacade.Login(request.UserName, request.Password,
-                (msgs) => { return false; });
+                Task task = new Task(() => send(msgs));
+                task.Start();
+                return true;
+            };
+            Response<int> response  = buyerFacade.Login(request.UserName, request.Password, notifier);
 
             if (response.IsErrorOccured())
+            {
+                notificationServer.RemoveWebSocketService("ws://127.0.0.1:" + port + relativeServicePath);
                 return BadRequest(response);
+            }
 
+            buyerIdToRelativeNotificationPath.Add(response.Value, relativeServicePath);
             return Ok(response);
         }
 
@@ -153,6 +187,8 @@ namespace WebAPI.Controllers
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
+            notificationServer.RemoveWebSocketService("ws://127.0.0.1:" + port + 
+                buyerIdToRelativeNotificationPath[request.UserId]);
             return Ok(response);
         }
 

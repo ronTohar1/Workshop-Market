@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
 using MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs;
+using ServicePurchasePolicy = MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchasePolicy;
 
 namespace TestMarketBackend.Acceptance
 {
@@ -1067,7 +1068,7 @@ namespace TestMarketBackend.Acceptance
         // helping functions for adding discount tests 
         // helping functions for adding discount tests 
 
-        private static TestCaseData AddPurchasePolicyTestCase(Func<ServicePurchasePolicy> getPolicy, IList<AddProductToCartArguments> arguments, string description, bool shouldSucceedBuying)
+        private static TestCaseData AddPurchasePolicyTestCase(Func<MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchasePolicy> getPolicy, IList<AddProductToCartArguments> arguments, string description, bool shouldSucceedBuying)
         {
             return new TestCaseData(
 

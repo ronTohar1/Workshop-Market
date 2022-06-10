@@ -67,7 +67,8 @@ export default function StorePurchasePolicies({
     const [chosenIds, setChosenIds] = React.useState<number[]>([])
 
     const handleSelectionChanged = (newSelection: any) => {
-        const chosenIds: number[] = newSelection.map((id:number)=>rows[id].id)
+        console.log(newSelection)
+        const chosenIds: number[] = newSelection//.map((id:number)=>rows[id].id)
         setSelectionModel(newSelection)
         setChosenIds(chosenIds)
     }

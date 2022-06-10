@@ -50,7 +50,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
             int hour = DateTime.Now.Hour;
             AfterHourProductRestriction res = new AfterHourProductRestriction(hour, pid1, amount1);
 
-            Assert.IsTrue(res.IsSatisfied(sbag.Object));
+            Assert.IsTrue(!res.IsSatisfied(sbag.Object));
 
             res.hour += 1;
 

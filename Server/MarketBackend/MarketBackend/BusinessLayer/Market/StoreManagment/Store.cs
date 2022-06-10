@@ -103,16 +103,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             Member founder = membersGetter(dataStore.Founder.Id);
 
-            Hierarchy<int> appointmentsHierarchy = // use Hierarchy class 
+            Hierarchy<int> appointmentsHierarchy = Hierarchy<int>.DataHierarchyToHierarchy(dataStore.Appointments);
 
             IDictionary<int, Product> products = new ConcurrentDictionary<int, Product>();
             foreach (DataProduct dataProduct in dataStore.Products)
             {
-                products.Add(dataProduct.Id, ) // use Product class 
+                products.Add(dataProduct.Id, Product.DataProductToProduct(dataProduct)); 
             }
 
             IList<Purchase> purchaseHistory = dataStore.PurchaseHistory
-                .Select(dataPurchase => ) // use Purchase class 
+                .Select(dataPurchase => Purchase.DataPurchaseToPurchase(dataPurchase)).ToList();
 
             IDictionary<Role, IList<int>> rolesInStore = GetRolesInStoresWithRoles();
             IDictionary<int, IList<Permission>> managersPermissions = new ConcurrentDictionary<int, IList<Permission>>();
@@ -128,18 +128,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 }
             }
 
-            StoreDiscountPolicyManager discountManager = // use DiscountManager class
+            StoreDiscountPolicyManager discountManager = null; // todo: use DiscountManager class
 
-            StorePurchasePolicyManager purchaseManager = // use PruchasePolicyManager class 
+            StorePurchasePolicyManager purchaseManager = null; // todo: use PruchasePolicyManager class 
 
+            IDictionary<int, Bid> bids = new ConcurrentDictionary<int, Bid>();
+            foreach(DataBid dataBid in dataStore.Bids)
+            {
+                bids[dataBid.Id] = Bid.DataBidToBid(dataBid, dataStore.Id); 
+            }
 
             return new Store(dataStore.Name, founder, dataStore.IsOpen, appointmentsHierarchy, products, purchaseHistory,
                 managersPermissions, membersGetter, discountManager, purchaseManager, bids, rolesInStore); 
-
-            // initializeRolesInStore();
-
-
-
         }
 
         public bool CommitTransaction(int transactionId)

@@ -3,6 +3,8 @@ using System;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 
 namespace MarketBackend.BusinessLayer.Market; 
 public class StoreController
@@ -18,6 +20,8 @@ public class StoreController
 	private Mutex openStoresMutex; 
 	private Mutex closedStoresMutex;
 
+	private StoreDataManager storeDataManager;  
+
 	// creates a new StoreController without stores yet
 	public StoreController(MembersController membersController)
 	{
@@ -28,13 +32,39 @@ public class StoreController
 
 		this.openStoresMutex = new Mutex(); 
 		this.closedStoresMutex = new Mutex();
+
+		storeDataManager = StoreDataManager.GetInstance(); 
 	}
 
-	public static LoadStoreController(MembersController membersController)
-    {
-		StoreController storeController = new StoreController(membersController); 
+	//public static LoadStoreController(MembersController membersController)
+ //   {
+	//	// trying to load data 
 
-    }
+	//	StoreDataManager storeDataManager = StoreDataManager.GetInstance();
+	//	storeDataManager.Find(store => store.IsOpen); 
+
+	////private IDictionary<int, Store> openStores;
+	////private IDictionary<int, Store> closedStores;
+
+	////private MembersController membersController;
+
+	////private static int storeIdCounter = 0; // the next store id
+	////private static Mutex storeIdCounterMutex = new Mutex();
+
+	////private Mutex openStoresMutex;
+	////private Mutex closedStoresMutex;
+
+	////private StoreDataManager storeDataManager;
+
+	//// adding data to store controller instance
+	//StoreController storeController = new StoreController(membersController); 
+
+ //   }
+
+	//private static Store DataStoreToStore(DataStore dataStore)
+	//{
+	//	Store.LoadStore()
+	//}
 
 
 	public Store? GetStore(int storeId)

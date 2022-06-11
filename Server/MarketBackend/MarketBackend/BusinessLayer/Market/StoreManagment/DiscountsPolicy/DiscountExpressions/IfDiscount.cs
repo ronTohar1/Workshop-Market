@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             this.test = test;
             this.thenDis = thenDis;
             this.elseDis = elseDis;
+        }
+
+        public static IfDiscount DataIfDiscountToIfDiscount(DataIfDiscount dataIfDiscount)
+        {
+            return new IfDiscount(
+                IPredicateExpression.DataPredicateExpressionToIPredicateExpression(dataIfDiscount.Test),  
+                IDiscountExpression.DataDiscountExpressionToIDiscountExpression(dataIfDiscount.Then), 
+                IDiscountExpression.DataDiscountExpressionToIDiscountExpression(dataIfDiscount.Else)
+                ); 
         }
 
         //if [] then [] else []

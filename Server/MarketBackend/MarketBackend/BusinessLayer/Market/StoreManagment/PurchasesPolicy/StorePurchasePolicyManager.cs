@@ -4,6 +4,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.LogicalO
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PredicatePolicies;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.RestrictionPolicies;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -20,9 +21,27 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
         private static Mutex idMutex = new Mutex(false);
         private static int discountId = 0;
 
-        public StorePurchasePolicyManager()
+        public StorePurchasePolicyManager() : this(new ConcurrentDictionary<int, PurchasePolicy>())
         {
-            this.purchases = new ConcurrentDictionary<int, PurchasePolicy>();
+
+        }
+
+        private StorePurchasePolicyManager(IDictionary<int, PurchasePolicy> purchasesPolicies)
+        {
+            this.purchases = purchasesPolicies;
+        }
+
+        // r S 8
+        public static StorePurchasePolicyManager DataSPPMToSPPM(DataStorePurchasePolicyManager dataSPPM)
+        {
+            IDictionary<int, PurchasePolicy> purchasePolicies = new ConcurrentDictionary<int, PurchasePolicy>();
+
+            foreach (DataPurchasePolicy dataPurchasePolicy in dataSPPM.PurchasesPolicies)
+            {
+                purchasePolicies.Add(dataPurchasePolicy.Id, PurchasePolicy.DataPurchasePolicyToPurchasePolicy(dataPurchasePolicy));
+            }
+
+            return new StorePurchasePolicyManager(purchasePolicies);
         }
 
         private int getId()

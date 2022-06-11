@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies
 {
-    public class DataBeforeHourRestriction : DataRestrictionExpression
+    public class DataBeforeHourRestriction : DataAfterHourRestriction
     {
 
     }

@@ -5,6 +5,8 @@ using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using MarketBackend.DataLayer.DataManagers;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -65,6 +67,43 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             approvebidLock = new Mutex(false);
 
             this.rolesAndPermissionsLock = new ReaderWriterLock(); // no need to acquire it here (probably) because constructor is of one thread
+        }
+
+        // todo: implement function after adding the add to store's fields functions 
+
+        // without the store id 
+        //public DataStore ToNewDataStore()
+        //{
+        //    return new DataStore()
+        //    {
+        //        Name = name,
+        //        Founder = MemberDataManager.GetInstance().Find(founder.Id),
+        //        IsOpen = isOpen,
+        //        Products = products.Select(product => product.ToNewDataProduct()).ToList() ,
+        //        PurchaseHistory = purchaseHistory.Select(pruchase => purchase.ToNewPurchase()).ToList(),
+        //        MembersPermissions = GetNewDataStoreMemberRoles(), 
+        //        Appointments = , // ... 
+        //        DiscountManager = 
+
+        //        //		public int Id { get; set; }
+        //        //public string Name { get; set; }
+        //        //public DataMember? Founder { get; set; }
+        //        //public bool IsOpen { get; set; }
+        //        //public IList<DataProduct> Products { get; set; }
+        //        //public IList<DataPurchase> PurchaseHistory { get; set; }
+        //        //public IList<DataStoreMemberRoles> MembersPermissions { get; set; }
+        //        //public DataAppointmentsNode? Appointments { get; set; }
+
+        //        //public DataStoreDiscountPolicyManager DiscountManager { get; set; }
+        //        //public DataStorePurchasePolicyManager PurchaseManager { get; set; }
+
+        //        //public IList<DataBid> Bids { get; set; }
+        //    };
+        //}
+
+        private IList<DataStoreMemberRoles> GetNewDataStoreMemberRoles()
+        {
+
         }
 
         public bool CommitTransaction(int transactionId)

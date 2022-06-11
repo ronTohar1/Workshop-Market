@@ -3,6 +3,9 @@ using System;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using MarketBackend.DataLayer.DataDTOs;
 
 namespace MarketBackend.BusinessLayer.Market; 
 public class StoreController
@@ -18,6 +21,8 @@ public class StoreController
 	private Mutex openStoresMutex; 
 	private Mutex closedStoresMutex;
 
+	private StoreDataManager storeDataManager; 
+
 	// creates a new StoreController without stores yet
 	public StoreController(MembersController membersController)
 	{
@@ -28,6 +33,8 @@ public class StoreController
 
 		this.openStoresMutex = new Mutex(); 
 		this.closedStoresMutex = new Mutex();
+
+		this.storeDataManager = StoreDataManager.GetInstance(); 
 	}
 
 
@@ -73,7 +80,7 @@ public class StoreController
 	// r 3.2
 	// opens a new store and returns its id
 	public int OpenNewStore(int memberId, string storeName)
-    {
+	{
 		Member storeFounder = membersController.GetMember(memberId);
 		if (storeFounder == null)
 			throw new MarketException("The member id: " + memberId + " does not exists in the system");
@@ -84,13 +91,40 @@ public class StoreController
 		openStoresMutex.WaitOne();
 
 		string errorDescription = CanAddOpenStore(storeName);
-		if (errorDescription != null){
+		if (errorDescription != null) {
 			openStoresMutex.ReleaseMutex();
-			throw new MarketException(errorDescription); 
-        }
+			throw new MarketException(errorDescription);
+		}
 
-		int newStoreId = GenerateStoreId(); 
-		openStores.Add(newStoreId, new Store(storeName, storeFounder, (memberId) => membersController.GetMember(memberId)));
+		Store newStore = new Store(storeName, storeFounder, (memberId) => membersController.GetMember(memberId));
+		DataStore dataStore = newStore.ToDataStore(); 
+
+
+		DataStore dataStore = new DataStore()
+		{
+			Name = storeName,
+			Founder = MemberDataManager.GetInstance().Find(storeFounder.Id),
+			IsOpen = true,
+			Products = new List<DataProduct>()
+		//		public int Id { get; set; }
+		//public string Name { get; set; }
+		//public DataMember? Founder { get; set; }
+		//public bool IsOpen { get; set; }
+		//public IList<DataProduct> Products { get; set; }
+		//public IList<DataPurchase> PurchaseHistory { get; set; }
+		//public IList<DataStoreMemberRoles> MembersPermissions { get; set; }
+		//public DataAppointmentsNode? Appointments { get; set; }
+
+		//public DataStoreDiscountPolicyManager DiscountManager { get; set; }
+		//public DataStorePurchasePolicyManager PurchaseManager { get; set; }
+
+		//public IList<DataBid> Bids { get; set; }
+		};
+		storeDataManager.Add(dataStore);
+		storeDataManager.Save();
+
+		int newStoreId = dataStore.Id; 
+		openStores.Add(newStoreId, );
 
 		openStoresMutex.ReleaseMutex(); 
 

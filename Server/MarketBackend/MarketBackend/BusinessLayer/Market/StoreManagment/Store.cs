@@ -8,6 +8,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Purchase
 using MarketBackend.DataLayer.DataManagers;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 using MarketBackend.DataLayer.DataDTOs;
+using MarketBackend.DataLayer.DataDTOs.Market;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -145,38 +146,65 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // todo: implement function after adding the add to store's fields functions 
 
         // without the store id 
-        //public DataStore ToNewDataStore()
-        //{
-        //    return new DataStore()
-        //    {
-        //        Name = name,
-        //        Founder = MemberDataManager.GetInstance().Find(founder.Id),
-        //        IsOpen = isOpen,
-        //        Products = products.Select(product => product.ToNewDataProduct()).ToList() ,
-        //        PurchaseHistory = purchaseHistory.Select(pruchase => purchase.ToNewPurchase()).ToList(),
-        //        MembersPermissions = GetNewDataStoreMemberRoles(), 
-        //        Appointments = , // ... 
-        //        DiscountManager = 
-
-        //        //		public int Id { get; set; }
-        //        //public string Name { get; set; }
-        //        //public DataMember? Founder { get; set; }
-        //        //public bool IsOpen { get; set; }
-        //        //public IList<DataProduct> Products { get; set; }
-        //        //public IList<DataPurchase> PurchaseHistory { get; set; }
-        //        //public IList<DataStoreMemberRoles> MembersPermissions { get; set; }
-        //        //public DataAppointmentsNode? Appointments { get; set; }
-
-        //        //public DataStoreDiscountPolicyManager DiscountManager { get; set; }
-        //        //public DataStorePurchasePolicyManager PurchaseManager { get; set; }
-
-        //        //public IList<DataBid> Bids { get; set; }
-        //    };
-        //}
-
-        private IList<DataStoreMemberRoles> GetNewDataStoreMemberRoles()
+        public DataStore ToNewDataStore(int storeIdForReferencesToStore)
         {
+            DataStore result = new DataStore()
+            {
+                Name = name,
+                Founder = MemberDataManager.GetInstance().Find(founder.Id),
+                IsOpen = isOpen,
+                Products = products.Values.Select(product => product.ToNewDataProduct()).ToList(),
+                PurchaseHistory = purchaseHistory.Select(purchase => purchase.ToNewDataPurchase(null)).ToList(),
+                MembersPermissions = GetNewDataStoreMemberRoles(storeIdForReferencesToStore), 
+                Appointments = Hierarchy<int>.ToNewDataAppointmentsNode(appointmentsHierarchy), 
+                DiscountManager = , // ... 
+                PurchaseManager = , // ... 
+                Bids = bids.Values.Select(bid => bid.ToNewDataBid()).ToList()
+            };
+            
+            foreach(DataPurchase dataPurchase in result.PurchaseHistory)
+            {
+                dataPurchase.Store = result; 
+            }
 
+            return result; 
+        }
+
+        private IList<DataStoreMemberRoles> GetNewDataStoreMemberRoles(int storeId)
+        {
+            IList<DataStoreMemberRoles> result = new List<DataStoreMemberRoles>();
+            DataStoreMemberRoles dataRole;
+            foreach (Role role in Enum.GetValues(typeof(Role)))
+            {
+                foreach (int memberId in rolesInStore[role])
+                {
+                    dataRole = new DataStoreMemberRoles()
+                    {
+                        StoreId = storeId,
+                        MemberId = memberId,
+                        Role = role,
+                        ManagerPermissions = null
+                    };
+
+                    if (role == Role.Manager)
+                    {
+                        dataRole.ManagerPermissions = managersPermissions[memberId].Select(
+                            permission => new DataManagerPermission() { Permission = permission }
+                            ).ToList();
+                    }
+
+                    result.Add(dataRole); 
+                }
+            }
+            return result; 
+        }
+
+        public static void UpdateStoreIdReferencesInDataStore(DataStore dataStore, int storeId)
+        {
+            foreach (DataStoreMemberRoles memberPermissions in dataStore.MembersPermissions)
+            {
+                memberPermissions.StoreId = storeId; 
+            }
         }
 
         public bool CommitTransaction(int transactionId)

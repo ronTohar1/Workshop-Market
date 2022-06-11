@@ -33,7 +33,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 					DataHierarchyToHierarchy(childDataHierarchy, result))
 				.ToList());
 			return result; 
-	}
+		}
+
+		public static DataAppointmentsNode ToNewDataAppointmentsNode(Hierarchy<int> hierarchy)
+		{
+			return new DataAppointmentsNode()
+			{
+				MemberId = hierarchy.value, 
+				Children = hierarchy.children.Select(child => ToNewDataAppointmentsNode(child)).ToList()
+			}; 
+        }
 
 		private void AddChildrenNoSave(IList<Hierarchy<T>> childrenToAdd)
         {

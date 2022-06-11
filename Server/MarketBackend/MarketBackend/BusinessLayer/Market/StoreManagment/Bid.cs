@@ -1,4 +1,6 @@
 ﻿using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using MarketBackend.DataLayer.DataManagementObjects;
+using MarketBackend.DataLayer.DataManagers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,6 +73,19 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 dataBid.Bid, aprovingIds, dataBid.CounterOffer, dataBid.Offer); 
         }
 
+        public DataBid ToNewDataBid()
+        {
+            return new DataBid()
+            {
+                Product = ProductDataManager.GetInstance().Find(productId),
+                Member = MemberDataManager.GetInstance().Find(memberId),
+                Bid = bid,
+                Approving = MemberDataManager.GetInstance()
+                    .Find(dataMember => aprovingIds.Contains(dataMember.Id)),
+                CounterOffer = counterOffer,
+                Offer = offer
+            }; 
+        }
         public void approveBid(int memberId)
         {
             aprovingIds.Add(memberId);

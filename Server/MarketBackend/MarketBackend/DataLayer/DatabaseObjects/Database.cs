@@ -28,12 +28,6 @@ namespace MarketBackend.DataLayer.DatabaseObjects
     {
 
         private static Database instance = null; 
-        private readonly string? databaseName;
-        private readonly string? instanceName;
-        private readonly string? ip;
-        private readonly string? port;
-        private readonly string? databaseUsername;
-        private readonly string? databasePassword;
 
         public static Database GetInstance()
         {
@@ -45,19 +39,6 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         // needs to be private (or protected for testing), sometimes is public for adding migrations to the database 
         private Database() : base()
         {
-            var DBServerSettings = ConfigurationManager.GetSection("Database/DBServerSettings") as System.Collections.Specialized.NameValueCollection;
-            if (DBServerSettings == null)
-                throw new Exception("Cannot find config file for loading the database.");
-
-            databaseName = DBServerSettings["databaseName"];
-            instanceName = DBServerSettings["instanceName"];
-            ip = DBServerSettings["ip"];
-            port = DBServerSettings["port"];
-            databaseUsername = DBServerSettings["databaseUsername"];
-            databasePassword = DBServerSettings["databasePassword"];
-
-            if (databaseName == null || instanceName == null || ip == null || port == null || databasePassword == null || databasePassword == null)
-                throw new Exception("Database cannot be loaded. One or more of the propeties in config file cannot be found");
 
         }
 
@@ -117,15 +98,17 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string localVMConnectionString = "Data Source = tcp:" + ip + "\\" + instanceName + "." + databaseName + "," + port + "; " +
-                "Database=" + databaseName + "; " +
+            var dbConfigs = new DatabaseConfig();
+
+            string localVMConnectionString = "Data Source = tcp:" + dbConfigs.ip + "\\" + dbConfigs.instanceName + "." + dbConfigs.databaseName + "," + dbConfigs.port + "; " +
+                "Database=" + dbConfigs.databaseName + "; " +
                 "Integrated Security = False; " +
-                "User Id = " + databaseUsername + "; " +
-                "Password = " + databasePassword + "; " +
+                "User Id = " + dbConfigs.databaseUsername + "; " +
+                "Password = " + dbConfigs.databasePassword + "; " +
                 "Encrypt = True; " +
                 "TrustServerCertificate = True; " +
                 "MultipleActiveResultSets = True";  // todo: check if need more security 
-
+            
             optionsBuilder.UseSqlServer(localVMConnectionString); 
         }
 

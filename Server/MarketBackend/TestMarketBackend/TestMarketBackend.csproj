@@ -30,8 +30,4 @@
     <Folder Include="BusinessLayer\Buyers\Members\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\MarketBackend\AppConfigs\App.config" Link="App.config" />
-  </ItemGroup>
-
 </Project>

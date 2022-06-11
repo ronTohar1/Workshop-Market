@@ -146,7 +146,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // todo: implement function after adding the add to store's fields functions 
 
         // without the store id 
-        public DataStore ToNewDataStore(int storeIdForReferencesToStore)
+        public DataStore ToNewDataStore()
         {
             DataStore result = new DataStore()
             {
@@ -155,7 +155,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 IsOpen = isOpen,
                 Products = products.Values.Select(product => product.ToNewDataProduct()).ToList(),
                 PurchaseHistory = purchaseHistory.Select(purchase => purchase.ToNewDataPurchase(null)).ToList(),
-                MembersPermissions = GetNewDataStoreMemberRoles(storeIdForReferencesToStore), 
+                MembersPermissions = GetNewDataStoreMemberRoles(null), 
                 Appointments = Hierarchy<int>.ToNewDataAppointmentsNode(appointmentsHierarchy), 
                 DiscountManager = , // ... 
                 PurchaseManager = , // ... 
@@ -167,10 +167,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 dataPurchase.Store = result; 
             }
 
+            foreach(DataStoreMemberRoles memberPermissions in result.MembersPermissions)
+            {
+                memberPermissions.Store = result;
+            }
+
             return result; 
         }
 
-        private IList<DataStoreMemberRoles> GetNewDataStoreMemberRoles(int storeId)
+        private IList<DataStoreMemberRoles> GetNewDataStoreMemberRoles(DataStore dataStore)
         {
             IList<DataStoreMemberRoles> result = new List<DataStoreMemberRoles>();
             DataStoreMemberRoles dataRole;
@@ -180,7 +185,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 {
                     dataRole = new DataStoreMemberRoles()
                     {
-                        StoreId = storeId,
+                        Store = dataStore,
                         MemberId = memberId,
                         Role = role,
                         ManagerPermissions = null
@@ -197,14 +202,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 }
             }
             return result; 
-        }
-
-        public static void UpdateStoreIdReferencesInDataStore(DataStore dataStore, int storeId)
-        {
-            foreach (DataStoreMemberRoles memberPermissions in dataStore.MembersPermissions)
-            {
-                memberPermissions.StoreId = storeId; 
-            }
         }
 
         public bool CommitTransaction(int transactionId)
@@ -992,7 +989,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // ------------------------------ General ------------------------------
 
         // 4.9
-        public void CloseStore(int memberId)
+        public void CloseStore(int memberId, int storeId)
         {
             lock (isOpenMutex)
             {
@@ -1002,9 +999,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 if (!isOpen)
                     throw new MarketException($"{this.name} is allready closed");
                 string notificationMessage = $"We regret to inform you that {this.name} has been closed";
-                isOpen = false;
+                
+                storeDataManager.Update(storeId, dataStore => dataStore.IsOpen = false);
+
                 notifyAllStoreOwners(notificationMessage);
                 notifyAllStoreManagers(notificationMessage);
+
+                storeDataManager.Save(); 
+
+                isOpen = false;
             }
         }
 

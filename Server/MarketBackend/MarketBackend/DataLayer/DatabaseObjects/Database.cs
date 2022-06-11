@@ -117,11 +117,11 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         // setting (not defualt) primary keys
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<DataStoreMemberRoles>()
-                .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<DataStoreMemberRoles>()
+        //        .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
+        //}
 
         //private void DiscountsWithoutCascades(ModelBuilder modelBuilder)
         //{

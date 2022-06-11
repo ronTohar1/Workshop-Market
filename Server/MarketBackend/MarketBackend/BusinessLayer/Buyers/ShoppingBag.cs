@@ -80,22 +80,27 @@ namespace MarketBackend.BusinessLayer.Buyers
                     ProductInBagDataManager.GetInstance().Update(dpib.Id, x => x.Amount = amount);
                     ProductInBagDataManager.GetInstance().Save();
                 }
-
                 productsAmounts[product] = amount;
             }
         }
+
         // r S 8
         /// <summary>
         /// Removes product from the bag, product must be exist
         /// </summary>
         virtual public void RemoveProduct(ProductInBag product, int buyerId, bool isMember)
         {
-            if (isMember && productsAmounts.ContainsKey(product))
-                RemoveProductFromDB(buyerId, product.ProductId, product.StoreId);
-            if (!productsAmounts.Remove(product))
+            if (productsAmounts.ContainsKey(product))
+            {
+                if (isMember)
+                {
+                    RemoveProductFromDB(buyerId, product.ProductId, product.StoreId);
+                    MemberDataManager.GetInstance().Save();
+                }
+                productsAmounts.Remove(product);
+            }
+            else
                 throw new ArgumentException(nameof(product) + "is not exist in cart");
-            if (isMember)
-                MemberDataManager.GetInstance().Save();
         }
 
         public bool IsEmpty()

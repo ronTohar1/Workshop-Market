@@ -27,7 +27,7 @@ public class MembersController : IBuyersController
         return GetMember(buyerId);
     }
 
-
+    //r S 8
     /*  Registers a new member to the controller.
     *   First, validates the username and password.
     *   Second, checks the username is unique.
@@ -48,7 +48,6 @@ public class MembersController : IBuyersController
                     Member member = this.createNewMember(username,password);
                     if (!this.AddMember(member))
                         throw new Exception("Could not add valid member to the members controller");
-                    MemberDataManager.GetInstance().Save();
                     return member.Id;
                 }
                 else
@@ -72,6 +71,7 @@ public class MembersController : IBuyersController
         return null;
     }
 
+    //r S 8
     public void RemoveMember(int memberId) {
         lock (mutex)
         {
@@ -79,9 +79,9 @@ public class MembersController : IBuyersController
                 throw new MarketException($"Failed to remove, there isn't such member with id: {memberId}");
             members[memberId].RemoveCartFromDB(MemberDataManager.GetInstance().Find(memberId));
             MemberDataManager.GetInstance().Remove(memberId);
+            MemberDataManager.GetInstance().Save();
             members.Remove(memberId);
 
-            MemberDataManager.GetInstance().Save();
         }
     }
     public IDictionary<int, Member> GetLoggedInMembers()
@@ -100,9 +100,11 @@ public class MembersController : IBuyersController
         return false;
     }
 
+    //r S 8
     private bool AddMember(Member member)
     {
         MemberDataManager.GetInstance().Add(member.MemberToDataMember());
+        MemberDataManager.GetInstance().Save();
         return this.members.TryAdd(member.Id, member);
     }
 

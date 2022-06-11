@@ -81,12 +81,21 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             }
         }
 
+        //r S 8
         public virtual void Notify(string[] notifications) {
             
             if (!LoggedIn || !notifier.tryToNotify(notifications))
             {
                 foreach (string notification in notifications)
+                {
+                    DataMember dm = MemberDataManager.GetInstance().Find(Id);
+                    dm.PendingNotifications.Add(new DataNotification()
+                    {
+                        Notification = notification
+                    });
+                    MemberDataManager.GetInstance().Save();
                     pendingNotifications.Add(notification);
+                }
             }
             
         }
@@ -94,9 +103,15 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         public void Notify(string notification)
        => Notify(new string[] { notification });
 
+        //r S 8
         private void SendPending() {
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
+            {
+                DataMember dm = MemberDataManager.GetInstance().Find(Id);
+                dm.PendingNotifications.Clear();
+                MemberDataManager.GetInstance().Save();
                 pendingNotifications.Clear();
+            }
         }
         public bool matchingPasswords(string password)
         => this.password == security.HashPassword(password);
@@ -108,8 +123,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             DataMember dm = MemberDataManager.GetInstance().Find(memberId);
             DataProductInBag? dpib = FindDataProductInBag(dm, storeId, product.ProductId);
 
-            ShoppingBag bag = Cart.ShoppingBags[storeId];
-            bag.ChangeProductAmount(product, amount, dpib);
+            Cart.ShoppingBags[storeId].ChangeProductAmount(product, amount, dpib);
         }
 
         // r S 8 - database functions

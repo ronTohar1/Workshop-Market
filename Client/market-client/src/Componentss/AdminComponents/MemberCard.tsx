@@ -14,9 +14,14 @@ export default function MemberCard({member} : {member:Member}) {
   };
     return (
         <div>
-             <Card elevation={1}>
+             <Card  style={{
+                      width: '100%',
+                      margin: 'auto',
+                      padding: '10px',
+                      backgroundColor: '#33c9dc',
+                      }}>
                     <CardHeader
-                    title={member.username}
+                    title={member.userName}
                     />
                     <CardContent>
                     <Box textAlign='center'>
@@ -46,7 +51,7 @@ export default function MemberCard({member} : {member:Member}) {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                { `User name: ${member.username} `}
+                { `User name: ${member.userName} `}
                 </DialogContentText>
                 <DialogContentText id="alert-dialog-description">
                 { `user id: ${member.id} `}

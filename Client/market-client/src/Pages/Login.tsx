@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { serverGetPendingMessages, serverLogin } from "../services/BuyersService"
 import { useNavigate } from "react-router-dom"
-import { pathHome } from "../Paths"
+import { pathAdmin, pathHome } from "../Paths"
 import * as sessionService from "../services/SessionService"
 import HomeIcon from "@mui/icons-material/Home"
 import { fetchResponse } from '../services/GeneralService'
@@ -110,7 +110,11 @@ export default function Login() {
       fetchResponse(serverGetPendingMessages(username))
         .then((messages: string[]) => messages.forEach(alertFunc))
         .catch(alert)
-
+      
+      if (username=="admin" && password=="admin"){
+        navigate(pathAdmin)  
+        return;
+      }
       navigate(pathHome)
     }).catch((e) => {
       alert(e)

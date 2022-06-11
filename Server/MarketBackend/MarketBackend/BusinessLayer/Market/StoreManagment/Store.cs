@@ -130,7 +130,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
             StoreDiscountPolicyManager discountManager = StoreDiscountPolicyManager.DataSDPMToSDPM(dataStore.DiscountManager); 
 
-            StorePurchasePolicyManager purchaseManager = null; // todo: use PruchasePolicyManager class 
+            StorePurchasePolicyManager purchaseManager = StorePurchasePolicyManager.DataSPPMToSPPM(dataStore.PurchaseManager); 
 
             IDictionary<int, Bid> bids = new ConcurrentDictionary<int, Bid>();
             foreach(DataBid dataBid in dataStore.Bids)

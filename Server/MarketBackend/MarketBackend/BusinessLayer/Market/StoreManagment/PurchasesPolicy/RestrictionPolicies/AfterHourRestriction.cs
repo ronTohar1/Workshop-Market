@@ -32,7 +32,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
 
         public virtual bool IsSatisfied(ShoppingBag bag)
         {
-            return DateTime.Now.Hour <= hour;
+            return DateTime.Now.Hour < hour;
         }
     }
 }

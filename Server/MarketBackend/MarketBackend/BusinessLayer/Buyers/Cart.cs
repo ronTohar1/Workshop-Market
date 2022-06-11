@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
 using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
 
 namespace MarketBackend.BusinessLayer.Buyers
 {
@@ -21,27 +22,25 @@ namespace MarketBackend.BusinessLayer.Buyers
         public Cart() => 
             this.shoppingBags = new Dictionary<int, ShoppingBag>();
 
-        public virtual void AddProductToCart(ProductInBag product, int amount)
+        // r S 8
+        public virtual void AddProductToCart(ProductInBag product, int amount, int buyerId, bool isMember)
         {
             int storeId = product.StoreId;
-            if (!shoppingBags.ContainsKey(storeId))         // creating new bag for first product from store
+            if (!shoppingBags.ContainsKey(storeId)) // creating new bag for first product from store
+            {
+                if (isMember)
+                    AddShoppingBagToDB(buyerId, product.StoreId);
                 shoppingBags[storeId] = new ShoppingBag(storeId);
-
-            shoppingBags[storeId].AddProductToBag(product, amount);
+            }
+            shoppingBags[storeId].AddProductToBag(product, amount, buyerId, isMember);
         }
 
-        public virtual void RemoveProductFromCart(ProductInBag product)
+        public virtual void RemoveProductFromCart(ProductInBag product, int buyerId, bool isMember)
         {
             int storeId = product.StoreId;
-            shoppingBags[storeId].RemoveProduct(product);
+            shoppingBags[storeId].RemoveProduct(product, buyerId, isMember);
             if (shoppingBags[storeId].IsEmpty())
                 shoppingBags.Remove(storeId);
-        }
-
-        public void ChangeProductAmount(ProductInBag product, int amount)
-        {
-            int storeId = product.StoreId;
-            shoppingBags[storeId].ChangeProductAmount(product, amount);
         }
         
        public virtual ProductInBag? GetProductInBag(int storeId, int productId)
@@ -75,6 +74,23 @@ namespace MarketBackend.BusinessLayer.Buyers
                 ShoppingBagDataManager.GetInstance().Remove(dsb.Id);
             }
 
+        }
+
+        public void AddShoppingBagToDB(int memberId, int storeId)
+        {
+            DataMember dm = MemberDataManager.GetInstance().Find(memberId);
+            dm.Cart.ShoppingBags.Add(new DataShoppingBag()
+            {
+                Store = StoreDataManager.GetInstance().Find(storeId),
+                ProductsAmounts = new List<DataProductInBag>()
+            });
+            MemberDataManager.GetInstance().Save();
+        }
+
+        //for tests
+        public virtual void RemoveProductFromCart(ProductInBag product)
+        {
+            RemoveProductFromCart(product, 0, false);
         }
     }
 }

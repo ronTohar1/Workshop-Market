@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataManagers
 {
-    internal class ShoppingBagDataManager : ObjectDataManager<DataShoppingBag, int>
+    public class ShoppingBagDataManager : ObjectDataManager<DataShoppingBag, int>
     {
         private static ShoppingBagDataManager instance = null;
 

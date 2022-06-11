@@ -101,6 +101,16 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         public bool matchingPasswords(string password)
         => this.password == security.HashPassword(password);
 
+        public override void ChangeProductAmount(ProductInBag product, int amount, int memberId)
+        {
+            int storeId = product.StoreId;
+
+            DataMember dm = MemberDataManager.GetInstance().Find(memberId);
+            DataProductInBag? dpib = FindDataProductInBag(dm, storeId, product.ProductId);
+
+            ShoppingBag bag = Cart.ShoppingBags[storeId];
+            bag.ChangeProductAmount(product, amount, dpib);
+        }
 
         // r S 8 - database functions
         public DataMember MemberToDataMember()
@@ -118,12 +128,33 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
 
         public void RemoveCartFromDB(DataMember member)
         {
+            if (member == null) return;
             DataCart? c = member.Cart;
             if (c != null)
             {
                 Cart.RemoveContentFromDB(c);
                 CartDataManager.GetInstance().Remove(c.Id);
             }
+        }
+
+        public DataProductInBag? FindDataProductInBag(DataMember dm, int storeId, int productId)
+        {
+            if (dm == null) return null;
+            DataCart? dc = dm.Cart;
+            if (dc == null)
+                return null;
+            foreach (DataShoppingBag dsb in dc.ShoppingBags)
+            {
+                if (dsb.Store.Id == storeId)
+                {
+                    foreach (DataProductInBag dpib in dsb.ProductsAmounts)
+                    {
+                        if (dpib.ProductId == productId)
+                            return dpib;
+                    }
+                }
+            }
+            return null;
         }
             
     }

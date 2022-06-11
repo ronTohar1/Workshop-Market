@@ -48,6 +48,7 @@ public class MembersController : IBuyersController
                     Member member = this.createNewMember(username,password);
                     if (!this.AddMember(member))
                         throw new Exception("Could not add valid member to the members controller");
+                    MemberDataManager.GetInstance().Save();
                     return member.Id;
                 }
                 else
@@ -79,6 +80,8 @@ public class MembersController : IBuyersController
             members[memberId].RemoveCartFromDB(MemberDataManager.GetInstance().Find(memberId));
             MemberDataManager.GetInstance().Remove(memberId);
             members.Remove(memberId);
+
+            MemberDataManager.GetInstance().Save();
         }
     }
     public IDictionary<int, Member> GetLoggedInMembers()

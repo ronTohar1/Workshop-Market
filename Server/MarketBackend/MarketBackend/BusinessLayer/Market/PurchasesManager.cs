@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 
 namespace MarketBackend.BusinessLayer.Market;
@@ -27,15 +28,16 @@ public class PurchasesManager
         Buyer buyer = GetBuyerOrThrowException(buyerId);
         Store store = GetOpenStoreOrThrowException(storeId);
 
-        string canBuyProductErrorMessage = store.CanBuyProduct(buyerId, productId, amount);
+        string? canBuyProductErrorMessage = store.CanBuyProduct(buyerId, productId, amount);
         if (canBuyProductErrorMessage != null)
         {
             throw new MarketException(canBuyProductErrorMessage);
         }
 
         // can add product to cart
+        Buyer? b = buyersController.GetBuyer(buyerId);
 
-        buyer.Cart.AddProductToCart(new ProductInBag(productId, storeId), storeId);
+        buyer.Cart.AddProductToCart(new ProductInBag(productId, storeId), amount, buyerId, b is Member);
     }
 
     // r 2,3
@@ -46,8 +48,8 @@ public class PurchasesManager
         Store store = GetOpenStoreOrThrowException(storeId);
 
         // maybe can remove product from cart (for example the cart checks the product exists etc. )
-
-        buyer.Cart.RemoveProductFromCart(new ProductInBag(productId, storeId));
+        Buyer? b = buyersController.GetBuyer(buyerId);
+        buyer.Cart.RemoveProductFromCart(new ProductInBag(productId, storeId), buyerId, b is Member);
     }
 
     // cc 10
@@ -230,7 +232,7 @@ public class PurchasesManager
                 int amount = prod.Value;
 
                 //Remove from cart
-                buyer.Cart.RemoveProductFromCart(productInBag);
+                buyer.Cart.RemoveProductFromCart(productInBag, buyer.Id, buyer is Member);
             }
             store.notifyAllStoreOwners($"The buyer with the id:${buyer.Id} has purchased at the store: {store.name}");
         }
@@ -399,5 +401,17 @@ public class PurchasesManager
     {
         if (amount <= 0)
             throw new MarketException("The product amount has to be positive, given: " + amount);
+    }
+
+    // for tests
+    public void RemoveProductFromCartt(int buyerId, int storeId, int productId, int amount)
+    {
+        VerifyValidProductAmount(amount); // checking first for efficiency 
+        Buyer buyer = GetBuyerOrThrowException(buyerId);
+        Store store = GetOpenStoreOrThrowException(storeId);
+
+        // maybe can remove product from cart (for example the cart checks the product exists etc. )
+        Buyer? b = buyersController.GetBuyer(buyerId);
+        buyer.Cart.RemoveProductFromCart(new ProductInBag(productId, storeId));
     }
 }

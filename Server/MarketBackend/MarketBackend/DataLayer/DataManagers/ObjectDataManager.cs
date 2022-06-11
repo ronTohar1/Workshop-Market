@@ -24,27 +24,27 @@ namespace MarketBackend.DataLayer.DataManagementObjects
             this.db = Database.GetInstance();  
         }
 
-        public void Add(T toAdd)
+        public virtual void Add(T toAdd)
         {
             TryAction(() => AddThrows(toAdd)); 
         }
 
         protected abstract void AddThrows(T toAdd);
 
-        public T Find(U id)
+        public virtual T Find(U id)
         {
             return TryFunction(() => FindThrows(id));
         }
         protected abstract T FindThrows(U id);
 
-        public IList<T> Find(Predicate<T> predicate)
+        public virtual IList<T> Find(Predicate<T> predicate)
         {
             return TryFunction(() => FindThrows(predicate)); 
         }
 
         protected abstract IList<T> FindThrows(Predicate<T> predicate);
 
-        public void Update(U id, Action<T> action)
+        public virtual void Update(U id, Action<T> action)
         {
             TryAction(() => UpdateThrows(id, action));
         }
@@ -54,7 +54,7 @@ namespace MarketBackend.DataLayer.DataManagementObjects
             action(FindThrows(id));
         }
 
-        public T Remove(U id)
+        public virtual T Remove(U id)
         {
             return TryFunction(() => RemoveThrows(id)); 
         }
@@ -66,7 +66,7 @@ namespace MarketBackend.DataLayer.DataManagementObjects
 
         protected abstract T RemoveThrows(T toRemove);
 
-        public void Save()
+        public virtual void Save()
         {
             TryAction(() => SaveThrows()); 
         }

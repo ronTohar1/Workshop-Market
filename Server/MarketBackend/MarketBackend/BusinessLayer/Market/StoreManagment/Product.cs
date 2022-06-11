@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MarketBackend.DataLayer.DataDTOs;
+using MarketBackend.DataLayer.DataManagementObjects;
+using System;
 using System.Collections.Concurrent;
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -24,13 +26,32 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 		public Mutex storeMutex { get; private set; }
 
+		private ProductDataManager productDataManager; 
+
 		public Product(string product_name, double pricePerUnit, string category, double productdicount = 0.0)
+			: this(
+				  GenerateProductId(), 
+				  product_name, 
+				  0,
+				  new SynchronizedCollection<PurchaseOption>(),
+				  new ConcurrentDictionary<int, IList<string>>(),
+				  pricePerUnit,
+				  category, 
+				  productdicount
+				  )
 		{
-			this.id = GenerateProductId();
+
+		}
+
+		private Product(int id, string product_name, int amountInInventory, 
+			IList<PurchaseOption> purchaseOptions, IDictionary<int, IList<string>> reviews, 
+			double pricePerUnit, string category, double productdicount = 0.0)
+		{
+			this.id = id;
 			this.name = product_name;
-			this.amountInInventory = 0;
-			this.purchaseOptions = new SynchronizedCollection<PurchaseOption>();
-			this.reviews = new ConcurrentDictionary<int, IList<string>>(); // 
+			this.amountInInventory = amountInInventory;
+			this.purchaseOptions = purchaseOptions;
+			this.reviews = reviews; 
 			this.pricePerUnit = pricePerUnit;
 			this.category = category;
 			this.productdicount = productdicount;
@@ -43,9 +64,36 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 			storeMutex = new Mutex();
 
+			this.productDataManager = ProductDataManager.GetInstance();
+
 		}
 
 		public Product(string product_name, double pricePerUnit, string category) : this(product_name, pricePerUnit, category, 0.0) { }
+
+		// r S 8
+		public static Product DataProductToProduct(DataProduct dataProduct)
+        {
+			IList<PurchaseOption> purchaseOptions = dataProduct.PurchaseOptions
+				.Select(dataPO => dataPO.PurchaseOption).ToList();
+
+			IDictionary<int, IList<string>> reviews = new ConcurrentDictionary<int, IList<string>>();
+			int memberId; 
+			foreach (DataProductReview dataReview in dataProduct.Reviews)
+            {
+				memberId = dataReview.Member.Id;
+				if (!reviews.ContainsKey(memberId))
+                {
+					reviews[memberId] = new SynchronizedCollection<string>();
+
+				}
+				reviews[memberId].Append(dataReview.Review);
+			}
+
+			return new Product(dataProduct.Id, dataProduct.Name, dataProduct.AmountInInventory, 
+				purchaseOptions, reviews, dataProduct.PricePerUnit, dataProduct.Category, 
+				dataProduct.ProductDiscount);
+	}
+
 
 		// r.4.1
 		public virtual void AddToInventory(int amountToAdd)

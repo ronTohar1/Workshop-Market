@@ -13,8 +13,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Market
     public class DataPurchase
     {
         public int Id { get; set; }
-        [ForeignKey("DataMember")]
-        public DataMember? Member { get; set; }
+        public int BuyerId { get; set; } 
         [ForeignKey("DataStore")]
         public DataStore? Store { get; set; }
         public DateTime PurchaseDate { get; set; }

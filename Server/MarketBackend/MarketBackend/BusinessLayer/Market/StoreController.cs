@@ -3,6 +3,8 @@ using System;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 
 namespace MarketBackend.BusinessLayer.Market; 
 public class StoreController
@@ -18,17 +20,56 @@ public class StoreController
 	private Mutex openStoresMutex; 
 	private Mutex closedStoresMutex;
 
+	private StoreDataManager storeDataManager;  
+
 	// creates a new StoreController without stores yet
-	public StoreController(MembersController membersController)
+	public StoreController(MembersController membersController) : 
+		this(membersController, new ConcurrentDictionary<int, Store>(), new ConcurrentDictionary<int, Store>())
+	{
+
+	}
+
+	private StoreController(MembersController membersController, 
+		IDictionary<int, Store> openStores, IDictionary<int, Store> closedStores)
 	{
 		this.membersController = membersController;
 
-		this.openStores = new ConcurrentDictionary<int, Store>(); 
-		this.closedStores = new ConcurrentDictionary<int, Store>();
+		this.openStores = openStores;
+		this.closedStores = closedStores;
 
-		this.openStoresMutex = new Mutex(); 
+		this.openStoresMutex = new Mutex();
 		this.closedStoresMutex = new Mutex();
+
+		storeDataManager = StoreDataManager.GetInstance();
 	}
+
+	public static StoreController LoadStoreController(MembersController membersController)
+    {
+        // trying to load data 
+
+        StoreDataManager storeDataManager = StoreDataManager.GetInstance();
+
+		IList<DataStore> dataOpenStores = storeDataManager.Find(store => store.IsOpen);
+		IList<DataStore> dataClosedStores = storeDataManager.Find(store => !store.IsOpen);
+
+		Func<int, Member> membersGetter = memberId => membersController.GetMember(memberId);
+
+		IDictionary<int, Store> openStores = DataStoresListToStoresDisctionary(dataOpenStores, membersGetter);
+		IDictionary<int, Store> closedStores = DataStoresListToStoresDisctionary(dataClosedStores, membersGetter);
+
+		return new StoreController(membersController, openStores, closedStores);
+	}
+
+	private static IDictionary<int, Store> DataStoresListToStoresDisctionary(IList<DataStore> dataStores, Func<int, Member> membersGetter)
+    {
+		IDictionary<int, Store> storesDictionary = new ConcurrentDictionary<int, Store>();
+		foreach (DataStore dataStore in dataStores)
+		{
+			storesDictionary.Add(dataStore.Id, Store.DataStoreToStore(dataStore, membersGetter));
+		}
+		return storesDictionary; 
+	}
+
 
 
 	public Store? GetStore(int storeId)

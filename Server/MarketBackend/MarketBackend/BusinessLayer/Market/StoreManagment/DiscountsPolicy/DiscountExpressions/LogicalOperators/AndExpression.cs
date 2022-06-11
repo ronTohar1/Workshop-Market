@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         public AndExpression(IPredicateExpression firstExpression, IPredicateExpression secondExpression) : base(firstExpression, secondExpression)
         {
 
+        }
+
+        public static AndExpression DataAndExpressionToAndExpression(DataAndExpression dataAndExpression)
+        {
+            return new AndExpression(
+                IPredicateExpression.DataPredicateExpressionToIPredicateExpression(dataAndExpression.First),
+                IPredicateExpression.DataPredicateExpressionToIPredicateExpression(dataAndExpression.Second)
+                );
         }
 
         //if [] and [] then yes

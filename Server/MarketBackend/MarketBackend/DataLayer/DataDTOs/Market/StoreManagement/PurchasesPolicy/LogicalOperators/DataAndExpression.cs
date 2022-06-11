@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators
 {
-    public class DataAndExpression : DataPurchasePolicy
+    public class DataAndExpression : DataIPurchasePolicy
     {
         public DataRestrictionExpression? FirstPred { get; set; }
         public DataRestrictionExpression? SecondPred { get; set; }

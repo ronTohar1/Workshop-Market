@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
         {
             this.productId = productId;
             this.amount = amount;
+        }
+
+        public static AtlestAmountRestriction DataAtlestAmountRestrictionToAtlestAmountRestriction(DataAtLeastAmountRestriction dataAtlestAmountRestriction)
+        {
+            // AtlestAmountRestriction or AtMostAmountRestriction
+
+            if (dataAtlestAmountRestriction is DataAtMostAmountRestriction)
+                return AtMostAmountRestriction.DataAtMostAmountRestrictionToAtMostAmountRestriction((DataAtMostAmountRestriction)dataAtlestAmountRestriction);
+            return new AtlestAmountRestriction(dataAtlestAmountRestriction.ProductId, dataAtlestAmountRestriction.Amount); 
         }
 
         public virtual bool IsSatisfied(ShoppingBag bag)

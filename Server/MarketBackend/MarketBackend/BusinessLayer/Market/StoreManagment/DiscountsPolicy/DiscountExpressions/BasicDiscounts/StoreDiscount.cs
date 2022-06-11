@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.BasicDiscounts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,17 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
                 sum += bag.ProductsAmounts[pib] * store.products[pib.ProductId].GetPrice();
             }
             return sum;
+        }
+
+        public static StoreDiscount DataStoreDiscountToStoreDiscount(DataStoreDiscount dataStoreDiscount)
+        {
+            // StoreDiscount or DateDiscount or OneProductDiscount
+
+            if (dataStoreDiscount is DataDateDiscount)
+                return DateDiscount.DataDateDiscountToDateDiscount((DataDateDiscount)dataStoreDiscount);
+            else if (dataStoreDiscount is DataOneProductDiscount)
+                return OneProductDiscount.DataOneProductDiscountToOneProductDiscount((DataOneProductDiscount)dataStoreDiscount);
+            return new StoreDiscount(dataStoreDiscount.Discount); 
         }
     }
 }

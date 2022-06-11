@@ -42,6 +42,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             return instance;
         }
 
+        // needs to be private (or protected for testing), sometimes is public for adding migrations to the database 
         private Database() : base()
         {
             var DBServerSettings = ConfigurationManager.GetSection("Database/DBServerSettings") as System.Collections.Specialized.NameValueCollection;
@@ -70,6 +71,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataPurchaseOption> PurchaseOptions { get; set; }
         public DbSet<DataStoreMemberRoles> StoreMemberRoles { get; set; }
         public DbSet<DataProductReview> ProductReview { get; set; }
+
+        public DbSet<DataAppointmentsNode> AppointmentsNodes { get; set; }
         
         // discounts hierarchies
 
@@ -82,10 +85,10 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataMaxExpression> MaxExpressions { get; set; }
         public DbSet<DataBagValuePredicate> BagValuePredicates { get; set; }
         public DbSet<DataProductAmountPredicate> ProductAmountPredicates { get; set; }
-        public DbSet<DataConditionExpression> ConditionDiscounts { get; set; }
+        public DbSet<DataConditionDiscount> ConditionDiscounts { get; set; }
         public DbSet<DataIfDiscount> IfDiscounts { get; set; }
         public DbSet<DataLogicalExpression> LogicalExpressions { get; set; }
-        public DbSet<DataConditionExpression> ConditionExpressions { get; set; }
+        public DbSet<DataConditionDiscount> ConditionExpressions { get; set; }
         public DbSet<DataDiscountExpression> DiscountExpressions { get; set; }
         public DbSet<DataExpression> Expressions { get; set; }
         public DbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression> DiscountPredicateExpressions { get; set; }
@@ -99,7 +102,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataCheckProductLessPredicate> CheckProductLessPredicates { get; set; }
         public DbSet<DataCheckProductMoreEqualsPredicate> CheckProductMoreEqualsPredicates { get; set; }
         public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression> PruchasePredicateExpressions { get; set; }
-        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPurchasePolicy> InterfacesPurchasePolicies { get; set; }
+        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataIPurchasePolicy> InterfacesPurchasePolicies { get; set; }
         public DbSet<DataRestrictionExpression> RestrictionExpressions { get; set; }
         public DbSet<DataAfterHourProductRestriction> DataAfterHourProductRestrictions { get; set; }
         public DbSet<DataAfterHourRestriction> AfterHourRestrictions { get; set; }

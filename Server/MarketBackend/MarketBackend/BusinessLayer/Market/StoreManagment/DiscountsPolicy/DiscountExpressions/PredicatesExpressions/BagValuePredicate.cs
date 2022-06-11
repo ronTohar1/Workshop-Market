@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.PredicatesExpressions;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts
 {
@@ -10,6 +11,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         public BagValuePredicate(int worth)
         {
             this.worth = worth;
+        }
+
+        public static BagValuePredicate DataBagValuePredicateToBagValuePredicate(DataBagValuePredicate dataBagValuePredicate)
+        {
+            return new BagValuePredicate(dataBagValuePredicate.Worth); 
         }
 
         //check of the bag worth more than worth

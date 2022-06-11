@@ -1,5 +1,6 @@
 ﻿using MarketBackend.DataLayer.DataDTOs;
 using MarketBackend.DataLayer.DataManagementObjects;
+using MarketBackend.DataLayer.DataManagers;
 using System;
 using System.Collections.Concurrent;
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
@@ -96,24 +97,27 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 		public DataProduct ToNewDataProduct()
         {
-			return new DataProduct()
+			DataProduct result = new DataProduct()
 			{
 				// id is in the data layer 
 				Name = name,
 				AmountInInventory = amountInInventory,
+				PricePerUnit = pricePerUnit,
 				PurchaseOptions = purchaseOptions
-					.Select(purchaseOption => new DataPurchaseOption()).ToList()
-			}; 
+					.Select(purchaseOption => PurchaseOptionToNewDataPurchaseOption(purchaseOption)).ToList(),
+				Category = category,
+				ProductDiscount = productdicount,
+				Reviews = reviews.SelectMany(pair =>
+					pair.Value.Select(review => ProductReviewToNewDataProductReview(review, pair.Key, null))).ToList()
+			};
 
-		//		public virtual int id { get; private set; }
-		//public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
-		//public virtual int amountInInventory { get; set; }
-		//public IList<PurchaseOption> purchaseOptions { get; }
-		//public IDictionary<int, IList<string>> reviews; //mapping between member id and his reviews
-		//public double pricePerUnit { get; set; }
-		//public virtual string category { get; private set; }
-		//public double productdicount { get; set; }
-		}
+			foreach(DataProductReview dataProductReview in result.Reviews)
+            {
+				dataProductReview.Product = result; 
+            }
+
+			return result; 
+	}
 
 		private static DataPurchaseOption PurchaseOptionToNewDataPurchaseOption(PurchaseOption purchaseOption)
         {
@@ -122,6 +126,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 				PurchaseOption = purchaseOption
 			}; 
         }
+
+		private static DataProductReview ProductReviewToNewDataProductReview(string review, int memberId, DataProduct dataProduct)
+		{
+			return new DataProductReview()
+			{
+				Member = MemberDataManager.GetInstance().Find(memberId),
+				Product = dataProduct,
+				Review = review
+			};
+		}
 
 		// r.4.1
 		public virtual void AddToInventory(int amountToAdd)

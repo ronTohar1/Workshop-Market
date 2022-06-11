@@ -8,8 +8,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 	public class Product
 	{
 		public virtual int id { get; private set; }
-		public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
-		public virtual int amountInInventory { get; set; }
+		public virtual string name { get; private set; } // todo: is it okay to make it virtual for testing? 
+		public virtual int amountInInventory { get; set; } // public set for testing 
 		public IList<PurchaseOption> purchaseOptions { get; }
 		public IDictionary<int,IList<string>> reviews; //mapping between member id and his reviews
 		public double pricePerUnit { get; set; }
@@ -138,15 +138,20 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		}
 
 		// r.4.1
-		public virtual void AddToInventory(int amountToAdd)
+		public virtual void AddToInventory(int amountToAdd, Action saveChanges)
 		{
 			amountInInventoryMutex.WaitOne();
+
+			productDataManager.Update(id, product => product.AmountInInventory += amountToAdd);
+			saveChanges();
+
 			amountInInventory = amountInInventory + amountToAdd;
+
 			amountInInventoryMutex.ReleaseMutex();
 		}
 		// cc 9
 		// r.4.1
-		public virtual void RemoveFromInventory(int amountToRemove)
+		public virtual void RemoveFromInventory(int amountToRemove, Action saveChanges)
 		{
 			amountInInventoryMutex.WaitOne();
 			if (amountInInventory < amountToRemove)
@@ -154,23 +159,34 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 				amountInInventoryMutex.ReleaseMutex();
 				throw new MarketException($"Not enough products of {name} in storage");
 			}
+
+			productDataManager.Update(id, product => product.AmountInInventory -= amountToRemove);
+			saveChanges(); 
+
 			amountInInventory = amountInInventory - amountToRemove;
 			amountInInventoryMutex.ReleaseMutex();
 		}
 
 		// r.4.2
-		public void AddPurchaseOption(PurchaseOption purchaseOption)
+		public void AddPurchaseOption(PurchaseOption purchaseOption, Action saveChanges)
 		{
 			if (!ContainsPurchasePolicy(purchaseOption))
 			{
 				purchaseOptionsMutex.WaitOne();
+
+				productDataManager.Update(id, product =>
+					product.PurchaseOptions.Add(
+						new DataPurchaseOption { PurchaseOption = purchaseOption })
+					);
+				saveChanges(); 
+
 				purchaseOptions.Add(purchaseOption);
 				purchaseOptionsMutex.ReleaseMutex();
 			}
 		}
 
 		// r.4.2
-		public void RemovePurchaseOption(PurchaseOption purchaseOption)
+		public void RemovePurchaseOption(PurchaseOption purchaseOption, Action saveChanges)
 		{
 			purchaseOptionsMutex.WaitOne();
 			if (!ContainsPurchasePolicy(purchaseOption))
@@ -178,38 +194,66 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 				purchaseOptionsMutex.ReleaseMutex();
 				throw new MarketException($"Not enough products of {name} in storage");
 			}
+
+			productDataManager.Update(id, product =>
+			{
+				foreach (DataPurchaseOption dataPurchaseOption in product.PurchaseOptions.Where(dataPO => dataPO.PurchaseOption == purchaseOption))
+				{
+					product.PurchaseOptions.Remove(dataPurchaseOption);
+				}
+			});
+
+			saveChanges(); 
+
 			purchaseOptions.Remove(purchaseOption);
 			purchaseOptionsMutex.ReleaseMutex();
 		}
 
 		// r.4.2
-		public void AddProductReview(int memberId, string review)
+		public void AddProductReview(int memberId, string review, Action saveChanges)
 		{
 			if (String.IsNullOrWhiteSpace(review))
 				throw new MarketException($"can't recieve an empty comment");
-			
+
+			productDataManager.Update(id, product =>
+				product.Reviews.Add(ProductReviewToNewDataProductReview(review, memberId, productDataManager.Find(id)));
+			saveChanges(); 
+
 			if (!reviews.ContainsKey(memberId))
 				reviews[memberId] = new SynchronizedCollection<string>();
 			reviews[memberId].Add(review);
 		}
 		// r.4.2
-		public void SetProductCategory(string newCategory)
+		public void SetProductCategory(string newCategory, Action saveChanges)
 		{
 			categoryMutex.WaitOne();
+
+			productDataManager.Update(id, product => product.Category = newCategory);
+			saveChanges(); 
+
 			category = newCategory;
+
 			categoryMutex.ReleaseMutex();
 		}
 		// r.4.2
-		public void SetProductDiscountPercentage(double newDiscountPercentage)
+		public void SetProductDiscountPercentage(double newDiscountPercentage, Action saveChanges)
 		{
 			productDiscountMutex.WaitOne();
+
+			productDataManager.Update(id, product => product.ProductDiscount = newDiscountPercentage / 100);
+			saveChanges();
+
 			productdicount = newDiscountPercentage / 100;
 			productDiscountMutex.ReleaseMutex();
 		}
 		// r.4.2
-		public void SetProductPriceByUnit(double newPrice)
+		public void SetProductPriceByUnit(double newPrice, Action saveChanges)
 		{
 			pricePerUnitMutex.WaitOne();
+
+			productDataManager.Update(id, product => product.PricePerUnit = newPrice);
+			saveChanges();
+
 			pricePerUnit = newPrice;
 			pricePerUnitMutex.ReleaseMutex();
 		}

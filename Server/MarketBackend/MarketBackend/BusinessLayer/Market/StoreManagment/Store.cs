@@ -49,7 +49,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                   storeName, 
                   founder, 
                   true,
-                  new Hierarchy<int>(founder.Id),
+                  new Hierarchy<int>(founder.Id, (dataAppointmentsNode, value) => dataAppointmentsNode.MemberId = value),
                   new ConcurrentDictionary<int, Product>(),
                   new SynchronizedCollection<Purchase>(),
                   new ConcurrentDictionary<int, IList<Permission>>(), 
@@ -156,7 +156,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 Products = products.Values.Select(product => product.ToNewDataProduct()).ToList(),
                 PurchaseHistory = purchaseHistory.Select(purchase => purchase.ToNewDataPurchase(null)).ToList(),
                 MembersPermissions = GetNewDataStoreMemberRoles(null), 
-                Appointments = Hierarchy<int>.ToNewDataAppointmentsNode(appointmentsHierarchy), 
+                Appointments = appointmentsHierarchy.ToNewDataAppointmentsNode(), 
                 DiscountManager = , // ... 
                 PurchaseManager = , // ... 
                 Bids = bids.Values.Select(bid => bid.ToNewDataBid()).ToList()

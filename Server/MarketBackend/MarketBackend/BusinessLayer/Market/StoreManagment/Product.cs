@@ -92,8 +92,36 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			return new Product(dataProduct.Id, dataProduct.Name, dataProduct.AmountInInventory, 
 				purchaseOptions, reviews, dataProduct.PricePerUnit, dataProduct.Category, 
 				dataProduct.ProductDiscount);
-	}
+		}
 
+		public DataProduct ToNewDataProduct()
+        {
+			return new DataProduct()
+			{
+				// id is in the data layer 
+				Name = name,
+				AmountInInventory = amountInInventory,
+				PurchaseOptions = purchaseOptions
+					.Select(purchaseOption => new DataPurchaseOption()).ToList()
+			}; 
+
+		//		public virtual int id { get; private set; }
+		//public virtual string name { get; set; } // todo: is it okay to make it virtual for testing? 
+		//public virtual int amountInInventory { get; set; }
+		//public IList<PurchaseOption> purchaseOptions { get; }
+		//public IDictionary<int, IList<string>> reviews; //mapping between member id and his reviews
+		//public double pricePerUnit { get; set; }
+		//public virtual string category { get; private set; }
+		//public double productdicount { get; set; }
+		}
+
+		private static DataPurchaseOption PurchaseOptionToNewDataPurchaseOption(PurchaseOption purchaseOption)
+        {
+			return new DataPurchaseOption()
+			{
+				PurchaseOption = purchaseOption
+			}; 
+        }
 
 		// r.4.1
 		public virtual void AddToInventory(int amountToAdd)

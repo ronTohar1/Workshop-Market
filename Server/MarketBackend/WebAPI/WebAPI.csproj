@@ -14,5 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\MarketBackend\MarketBackend.csproj" />
   </ItemGroup>
+	
 
 </Project>

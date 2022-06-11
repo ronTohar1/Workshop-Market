@@ -17,6 +17,7 @@ using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.Re
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,12 +42,6 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         }
 
-        private const string databaseName = "MarketDatabase";
-        private const string instanceName = "SQLEXPRESS";
-        private const string ip = "192.168.56.101";
-        private const string port = "50488";
-        private const string databaseUsername = "amitZivan";
-        private const string databasePassword = "passMarket";
 
         public DbSet<DataMember> Members { get; set; }
         public DbSet<DataStore> Stores { get; set; }
@@ -103,15 +98,17 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string localVMConnectionString = "Data Source = tcp:" + ip + "\\" + instanceName + "." + databaseName + "," + port + "; " +
-                "Database=" + databaseName + "; " +
+            var dbConfigs = new DatabaseConfig();
+
+            string localVMConnectionString = "Data Source = tcp:" + dbConfigs.ip + "\\" + dbConfigs.instanceName + "." + dbConfigs.databaseName + "," + dbConfigs.port + "; " +
+                "Database=" + dbConfigs.databaseName + "; " +
                 "Integrated Security = False; " +
-                "User Id = " + databaseUsername + "; " +
-                "Password = " + databasePassword + "; " +
+                "User Id = " + dbConfigs.databaseUsername + "; " +
+                "Password = " + dbConfigs.databasePassword + "; " +
                 "Encrypt = True; " +
                 "TrustServerCertificate = True; " +
                 "MultipleActiveResultSets = True";  // todo: check if need more security 
-
+            
             optionsBuilder.UseSqlServer(localVMConnectionString); 
         }
 

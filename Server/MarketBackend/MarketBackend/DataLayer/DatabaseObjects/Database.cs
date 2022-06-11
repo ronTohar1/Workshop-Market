@@ -17,6 +17,7 @@ using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.Re
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,12 @@ namespace MarketBackend.DataLayer.DatabaseObjects
     {
 
         private static Database instance = null; 
+        private readonly string? databaseName;
+        private readonly string? instanceName;
+        private readonly string? ip;
+        private readonly string? port;
+        private readonly string? databaseUsername;
+        private readonly string? databasePassword;
 
         public static Database GetInstance()
         {
@@ -37,15 +44,22 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         private Database() : base()
         {
+            var DBServerSettings = ConfigurationManager.GetSection("Database/DBServerSettings") as System.Collections.Specialized.NameValueCollection;
+            if (DBServerSettings == null)
+                throw new Exception("Cannot find config file for loading the database.");
+
+            databaseName = DBServerSettings["databaseName"];
+            instanceName = DBServerSettings["instanceName"];
+            ip = DBServerSettings["ip"];
+            port = DBServerSettings["port"];
+            databaseUsername = DBServerSettings["databaseUsername"];
+            databasePassword = DBServerSettings["databasePassword"];
+
+            if (databaseName == null || instanceName == null || ip == null || port == null || databasePassword == null || databasePassword == null)
+                throw new Exception("Database cannot be loaded. One or more of the propeties in config file cannot be found");
 
         }
 
-        private const string databaseName = "MarketDatabase";
-        private const string instanceName = "SQLEXPRESS";
-        private const string ip = "192.168.56.101";
-        private const string port = "50488";
-        private const string databaseUsername = "amitZivan";
-        private const string databasePassword = "passMarket";
 
         public DbSet<DataMember> Members { get; set; }
         public DbSet<DataStore> Stores { get; set; }

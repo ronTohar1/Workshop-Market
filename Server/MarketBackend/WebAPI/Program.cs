@@ -20,7 +20,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
             Console.WriteLine("WS server started on ws://127.0.0.1:7890");
 
             SystemOperator so = new SystemOperator("admin", "admin"); // For easier testing
-            if (so.MarketOpen)
+            if (!so.MarketOpen)
             {
                 Console.WriteLine("Unable to open market successfully. Goodbye...");
                 return;

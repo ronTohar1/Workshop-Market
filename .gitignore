@@ -447,6 +447,4 @@ psd
 thumb
 sketch
 
-**/error_logs.txt
-**/event_logs.txt
-
+Server/MarketBackend/MarketBackend/SystemLog/error_log.txt Server/MarketBackend/MarketBackend/SystemLog/event_logs.txt

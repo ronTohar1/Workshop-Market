@@ -43,6 +43,7 @@ public class StoreController
 		storeDataManager = StoreDataManager.GetInstance();
 	}
 
+	// r S 8
 	public static StoreController LoadStoreController(MembersController membersController)
     {
         // trying to load data 

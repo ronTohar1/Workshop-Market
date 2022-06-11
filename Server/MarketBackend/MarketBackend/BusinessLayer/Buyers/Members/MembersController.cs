@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Market;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
 
 namespace MarketBackend.BusinessLayer.Buyers.Members;
 
@@ -13,10 +15,29 @@ public class MembersController : IBuyersController
     private readonly IDictionary<int, Member> members;
     private Mutex mutex;
 
-    public MembersController()
+    public MembersController() : this(new ConcurrentDictionary<int, Member>())
     {
-        members = new ConcurrentDictionary<int, Member>();
+    }
+
+    private MembersController(IDictionary<int, Member> members)
+    {
+        this.members = members; 
         this.mutex = new Mutex();
+    }
+
+    public static MembersController LoadMembersController()
+    {
+        MemberDataManager memberDataManager = MemberDataManager.GetInstance();
+
+        IList<DataMember> dataMembers = memberDataManager.Find(dataMember => true);
+
+        IDictionary<int, Member> members = new ConcurrentDictionary<int, Member>();
+        foreach(DataMember dataMember in dataMembers)
+        {
+            members.Add(dataMember.Id, Member.DataMemberToMember(dataMember, new Security())); 
+        }
+
+        return new MembersController(members);
     }
 
     public Buyer? GetBuyer(int buyerId)

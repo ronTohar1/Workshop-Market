@@ -96,6 +96,7 @@ export default function Checkout() {
         fetchProducts(
           serverSearchProducts(null, null, null, null, null, prodsIds)
         ).then((products: Product[]) => {
+          console.log(products)
           const cartProducts: CartProduct[] = convertToCartProduct(products, prodsToQuantity)
 
           const productToAmount: Map<Product, number> = cartProducts.reduce((map: Map<Product, number>, cartProduct: CartProduct) => {

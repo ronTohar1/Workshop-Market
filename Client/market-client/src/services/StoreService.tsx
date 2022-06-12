@@ -447,3 +447,47 @@ export async function serverRemoveDiscountPolicy(
   const response = jsonResponse.json();
   return response
 }
+
+export async function serverAddProductReview(
+  userId: number,
+  memberId: number, 
+  productId:number,
+  review:string
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/AddProductReview";
+  const jsonResponse = await fetch('https://localhost:7242/api/Stores/AddProductReview', {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "storeId": 0,\n  "memberId": 0,\n  "productId": 0,\n  "review": "string"\n}',
+    body: JSON.stringify({
+        'storeId': 0,
+        'memberId': 0,
+        'productId': 0,
+        'review': review
+    })
+});
+  return jsonResponse.json();
+}
+
+export async function serverGetProductReview(
+  storeId: number, 
+  productId: number
+): Promise<ClientResponse<Map<string, string[]>>> {
+  const uri = serverPort + "/api/Stores/GetProductReviews";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "storeId": 0,\n  "productId": 0\n}',
+    body: JSON.stringify({
+        'storeId': 0,
+        'productId': 0
+    })
+});
+  return jsonResponse.json();
+}

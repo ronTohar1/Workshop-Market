@@ -47,6 +47,11 @@ const columns: GridColDef[] = [
         type: "string",
         flex: 3,
         align: "left",
+        renderCell: ({ value }) => (
+            <span style={{ overflow: "scroll" }}>
+              {value}
+            </span>
+          ),
         headerAlign: "left",
     },
 ]

@@ -49,7 +49,7 @@ interface RoleMember {
 const columns: GridColDef[] = [
   {
     field: fields.id,
-    headerName: "member ID",
+    headerName: "Member ID",
     type: "number",
     flex: 1,
     align: "left",

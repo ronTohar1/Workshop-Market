@@ -66,7 +66,7 @@ const conn: { ws: WebSocket | null } = { ws: f() }
 export function alertFunc(m: string) { alert(m) }
 export function initWebSocket(address: string) {
   storage.setItem("address", address)
-  const ws = f()
+  conn.ws = f()
 }
 export function addEventListener(ws: WebSocket, listenTo: string, funcToExec: any) {
   ws.addEventListener(listenTo, function (event) { funcToExec(event) })

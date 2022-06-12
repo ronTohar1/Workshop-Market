@@ -225,14 +225,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             // we allow this only to coOwners
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add to inventory: ");
             if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not add to inventory: there isn't such a product with product id: {productId}"));
+                throw new MarketException(StoreErrorMessage($"Could not add to inventory:\n there isn't such a product with product id {productId}"));
             products[productId].AddToInventory(amount);
         }
         // r.4.1
         public void RemoveProduct(int memberId, int productId) {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not remove a product: ");
             if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not remove a product: there isn't such a product with product id: {productId}"));
+                throw new MarketException(StoreErrorMessage($"Could not remove a product:\n there isn't such a product with product id {productId}"));
             products.Remove(productId);
         }
         // r.4.1
@@ -241,7 +241,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not take from inventory: ");
             if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not take from inventory: there isn't such a product with product id: {productId}"));
+                throw new MarketException(StoreErrorMessage($"Could not take from inventory:\n there isn't such a product with product id {productId}"));
             try {
                 products[productId].RemoveFromInventory(amount);
             }
@@ -259,7 +259,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product price per unit: ");
             if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not set the product price per unit: there isn't such a product with product id: {productId}"));
+                throw new MarketException(StoreErrorMessage($"Could not set the product price per unit:\n there isn't such a product with product id {productId}"));
             products[productId].SetProductPriceByUnit(productPrice);
         }
         // r.4.1
@@ -267,7 +267,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product's discount percentage: ");
             if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not set the product's discount percentage: there isn't such a product with product id: {productId}"));
+                throw new MarketException(StoreErrorMessage($"Could not set the product's discount percentage:\n there isn't such a product with product id: {productId}"));
             products[productId].SetProductDiscountPercentage(discountPercentage);
         }
         // r.4.1
@@ -275,7 +275,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product's category: ");
             if (!products.ContainsKey(productId))
-                throw new MarketException(StoreErrorMessage($"Could not set the product's category: there isn't such a product with product id: {productId}"));
+                throw new MarketException(StoreErrorMessage($"Could not set the product's category:\n there isn't such a product with product id: {productId}"));
             products[productId].SetProductCategory(category);
         }
         // r.3.3
@@ -531,7 +531,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (permissionError != null)
             {
                 rolesAndPermissionsLock.ReleaseWriterLock();
-                throw new MarketException("Could not changed manager permissions: " + permissionError);
+                throw new MarketException("Could not change manager permissions: " + permissionError);
             }
 
             if (!IsManager(managerMemberId))
@@ -549,7 +549,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public virtual IList<int> GetMembersInRole(int memberId, Role role) {
             string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.RecieiveRolesInfo); 
             if (permissionError != null)
-                throw new MarketException("Error in getting members in role: " + role.ToString() + " " + permissionError);
+                throw new MarketException("Error getting the members in role: " + role.ToString() + ".\n " + permissionError);
             return GetMembersInRoleNoPermissionsCheck(role); 
         }
 
@@ -558,7 +558,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             lock (isOpenMutex)
             {
                 if (!isOpen)
-                    throw new MarketException($"Could not check members in role: {this.name} is closed");
+                    throw new MarketException($"Could not check members in role because the store: '{this.name}' is closed");
 
                 // no need to aquire lock because the second action does not depend on the first
                 IList<int> rollers = rolesInStore[role];
@@ -571,7 +571,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             string permissionError = CheckAtLeastManagerWithPermission(memberId, Permission.RecieiveRolesInfo);
             if (permissionError != null)
-                throw new MarketException("Error in getting founder: " + permissionError);
+                throw new MarketException("Error getting founder: \n" + permissionError);
 
             // no need to aquire lock because the second action does not depend on the first
 
@@ -583,18 +583,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             string permissionError = CheckAtLeastManagerWithPermission(requestingMemberId, Permission.RecieiveRolesInfo);
             if (permissionError != null)
-                throw new MarketException("Error in getting manager permissions: " + permissionError);
+                throw new MarketException("Error getting manager permissions: \n" + permissionError);
 
             rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             if (!IsManager(managerMemberId))
             {
                 rolesAndPermissionsLock.ReleaseReaderLock();
-                throw new MarketException("This is not a manager so its permissions could not be retunrd");
+                throw new MarketException("The requested member is not a manager, so its permissions cant retrieved");
             }
             lock (isOpenMutex)
             {
                 if (!isOpen)
-                    throw new MarketException($"Could not recieve purchase history: {this.name} is closed");
+                    throw new MarketException($"Cant get purchase history because the store '{this.name}' is closed");
 
                 IList<Permission> result = new List<Permission>(managersPermissions[managerMemberId]);
                 rolesAndPermissionsLock.ReleaseReaderLock();
@@ -625,7 +625,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (!IsManager(managerId))
             {
                 rolesAndPermissionsLock.ReleaseReaderLock();
-                throw new ArgumentException(StoreErrorMessage("The id: " + managerId + " is not of a managaer"));
+                throw new ArgumentException(StoreErrorMessage("User with id " + managerId + " is not a managaer"));
 
             }
             bool result = managersPermissions[managerId].Contains(permission);

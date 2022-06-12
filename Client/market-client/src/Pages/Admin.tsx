@@ -47,7 +47,14 @@ export default function Admin() {
   return (
     <ThemeProvider theme={theme}>
       <main>
-        <Navbar />
+        <ProductHeroLayout
+          sxBackground={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: "100vh",
+            outerHeight: "150vh",
+          }}>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Stack>
             {/* Increase the network loading priority of the background image. */}
@@ -73,6 +80,7 @@ export default function Admin() {
             <RemoveAMember />
           </Stack>
         </div>
+        </ProductHeroLayout>
       </main>
     </ThemeProvider>
   )

@@ -8,7 +8,7 @@ class AfterHour extends Restriction {
         this.hour = hour;
     }
     public toString = () : string => {
-        return `The store does suffice it's purchase services after: ${this.hour}:00`;
+        return `The store does not suffice it's purchase services after: ${this.hour}:00`;
     }
   }
   

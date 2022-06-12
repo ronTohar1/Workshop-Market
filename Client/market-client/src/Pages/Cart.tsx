@@ -8,6 +8,7 @@ import DialogTwoOptions from "../Componentss/CartComponents/DialogTwoOptions"
 import ProductCard from "../Componentss/CartComponents/ProductCard"
 import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
 import LargeMessage from "../Componentss/LargeMessage"
+import LoadingCircle from "../Componentss/LoadingCircle"
 import Navbar from "../Componentss/Navbar"
 import Cart from "../DTOs/Cart"
 import Product from "../DTOs/Product"
@@ -90,7 +91,7 @@ function MakeProductCard(
     //     alignItems: "center",
     //   }}
     // >
-    <Box sx={{m:2}}>
+    <Box sx={{ m: 2 }}>
       {ProductCard(
         product,
         quantity,
@@ -104,7 +105,7 @@ function MakeProductCard(
 
 export default function CartPage() {
   const navigate = useNavigate()
-  const [cartProducts, setCartProducts] = React.useState<CartProduct[]>([])
+  const [cartProducts, setCartProducts] = React.useState<CartProduct[] | null>(null)
   const [openRemoveDialog, setOpenRemoveDialog] = React.useState<boolean>(false)
   const [renderProducts, setRenderProducts] = React.useState<boolean>(false)
   const [ProductToRemove, setProductToRemove] = React.useState<Product | null>(
@@ -122,8 +123,10 @@ export default function CartPage() {
         const [prodsIds, prodsToQuantity] = getCartProducts(cart)
         fetchProducts(
           serverSearchProducts(null, null, null, null, null, prodsIds)
-        ).then((products: Product[]) =>
-          setCartProducts(convertToCartProduct(products, prodsToQuantity))
+        ).then((products: Product[]) => {
+          const newCartProducts = convertToCartProduct(products, prodsToQuantity)
+          setCartProducts(newCartProducts)
+        }
         )
       })
       .catch((e) => {
@@ -137,7 +140,7 @@ export default function CartPage() {
   const calulateTotal = (cartProducts: CartProduct[]): number => {
     return cartProducts.reduce(
       (total: number, cartProduct: CartProduct) =>
-        total + cartProduct.product.price,
+        total + cartProduct.product.price * cartProduct.quantity,
       0
     )
   }
@@ -184,7 +187,7 @@ export default function CartPage() {
     navigate(pathCheckout)
   }
 
-  return (
+  return cartProducts === null ? LoadingCircle() : (
     <ThemeProvider theme={theme}>
       <Navbar />
       <Stack direction="row">
@@ -198,13 +201,13 @@ export default function CartPage() {
           >
             {cartProducts.length > 0
               ? cartProducts.map((cartProduct: CartProduct) =>
-                  MakeProductCard(
-                    cartProduct.product,
-                    cartProduct.quantity,
-                    handleRemoveProductCanClick,
-                    handleUpdateQuantity
-                  )
+                MakeProductCard(
+                  cartProduct.product,
+                  cartProduct.quantity,
+                  handleRemoveProductCanClick,
+                  handleUpdateQuantity
                 )
+              )
               : LargeMessage("No Products In Cart....")}
           </Grid>
         </Box>
@@ -223,10 +226,10 @@ export default function CartPage() {
 
       {ProductToRemove !== null
         ? DialogTwoOptions(
-            ProductToRemove,
-            openRemoveDialog,
-            handleCloseRemoveDialog
-          )
+          ProductToRemove,
+          openRemoveDialog,
+          handleCloseRemoveDialog
+        )
         : null}
 
       {SuccessSnackbar(

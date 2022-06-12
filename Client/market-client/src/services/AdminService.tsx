@@ -16,7 +16,7 @@ export async function serverGetBuyerPurchaseHistory(
         },
         // body: '{\n  "userId": 0,\n  "targetId": 0\n}',
         body: JSON.stringify({
-            'userId': 0,
+            'userId': buyerId,
             'targetId': targetId
         })
     });
@@ -35,7 +35,7 @@ export async function serverGetBuyerPurchaseHistory(
         },
         // body: '{\n  "userId": 0,\n  "targetId": 0\n}',
         body: JSON.stringify({
-            'userId': 0,
+            'userId': userId,
             'targetId': targetId
         })
     });
@@ -53,7 +53,7 @@ export async function serverGetLoggedInMembers(
         },
         // body: '{\n  "userId": 0\n}',
         body: JSON.stringify({
-            'userId': 0
+            'userId': userId
         })
     });
     return jsonResponse.json();
@@ -72,14 +72,14 @@ export async function serverGetAMemberInfo(
       },
       // body: '{\n  "userId": 0,\n  "targetId": 0\n}',
       body: JSON.stringify({
-          'userId': 0,
+          'userId': userId,
           'targetId': targetId
       })
     });
     return jsonResponse.json();
   }
 
-  export async function removeMember(
+  export async function serverRemoveMember(
     userId: number,
     targetId: number,
   ): Promise<ClientResponse<boolean>> {
@@ -92,7 +92,7 @@ export async function serverGetAMemberInfo(
       },
       // body: '{\n  "userId": 0,\n  "targetId": 0\n}',
       body: JSON.stringify({
-          'userId': 0,
+          'userId': userId,
           'targetId': targetId
       })
   });

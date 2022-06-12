@@ -12,6 +12,7 @@ const isInitOccured = "isInitOccured"
 const userName = "userName"
 const isGuest = "isGuest"
 const buyerId = "buyerId"
+const isAdmin = "isAdmin"
 const notificationsArr = "notifications"
 
 export async function initSession() {
@@ -32,6 +33,7 @@ function initFields(id: number) {
   setBuyerId(id)
   setIsGuest(true)
   setUsername("guest")
+  setIsAdmin(false)
 }
 
 export function clearSession() {
@@ -69,6 +71,10 @@ export const getUsername: () => string = () => { return storage.getItem(userName
 
 export const setUsername: (v: string) => void = (v) => storage.setItem(userName, v)
 
+// IsAdmin setter Getter
+export const getIsAdmin: () => boolean = createGetter(isAdmin)
+
+export const setIsAdmin: (v: boolean) => void = createSetter(isAdmin)
 // notifications
 
 // export const getNotifications: () => string[] = () => {

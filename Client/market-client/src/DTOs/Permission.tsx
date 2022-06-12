@@ -29,9 +29,9 @@ export function permissionToString(permissionNum: Permission): string {
         case Permission.RemoveCoManager:
             return 'Remove Co-Manager Permission';
         case Permission.MakeCoOwner:
-            return 'Make Co-Worker Permission';
+            return 'Make Co-Owner Permission';
         case Permission.RemoveCoOwner:
-            return 'Remove Co-Worker Permission';
+            return 'Remove Co-Owner Permission';
         case Permission.RecieiveRolesInfo:
             return 'Recieve Roles Info Permission';
         case Permission.DiscountPolicyManagement:

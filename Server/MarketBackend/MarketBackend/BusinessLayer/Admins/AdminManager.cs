@@ -109,7 +109,7 @@ namespace MarketBackend.BusinessLayer.Admins
         {
             VerifyAdmin(adminId);
             if (storeController.HasRolesInMarket(memberToRemoveId))
-                return false;
+                throw new MarketException("Sorry dear admin, but this user has a role in a store");
             //from this point it's legal to ask the removal of a member from the memberController
             membersController.RemoveMember(memberToRemoveId);
             return true;

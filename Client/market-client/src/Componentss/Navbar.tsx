@@ -18,6 +18,7 @@ import { BadgeProps, List, ListItem, ListItemText } from "@mui/material"
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"
 import Stack from "@mui/material/Stack"
 import {
+  pathAdmin,
   pathCart,
   pathHome,
   pathLogin,
@@ -31,7 +32,7 @@ import MarketNotification from "../DTOs/MarketNotification"
 import { clearNotifications, dummyNotificaitons, noteConn } from "../services/NotificationsService"
 import { getCartProducts } from "../services/ProductsService"
 import { fetchResponse } from "../services/GeneralService"
-import { clearSession, getBuyerId, getIsGuest, getUsername, initSession, storage } from "../services/SessionService"
+import { clearSession, getBuyerId, getIsAdmin, getIsGuest, getUsername, initSession, storage } from "../services/SessionService"
 import { serverGetCart, serverLogout } from "../services/BuyersService"
 import Cart from "../DTOs/Cart"
 import { addNotificationListener } from '../services/NotificationsService'
@@ -177,6 +178,18 @@ export default function Navbar() {
     else navigate(`${pathStoreManager}`)
   }
 
+  const handleNameClick = () => {
+    const isAdmin = getIsAdmin()
+    console.log("isAdmin")
+    console.log(isAdmin)
+    if (getIsAdmin())
+      navigate(`${pathAdmin}`)
+    else if (getIsGuest()) navigate(`${pathLogin}`)
+    else
+      navigate(`${pathStoreManager}`)
+
+  }
+
   const menuId = "primary-search-account-menu"
   const renderMenuAccount = (
     <Menu
@@ -254,7 +267,7 @@ export default function Navbar() {
               </Typography>
 
               <Typography
-                onClick={handleMyAccountClick}
+                onClick={handleNameClick}
                 variant="h6"
                 noWrap
                 component="div"

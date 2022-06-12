@@ -8,12 +8,15 @@ import {
   Typography,
   TextField,
   CardActions,
+  Dialog,
 } from "@mui/material"
 import UpdateIcon from "@mui/icons-material/Update"
 import Product from "../../DTOs/Product"
 import { Currency } from "../../Utils"
 import RemoveProductCan from "./RemoveProductCan"
-
+import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import ProductReview from "../ProductReview"
 function UpdateQuantityComponent(
   product: Product,
   handleUpdateQuantity: (product: Product, newQuan: number) => void
@@ -73,6 +76,9 @@ function ProductContent(product: Product, quantity: number) {
         Quantity: {quantity}
         <br></br>
         Store : {product.storeName}</Typography>
+      <br></br>
+      <ProductReview product={product} />
+      
     </div>
   )
 }

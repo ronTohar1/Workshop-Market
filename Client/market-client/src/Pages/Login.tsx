@@ -75,22 +75,18 @@ export default function Login() {
 
     fetchResponse(result).then((memberId: number) => {
 
-
+      if (username == "admin" && password == "admin") {
+        sessionService.setIsGuest(false)
+        sessionService.setBuyerId(memberId)
+        //@ts-ignore
+        sessionService.setUsername(username)
+        sessionService.setIsAdmin(true)
+        navigate(pathAdmin)
+        return;
+      }
       const address = `ws://127.0.0.1:7890/${username}-notifications`
-      // const ws = new WebSocket(address)
-      // ws.addEventListener('message', function (event) {
-      //   alertFunc("Message from server:\n" + event.data);
-      // });
-
-      // ws.addEventListener('open', function (event) {
-      //   alertFunc("Opened")
-      // });
-
-      // ws.addEventListener('close', function (event) {
-      //   alertFunc("Closed")
-      // });
       initWebSocket(address)
-      
+
       alert("Logged in successfully!")
       sessionService.setIsGuest(false)
       sessionService.setBuyerId(memberId)
@@ -99,13 +95,11 @@ export default function Login() {
 
       fetchResponse(serverGetPendingMessages(username))
         .then((messages: string[]) => messages.forEach(alertFunc))
+        .then(() => {
+          navigate(pathHome)
+
+        })
         .catch(alert)
-      
-      if (username=="admin" && password=="admin"){
-        navigate(pathAdmin)  
-        return;
-      }
-      navigate(pathHome)
     }).catch((e) => {
       alert(e)
     })

@@ -449,7 +449,7 @@ export async function serverRemoveDiscountPolicy(
 }
 
 export async function serverAddProductReview(
-  userId: number,
+  storeId: number,
   memberId: number, 
   productId:number,
   review:string
@@ -463,9 +463,9 @@ export async function serverAddProductReview(
     },
     // body: '{\n  "storeId": 0,\n  "memberId": 0,\n  "productId": 0,\n  "review": "string"\n}',
     body: JSON.stringify({
-        'storeId': 0,
-        'memberId': 0,
-        'productId': 0,
+        'storeId': storeId,
+        'memberId': memberId,
+        'productId': productId,
         'review': review
     })
 });
@@ -485,8 +485,8 @@ export async function serverGetProductReview(
     },
     // body: '{\n  "storeId": 0,\n  "productId": 0\n}',
     body: JSON.stringify({
-        'storeId': 0,
-        'productId': 0
+        'storeId': storeId,
+        'productId': productId
     })
 });
   return jsonResponse.json();

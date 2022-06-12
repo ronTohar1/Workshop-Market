@@ -64,5 +64,11 @@ namespace MarketBackend.BusinessLayer.Buyers
         {
             return new ReadOnlyCollection<Purchase>(this.purchaseHistory);
         }
+
+        public virtual void ChangeProductAmount(ProductInBag product, int amount, int buyerId)
+        {
+            int storeId = product.StoreId;
+            Cart.ShoppingBags[storeId].ChangeProductAmount(product, amount, null);
+        }
     }
 }

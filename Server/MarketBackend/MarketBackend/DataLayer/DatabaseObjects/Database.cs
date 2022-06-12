@@ -57,9 +57,11 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataPurchaseOption> PurchaseOptions { get; set; }
         public DbSet<DataStoreMemberRoles> StoreMemberRoles { get; set; }
         public DbSet<DataProductReview> ProductReview { get; set; }
-
         public DbSet<DataAppointmentsNode> AppointmentsNodes { get; set; }
         
+        public DbSet<DataShoppingBag> ShoppingBags { get; set; }
+        public DbSet<DataProductInBag> ProductInBags { get; set; }
+
         // discounts hierarchies
 
         public DbSet<DataDateDiscount> DateDiscounts { get; set; }

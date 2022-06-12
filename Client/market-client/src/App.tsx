@@ -76,7 +76,7 @@ export function addEventListener(ws: WebSocket, listenTo: string, funcToExec: an
 
 const App = () => {
   // window.onunload = () => clearSession()
-  // initSession()
+  initSession()
   useEffect(() => {
     const handleTabClose = (event: any) => {
       event.preventDefault()

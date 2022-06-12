@@ -45,6 +45,14 @@ namespace MarketBackend.BusinessLayer.Buyers
             purchaseHistory = new SynchronizedCollection<Purchase>();
         }
 
+        protected Buyer(int id, Cart cart, IList<Purchase> purchaseHistory)
+        {
+            //Init properites
+            this.Cart = cart;
+            this.Id = id;
+            this.purchaseHistory = purchaseHistory; 
+        }
+
 
         public virtual void AddPurchase(Purchase purchase)
         {

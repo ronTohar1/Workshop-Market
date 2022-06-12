@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataManagers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -51,6 +54,38 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             this.pendingNotifications = new SynchronizedCollection<string>();
         }
 
+        private Member(int id, string username, int password, Cart cart, 
+            Security security, IList<string> pendingNotifications,
+            IList<Purchase> purchaseHistory) : base(id, cart, purchaseHistory)
+        {
+            //Init locks first
+            this.mutex = new Mutex();
+            this.loggedInLock = new ReaderWriterLock();
+
+            //Init fields
+            this.security = security;
+            this.Username = username;
+            this.password = password;
+            this._loggedIn = false;
+            this.pendingNotifications = pendingNotifications;
+        }
+
+        // r S 8
+        public static Member DataMemberToMember(DataMember dataMember, Security security)
+        {
+            Cart cart = Cart.DataCartToCart(dataMember.Cart);
+
+            IList<string> pendingNotifications = ToSynchronized(
+                dataMember.PendingNotifications
+                .Select(dataNotification => dataNotification.Notification));
+
+            IList<Purchase> purchaseHistory = ToSynchronized(
+                dataMember.PurchaseHistory
+                .Select(dataPurchase => Purchase.DataPurchaseToPurchase(dataPurchase)));
+
+            return new Member(dataMember.Id, dataMember.Username, dataMember.Password,
+                cart, security, pendingNotifications, purchaseHistory);
+        }
 
         public bool Login(string password, Func<string[], bool> notifyFunc)
         {
@@ -88,8 +123,24 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             
         }
 
+        public virtual void DataNotify(string[] notifications)
+        {
+            MemberDataManager memberDataManager = MemberDataManager.GetInstance();
+            DataMember dataMember = memberDataManager.Find(Id); 
+            if (!LoggedIn)
+            {
+                foreach (string notification in notifications)
+                {
+                    dataMember.PendingNotifications.Add(new DataNotification() { Notification = notification });
+                }
+            }
+        }
+
         public void Notify(string notification)
        => Notify(new string[] { notification });
+
+        public void DataNotify(string notification)
+       => DataNotify(new string[] { notification });
 
         private void SendPending() {
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
@@ -97,6 +148,16 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         }
         public bool matchingPasswords(string password)
         => this.password == security.HashPassword(password);
-            
+
+        private static SynchronizedCollection<T> ToSynchronized<T>(IEnumerable<T> elements)
+        {
+            SynchronizedCollection<T> synchronizedCollection = new SynchronizedCollection<T>();
+            foreach (T element in elements)
+            {
+                synchronizedCollection.Add(element);
+            }
+            return synchronizedCollection;
+        }
+
     }
 }

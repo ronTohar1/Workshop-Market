@@ -322,10 +322,7 @@ namespace MarketBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("DataStoreMemberRolesMemberId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DataStoreMemberRolesStoreId")
+                    b.Property<int?>("DataStoreMemberRolesId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Permission")
@@ -333,7 +330,7 @@ namespace MarketBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DataStoreMemberRolesMemberId", "DataStoreMemberRolesStoreId");
+                    b.HasIndex("DataStoreMemberRolesId");
 
                     b.ToTable("ManagerPermissions");
                 });
@@ -380,21 +377,24 @@ namespace MarketBackend.Migrations
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<int>("MemberId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DataStoreId")
                         .HasColumnType("int");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
-                    b.HasKey("MemberId", "StoreId");
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("DataStoreId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("StoreMemberRoles");
                 });
@@ -985,7 +985,7 @@ namespace MarketBackend.Migrations
                 {
                     b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", null)
                         .WithMany("ManagerPermissions")
-                        .HasForeignKey("DataStoreMemberRolesMemberId", "DataStoreMemberRolesStoreId");
+                        .HasForeignKey("DataStoreMemberRolesId");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", b =>
@@ -1021,9 +1021,11 @@ namespace MarketBackend.Migrations
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", b =>
                 {
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", null)
+                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", "Store")
                         .WithMany("MembersPermissions")
-                        .HasForeignKey("DataStoreId");
+                        .HasForeignKey("StoreId");
+
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DataDiscount", b =>

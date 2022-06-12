@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
 
 namespace MarketBackend.BusinessLayer.Buyers
 {
@@ -18,6 +19,18 @@ namespace MarketBackend.BusinessLayer.Buyers
 
         public Cart() => 
             this.shoppingBags = new Dictionary<int, ShoppingBag>();
+
+        public static Cart DataCartToCart(DataCart dataCart)
+        {
+            IDictionary<int, ShoppingBag> shoppingBags = new Dictionary<int, ShoppingBag>();
+
+            foreach(DataShoppingBag dataShoppingBag in dataCart.ShoppingBags)
+            {
+                shoppingBags.Add(dataShoppingBag.Store.Id, ShoppingBag.DataShoppingBagToShoppingBag(dataShoppingBag)); 
+            }
+
+            return new Cart(shoppingBags); 
+        }
 
         public virtual void AddProductToCart(ProductInBag product, int amount)
         {

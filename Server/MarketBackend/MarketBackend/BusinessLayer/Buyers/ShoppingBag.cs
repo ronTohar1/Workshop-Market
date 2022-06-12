@@ -1,4 +1,6 @@
-﻿namespace MarketBackend.BusinessLayer.Buyers
+﻿using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+
+namespace MarketBackend.BusinessLayer.Buyers
 {
     public class ShoppingBag
     {
@@ -31,6 +33,18 @@
             productsAmounts = new Dictionary<ProductInBag, int>();
         }
 
+        // r S 8
+        public static ShoppingBag DataShoppingBagToShoppingBag(DataShoppingBag dataShoppingBag)
+        {
+            IDictionary<ProductInBag, int> productsAmounts = new Dictionary<ProductInBag, int>();
+
+            foreach (DataProductInBag dataProductInBag in dataShoppingBag.ProductsAmounts)
+            {
+                productsAmounts.Add(ProductInBag.DataProductInBagToProductInBag(dataProductInBag, dataShoppingBag.Store.Id), dataProductInBag.Amount);
+            }
+
+            return new ShoppingBag(dataShoppingBag.Store.Id, productsAmounts); 
+        }
 
         /// <summary>
         /// Add given amount of product units to the bag. If product not exist in bag, it will be added to the bag

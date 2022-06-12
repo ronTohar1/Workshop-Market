@@ -35,4 +35,28 @@
     <PackageReference Include="NLog" Version="4.7.15" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="DatabaseConfig.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DatabaseConfig.settings</DependentUpon>
+    </Compile>
+    <Compile Update="DatabaseConfig.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DatabaseConfig.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DatabaseConfig.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DatabaseConfig.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="DatabaseConfig.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DatabaseConfig.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
 </Project>

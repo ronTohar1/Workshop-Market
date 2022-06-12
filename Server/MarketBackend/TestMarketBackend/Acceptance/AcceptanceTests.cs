@@ -291,11 +291,10 @@ namespace TestMarketBackend.Acceptance
         [SetUp]
         public void SetUp()
         {
-            systemOperator = new SystemOperator();
-            Response<int> response = systemOperator.OpenMarket(adminUsername,adminPassword);
-            if (response.IsErrorOccured())
-                throw new Exception("Unexpected exception in acceptance setup");
-            adminId = response.Value;
+            systemOperator = new SystemOperator(adminUsername, adminPassword);
+            adminId = systemOperator.MarketOpenerAdminId;
+            if (adminId < 0)
+                throw new Exception("Unable to open market successfully");
 
             buyerFacade = systemOperator.GetBuyerFacade().Value;
             storeManagementFacade = systemOperator.GetStoreManagementFacade().Value;

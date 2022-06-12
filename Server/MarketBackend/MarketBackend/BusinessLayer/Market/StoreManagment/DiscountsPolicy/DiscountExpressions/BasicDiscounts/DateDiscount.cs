@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.BasicDiscounts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             this.year = year;
             this.month = month;
             this.day = day;
+        }
+
+        public static DateDiscount DataDateDiscountToDateDiscount(DataDateDiscount dataDateDiscount)
+        {
+            return new DateDiscount(dataDateDiscount.Discount, dataDateDiscount.Year,
+                dataDateDiscount.Month, dataDateDiscount.Day); 
         }
 
 

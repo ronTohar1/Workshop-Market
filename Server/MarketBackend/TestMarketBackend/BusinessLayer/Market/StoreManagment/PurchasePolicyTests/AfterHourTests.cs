@@ -19,7 +19,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
 
             AfterHourRestriction res = new AfterHourRestriction(hour);
 
-            Assert.IsTrue(res.IsSatisfied(It.IsAny<ShoppingBag>()));
+            Assert.IsTrue(!res.IsSatisfied(It.IsAny<ShoppingBag>()));
 
             res.hour = hour - 1;
             Assert.IsTrue(!res.IsSatisfied(It.IsAny<ShoppingBag>()));

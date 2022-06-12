@@ -5,6 +5,9 @@ using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using MarketBackend.DataLayer.DataDTOs;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -36,23 +39,50 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public IDictionary<int, Bid> bids { get; }
         private Mutex approvebidLock;
 
+        private StoreDataManager storeDataManager; // r S 8
 
         // cc 5
         // cc 6
         public Store(string storeName, Member founder, Func<int, Member> membersGetter)
+            : this(
+                  storeName, 
+                  founder, 
+                  true,
+                  new Hierarchy<int>(founder.Id),
+                  new ConcurrentDictionary<int, Product>(),
+                  new SynchronizedCollection<Purchase>(),
+                  new ConcurrentDictionary<int, IList<Permission>>(), 
+                  membersGetter,
+                  new StoreDiscountPolicyManager(),
+                  new StorePurchasePolicyManager(),
+                  new ConcurrentDictionary<int, Bid>())
 	    {
-            discountManager = new StoreDiscountPolicyManager();
-            purchaseManager = new StorePurchasePolicyManager();
 
-            this.name = storeName;
+        }
+
+        private Store(string name, Member founder, bool isOpen, Hierarchy<int> appointmentsHierarchy,
+            IDictionary<int, Product> products, IList<Purchase> purchaseHistory,
+            IDictionary<int, IList<Permission>> managersPermissions, Func<int, Member> membersGetter,
+            StoreDiscountPolicyManager discountManager, StorePurchasePolicyManager purchaseManager,
+            IDictionary<int, Bid> bids, IDictionary<Role, IList<int>> rolesInStore = null)
+        {
+            this.name = name;
             this.founder = founder;
-            this.isOpen = true;
-            this.appointmentsHierarchy = new Hierarchy<int>(founder.Id);
-            this.purchaseHistory = new SynchronizedCollection<Purchase>();
-            this.products = new ConcurrentDictionary<int, Product>();
-            this.managersPermissions = new ConcurrentDictionary<int, IList<Permission>>();
-            initializeRolesInStore();
+            this.isOpen = isOpen;
+            this.appointmentsHierarchy = appointmentsHierarchy; 
+            this.products = products;
+            this.purchaseHistory = purchaseHistory;
+            this.managersPermissions = managersPermissions; 
             this.membersGetter = membersGetter;
+            this.discountManager = discountManager;
+            this.purchaseManager = purchaseManager;
+            this.bids = bids; 
+
+            if (rolesInStore == null)
+                initializeRolesInStore();
+            else
+                this.rolesInStore = rolesInStore;
+
             this.isOpenMutex = new Mutex();
 
             //Transactions
@@ -61,10 +91,55 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             this.transactionIdMutex = new Mutex();
 
             //bids
-            bids = new ConcurrentDictionary<int, Bid>();
-            approvebidLock = new Mutex(false);
+            this.approvebidLock = new Mutex(false);
 
             this.rolesAndPermissionsLock = new ReaderWriterLock(); // no need to acquire it here (probably) because constructor is of one thread
+
+            this.storeDataManager = StoreDataManager.GetInstance();
+        }
+
+        // r S 8
+        public static Store DataStoreToStore(DataStore dataStore, Func<int, Member> membersGetter)
+        {
+            Member founder = membersGetter(dataStore.Founder.Id);
+
+            Hierarchy<int> appointmentsHierarchy = Hierarchy<int>.DataHierarchyToHierarchy(dataStore.Appointments);
+
+            IDictionary<int, Product> products = new ConcurrentDictionary<int, Product>();
+            foreach (DataProduct dataProduct in dataStore.Products)
+            {
+                products.Add(dataProduct.Id, Product.DataProductToProduct(dataProduct)); 
+            }
+
+            IList<Purchase> purchaseHistory = dataStore.PurchaseHistory
+                .Select(dataPurchase => Purchase.DataPurchaseToPurchase(dataPurchase)).ToList();
+
+            IDictionary<Role, IList<int>> rolesInStore = GetRolesInStoresWithRoles();
+            IDictionary<int, IList<Permission>> managersPermissions = new ConcurrentDictionary<int, IList<Permission>>();
+            int memberId; 
+            foreach(DataStoreMemberRoles dataPermissions in dataStore.MembersPermissions)
+            {
+                memberId = dataPermissions.MemberId;
+                rolesInStore[dataPermissions.Role].Add(memberId); 
+                if (dataPermissions.Role == Role.Manager)
+                {
+                    managersPermissions.Add(memberId,
+                        dataPermissions.ManagerPermissions.Select(dataPermission => (Permission)dataPermission.Permission).ToList()); 
+                }
+            }
+
+            StoreDiscountPolicyManager discountManager = StoreDiscountPolicyManager.DataSDPMToSDPM(dataStore.DiscountManager); 
+
+            StorePurchasePolicyManager purchaseManager = StorePurchasePolicyManager.DataSPPMToSPPM(dataStore.PurchaseManager); 
+
+            IDictionary<int, Bid> bids = new ConcurrentDictionary<int, Bid>();
+            foreach(DataBid dataBid in dataStore.Bids)
+            {
+                bids[dataBid.Id] = Bid.DataBidToBid(dataBid, dataStore.Id); 
+            }
+
+            return new Store(dataStore.Name, founder, dataStore.IsOpen, appointmentsHierarchy, products, purchaseHistory,
+                managersPermissions, membersGetter, discountManager, purchaseManager, bids, rolesInStore); 
         }
 
         public bool CommitTransaction(int transactionId)
@@ -184,17 +259,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             }
         }
 
+        private static IDictionary<Role, IList<int>> GetRolesInStoresWithRoles()
+        {
+            IDictionary<Role, IList<int>> rolesInStore = new ConcurrentDictionary<Role, IList<int>>();
+            foreach (Role role in Enum.GetValues(typeof(Role)))
+            {
+                rolesInStore.Add(role, new SynchronizedCollection<int>());
+            }
+            return rolesInStore;
+        }
+
         private void initializeRolesInStore()
         {
             // need to be called from constructor or with acquiring the lock 
             // saving founder as a coOnwer as well
             if (founder == null)
                 throw new ArgumentNullException("Initializing roles in stores should happen after founder is initialized");
-            this.rolesInStore = new ConcurrentDictionary<Role, IList<int>>();
-            foreach (Role role in Enum.GetValues(typeof(Role)))
-            {
-                rolesInStore.Add(role, new SynchronizedCollection<int>());
-            }
+            this.rolesInStore = GetRolesInStoresWithRoles();
             this.rolesInStore[Role.Owner].Add(founder.Id);
         }
 

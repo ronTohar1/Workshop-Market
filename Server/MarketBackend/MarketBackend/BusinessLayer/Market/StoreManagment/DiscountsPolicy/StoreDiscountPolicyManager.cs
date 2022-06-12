@@ -6,6 +6,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpres
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalOperators;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.NumericExpressions;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
 using System.Collections.Concurrent;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
@@ -18,9 +19,27 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 
         public IDictionary<int, Discount> discounts { get; private set; }
 
-        public StoreDiscountPolicyManager()
+        public StoreDiscountPolicyManager() : this(new ConcurrentDictionary<int, Discount>())
         {
-            this.discounts = new ConcurrentDictionary<int, Discount>();
+
+        }
+
+        private StoreDiscountPolicyManager(IDictionary<int, Discount> discounts)
+        {
+            this.discounts = discounts; 
+        }
+
+        // r S 8
+        public static StoreDiscountPolicyManager DataSDPMToSDPM(DataStoreDiscountPolicyManager dataSDPM)
+        {
+            IDictionary<int, Discount> discounts = new ConcurrentDictionary<int, Discount>(); 
+            
+            foreach(DataDiscount dataDiscount in dataSDPM.Discounts)
+            {
+                discounts.Add(dataDiscount.Id, Discount.DataDiscountToDiscount(dataDiscount)); 
+            }
+            
+            return new StoreDiscountPolicyManager(discounts); 
         }
 
         private int getId()

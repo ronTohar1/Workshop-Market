@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MarketBackend.DataLayer.DataManagementObjects
+namespace MarketBackend.DataLayer.DataManagers
 {
     public abstract class ObjectDataManager<T, U>
     {
@@ -19,14 +19,14 @@ namespace MarketBackend.DataLayer.DataManagementObjects
 
         protected Database db;
 
-        public ObjectDataManager(Database db)
+        public ObjectDataManager()
         {
-            this.db = db; 
+            db = Database.GetInstance();
         }
 
         public void Add(T toAdd)
         {
-            TryAction(() => AddThrows(toAdd)); 
+            TryAction(() => AddThrows(toAdd));
         }
 
         protected abstract void AddThrows(T toAdd);
@@ -39,7 +39,7 @@ namespace MarketBackend.DataLayer.DataManagementObjects
 
         public IList<T> Find(Predicate<T> predicate)
         {
-            return TryFunction(() => FindThrows(predicate)); 
+            return TryFunction(() => FindThrows(predicate));
         }
 
         protected abstract IList<T> FindThrows(Predicate<T> predicate);
@@ -49,33 +49,36 @@ namespace MarketBackend.DataLayer.DataManagementObjects
             TryAction(() => UpdateThrows(id, action));
         }
 
-        protected abstract void UpdateThrows(U id, Action<T> action);
+        protected void UpdateThrows(U id, Action<T> action)
+        {
+            action(FindThrows(id));
+        }
 
         public T Remove(U id)
         {
-            return TryFunction(() => RemoveThrows(id)); 
+            return TryFunction(() => RemoveThrows(id));
         }
 
         protected T RemoveThrows(U id)
         {
-            return RemoveThrows(FindThrows(id)); 
+            return RemoveThrows(FindThrows(id));
         }
 
         protected abstract T RemoveThrows(T toRemove);
 
         public void Save()
         {
-            TryAction(() => SaveThrows()); 
+            TryAction(() => SaveThrows());
         }
 
         protected void SaveThrows()
         {
-            db.SaveChanges(); 
+            db.SaveChanges();
         }
 
         private void TryAction(Action action)
         {
-            TryFunction<int>(() => { action(); return -1; });
+            TryFunction(() => { action(); return -1; });
         }
 
         private V TryFunction<V>(Func<V> function)

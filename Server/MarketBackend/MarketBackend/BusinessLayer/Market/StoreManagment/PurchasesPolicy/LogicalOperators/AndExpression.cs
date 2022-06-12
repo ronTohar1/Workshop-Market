@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.logi
         {
             this.firstPred = firstPred;
             this.secondPred = secondPred;
+        }
+
+        public static AndExpression DataAndExpressionToAndExpression(DataAndExpression dataAndExpression)
+        {
+            return new AndExpression(
+                IRestrictionExpression.DataRestrictionExpressionToIRestrictionExpression(dataAndExpression.FirstPred),
+                IRestrictionExpression.DataRestrictionExpressionToIRestrictionExpression(dataAndExpression.SecondPred)
+                );
         }
 
         public bool IsSatisfied(ShoppingBag bag)

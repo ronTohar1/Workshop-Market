@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.BasicDiscounts;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.BasicDiscounts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         public OneProductDiscount(int productId, int discount) : base(discount)
         {
             this.productId = productId;
+        }
+
+        public static OneProductDiscount DataOneProductDiscountToOneProductDiscount(DataOneProductDiscount dataOneProductDiscount)
+        {
+            return new OneProductDiscount(dataOneProductDiscount.ProductId, dataOneProductDiscount.Discount);
         }
 
         //check the price of the certain product id in the bag and return the discount percent of it

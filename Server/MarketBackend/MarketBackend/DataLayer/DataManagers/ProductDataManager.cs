@@ -1,16 +1,29 @@
 ﻿using MarketBackend.DataLayer.DatabaseObjects;
 using MarketBackend.DataLayer.DataDTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MarketBackend.DataLayer.DataManagers;
 
 namespace MarketBackend.DataLayer.DataManagementObjects
 {
     public class ProductDataManager : ObjectDataManager<DataProduct, int>
     {
-        public ProductDataManager(Database db) : base(db)
+        private static ProductDataManager instance = null;
+
+        public static ProductDataManager GetInstance()
+        {
+            if (instance == null)
+                instance = new ProductDataManager();
+            return instance;
+        }
+
+        public static void ForTestingSetInstance(ProductDataManager argumentInstance)
+        {
+            if (argumentInstance == null)
+                throw new ArgumentException("this function is for testing, and needs to get a not null instance");
+            instance = argumentInstance;
+        }
+
+        // protected for testing
+        protected ProductDataManager()
         {
         }
 
@@ -21,22 +34,24 @@ namespace MarketBackend.DataLayer.DataManagementObjects
 
         protected override DataProduct FindThrows(int id)
         {
-            throw new NotImplementedException();
+            DataProduct? dp = db.FindAsync<DataProduct>(id).Result;
+            if (dp == null)
+                throw new Exception("cannot be found in the database");
+            return dp;
         }
 
         protected override IList<DataProduct> FindThrows(Predicate<DataProduct> predicate)
         {
-            throw new NotImplementedException();
+            return db.Products.Where(entity => predicate.Invoke(entity)).ToList();
         }
 
         protected override DataProduct RemoveThrows(DataProduct toRemove)
         {
-            throw new NotImplementedException();
+            DataProduct? dp = db.Remove(toRemove).Entity;
+            if (dp == null)
+                throw new Exception("cannot be found in the database");
+            return dp;
         }
 
-        protected override void UpdateThrows(int id, Action<DataProduct> action)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,19 +31,44 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             counterLock.ReleaseMutex();
             return temp;
         }
-        public Bid(int productId, int memberId, int storeId ,double bid)
+        public Bid(int productId, int memberId, int storeId ,double bid) 
+            : this(
+                  getId(), storeId, productId, memberId, bid,
+                  new SynchronizedCollection<int>(), 
+                  false, 0 //counter offer
+                  )
         {
-            this.id = getId();
+
+        }
+
+        private Bid(int id, int storeId, int productId, int memberId, double bid,
+            IList<int> aprovingIds, bool counterOffer, double offer)
+        {
+            this.id = id;
             this.storeId = storeId;
             this.productId = productId;
             this.memberId = memberId;
             this.bid = bid;
 
             //counter offer
-            counterOffer = false;
-            offer = 0;
+            this.counterOffer = counterOffer;
+            this.offer = offer;
 
-            aprovingIds = new SynchronizedCollection<int>();
+            this.aprovingIds = aprovingIds;
+        }
+
+        // r S 8
+        public static Bid DataBidToBid(DataBid dataBid, int storeId)
+        {
+            IList<int> aprovingIds = new SynchronizedCollection<int>(); 
+
+            foreach(int approingId in dataBid.Approving.Select(dataMember => dataMember.Id))
+            {
+                aprovingIds.Add(approingId); 
+            }
+
+            return new Bid(dataBid.Id, storeId, dataBid.Product.Id, dataBid.Member.Id,
+                dataBid.Bid, aprovingIds, dataBid.CounterOffer, dataBid.Offer); 
         }
 
         public void approveBid(int memberId)

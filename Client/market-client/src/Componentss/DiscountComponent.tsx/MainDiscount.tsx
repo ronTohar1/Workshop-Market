@@ -44,7 +44,7 @@ import Navbar from '../Navbar';
 
 
 //Logical was removed
-const discountSteps = ['Store', 'Product', 'Max','Addative','Date','Conditional'];
+const discountSteps = ['Store', 'Product', 'Max','Date','Conditional'];
 const prdicateSteps = ['Amount in bag', 'Bag minimal cost','Logical'];
 const theme = createTheme({
   palette: {
@@ -92,19 +92,19 @@ export default function MainDiscount() {
         return <ProductDiscountForm  store={store} discountAdder={addDiscount}/>;
       case 2:
         return <MaxDiscountForm  store={store}  discountAdder={addDiscount} discounts={discounts}/>;
+      // case 3:
+      //   return <AddativeDiscountForm  store={store}  discountAdder={addDiscount} discounts={discounts}/>;
       case 3:
-        return <AddativeDiscountForm  store={store}  discountAdder={addDiscount} discounts={discounts}/>;
-      case 4:
         return <DateDiscountForm  store={store}  discountAdder={addDiscount}/>;
       // case 5:
       //     return <LogicalDiscount  store={store}  discountAdder={addDiscount}  discounts={discounts}/>;
-      case 5:
+      case 4:
           return <ConditionalDiscount  store={store}  discountAdder={addDiscount} discounts={discounts} predicates={predicates} />;
-      case 6:
+      case 5:
           return <AmountInBag  store={store}  predicateAdder={addPredicate}/>;
-      case 7:
+      case 6:
           return <BagMinimalCost  store={store}  predicateAdder={addPredicate}/>;
-      case 8:
+      case 7:
           return <LogicalPredicate  store={store}  predicateAdder={addPredicate} predicates={predicates}/>;
       default:
         throw new Error('Unknown step');

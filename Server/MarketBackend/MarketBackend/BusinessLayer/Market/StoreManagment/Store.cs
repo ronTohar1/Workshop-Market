@@ -23,7 +23,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private Mutex isOpenMutex;
 
 
-        private const int timeoutMilis = 2000; // time for wating for the rw lock in the next line, after which it throws an exception
+        private const int timeoutMilis = 3000; // time for wating for the rw lock in the next line, after which it throws an exception
         private ReaderWriterLock rolesAndPermissionsLock;
 
         private IDictionary<int, IDictionary<Product,int>> transactions;
@@ -638,6 +638,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             bool result = IsManager(memberId) && HasPermission(memberId, permission);
+            rolesAndPermissionsLock.ReleaseReaderLock();
+
             return result;
         }
      

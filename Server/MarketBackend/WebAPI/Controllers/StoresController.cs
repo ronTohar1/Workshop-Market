@@ -155,7 +155,7 @@ namespace WebAPI.Controllers
         [HttpPost("OpenNewStore")]
         public ActionResult<Response<int>> OpenNewStore([FromBody] OpenStoreRequest request)
         {
-            Response<int> response = storeManagementFacade.OpenStore(
+            Response<int> response = storeManagementFacade.OpenNewStore(
                 request.UserId, request.StoreName);
 
             if (response.IsErrorOccured())

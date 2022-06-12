@@ -149,7 +149,7 @@ using System.Collections.Concurrent;
         {
             // Opening a store whose owner is member2
             storeOwnerId = member2Id;
-            Response<int> serviceStoreIdResponse = storeManagementFacade.OpenStore(storeOwnerId, storeName);
+            Response<int> serviceStoreIdResponse = storeManagementFacade.OpenNewStore(storeOwnerId, storeName);
             storeId = serviceStoreIdResponse.Value;
 
             // the owner(member2) appoints member3 as a store owner
@@ -169,7 +169,7 @@ using System.Collections.Concurrent;
 
             // Opening a store whose owner is member2
             store2OwnerId = member2Id;
-            serviceStoreIdResponse = storeManagementFacade.OpenStore(store2OwnerId, store2Name);
+            serviceStoreIdResponse = storeManagementFacade.OpenNewStore(store2OwnerId, store2Name);
             store2Id = serviceStoreIdResponse.Value;
 
             // notice that member2 is a store owner in all stores

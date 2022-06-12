@@ -28,6 +28,19 @@ namespace MarketBackend.ServiceLayer
 
         private const string facadeErrorMsg = "Cannot give any facade when market is closed!";
 
+        // for init from config file
+        public SystemOperator()
+        {
+            AppConfig appConfig = new AppConfig();
+            if (!appConfig.RunInitFile)
+                throw new Exception("You can use this c'tor only when system should be loaded using init file. Please recheck appconfig file.");
+
+            SystemLoader systemLoader = new SystemLoader(appConfig.InitFilePath, this);
+            bso = new BusiessSystemOperator(systemLoader.AdminUsername, systemLoader.AdminPassword); // will initialize the controllers if it's the first boot;
+            OpenMarket(systemLoader.AdminUsername, systemLoader.AdminPassword);
+            systemLoader.LoadSystem();
+        }
+
 
         public SystemOperator(string username, string password)
         {

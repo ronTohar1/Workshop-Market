@@ -98,7 +98,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var dbConfigs = new DatabaseConfig();
+            var dbConfigs = new AppConfig();
 
             string localVMConnectionString = "Data Source = tcp:" + dbConfigs.ip + "\\" + dbConfigs.instanceName + "." + dbConfigs.databaseName + "," + dbConfigs.port + "; " +
                 "Database=" + dbConfigs.databaseName + "; " +

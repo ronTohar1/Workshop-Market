@@ -13,11 +13,11 @@ namespace MarketBackend {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.1.0.0")]
-    internal sealed partial class DatabaseConfig : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class AppConfig : global::System.Configuration.ApplicationSettingsBase {
         
-        private static DatabaseConfig defaultInstance = ((DatabaseConfig)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new DatabaseConfig())));
+        private static AppConfig defaultInstance = ((AppConfig)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AppConfig())));
         
-        public static DatabaseConfig Default {
+        public static AppConfig Default {
             get {
                 return defaultInstance;
             }
@@ -104,6 +104,30 @@ namespace MarketBackend {
             }
             set {
                 this["updateDatabase"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool RunInitFile {
+            get {
+                return ((bool)(this["RunInitFile"]));
+            }
+            set {
+                this["RunInitFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("init.json")]
+        public string InitFilePath {
+            get {
+                return ((string)(this["InitFilePath"]));
+            }
+            set {
+                this["InitFilePath"] = value;
             }
         }
     }

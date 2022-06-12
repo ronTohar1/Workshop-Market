@@ -317,9 +317,9 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
         [HttpPost("GetProductReviews")]
-        public ActionResult<Response<IDictionary<ServiceMember, IList<string>>>> GetProductReviews([FromBody] GetProductReviewsRequest request)
+        public ActionResult<Response<IDictionary<string, IList<string>>>> GetProductReviews([FromBody] GetProductReviewsRequest request)
         {
-            Response<IDictionary<ServiceMember, IList<string>>> response = storeManagementFacade.GetProductReviews(
+            Response<IDictionary<string, IList<string>>> response = storeManagementFacade.GetProductReviews(
                 request.StoreId, request.ProductId);
              
             if (response.IsErrorOccured())

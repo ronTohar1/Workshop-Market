@@ -463,8 +463,8 @@ export async function serverAddProductReview(
     // body: '{\n  "storeId": 0,\n  "memberId": 0,\n  "productId": 0,\n  "review": "string"\n}',
     body: JSON.stringify({
         'storeId': 0,
-        'memberId': 4,
-        'productId': productId,
+        'memberId': 0,
+        'productId': 0,
         'review': review
     })
 });
@@ -474,7 +474,7 @@ export async function serverAddProductReview(
 export async function serverGetProductReview(
   storeId: number, 
   productId: number
-): Promise<ClientResponse<Map<Member, string[]>>> {
+): Promise<ClientResponse<Map<string, string[]>>> {
   const uri = serverPort + "/api/Stores/GetProductReviews";
   const jsonResponse = await fetch(uri, {
     method: 'POST',
@@ -485,7 +485,7 @@ export async function serverGetProductReview(
     // body: '{\n  "storeId": 0,\n  "productId": 0\n}',
     body: JSON.stringify({
         'storeId': 0,
-        'productId': productId
+        'productId': 0
     })
 });
   return jsonResponse.json();

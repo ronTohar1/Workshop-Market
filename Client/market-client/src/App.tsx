@@ -57,7 +57,7 @@ export function addEventListener(listenTo: string, funcToExec: any) {
 
 const App = () => {
   // window.onunload = () => clearSession()
-  // initSession()
+   initSession()
   useEffect(() => {
     const handleTabClose = (event: any) => {
       event.preventDefault()

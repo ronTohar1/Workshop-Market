@@ -35,7 +35,7 @@ export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
     const memberStores: Promise<Store[]> = memberStoresPromise.reduce(
       async (stores: Promise<Store[]>, currStore: Promise<Store>) => (await stores).concat((await currStore))
       , Promise.resolve([]))
-
+    console.log(memberStores)
     return memberStores
   } catch (e) {
     return Promise.reject(e)

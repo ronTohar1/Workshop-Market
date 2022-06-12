@@ -26,7 +26,7 @@ import { initSession } from "./services/SessionService";
 
 // initSession()
 // window.onunload = () => localStorage.clear()
-// initSession()
+ initSession()
 
 const container = document.getElementById("root");
 //@ts-ignore

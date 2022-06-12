@@ -14,7 +14,7 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import Product from '../DTOs/Product';
 import Member from '../DTOs/Member';
-import { Container, InputLabel, TextField } from '@mui/material';
+import { Container, Grid, InputLabel, TextField } from '@mui/material';
 import { serverAddProductReview, serverGetProductReview } from '../services/StoreService';
 import { fetchResponse } from "../services/GeneralService"
 import { getBuyerId } from '../services/SessionService';
@@ -27,21 +27,22 @@ const Transition = React.forwardRef(function Transition(
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-const dummy = new Map<Member, string[]>();
-dummy.set(new Member(0, "ronto", true), ["Great quality", "I like cats", "Shawarma"])
-dummy.set(new Member(0, "David", true), ["Abale", "Shawarma","Abale", "Shawarma","Abale", "Shawarma"])
+const dummy = new Map<string, string[]>();
+// dummy.set("ronto", ["Great quality", "I like cats", "Shawarma"])
+// dummy.set("David", ["Abale", "Shawarma","Abale", "Shawarma","Abale", "Shawarma"])
 
 export default function ProductReview({product}: {product:Product}) {
   const [open, setOpen] = React.useState(false);
   const [newComment, setNewComment] = React.useState('');
-  const [comments, setComments] = React.useState<Map<Member, string[]>>(dummy);
+  const [comments, setComments] = React.useState<Map<string, string[]>>(dummy);
 
   const refreshReviews = ()=>{
     const responsePromise = serverGetProductReview(product.storeId,product.id)
     console.log(responsePromise)
-    fetchResponse(responsePromise).then((succedded)=>{
-      console.log(succedded)
-      setComments(succedded)
+    fetchResponse(responsePromise).then((succeed: any)=>{
+      const commentsMap = new Map<string, string[]>();
+      Object.keys(succeed).forEach(name=>commentsMap.set(name, succeed[name]))
+      setComments(commentsMap)
     })
     .catch((e) => {
       alert(e)
@@ -55,15 +56,13 @@ export default function ProductReview({product}: {product:Product}) {
   const handleSubmit = ()=>{
     const buyerId = getBuyerId()
     const responsePromise = serverAddProductReview(product.storeId,buyerId,product.id,newComment)
-    console.log(responsePromise)
     fetchResponse(responsePromise).then((succedded)=>{
-      console.log(succedded)
+      refreshReviews()
     })
     .catch((e) => {
       alert(e)
       setOpen(false)
      })
-    refreshReviews();
   }
 
   const handleClose = () => {
@@ -97,14 +96,14 @@ export default function ProductReview({product}: {product:Product}) {
           </Toolbar>
         </AppBar>
         <Container style={{minHeight: '32vw',maxHeight: '32vw', overflow: 'auto'}} >
-        <List>
+        <Grid container spacing={3} >
         {Array.from( comments ).map(([member, reviews]) => 
            reviews.map(review=>(  
-           <ListItem >
-            <ListItemText primary={`Member: ${member.userName}`} secondary={`Review:       ${review}`} />
-          </ListItem>))
+            <Grid item xs={12} md={11.7}>
+            <ListItemText primary={`Member: ${member}`} secondary={`Review:       ${review}`} />
+            </Grid>))
           )}
-        </List>
+        </Grid>
         </Container>
         <Container style={{maxHeight: '100%',maxWidth: '100%', overflow: 'auto'}} >
 

@@ -774,25 +774,25 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<IDictionary<ServiceMember, IList<string>>> GetProductReviews(int storeId, int productId) {
+        public Response<IDictionary<string, IList<string>>> GetProductReviews(int storeId, int productId) {
             try
             {
                 Store? s = storeController.GetStore(storeId);
                 if (s == null)
-                    return new Response<IDictionary<ServiceMember, IList<string>>>($"There isn't a store with an id {storeId}");
+                    return new Response<IDictionary<string, IList<string>>>($"There isn't a store with an id {storeId}");
                 IDictionary<Member, IList<string>> memberReviews= s.GetProductReviews(productId);
                 logger.Info($"GetProductReviews was called with parameters: [storeId {storeId}, productId = {productId}]");
-                return new Response<IDictionary<ServiceMember, IList<string>>>(memberReviews.Keys.ToDictionary(x => new ServiceMember(x), x=>memberReviews[x]));
+                return new Response<IDictionary<string, IList<string>>>(memberReviews.Keys.ToDictionary(x => x.Username, x=>memberReviews[x]));
             }
             catch (MarketException mex)
             {
                 logger.Error(mex, $"method: GetProductReviews, parameters: [storeId {storeId}, productId = {productId}]");
-                return new Response<IDictionary<ServiceMember, IList<string>>>(mex.Message);
+                return new Response<IDictionary<string, IList<string>>>(mex.Message);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"method: GetProductReviews, parameters: [storeId {storeId}, productId = {productId}]");
-                return new Response<IDictionary<ServiceMember, IList<string>>>("Sorry, an unexpected error occured. Please try again");
+                return new Response<IDictionary<string, IList<string>>>("Sorry, an unexpected error occured. Please try again");
             }
         }
         public Response<bool> AddProductReview(int storeId, int memberId, int productId, string review)

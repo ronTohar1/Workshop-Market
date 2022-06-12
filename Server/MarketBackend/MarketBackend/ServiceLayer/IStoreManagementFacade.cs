@@ -24,7 +24,7 @@ namespace MarketBackend.ServiceLayer
         Response<ServiceMember> GetFounder(int storeId, int memberId);
         Response<IList<Permission>> GetManagerPermissions(int storeId, int requestingMemberId, int managerMemberId);
         Response<IList<int>> GetMembersInRole(int storeId, int memberId, Role role);
-        Response<IDictionary<ServiceMember, IList<string>>> GetProductReviews(int storeId, int productId);
+        Response<IDictionary<string, IList<string>>> GetProductReviews(int storeId, int productId);
         Response<IList<Purchase>> GetPurchaseHistory(int userId, int storeId);
         Response<bool> MakeCoManager(int userId, int targetUserId, int storeId);
         Response<bool> MakeCoOwner(int userId, int targetUserId, int storeId);

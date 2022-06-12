@@ -14,8 +14,8 @@ import { getIsGuest } from "../services/SessionService"
 
 const cards = [1, 2, 3]
 
-// const backgroundImage =
-//   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
+const backgroundImage =
+  "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
 
 
 const createButton = (name: string, path: string) => {
@@ -79,17 +79,30 @@ const styles = {
 }
 export default function Home() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} >
     {/* {!getIsGuest() && <Navbar/> } */}
       
       <main>
-        <div style={styles.paperContainer}>
+      <ProductHeroLayout
+          sxBackground={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: "100vh",
+            outerHeight: "150vh",
+          }}>
+        
         {/* Increase the network loading priority of the background image. */}
         {/* <img
           style={{ display: "none" }}
           src={backgroundImage}
           alt="increase priority"
         /> */}
+          <img
+            style={{ display: "none" }}
+            src={backgroundImage}
+            alt='increase priority'
+          />
         <Typography color="primary" align="center" variant="h2">
           Buy smart and cheap
         </Typography>
@@ -118,7 +131,7 @@ export default function Home() {
             {buttons}
           </ButtonGroup>
         </Box>
-        </div>
+        </ProductHeroLayout>
       </main>
     </ThemeProvider>
   )

@@ -647,8 +647,30 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException("Could not remove co owner: " + permissionError);
             }
 
-            Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId);
-            RemovedByOwnerBranchUpdate(removedBrance, $"We regeret to inform you that you've lost your position at {this.name}");
+            string notification = $"We regeret to inform you that you've lost your position at {this.name}"; 
+
+            IList<int> memberIdsToRemove = appointmentsHierarchy.GetHierarchyValueList(); 
+            Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId, () =>
+            {
+                DataStore dataStore = storeDataManager.Find(id);
+
+                // remove roles in database
+                // 
+                foreach (int memberToRemoveId in memberIdsToRemove)
+                {
+                    IList<DataStoreMemberRoles> rolesToRemove = dataStore.MembersPermissions.Where(dataRole => dataRole.MemberId == memberToRemoveId).ToList();
+                    foreach (DataStoreMemberRoles roleToRemove in rolesToRemove)
+                    {
+                        StoreMemberRolesDataManager.GetInstance().Remove(roleToRemove.Id);
+                    }
+
+                    // notification in database 
+
+                    membersGetter(memberToRemoveId).DataNotify(notification);
+                }
+
+            });
+            RemovedByOwnerBranchUpdate(removedBrance, notification);
 
             rolesAndPermissionsLock.ReleaseWriterLock();
             
@@ -744,6 +766,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException(StoreErrorMessage("The id: " + managerMemberId + " is not of a managaer"));
             }
+
+            storeDataManager.Update(id, store => store.MembersPermissions
+            .FirstOrDefault(memberPermission => memberPermission.MemberId == managerMemberId, null)
+            .ManagerPermissions = newPermissions.Select(permission =>
+                new DataManagerPermission() { Permission = permission }).ToList()
+            );
+            storeDataManager.Save();
+
             managersPermissions[managerMemberId] = newPermissions;
 
             rolesAndPermissionsLock.ReleaseWriterLock();

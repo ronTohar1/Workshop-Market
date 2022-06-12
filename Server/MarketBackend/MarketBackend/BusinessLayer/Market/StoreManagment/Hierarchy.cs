@@ -111,8 +111,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			Hierarchy<T> valueHierarchyParent = valueHierarchy.parent;
 			if (valueHierarchyParent != null) {
 
-				hierarchyDataManager.Remove(id);
-
+				DataRemove(); 
 				saveChanges();
 
 				valueHierarchyParent.children.Remove(valueHierarchy);
@@ -120,6 +119,22 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 			hierarchyMutex.ReleaseMutex();
 			return valueHierarchy;
+		}
+
+		public IList<T> GetHierarchyValueList()
+        {
+			IList<T> hierarchyIdList = children.SelectMany(child => child.GetHierarchyValueList()).ToList();
+			hierarchyIdList.Insert(0, value);
+			return hierarchyIdList; 
+		}
+
+		private void DataRemove()
+        {
+			hierarchyDataManager.Remove(id);
+			foreach (Hierarchy<T> child in children)
+            {
+				child.DataRemove(); 
+            }
 		}
 
 		public Hierarchy<T> FindHierarchy(T node)

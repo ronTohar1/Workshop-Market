@@ -20,6 +20,7 @@ import { Stack } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import HomeIcon from "@mui/icons-material/Home"
 import { pathAdmin, pathHome } from "../Paths"
+import LoadingCircle from "../Componentss/LoadingCircle"
 
 const backgroundImage =
   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
@@ -45,57 +46,65 @@ const theme = createTheme({
 })
 
 export default function Admin() {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
+  // const [noReason, setNoReason] = React.useState(true)
+  // React.useEffect(() => {
+  //   alert(getBuyerId())
+  //   setNoReason(false)
+  // }, [])
   return (
     <ThemeProvider theme={theme}>
-      <main>
+      <ProductHeroLayout
+        sxBackground={{
+          // backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: "100vh",
+          outerHeight: "150vh",
+        }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Stack>
+            {/* Increase the network loading priority of the background image. */}
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <Stack >
+                <Button
+                  variant="contained"
+                  // onClick={() => navigate(pathHome)}
+                  href={pathHome}
+                  color="success"
+                  // sx={{ position: "absolute", top: "0px", right: "0px" }}
+                  endIcon={<HomeIcon />}
+                >
+                  Home
+                </Button>
+                <Box
+                  component="img"
+                  sx={{
+                    m: 4,
+                    height: 233,
+                    width: 175,
+                    maxHeight: { xs: 233, md: 167 },
+                    maxWidth: { xs: 350, md: 250 },
+                  }}
+                  alt="Admin setting"
+                  src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                />
+              </Stack>
+            </div>
 
-        <ProductHeroLayout
-          sxBackground={{
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            height: "100vh",
-            outerHeight: "150vh",
-          }}>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Stack>
-              {/* Increase the network loading priority of the background image. */}
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Stack >
-                  <Button
-                    variant="contained"
-                    href={pathHome}
-                    color="success"
-                    // sx={{ position: "absolute", top: "0px", right: "0px" }}
-                    endIcon={<HomeIcon />}
-                  >
-                    Home
-                  </Button>
-                  <Box
-                    component="img"
-                    sx={{
-                      m: 4,
-                      height: 233,
-                      width: 175,
-                      maxHeight: { xs: 233, md: 167 },
-                      maxWidth: { xs: 350, md: 250 },
-                    }}
-                    alt="Admin setting"
-                    src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                  />
-                </Stack>
-              </div>
-
-              <BuyerPurchaseHistoryForm />
-              <StorePurchaseHistoryForm />
-              <ShowLoggedInMembers />
-              <DisplayMemberAccount />
-              <RemoveAMember />
-            </Stack>
-          </div>
-        </ProductHeroLayout>
-      </main>
+            {BuyerPurchaseHistoryForm()}
+            {StorePurchaseHistoryForm()}
+            {ShowLoggedInMembers()}
+            {DisplayMemberAccount()}
+            {RemoveAMember()}
+            {/* <BuyerPurchaseHistoryForm />
+                <StorePurchaseHistoryForm />
+                <ShowLoggedInMembers />
+                <DisplayMemberAccount />
+                <RemoveAMember /> */}
+          </Stack>
+        </div>
+      </ProductHeroLayout>
     </ThemeProvider>
   )
 }

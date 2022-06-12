@@ -75,15 +75,7 @@ export default function Login() {
 
     fetchResponse(result).then((memberId: number) => {
 
-      if (username == "admin" && password == "admin") {
-        sessionService.setIsGuest(false)
-        sessionService.setBuyerId(memberId)
-        //@ts-ignore
-        sessionService.setUsername(username)
-        sessionService.setIsAdmin(true)
-        navigate(pathAdmin)
-        return;
-      }
+
       const address = `ws://127.0.0.1:7890/${username}-notifications`
       initWebSocket(address)
 
@@ -92,12 +84,16 @@ export default function Login() {
       sessionService.setBuyerId(memberId)
       //@ts-ignore
       sessionService.setUsername(username)
+      if (username == "admin" && password == "admin")
+        sessionService.setIsAdmin(true)
 
       fetchResponse(serverGetPendingMessages(username))
         .then((messages: string[]) => messages.forEach(alertFunc))
         .then(() => {
-          navigate(pathHome)
+          if (username == "admin" && password == "admin")
+            navigate(pathAdmin)
 
+          navigate(pathHome)
         })
         .catch(alert)
     }).catch((e) => {

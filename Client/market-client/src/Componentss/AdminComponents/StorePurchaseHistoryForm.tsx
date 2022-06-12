@@ -14,14 +14,14 @@ import { getBuyerId } from '../../services/SessionService';
 import { fetchResponse } from '../../services/GeneralService';
 
 export const purchasesDummy= [
-  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
-  new Purchase("10/10/2021",10, "bought 3 apples", 0),
-  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
-  new Purchase("10/10/2021",10, "bought 3 apples", 0),
-  new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-  new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
+  // new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
+  // new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
+  // new Purchase("10/10/2021",10, "bought 3 apples", 0),
+  // new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
+  // new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
+  // new Purchase("10/10/2021",10, "bought 3 apples", 0),
+  // new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
+  // new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
 
 ]
 
@@ -102,7 +102,7 @@ export default function StorePurchaseHistoryForm() {
         <Container style={{maxHeight: '5%', overflow: 'auto'}} >
       <Grid container spacing={3} >
         {purchases.map(purchase => (
-          <Grid item xs={12} md={6} lg={4}>
+          <Grid item xs={12} md={11.7}>
             <PurchaseCard purchase={purchase}/>
           </Grid>
         ))}

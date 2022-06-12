@@ -10,11 +10,13 @@ import ButtonGroup from "@mui/material/ButtonGroup"
 import Box from "@mui/material/Box"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { pathLogin, pathRegister, pathSearch } from "../Paths"
+import { getIsGuest } from "../services/SessionService"
 
 const cards = [1, 2, 3]
 
-// const backgroundImage =
-//   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
+const backgroundImage =
+  "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
+
 
 const createButton = (name: string, path: string) => {
   return (
@@ -72,21 +74,35 @@ const theme = createTheme({
 const styles = {
   paperContainer: {
     height: 1356,
-    // backgroundImage: `url(${"https://images.unsplash.com/photo-1630326120534-9619533ba0d3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"})`,
+    backgroundImage: "https://images.unsplash.com/photo-1471193945509-9ad0617afabf",
   },
 }
 export default function Home() {
-  const bar = Navbar()
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} >
+    {/* {!getIsGuest() && <Navbar/> } */}
+      
       <main>
-        <div style={styles.paperContainer}>
+      <ProductHeroLayout
+          sxBackground={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: "100vh",
+            outerHeight: "150vh",
+          }}>
+        
         {/* Increase the network loading priority of the background image. */}
         {/* <img
           style={{ display: "none" }}
           src={backgroundImage}
           alt="increase priority"
         /> */}
+          <img
+            style={{ display: "none" }}
+            src={backgroundImage}
+            alt='increase priority'
+          />
         <Typography color="primary" align="center" variant="h2">
           Buy smart and cheap
         </Typography>
@@ -115,7 +131,7 @@ export default function Home() {
             {buttons}
           </ButtonGroup>
         </Box>
-        </div>
+        </ProductHeroLayout>
       </main>
     </ThemeProvider>
   )

@@ -1,4 +1,5 @@
 import Member from "../DTOs/Member"
+import MemberInRole from "../DTOs/MemberInRole"
 import Product from "../DTOs/Product"
 import Roles from "../DTOs/Roles"
 import Store from "../DTOs/Store"
@@ -16,76 +17,29 @@ export const dummyMember1 = new Member(0, "username1", true)
 export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
   try {
     // Getting all stores ids from server
-    const storesToProducts: Map<number, Product[]> = await fetchResponse(
-      serverSearchProducts(null, null, null, null, null, null)
+    const memberManager: MemberInRole = { memberId: memberId, roleInStore: Roles.Manager }
+    const memberOwner: MemberInRole = { memberId: memberId, roleInStore: Roles.Owner }
+
+    const managedStoresDict: Map<number, Product[]> = await fetchResponse(
+      serverSearchProducts(null, null, null, null, null, null, memberManager, false) // Want all stores without products
     )
 
-    // Create stores Ids array
-    let storesIds: number[] = []
-    for (const storeId in storesToProducts) {
-      storesIds.push(Number(storeId))
-    }
+    const ownedStoresDict: Map<number, Product[]> = await fetchResponse(
+      serverSearchProducts(null, null, null, null, null, null, memberOwner, false) // Want all stores without products
+    )
 
-    // Filter stores that are managed or owned by member
-    let managedStoresIds: number[] = []
+    const managedStoresPromise: Promise<Store>[] = Object.keys(managedStoresDict).map((storeId: string) => fetchResponse(serverGetStore(Number(storeId))))
+    const ownedStoresPromise: Promise<Store>[] = Object.keys(ownedStoresDict).map((storeId: string) => fetchResponse(serverGetStore(Number(storeId))))
 
-    //Filtering for all stores that are Managed by member
-    storesIds.forEach(async (storeId: number) => {
-      try {
-        const managers = await fetchResponse(
-          serverGetMembersInRoles(memberId, storeId, Roles.Manager)
-        )
-        if (managers.includes(memberId)) managedStoresIds.push(storeId) // If member is manager in store -> add to managed stores
-      } catch (e) {}
-    })
+    const memberStoresPromise: Promise<Store>[] = managedStoresPromise.concat(ownedStoresPromise)
+    const memberStores: Promise<Store[]> = memberStoresPromise.reduce(
+      async (stores: Promise<Store[]>, currStore: Promise<Store>) => (await stores).concat((await currStore))
+      , Promise.resolve([]))
 
-    //Filtering for all stores that are owned by member
-    storesIds.forEach(async (storeId: number) => {
-      try {
-        const managers = await fetchResponse(
-          serverGetMembersInRoles(memberId, storeId, Roles.Owner)
-        )
-        if (managers.includes(memberId)) managedStoresIds.push(storeId) // If member is manager in store -> add to managed stores
-      } catch (e) {}
-    })
-
-    // Get the managed or owned stores from server
-    let managedStores: Store[] = []
-    managedStoresIds.forEach(async (storeId: number) => {
-      try {
-        const store: Store = await fetchResponse(serverGetStore(storeId))
-        managedStores.push(store)
-      } catch (e) {}
-    })
-
-    return managedStores
+    return memberStores
   } catch (e) {
     return Promise.reject(e)
   }
-  //   return fetchResponse(serverSearchProducts(null, null, null, null, null, null))
-  //     .then((storesToProducts: Map<number, Product[]>) => {
 
-  //       let storesIds: number[] = []
-  //       for (const storeId in storesToProducts) {
-  //         storesIds.push(Number(storeId))
-  //       }
-
-  //       let stores: Store[] = []
-  //       storesIds.forEach((storeId: number) => {
-
-  //         fetchResponse(
-  //           serverGetMembersInRoles(member.id, storeId, Roles.Manager)
-  //         )
-  //           .then((managedStoresIds: number[]) => {
-  //             if (managedStoresIds.includes(member.id)) {
-  //               fetchResponse(serverGetStore(storeId)).then((store: Store) =>
-  //                 stores.push(store)
-  //               ).catch((e)=> Promise.reject(e))
-  //             }
-  //           })
-  //       })
-  //       return stores
-
-  //     })
-  //     .catch((e) => Promise.reject(e))
 }
+

@@ -17,19 +17,28 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { BadgeProps, List, ListItem, ListItemText } from "@mui/material"
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"
 import Stack from "@mui/material/Stack"
-import { pathCart, pathHome, pathLogin, pathSearch, pathStoreManager } from "../Paths"
+import {
+  pathCart,
+  pathHome,
+  pathLogin,
+  pathSearch,
+  pathStoreManager,
+} from "../Paths"
 import { Link, Navigate } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { Tooltip } from "@mui/material"
 import MarketNotification from "../DTOs/MarketNotification"
-import { dummyNotificaitons } from "../services/NotificationsService"
+import { clearNotifications, dummyNotificaitons, noteConn } from "../services/NotificationsService"
 import { getCartProducts } from "../services/ProductsService"
 import { fetchResponse } from "../services/GeneralService"
-import { getBuyerId, getIsGuest } from "../services/SessionService"
-import { serverGetCart } from "../services/BuyersService"
+import { clearSession, getBuyerId, getIsGuest, getUsername, initSession, storage } from "../services/SessionService"
+import { serverGetCart, serverLogout } from "../services/BuyersService"
 import Cart from "../DTOs/Cart"
+import { addNotificationListener } from '../services/NotificationsService'
+import { Logout } from "@mui/icons-material"
 
 const currentNotifications = dummyNotificaitons
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -102,6 +111,7 @@ const notificationsMenu = (
 
 export default function Navbar() {
   // const navigate = (x: any) => {};
+
   const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [searchValue, setSearchValue] = React.useState("")
@@ -113,16 +123,24 @@ export default function Navbar() {
     React.useState<MarketNotification[]>(currentNotifications)
   const [numItemsInCart, setNumItemsInCart] = React.useState<number>(0)
 
-  React.useEffect(() => {
-    fetchResponse(serverGetCart(getBuyerId()))
-      .then((cart: Cart) => {
-        const [prodsIds, prodsToQuantity] = getCartProducts(cart)
-        setNumItemsInCart(prodsIds.length)
-      })
-      .catch((e) => {
-        alert(e)
-      })
-  })
+  // React.useEffect(() => {
+  //   fetchResponse(serverGetCart(getBuyerId()))
+  //     .then((cart: Cart) => {
+  //       const [prodsIds, prodsToQuantity] = getCartProducts(cart)
+  //       setNumItemsInCart(prodsIds.length)
+  //     })
+  //     .catch((e) => {
+  //       alert("Couldn't load some of your information")
+  //     })
+  // })
+
+  // React.useEffect(()=>{
+  //   console.log(noteConn.notifications)
+  //   if (noteConn.notifications.length > 0)
+  //     alert("new message!")
+  //   clearNotifications()
+  // },[noteConn.notifications])
+
 
   const handleClickHome = () => {
     navigate(`${pathHome}`)
@@ -155,11 +173,8 @@ export default function Navbar() {
 
   const handleMyAccountClick = () => {
     setAnchorEl(null)
-    if(getIsGuest())
-      navigate(`${pathLogin}`)
-    else
-      navigate(`${pathStoreManager}`)
-
+    if (getIsGuest()) navigate(`${pathLogin}`)
+    else navigate(`${pathStoreManager}`)
   }
 
   const menuId = "primary-search-account-menu"
@@ -199,25 +214,62 @@ export default function Navbar() {
       ].join(","),
     },
   })
+
+  const handleLogout = () => {
+    if (getIsGuest()) {
+      alert("First Login Before Logging Out!")
+    }
+    else {
+      fetchResponse(serverLogout(getBuyerId()))
+        .then(
+          (success: boolean) => {
+            alert("Good Bye " + getUsername())
+
+            clearSession()
+            initSession().then(() => navigate(pathHome))
+          }
+        )
+        .catch(alert)
+    }
+  }
   return (
     <ThemeProvider theme={theme}>
       <AppBar position="sticky">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <div>
-            <Typography
-              onClick={handleClickHome}
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{
-                display: { xs: "none", sm: "block" },
-                "&:hover": {
-                  cursor: "pointer",
-                },
-              }}
-            >
-              Workshop Market
-            </Typography>
+            <Stack direction='row' spacing={8}>
+              <Typography
+                onClick={handleClickHome}
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
+              >
+                Ronto's Market
+              </Typography>
+
+              <Typography
+                onClick={handleMyAccountClick}
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                  ml: '10'
+                }}
+              >
+                {getIsGuest() ? "Hello Guest" : "Hello " + getUsername()}
+              </Typography>
+            </Stack>
+
             <Box sx={{}} />
           </div>
           <div>
@@ -290,6 +342,19 @@ export default function Navbar() {
                   <ShoppingCartIcon />
                 </StyledBadge>
               </IconButton>
+              <Tooltip title="Logout from your account">
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleLogout}
+                  color="inherit"
+                >
+                  <Logout />
+                </IconButton>
+              </Tooltip>
               <IconButton
                 size="large"
                 edge="end"

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    internal class ServiceAtlestAmount : IServiceRestriction
+    public class ServiceAtlestAmount : ServiceRestriction
     {
         public int productId { get; set; }
         public int amount { get; set; }
 
-        public ServiceAtlestAmount(int productId, int amount)
+        public ServiceAtlestAmount(int productId, int amount, string tag = "") : base(tag)
         {
             this.productId = productId;
             this.amount = amount;

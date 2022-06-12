@@ -126,6 +126,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
        => Notify(new string[] { notification });
 
         private void SendPending() {
+            
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
                 pendingNotifications.Clear();
         }

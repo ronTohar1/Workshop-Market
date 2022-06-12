@@ -12,9 +12,9 @@ import Navbar from "../Componentss/Navbar"
 import Cart from "../DTOs/Cart"
 import Product from "../DTOs/Product"
 import ShoppingBag from "../DTOs/ShoppingBag"
-import { pathHome } from "../Paths"
+import { pathCheckout, pathHome } from "../Paths"
 import {
-  serverChangeProductAmount,
+  serverChangeProductAmountInCart,
   serverGetCart,
   serverRemoveFromCart,
 } from "../services/BuyersService"
@@ -63,7 +63,7 @@ const getProductQuantity = (
   return quantity
 }
 
-function convertToCartProduct(
+export function convertToCartProduct(
   products: Product[],
   quantities: Map<number, number>
 ): CartProduct[] {
@@ -134,7 +134,7 @@ export default function CartPage() {
 
   const reloadCartProducts = () => setRenderProducts(!renderProducts)
 
-  const calulateTotal = (): number => {
+  const calulateTotal = (cartProducts: CartProduct[]): number => {
     return cartProducts.reduce(
       (total: number, cartProduct: CartProduct) =>
         total + cartProduct.product.price,
@@ -144,7 +144,7 @@ export default function CartPage() {
 
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
     fetchResponse(
-      serverChangeProductAmount(
+      serverChangeProductAmountInCart(
         getBuyerId(),
         product.id,
         product.storeId,
@@ -180,7 +180,9 @@ export default function CartPage() {
     setOpenRemoveDialog(true)
   }
 
-  const handlePurchase = () => alert("Purchasing.....")
+  const handlePurchase = () => {
+    navigate(pathCheckout)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -208,7 +210,7 @@ export default function CartPage() {
         </Box>
         <Box sx={{ width: "20%", mt: 2 }}>
           {CartSummary(
-            calulateTotal(),
+            calulateTotal(cartProducts),
             -1,
             cartProducts,
             expandSummary,

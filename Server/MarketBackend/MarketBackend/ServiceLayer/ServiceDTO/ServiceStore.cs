@@ -16,6 +16,9 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public ServiceMember Founder { get; }
         public IList<ServiceProduct> Products { get; private set; }
 
+        public IList<ServicePurchasePolicy> PurchasePolicies { get; set; }
+        public IList<ServiceDiscountPolicy> DiscountPolicies { get; set; }
+
         public ServiceStore(int id, Store store, IList<ServiceProduct> productsIds)
         {
             Id = id;
@@ -23,7 +26,8 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             Products = productsIds;
             IsOpen = store.isOpen;
             Founder = new ServiceMember(store.founder);
-
+            DiscountPolicies = store.discountManager.discounts.Values.Select(disc => new ServiceDiscountPolicy(disc.id, disc.description)).ToArray();
+            PurchasePolicies = store.purchaseManager.purchases.Values.Select(purch => new ServicePurchasePolicy(purch.id, purch.description)).ToArray();
         }
 
         public override bool Equals(Object? other)

@@ -17,6 +17,7 @@ import ShowLoggedInMembers from "../Componentss/AdminComponents/ShowLoggedInMemb
 import DisplayMemberAccount from "../Componentss/AdminComponents/DisplayMemberAccount"
 import RemoveAMember from "../Componentss/AdminComponents/RemoveAMember"
 import { Stack } from "@mui/material"
+import { useNavigate } from "react-router-dom"
 
 const backgroundImage =
   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
@@ -42,10 +43,18 @@ const theme = createTheme({
 })
 
 export default function Admin() {
+  const navigate = useNavigate()
   return (
     <ThemeProvider theme={theme}>
       <main>
-        <Navbar />
+        <ProductHeroLayout
+          sxBackground={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            height: "100vh",
+            outerHeight: "150vh",
+          }}>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Stack>
             {/* Increase the network loading priority of the background image. */}
@@ -71,6 +80,7 @@ export default function Admin() {
             <RemoveAMember />
           </Stack>
         </div>
+        </ProductHeroLayout>
       </main>
     </ThemeProvider>
   )

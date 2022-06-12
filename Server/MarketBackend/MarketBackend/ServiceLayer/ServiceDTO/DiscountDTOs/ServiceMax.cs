@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceMax : IServiceDiscount
+    public class ServiceMax : ServiceDiscount
     {
-        public IList<IServiceDiscount> discounts { get; set; }
-        public ServiceMax()
+        public IList<ServiceDiscount> discounts { get; set; }
+        public ServiceMax(string tag = "") : base(tag)
         {
-            discounts = new List<IServiceDiscount>();
+            discounts = new List<ServiceDiscount>();
         }
 
-        public void AddDiscount(IServiceDiscount discount)
+        public void AddDiscount(ServiceDiscount discount)
         {
             discounts.Add(discount);
         }

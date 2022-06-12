@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    internal class ServiceAtMostAmount : ServiceAtlestAmount
+    public class ServiceAtMostAmount : ServiceAtlestAmount
     {
-        public ServiceAtMostAmount(int productId, int amount) : base(productId, amount) { }
+        public ServiceAtMostAmount(int productId, int amount, string tag = "") : base(productId, amount, tag) { }
     }
 }

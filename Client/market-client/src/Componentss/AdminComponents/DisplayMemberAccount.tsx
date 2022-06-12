@@ -92,9 +92,14 @@ export default function DisplayMemberAccount() {
           </form>
         </DialogContent>
         <Container style={{maxHeight: '5%', overflow: 'auto'}} >
-     
-          <Grid item xs={12} md={6} lg={4}>
+        <Grid container spacing={3} >
+          {member==memberDummy? 
+          (<Grid item xs={12} md={6} lg={4}>
+            </Grid>):
+          (<Grid item xs={12} md={6} lg={11.3}>
           <MemberCard member={member}/>
+          </Grid>)
+          }
           </Grid>
         
     </Container>

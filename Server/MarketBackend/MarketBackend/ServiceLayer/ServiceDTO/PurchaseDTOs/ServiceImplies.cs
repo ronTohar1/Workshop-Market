@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    internal class ServiceImplies : IServicePurchase
+    public class ServiceImplies : ServicePurchasePolicy
     {
         //condition is what is allowed only if a different things happens
-        public IServicePredicate condition { get; set; }
+        public ServicePurchasePredicate condition { get; set; }
 
         //allowing is the thing condition is dependent on
-        public IServicePredicate allowing { get; set; }
+        public ServicePurchasePredicate allowing { get; set; }
 
 
 
-        public ServiceImplies(IServicePredicate condition, IServicePredicate allowing)
+        public ServiceImplies(ServicePurchasePredicate condition, ServicePurchasePredicate allowing, string tag="") : base(tag)
         {
             this.condition = condition;
             this.allowing = allowing;

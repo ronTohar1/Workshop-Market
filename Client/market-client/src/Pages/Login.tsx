@@ -1,23 +1,43 @@
-import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { serverLogin } from "../services/BuyersService";
-import { useNavigate } from "react-router-dom";
-import { pathHome } from "../Paths";
-import * as sessionService from "../services/SessionService";
+import * as React from "react"
+import Avatar from "@mui/material/Avatar"
+import Button from "@mui/material/Button"
+import CssBaseline from "@mui/material/CssBaseline"
+import TextField from "@mui/material/TextField"
+import FormControlLabel from "@mui/material/FormControlLabel"
+import Checkbox from "@mui/material/Checkbox"
+import Link from "@mui/material/Link"
+import Paper from "@mui/material/Paper"
+import Box from "@mui/material/Box"
+import Grid from "@mui/material/Grid"
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import Typography from "@mui/material/Typography"
+import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { serverGetPendingMessages, serverLogin } from "../services/BuyersService"
+import { useNavigate } from "react-router-dom"
+import { pathAdmin, pathHome } from "../Paths"
+import * as sessionService from "../services/SessionService"
+import HomeIcon from "@mui/icons-material/Home"
+import { fetchResponse } from '../services/GeneralService'
+import { noteConn, setUpConnection } from "../services/NotificationsService"
+import { addEventListener, alertFunc, initWebSocket } from "../App"
+// import WebSocket from 'ws'
 
-const theme = createTheme();
+const theme = createTheme({
+  typography: {
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+  },
+})
 
 const backgroundImages = [
   "https://images.unsplash.com/photo-1472851294608-062f824d29cc",
@@ -28,44 +48,86 @@ const backgroundImages = [
   "https://images.unsplash.com/photo-1559631658-9705048d977e",
   "https://images.unsplash.com/photo-1502160348486-995f41fa55b1",
   "https://images.unsplash.com/photo-1601599963565-b7ba29c8e3ff",
-];
+]
 
 const randBackgroundImage = () =>
-  backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+  backgroundImages[Math.floor(Math.random() * backgroundImages.length)]
 
 export default function Login() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     if (!sessionService.getIsGuest()) {
-      alert("You are already logged in!\nLog out before you try to log in");
+      alert("You are already logged in!\nLog out before you try to log in")
+      return
+    }
+
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    const username = data.get("username")?.toString()
+    const password = data.get("password")?.toString()
+    const result = serverLogin(username, password)
+    if (username === undefined) // Not going to happen but
+    {
+      alert("Please enter username")
       return;
     }
-    console.log(sessionService.getIsGuest())
 
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const username = data.get("username")?.toString();
-    const password = data.get("password")?.toString();
-    const result = serverLogin(username, password);
+    fetchResponse(result).then((memberId: number) => {
 
-    try {
-      const response = await result;
-      if (response.errorOccured) {
-        alert(response.errorMessage);
-      } else {
-        alert("Logged in successfully!");
-        sessionService.setIsGuest(false);
-        sessionService.setBuyerId(response.value);
-        navigate(pathHome);
+
+      const address = `ws://127.0.0.1:7890/${username}-notifications`
+      // const ws = new WebSocket(address)
+      // ws.addEventListener('message', function (event) {
+      //   alertFunc("Message from server:\n" + event.data);
+      // });
+
+      // ws.addEventListener('open', function (event) {
+      //   alertFunc("Opened")
+      // });
+
+      // ws.addEventListener('close', function (event) {
+      //   alertFunc("Closed")
+      // });
+      initWebSocket(address)
+      addEventListener('message', function (event:any) {
+        alertFunc("Message from server:\n" + event.data);
+      })
+
+      addEventListener('open', function (event:any) {
+        alertFunc("Opened");
+      })
+
+      addEventListener('close', function (event:any) {
+        alertFunc("Closed");
+      })
+      alert("Logged in successfully!")
+      sessionService.setIsGuest(false)
+      sessionService.setBuyerId(memberId)
+      //@ts-ignore
+      sessionService.setUsername(username)
+
+      fetchResponse(serverGetPendingMessages(username))
+        .then((messages: string[]) => messages.forEach(alertFunc))
+        .catch(alert)
+      
+      if (username=="admin" && password=="admin"){
+        navigate(pathAdmin)  
+        return;
       }
-    } catch (e) {
-      alert("Sorry, an unkown error occured");
-    }
-  };
+      navigate(pathHome)
+    }).catch((e) => {
+      alert(e)
+    })
+
+  }
 
   return (
     <ThemeProvider theme={theme}>
+      {/* <IconButton size="large">
+        <HomeIcon sx={{ fontsize: 100 }} color="primary" />
+      </IconButton> */}
+
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid
@@ -135,7 +197,17 @@ export default function Login() {
                 Sign In
               </Button>
               <Grid container>
-                <Grid item xs></Grid>
+                <Grid item xs>
+                  <Button
+                    variant="contained"
+                    href={pathHome}
+                    color="primary"
+                    // sx={{ position: "absolute", top: "0px", right: "0px" }}
+                    endIcon={<HomeIcon />}
+                  >
+                    Home
+                  </Button>
+                </Grid>
                 <Grid item>
                   <Link href="/register" variant="body2">
                     {"Don't have an account? Sign Up"}
@@ -147,5 +219,5 @@ export default function Login() {
         </Grid>
       </Grid>
     </ThemeProvider>
-  );
+  )
 }

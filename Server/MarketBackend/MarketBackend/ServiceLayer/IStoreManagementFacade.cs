@@ -20,7 +20,7 @@ namespace MarketBackend.ServiceLayer
         Response<IList<Purchase>> GetPurchaseHistory(int userId, int storeId);
         Response<bool> MakeCoManager(int userId, int targetUserId, int storeId);
         Response<bool> MakeCoOwner(int userId, int targetUserId, int storeId);
-        Response<int> OpenStore(int userId, string storeName);
+        Response<int> OpenNewStore(int userId, string storeName);
         Response<bool> RemoveCoOwner(int userId, int targetUserId, int storeId);
         Response<bool> RemoveDiscountPolicy(int disId, int storeId, int memberId);
         Response<bool> RemovePurchasePolicy(int policyId, int storeId, int memberId);

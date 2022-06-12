@@ -538,11 +538,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException("Could not remove co owner: " + permissionError);
             }
+            try
+            {
+                Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId);
 
-            Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId);
-            RemovedByOwnerBranchUpdate(removedBrance, $"We regeret to inform you that you've lost your position at {this.name}");
-
-            rolesAndPermissionsLock.ReleaseWriterLock();
+                RemovedByOwnerBranchUpdate(removedBrance, $"We regeret to inform you that you've lost your position at {this.name}");
+            }
+            catch (MarketException e) {
+                rolesAndPermissionsLock.ReleaseWriterLock();
+                throw e;
+            }
+            finally { rolesAndPermissionsLock.ReleaseWriterLock(); }
+         
             
         }
         private void RemovedByOwnerBranchUpdate(Hierarchy<int> removedBranch, string notification) {

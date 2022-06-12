@@ -155,8 +155,10 @@ namespace WebAPI.Controllers
             string username = request.Username;
             if (buyerUnsentMessages.ContainsKey(username))
             {
+                IList<string> msgsCopy = buyerUnsentMessages[username].Select(e => e).ToList();
+               var actionResult =  Ok(new Response<IList<string>>(msgsCopy));
                 buyerUnsentMessages[username].Clear();
-                return Ok(new Response<IList<string>>(buyerUnsentMessages[username]));
+                return actionResult;
             }
             return Ok(new Response<IList<string>>(new List<string>()));
         }
@@ -198,7 +200,7 @@ namespace WebAPI.Controllers
 
                     //this.buyerUnsentMessages[username] = unsentMsgs;
                     AddUnsentMessage(username, unsentMsgs);
-                    return false;
+                    return true; // So msgs delete on member msgs queue
                 }
 
                 foreach (string msg in msgs)

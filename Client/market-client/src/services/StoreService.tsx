@@ -138,7 +138,7 @@ export async function serverDecreaseProductAmount(
   return jsonResponse.json()
 }
 
-export async function makeCoOwner(
+export async function serverMakeCoOwner(
   userId: number,
   storeId: number,
   targetUserId: number
@@ -160,7 +160,7 @@ export async function makeCoOwner(
   return jsonResponse.json()
 }
 
-export async function removeCoOwner(
+export async function serverRemoveCoOwner(
   userId: number,
   storeId: number,
   targetUserId: number
@@ -182,7 +182,7 @@ export async function removeCoOwner(
   return jsonResponse.json()
 }
 
-export async function makeCoManager(
+export async function serverMakeCoManager(
   userId: number,
   storeId: number,
   targetUserId: number

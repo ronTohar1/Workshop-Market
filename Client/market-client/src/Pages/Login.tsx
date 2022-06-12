@@ -90,17 +90,7 @@ export default function Login() {
       //   alertFunc("Closed")
       // });
       initWebSocket(address)
-      addEventListener('message', function (event:any) {
-        alertFunc("Message from server:\n" + event.data);
-      })
-
-      addEventListener('open', function (event:any) {
-        alertFunc("Opened");
-      })
-
-      addEventListener('close', function (event:any) {
-        alertFunc("Closed");
-      })
+      
       alert("Logged in successfully!")
       sessionService.setIsGuest(false)
       sessionService.setBuyerId(memberId)
@@ -110,8 +100,7 @@ export default function Login() {
       fetchResponse(serverGetPendingMessages(username))
         .then((messages: string[]) => messages.forEach(alertFunc))
         .catch(alert)
-
-      navigate(pathHome)
+        navigate(pathHome)
     }).catch((e) => {
       alert(e)
     })

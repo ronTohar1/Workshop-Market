@@ -35,22 +35,29 @@ namespace MarketBackend.BusinessLayer.Buyers
             return new Cart(shoppingBags); 
         }
 
+        // r S 8
         public virtual void AddProductToCart(ProductInBag product, int amount, int buyerId, bool isMember)
         {
+            DataMember? dm = null;
+            DataShoppingBag? dsb = null;
             int storeId = product.StoreId;
             if (!shoppingBags.ContainsKey(storeId)) // creating new bag for first product from store
             {
                 if (isMember)
-                    AddShoppingBagToDB(buyerId, product.StoreId);
+                {
+                    dm = MemberDataManager.GetInstance().Find(buyerId);
+                    dsb = AddShoppingBagToDB(product.StoreId, dm); // r S 8 (no save)
+                }
                 shoppingBags[storeId] = new ShoppingBag(storeId);
             }
-            shoppingBags[storeId].AddProductToBag(product, amount, buyerId, isMember);
+            shoppingBags[storeId].AddProductToBag(product, amount, buyerId, isMember, dm, dsb); // r S 8 (save here and revert if bad)
         }
 
+        // r S 8
         public virtual void RemoveProductFromCart(ProductInBag product, int buyerId, bool isMember)
         {
             int storeId = product.StoreId;
-            shoppingBags[storeId].RemoveProduct(product, buyerId, isMember);
+            shoppingBags[storeId].RemoveProduct(product, buyerId, isMember); // r S 8
             if (shoppingBags[storeId].IsEmpty())
                 shoppingBags.Remove(storeId);
         }
@@ -60,7 +67,7 @@ namespace MarketBackend.BusinessLayer.Buyers
        public virtual bool isEmpty()
        => shoppingBags.Count==0 || shoppingBags.Values.Where(p=>p.ProductsAmounts.Count>0).Count()==0;
 
-       // r S 8 - database functions
+       // r S 8 - database functions --------------------------------------
        public DataCart CartToDataCart()
        {
             IList<DataShoppingBag> dsp = new List<DataShoppingBag>();
@@ -88,15 +95,15 @@ namespace MarketBackend.BusinessLayer.Buyers
 
         }
 
-        public void AddShoppingBagToDB(int memberId, int storeId)
+        public DataShoppingBag AddShoppingBagToDB(int storeId, DataMember dm)
         {
-            DataMember dm = MemberDataManager.GetInstance().Find(memberId);
-            dm.Cart.ShoppingBags.Add(new DataShoppingBag()
+            DataShoppingBag dsb = new DataShoppingBag()
             {
                 Store = StoreDataManager.GetInstance().Find(storeId),
                 ProductsAmounts = new List<DataProductInBag>()
-            });
-            MemberDataManager.GetInstance().Save();
+            };
+            dm.Cart.ShoppingBags.Add(dsb);
+            return dsb;
         }
 
         //for tests

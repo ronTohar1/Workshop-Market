@@ -22,6 +22,7 @@ public class PurchasesManager
     }
 
     // r 2.3
+    // r S 8
     public void AddProductToCart(int buyerId, int storeId, int productId, int amount)
     {
         VerifyValidProductAmount(amount); // checking first for efficiency 
@@ -37,10 +38,11 @@ public class PurchasesManager
         // can add product to cart
         Buyer? b = buyersController.GetBuyer(buyerId);
 
-        buyer.Cart.AddProductToCart(new ProductInBag(productId, storeId), amount, buyerId, b is Member);
+        buyer.Cart.AddProductToCart(new ProductInBag(productId, storeId), amount, buyerId, b is Member); // r S 8
     }
 
     // r 2,3
+    // r S 8
     public void RemoveProductFromCart(int buyerId, int storeId, int productId, int amount)
     {
         VerifyValidProductAmount(amount); // checking first for efficiency 
@@ -49,7 +51,7 @@ public class PurchasesManager
 
         // maybe can remove product from cart (for example the cart checks the product exists etc. )
         Buyer? b = buyersController.GetBuyer(buyerId);
-        buyer.Cart.RemoveProductFromCart(new ProductInBag(productId, storeId), buyerId, b is Member);
+        buyer.Cart.RemoveProductFromCart(new ProductInBag(productId, storeId), buyerId, b is Member); // r S 8
     }
 
     // cc 10

@@ -41,23 +41,44 @@ const theme = createTheme({
   },
 })
 
-const x = storage.getItem("websock")
-const conn: { ws: WebSocket | null } = { ws: x === null ? null : JSON.parse(x) }
+const f = () => {
+  const x = storage.getItem("address")
+
+  if (x != null) {
+
+    const newWs = new WebSocket(x)
+    addEventListener(newWs, 'message', function (event: any) {
+      alertFunc("Message from server:\n" + event.data);
+    })
+
+    // addEventListener(newWs, 'open', function (event: any) {
+    //   alertFunc("Opened");
+    // })
+
+    // addEventListener(newWs, 'close', function (event: any) {
+    //   alertFunc("Closed");
+    // })
+    return newWs
+  }
+
+  return null
+}
+const conn: { ws: WebSocket | null } = { ws: f() }
 export function alertFunc(m: string) { alert(m) }
 export function initWebSocket(address: string) {
-  const ws = new WebSocket(address)
-  console.log(ws)
-  conn.ws = ws
-  console.log(JSON.stringify(ws))
-  storage.setItem("websock",JSON.stringify(ws))
+  storage.setItem("address", address)
+  conn.ws = f()
 }
-export function addEventListener(listenTo: string, funcToExec: any) {
-  conn.ws?.addEventListener(listenTo, function (event) { funcToExec(event) })
+export function addEventListener(ws: WebSocket, listenTo: string, funcToExec: any) {
+  ws.addEventListener(listenTo, function (event) { funcToExec(event) })
 }
+
+
 
 const App = () => {
   // window.onunload = () => clearSession()
-   initSession()
+
+  initSession()
   useEffect(() => {
     const handleTabClose = (event: any) => {
       event.preventDefault()

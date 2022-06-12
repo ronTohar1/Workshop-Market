@@ -97,7 +97,6 @@ export default function StorePageOfManager({
   const [failureProductMsg, setFailureProductMsg] = React.useState<string>("")
   const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false)
   const [successProductMsg, setSuccessProductMsg] = React.useState<string>("")
-  const [hasPermission, setHasPermission] = React.useState<boolean>(true) // Has permission to watch store info
   const showSuccessSnack = (msg: string) => {
     setOpenSuccSnack(true)
     setSuccessProductMsg(msg)

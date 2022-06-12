@@ -12,6 +12,7 @@ const isInitOccured = "isInitOccured"
 const userName = "userName"
 const isGuest = "isGuest"
 const buyerId = "buyerId"
+const notificationsArr = "notifications"
 
 export async function initSession() {
   if (storage.getItem(isInitOccured) === null) {
@@ -67,3 +68,13 @@ export const setBuyerId: (v: number) => void = createSetter(buyerId)
 export const getUsername: () => string = () => { return storage.getItem(userName) || "" }
 
 export const setUsername: (v: string) => void = (v) => storage.setItem(userName, v)
+
+// notifications
+
+// export const getNotifications: () => string[] = () => {
+//   const notifications = storage.getItem(notificationsArr)
+//   return notifications === null ? [] : JSON.parse(notifications)
+// }
+
+// export const addNotification: (v: string) => void = (v) => storage.setItem(userName, JSON.stringify(getNotifications().concat([v])))
+// // export const removeNotification: (v: string) => void = (v) => storage.setItem(userName, v)

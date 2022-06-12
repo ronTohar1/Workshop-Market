@@ -9,6 +9,7 @@ import List from "@mui/material/List";
 import Purchase from "../DTOs/Purchase";
 import Discount from "../DTOs/DiscountDTOs/Discount";
 import PurchasePolicy from "../DTOs/PurchaseDTOs/PurchasePolicy";
+import Permission from "../DTOs/Permission";
 
 
 const stores = [
@@ -138,7 +139,7 @@ export async function serverDecreaseProductAmount(
   return jsonResponse.json()
 }
 
-export async function makeCoOwner(
+export async function serverMakeCoOwner(
   userId: number,
   storeId: number,
   targetUserId: number
@@ -160,7 +161,7 @@ export async function makeCoOwner(
   return jsonResponse.json()
 }
 
-export async function removeCoOwner(
+export async function serverRemoveCoOwner(
   userId: number,
   storeId: number,
   targetUserId: number
@@ -182,7 +183,7 @@ export async function removeCoOwner(
   return jsonResponse.json()
 }
 
-export async function makeCoManager(
+export async function serverMakeCoManager(
   userId: number,
   storeId: number,
   targetUserId: number
@@ -246,11 +247,11 @@ export async function getFounder(
   return jsonResponse.json()
 }
 
-export async function getManagerPermission(
+export async function serverGetManagerPermission(
   userId: number,
   storeId: number,
   targetUserId: number
-): Promise<ClientResponse<number[]>> {
+): Promise<ClientResponse<Permission[]>> {
   const uri = serverPort + "/api/Stores/ManagerPermissions"
   const jsonResponse = await fetch(uri, {
     method: "POST",
@@ -268,7 +269,7 @@ export async function getManagerPermission(
   return jsonResponse.json()
 }
 
-export async function setManagerPermission(
+export async function serverSetManagerPermission(
   userId: number,
   storeId: number,
   targetUserId: number,

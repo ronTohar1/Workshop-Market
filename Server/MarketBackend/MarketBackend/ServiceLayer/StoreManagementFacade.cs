@@ -135,6 +135,8 @@ namespace MarketBackend.ServiceLayer
                 Store s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<bool>($"There isn't a store with an id {storeId}");
+                if (s.founder.Id == targetUserId)
+                    throw new MarketException("You cannot remove the founder of the store!");
                 s.RemoveCoOwner(userId, targetUserId);
                 logger.Info($"RemoveCoOwner was called with parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
                 return new Response<bool>(true);

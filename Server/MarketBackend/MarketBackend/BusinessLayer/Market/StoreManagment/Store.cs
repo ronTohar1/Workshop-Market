@@ -682,6 +682,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             rolesInStore[Role.Owner].Remove(memberId);//doesn't do anything if not in collection
             rolesInStore[Role.Manager].Remove(memberId);
             membersGetter(memberId).Notify(notification);
+            --> // should be without saving in the database 
             foreach (Hierarchy<int> child in removedBranch.children) {
                 RemovedByOwnerBranchUpdate(child, notification);
             }
@@ -938,9 +939,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public int AddBid(int productId, int memberId, int storeId, double bidPrice)
         {
             Bid bid = new Bid(productId, memberId, storeId, bidPrice);
+            DataBid dataBid = bid.ToNewDataBid();
+            storeDataManager.Update(id, store => store.Bids.Add(dataBid));
+
+            string storeOwnersNotification = $"A bid has been made for the product {products[productId].name} for the price of {bidPrice}";
+            string membersWithRoleAndPermissionNotification = $"A bid has been made for the product {products[productId].name} for the price of {bidPrice}"; 
+
+            DataNotifyAllStoreOwners(storeOwnersNotification);
+            DataNotifyAllMembersWithRoleAndPermission(membersWithRoleAndPermissionNotification, Role.Manager, Permission.handlingBids);
+
+            storeDataManager.Save(); 
+
             bids.Add(bid.id, bid);
-            notifyAllStoreOwners($"A bid has been made for the product {products[productId].name} for the price of {bidPrice}");
-            notifyAllMembersWithRoleAndPermission($"A bid has been made for the product {products[productId].name} for the price of {bidPrice}", Role.Manager, Permission.handlingBids);
+            notifyAllStoreOwners(storeOwnersNotification);
+            notifyAllMembersWithRoleAndPermission(membersWithRoleAndPermissionNotification, Role.Manager, Permission.handlingBids);
+
             return bid.id;
         }
 
@@ -975,19 +988,26 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             Bid bid = bids[bidId];
             if (bid.counterOffer)
                 throw new MarketException("The bid cannot be approved beacause a counter offer has been made but not been approved by the member");
-            if(IsCoOwner(memberId) || IsManagerWithPermission(memberId, Permission.handlingBids))
+            string permissionString = CheckAtLeastManagerWithPermission(memberId, Permission.handlingBids);
+            if (permissionString != null)
+                throw new MarketException(permissionString + " to approve a bid"); 
+
+            approvebidLock.WaitOne();
+
+            Member m = membersGetter.Invoke(bid.memberId);
+            string notification = $"The bid you placed for the product {products[bid.productId].name} was approved for the cost of {bid.bid}"; 
+
+            bid.approveBid(memberId, () =>
             {
-                approvebidLock.WaitOne();
-                bid.approveBid(memberId);
-                approvebidLock.ReleaseMutex();
+                if (CheckAllApproved(bid))
+                    m.DataNotify(notification);
 
-                if (!CheckAllApproved(bid))
-                    return;
+                storeDataManager.Save(); 
+            });
+            approvebidLock.ReleaseMutex();
 
-                Member m = membersGetter.Invoke(bid.memberId);
-                m.Notify($"The bid you placed for the product {products[bid.productId].name} was approved for the cost of {bid.bid}");
-             
-            }
+            if (CheckAllApproved(bid))
+                m.Notify(notification);
         }
 
         public void DenyBid(int memberId, int bidId)
@@ -1130,6 +1150,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             {
                 if (HasPermission(memberId, permission))
                     membersGetter(memberId).Notify(notificationMessage);
+            }
+        }
+
+        private void DataNotifyAllMembersWithRoleAndPermission(string notificationMessage, Role roleAtStore, Permission permission)
+        {
+            foreach (int memberId in rolesInStore[roleAtStore])
+            {
+                if (HasPermission(memberId, permission))
+                    membersGetter(memberId).DataNotify(notificationMessage);
             }
         }
 

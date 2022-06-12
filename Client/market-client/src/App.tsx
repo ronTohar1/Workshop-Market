@@ -21,6 +21,7 @@ import Member from "./DTOs/Member"
 import { createTheme, ThemeProvider } from "@mui/material"
 import MainPolicy from "./Componentss/PurchasePolicy/MainPolicy"
 import { initSession, storage } from "./services/SessionService"
+import ProductReview from "./Componentss/ProductReview"
 
 
 const theme = createTheme({
@@ -84,6 +85,7 @@ const App = () => {
             <Route path={Paths.pathSearch} element={<SearchPage />} />
             <Route path={Paths.pathDiscount} element={<MainDiscount />} />
             <Route path={Paths.pathPolicy} element={<MainPolicy />} />
+            <Route path={Paths.pathProductReview} element={<ProductReview product={new Product(0,"apple",0,"apple",0,"apple",0)}/>} />
 
             {/* <Route
             path={Paths.pathStorePageOfManager}

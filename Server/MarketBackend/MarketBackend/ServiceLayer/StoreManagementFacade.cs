@@ -18,6 +18,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Purchase
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.RestrictionPolicies;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PredicatePolicies;
+using MarketBackend.BusinessLayer.Buyers.Members;
 
 namespace MarketBackend.ServiceLayer
 {
@@ -769,6 +770,50 @@ namespace MarketBackend.ServiceLayer
             catch (Exception ex)
             {
                 logger.Error(ex, $"method: DenyCounterOffer, parameters: [storeId {storeId}, memberId = {memberId}, bidId = {bidId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+        public Response<IDictionary<ServiceMember, IList<string>>> GetProductReviews(int storeId, int productId) {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<IDictionary<ServiceMember, IList<string>>>($"There isn't a store with an id {storeId}");
+                IDictionary<Member, IList<string>> memberReviews= s.GetProductReviews(productId);
+                logger.Info($"GetProductReviews was called with parameters: [storeId {storeId}, productId = {productId}]");
+                return new Response<IDictionary<ServiceMember, IList<string>>>(memberReviews.Keys.ToDictionary(x => new ServiceMember(x), x=>memberReviews[x]));
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetProductReviews, parameters: [storeId {storeId}, productId = {productId}]");
+                return new Response<IDictionary<ServiceMember, IList<string>>>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetProductReviews, parameters: [storeId {storeId}, productId = {productId}]");
+                return new Response<IDictionary<ServiceMember, IList<string>>>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<bool> AddProductReview(int storeId, int memberId, int productId, string review)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.AddProductReview(memberId, productId, review);
+                logger.Info($"AddProductReview was called with parameters: [storeId {storeId}, productId = {productId}, review = {review}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: AddProductReview, parameters: [storeId {storeId}, productId = {productId}, review = {review}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: AddProductReview, parameters: [storeId {storeId}, productId = {productId}, review = {review}]");
                 return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }

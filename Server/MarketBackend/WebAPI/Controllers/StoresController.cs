@@ -224,6 +224,131 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost("AddBid")]
+        public ActionResult<Response<int>> AddBid([FromBody] AddBidRequest request)
+        {
+            Response<int> response = storeManagementFacade.AddBid(
+                request.StoreId, request.ProductId, request.MemberId, request.BidPrice);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
+        [HttpPost("ApproveBid")]
+        public ActionResult<Response<bool>> ApproveBid([FromBody] ApproveBidRequest request)
+        {
+            Response<bool> response = storeManagementFacade.ApproveBid(
+                request.StoreId, request.MemberId, request.BidId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
+        [HttpPut("DenyBid")]
+        public ActionResult<Response<bool>> DenyBid([FromBody] DenyBidRequest request)
+        {
+            Response<bool> response = storeManagementFacade.DenyBid(
+                request.StoreId, request.MemberId, request.BidId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPost("MakeCounterOffer")]
+        public ActionResult<Response<bool>> MakeCounterOffer([FromBody] MakeCounterOfferRequest request)
+        {
+            Response<bool> response = storeManagementFacade.MakeCounterOffer(
+                request.StoreId, request.MemberId, request.BidId, request.Offer);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPost("GetApproveForBid")]
+        public ActionResult<Response<IList<int>>> GetApproveForBid([FromBody] GetApproveForBidRequest request)
+        {
+            Response< IList<int>> response = storeManagementFacade.GetApproveForBid(
+                request.StoreId, request.MemberId, request.BidId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
+        [HttpDelete("RemoveBid")]
+        public ActionResult<Response<bool>> RemoveBid([FromBody] RemoveBidRequest request)
+        {
+            Response<bool> response = storeManagementFacade.RemoveBid(
+                request.StoreId, request.MemberId, request.BidId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPost("ApproveCounterOffer")]
+        public ActionResult<Response<bool>> ApproveCounterOffer([FromBody] ApproveCounterOfferRequest request)
+        {
+            Response<bool> response = storeManagementFacade.ApproveCounterOffer(
+                request.StoreId, request.MemberId, request.BidId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPut("DenyCounterOffer")]
+        public ActionResult<Response<bool>> DenyCounterOffer([FromBody] DenyCounterOfferRequest request)
+        {
+            Response<bool> response = storeManagementFacade.DenyCounterOffer(
+                request.StoreId, request.MemberId, request.BidId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPost("GetProductReviews")]
+        public ActionResult<Response<IDictionary<ServiceMember, IList<string>>>> GetProductReviews([FromBody] GetProductReviewsRequest request)
+        {
+            Response<IDictionary<ServiceMember, IList<string>>> response = storeManagementFacade.GetProductReviews(
+                request.StoreId, request.ProductId);
+             
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPost("AddProductReview")]
+        public ActionResult<Response<IDictionary<ServiceMember, IList<string>>>> AddProductReview([FromBody] AddProductReviewRequest request)
+        {
+            Response<bool> response = storeManagementFacade.AddProductReview(
+                request.StoreId, request.MemberId, request.ProductId, request.Review);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
+
+
+
+
+
+
+
+
+
+        // aid function for parsing
         private ServicePredicate JsonToServicePredicate(dynamic spred, string json)
         {
 

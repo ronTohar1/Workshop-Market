@@ -102,7 +102,7 @@ export default function StorePurchaseHistoryForm() {
         <Container style={{maxHeight: '5%', overflow: 'auto'}} >
       <Grid container spacing={3} >
         {purchases.map(purchase => (
-          <Grid item xs={12} md={6} lg={4}>
+          <Grid item xs={12} md={11.7}>
             <PurchaseCard purchase={purchase}/>
           </Grid>
         ))}

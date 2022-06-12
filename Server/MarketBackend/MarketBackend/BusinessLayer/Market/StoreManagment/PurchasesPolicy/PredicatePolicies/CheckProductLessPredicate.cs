@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PredicatePolicies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Pred
         {
             this.productId = productId;
             this.amount = amount;
+        }
+
+        public static CheckProductLessPredicate DataCheckProductLessPredicateToCheckProductLessPredicate(DataCheckProductLessPredicate dataCheckProductLessPredicate)
+        {
+            // CheckProductLessPredicate or CheckProductMoreEqualsPredicate
+
+            if (dataCheckProductLessPredicate is DataCheckProductMoreEqualsPredicate)
+                return CheckProductMoreEqualsPredicate.DataCheckProductMoreEqualsPredicateToCheckProductMoreEqualsPredicate((DataCheckProductMoreEqualsPredicate)dataCheckProductLessPredicate);
+            return new CheckProductLessPredicate(dataCheckProductLessPredicate.ProductId, dataCheckProductLessPredicate.Amount); 
         }
 
         //return true if the bag has less product than the amount

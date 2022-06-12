@@ -11,20 +11,28 @@ export default function PurchaseCard({purchase}: {purchase: Purchase}) {
   const handleClose = () => {
     setOpen(false);
   };
+  const printDate = (date:Date)=>{
+    const components = date.toString().substring(0,10).split('-');
+    return components[2]+'/'+components[1]+'/'+components[0];
+  }
   return (
     <div>
-      <Card elevation={1}>
+      <Card elevation={10} style={{
+                      maxHeight: '8vw',
+                      minHeight: '8vw',
+                      width: '100%',
+                      margin: 'auto',
+                      padding: '10px',
+                      backgroundColor: '#a2cf6e',
+                      }}>
         <CardHeader
-          title={ `Buyer id: ${purchase.buyerId}`}
-          subheader={purchase.purchaseDate.toDateString()}
+          title= { `Total: ${purchase.purchasePrice} ₪`}
+          subheader={printDate(purchase.purchaseDate)}
         />
         <CardContent>
           {/* <Typography variant="body2" color="textSecondary">
             { `Description: ${purchase.purchaseDescription}`}
           </Typography> */}
-          <Typography variant="body2" color="textSecondary">
-          { `Total: ${purchase.purchasePrice} ₪`}
-          </Typography>
           <Box textAlign='center'>
           <Button  onClick={handleClickOpen}>
               detailes
@@ -39,17 +47,14 @@ export default function PurchaseCard({purchase}: {purchase: Purchase}) {
           maxWidth="sm"
         >
           <DialogTitle id="alert-dialog-title">
-            {`purchase made by buyer with id:  ${purchase.buyerId}`}
+          {`Total of:    ${purchase.purchasePrice} ₪`}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               {`Description:    ${purchase.purchaseDescription}`}
             </DialogContentText>
             <DialogContentText id="alert-dialog-description">
-              {`Date:    ${purchase.purchaseDate}`}
-            </DialogContentText>
-            <DialogContentText id="alert-dialog-description">
-              {`Total of:    ${purchase.purchasePrice} ₪`}
+              {`Date:    ${printDate(purchase.purchaseDate)}`}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

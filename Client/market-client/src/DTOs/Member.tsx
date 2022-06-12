@@ -1,7 +1,7 @@
 
 class Member {
     id: number;
-    username: string;
+    userName: string;
     loggedIn: boolean;
     
   
@@ -12,7 +12,7 @@ class Member {
   
     ) {
       this.id = id;
-      this.username = name;
+      this.userName = name;
       this.loggedIn = loggedIn;
     }
   }

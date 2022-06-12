@@ -31,10 +31,7 @@ export default function RemoveAMember() {
     console.log(responsePromise)
     fetchResponse(responsePromise).then((succedded)=>{
       console.log(succedded)
-      if (succedded)
-        alert("Member was removed successfully!")
-      else 
-        alert("Couldn't remove Member")
+      alert("Member was removed successfully!")
     })
     .catch((e) => {
       alert(e)

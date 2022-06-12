@@ -15,7 +15,7 @@ namespace WebAPI.Controllers
         public SystemController(ISystemOperator systemOperator) => this.systemOperator = systemOperator;
 
         [HttpPost("OpenMarket")]
-        public ActionResult<Response<int>> OpenMarket([FromBody] OpenMarketRequest request)
+        public ActionResult<Response<bool>> OpenMarket([FromBody] OpenMarketRequest request)
         {
             Response<int> response = systemOperator.OpenMarket(request.UserName, request.Password);
 

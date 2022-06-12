@@ -1,4 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.NumericExpressions;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +12,25 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
     public class MaxExpression : IDiscountExpression
     {
         public IList<IDiscountExpression> discounts { get; set; }
-        public MaxExpression()
+        public MaxExpression() : this(new List<IDiscountExpression>())
         {
-            discounts = new List<IDiscountExpression>();
+        }
+
+        private MaxExpression(IList<IDiscountExpression> discounts)
+        {
+            this.discounts = discounts;
+        }
+
+        public static MaxExpression DataMaxExpressionToMaxExpression(DataMaxExpression dataMaxExpression)
+        {
+            IList<IDiscountExpression> discounts = new List<IDiscountExpression>(); 
+
+            foreach (DataDiscountExpression dataDiscountExpression in dataMaxExpression.Discounts)
+            {
+                discounts.Add(IDiscountExpression.DataDiscountExpressionToIDiscountExpression(dataDiscountExpression));
+            }
+
+            return new MaxExpression(discounts); 
         }
 
         public void AddDiscount(IDiscountExpression discount)

@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Logi
         {
             this.condition = condition;
             this.allowing = allowing;
+        }
+
+        public static ImpliesExpression DataImpliesExpressionToImpliesExpression(DataImpliesExpression dataImpliesExpression)
+        {
+            return new ImpliesExpression(
+                IPredicateExpression.DataPredicateExpressionToIPredicateExpression(dataImpliesExpression.Condition),
+                IPredicateExpression.DataPredicateExpressionToIPredicateExpression(dataImpliesExpression.Allowing)
+                );
         }
 
         public bool IsSatisfied(ShoppingBag bag)

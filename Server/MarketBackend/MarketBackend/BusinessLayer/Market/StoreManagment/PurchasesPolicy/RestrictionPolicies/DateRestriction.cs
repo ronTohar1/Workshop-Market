@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
             this.year = year;
             this.month = month;
             this.day = day;
+        }
+
+        public static DateRestriction DataDateRestrictionToDateRestriction(DataDateRestriction dataDateRestriction)
+        {
+            return new DateRestriction(
+                dataDateRestriction.Year,
+                dataDateRestriction.Month,
+                dataDateRestriction.Day
+                ); 
         }
 
         public bool IsSatisfied(ShoppingBag bag)

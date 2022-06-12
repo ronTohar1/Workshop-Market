@@ -1,6 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         {
             this.pred = pred;
             this.then = then;
+        }
+
+        public static ConditionDiscount DataConditionDiscountToConditionDiscount(DataConditionDiscount dataConditionDiscount)
+        {
+            return new ConditionDiscount(IPredicateExpression.DataPredicateExpressionToIPredicateExpression(dataConditionDiscount.Predicate), 
+                IDiscountExpression.DataDiscountExpressionToIDiscountExpression(dataConditionDiscount.DiscountExpression)); 
         }
 
         // if [] then []

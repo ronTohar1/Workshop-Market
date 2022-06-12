@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataManagers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,8 +123,24 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             
         }
 
+        public virtual void DataNotify(string[] notifications)
+        {
+            MemberDataManager memberDataManager = MemberDataManager.GetInstance();
+            DataMember dataMember = memberDataManager.Find(Id); 
+            if (!LoggedIn)
+            {
+                foreach (string notification in notifications)
+                {
+                    dataMember.PendingNotifications.Add(new DataNotification() { Notification = notification });
+                }
+            }
+        }
+
         public void Notify(string notification)
        => Notify(new string[] { notification });
+
+        public void DataNotify(string notification)
+       => DataNotify(new string[] { notification });
 
         private void SendPending() {
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))

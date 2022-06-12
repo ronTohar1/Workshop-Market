@@ -40,6 +40,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public IDictionary<int, Bid> bids { get; }
         private Mutex approvebidLock;
 
+        int id; 
+
         private StoreDataManager storeDataManager; // r S 8
 
         // cc 5
@@ -359,7 +361,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add a new product: ");
             if (pricePerUnit <= 0)
                 throw new Exception("Cannot add product with price smaller or equal to 0!");
+            
             Product newProduct = new Product(productName, pricePerUnit, category);
+            DataProduct dataProduct = newProduct.ToNewDataProduct();
+            storeDataManager.Update(id, store => store.Products.Add(dataProduct)); 
+
+            storeDataManager.Save(); 
+
             products.Add(newProduct.id, newProduct);
             return newProduct.id;
         }
@@ -369,7 +377,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add to inventory: ");
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not add to inventory: there isn't such a product with product id: {productId}"));
-            products[productId].AddToInventory(amount);
+            
+            products[productId].AddToInventory(amount, () => storeDataManager.Save());
         }
         // r.4.1
         public void RemoveProduct(int memberId, int productId) {
@@ -377,6 +386,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not remove a product: there isn't such a product with product id: {productId}"));
             products.Remove(productId);
+            --> // todo: implement updating the database 
         }
         // r.4.1
         // c.9
@@ -386,7 +396,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not take from inventory: there isn't such a product with product id: {productId}"));
             try {
-                products[productId].RemoveFromInventory(amount);
+                products[productId].RemoveFromInventory(amount, () => storeDataManager.Save());
             }
             catch (MarketException mEx) {
                 throw new MarketException(StoreErrorMessage($"Could not take from inventory: {mEx.Message}"));
@@ -403,7 +413,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product price per unit: ");
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not set the product price per unit: there isn't such a product with product id: {productId}"));
-            products[productId].SetProductPriceByUnit(productPrice);
+            products[productId].SetProductPriceByUnit(productPrice, () => storeDataManager.Save());
         }
         // r.4.1
         public void SetProductDiscountPercentage(int memberId, int productId, double discountPercentage)
@@ -411,7 +421,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product's discount percentage: ");
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not set the product's discount percentage: there isn't such a product with product id: {productId}"));
-            products[productId].SetProductDiscountPercentage(discountPercentage);
+            products[productId].SetProductDiscountPercentage(discountPercentage, () => storeDataManager.Save());
         }
         // r.4.1
         public void SetProductCategory(int memberId, int productId, string category)
@@ -419,7 +429,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product's category: ");
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not set the product's category: there isn't such a product with product id: {productId}"));
-            products[productId].SetProductCategory(category);
+            products[productId].SetProductCategory(category, () => storeDataManager.Save());
         }
         // r.3.3
         // r.1.5, 1.6
@@ -429,13 +439,29 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException("Could not add review: " + permissionError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not add review: there isn't such a product with product id: {productId}"));
-            products[productId].AddProductReview(memberId, review);
-            notifyAllStoreOwners($"The member with id: {memberId} has written a new review of a product woth id: {productId} at {this.name}");
+            string notification = $"The member with id: {memberId} has written a new review of a product woth id: {productId} at {this.name}"
+            products[productId].AddProductReview(memberId, review, () =>
+            {
+                DataNotifyAllStoreOwners(notification); 
+                storeDataManager.Save();
+            });
+            notifyAllStoreOwners(notification); --> // todo: this should not save in the database 
         }
         // 6.4, 4.13
         public virtual void AddPurchaseRecord(int memberId, Purchase purchase)
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
+
+            DataPurchase dataPurchase = new DataPurchase() {
+                BuyerId = purchase.BuyerId,
+                PurchaseDate = purchase.purchaseDate,
+                PurchaseDescription = purchase.purchaseDescription,
+                PurchasePrice = purchase.purchasePrice,
+                Store = storeDataManager.Find(id)
+            };
+            storeDataManager.Update(id, store => store.PurchaseHistory.Add(dataPurchase)); 
+            --> // todo: check if need to save changes, or in purchases manager change this function 
+
             purchaseHistory.Add(purchase);
         }
 
@@ -568,12 +594,32 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                     // todo: also add tests for when the appointing coOwner is not the one that appointed the member of newCoOwnerId to be a manager
                 }
 
+                storeDataManager.Update(id, store =>
+                {
+                    DataStoreMemberRoles dataRole = store.MembersPermissions.First(dataPermission => dataPermission.MemberId == newCoOwnerMemberId);
+                    dataRole.ManagerPermissions = null;
+                    dataRole.Role = Role.Owner;
+                });
+                storeDataManager.Save(); 
+
                 managersPermissions.Remove(newCoOwnerMemberId);
                 rolesInStore[Role.Manager].Remove(newCoOwnerMemberId); 
             }
             else
             {
-                appointmentsHierarchy.AddToHierarchy(requestingMemberId, newCoOwnerMemberId);
+                appointmentsHierarchy.AddToHierarchy(requestingMemberId, newCoOwnerMemberId, () =>
+                {
+                    DataStore dataStore = storeDataManager.Find(id);
+                    DataStoreMemberRoles dataRole = new DataStoreMemberRoles()
+                    {
+                        Role = Role.Owner,
+                        ManagerPermissions = null,
+                        Store = dataStore,
+                        MemberId = newCoOwnerMemberId
+                    };
+                    dataStore.MembersPermissions.Add(dataRole);
+                    storeDataManager.Save(); 
+                });
                 // todo: add tests checking this field has been changed (and for what happens when newCoOwnerId is of a manager)
             }
 
@@ -646,12 +692,28 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException("The requested new CoOwner is not a member");
             }
 
+            IList<Permission> permissions = DefualtManagerPermissions(); 
+
+            appointmentsHierarchy.AddToHierarchy(requestingMemberId, newCoManagerMemberId, () =>
+            {
+                DataStore dataStore = storeDataManager.Find(id);
+                DataStoreMemberRoles dataRole = new DataStoreMemberRoles()
+                {
+                    Role = Role.Manager,
+                    ManagerPermissions = permissions.Select(permission => new DataManagerPermission { Permission = permission }).ToList(),
+                    Store = dataStore,
+                    MemberId = newCoManagerMemberId
+                };
+                dataStore.MembersPermissions.Add(dataRole);
+                storeDataManager.Save();
+            });
+
+
             rolesInStore[Role.Manager].Add(newCoManagerMemberId);
 
 
-            managersPermissions[newCoManagerMemberId] = DefualtManagerPermissions(); 
+            managersPermissions[newCoManagerMemberId] = permissions; 
 
-            appointmentsHierarchy.AddToHierarchy(requestingMemberId, newCoManagerMemberId);
             // todo: add tests checking this field has been changed
 
             rolesAndPermissionsLock.ReleaseWriterLock();
@@ -1018,11 +1080,19 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public void notifyAllStoreManagers(string notificationMessage)
             => notifyAllMembersWithRole(notificationMessage, Role.Manager);
 
+        private void DataNotifyAllStoreOwners(string notificationMessage)
+            => DataNotifyAllMembersWithRole(notificationMessage, Role.Owner);
+
 
         private void notifyAllMembersWithRole(string notificationMessage, Role roleAtStore)
         {
             foreach (int memberId in rolesInStore[roleAtStore])
                 membersGetter(memberId).Notify(notificationMessage);
+        }
+        private void DataNotifyAllMembersWithRole(string notificationMessage, Role roleAtStore)
+        {
+            foreach (int memberId in rolesInStore[roleAtStore])
+                membersGetter(memberId).DataNotify(notificationMessage);
         }
         private void notifyAllMembersWithRoleAndPermission(string notificationMessage, Role roleAtStore, Permission permission)
         {

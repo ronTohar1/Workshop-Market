@@ -15,9 +15,10 @@ namespace MyApp // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 7890);
+            var appConfig = new AppConfig();
+            WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), appConfig.websocketServerPort);
             notificationServer.Start();
-            Console.WriteLine("WS server started on ws://127.0.0.1:7890");
+            Console.WriteLine($"WS server started on ws://127.0.0.1:{appConfig.websocketServerPort}");
 
             //SystemOperator so = new SystemOperator("admin", "admin"); // For easier testing
             SystemOperator so = new();

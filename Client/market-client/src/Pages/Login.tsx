@@ -20,6 +20,7 @@ import HomeIcon from "@mui/icons-material/Home"
 import { fetchResponse } from '../services/GeneralService'
 import { noteConn, setUpConnection } from "../services/NotificationsService"
 import { addEventListener, alertFunc, initWebSocket } from "../App"
+import { serverIsAdmin } from "../services/AdminService"
 // import WebSocket from 'ws'
 
 const theme = createTheme({
@@ -72,34 +73,33 @@ export default function Login() {
       alert("Please enter username")
       return;
     }
+    else {
+      console.log("checking login")
+      fetchResponse(result).then((memberId: number) => {
 
-    fetchResponse(result).then((memberId: number) => {
+        console.log("started login")
+        const address = `ws://127.0.0.1:7890/${username}-notifications`
+        initWebSocket(address)
+        alert("Logged in successfully!")
 
+        //Session setup
+        sessionService.setIsGuest(false)
+        sessionService.setBuyerId(memberId)
+        sessionService.setUsername(username)
 
-      const address = `ws://127.0.0.1:7890/${username}-notifications`
-      initWebSocket(address)
+        console.log("messages")
 
-      alert("Logged in successfully!")
-      sessionService.setIsGuest(false)
-      sessionService.setBuyerId(memberId)
-      //@ts-ignore
-      sessionService.setUsername(username)
-      if (username == "admin" && password == "admin")
-        sessionService.setIsAdmin(true)
-
-      fetchResponse(serverGetPendingMessages(username))
-        .then((messages: string[]) => messages.forEach(alertFunc))
-        .then(() => {
-          if (username == "admin" && password == "admin")
-            navigate(pathAdmin)
-
-          navigate(pathHome)
+        return memberId
+      })
+        .then((memberId: number) => fetchResponse(serverIsAdmin(memberId))) // Check is admin
+        .then((isAdmin: boolean) => sessionService.setIsAdmin(isAdmin))     // Set is admin
+        .then(() => fetchResponse(serverGetPendingMessages(username)))      // Get pending notifications
+        .then((messages: string[]) => messages.forEach(alertFunc))          // Alert pending notifications
+        .then(() => navigate(pathHome))                                     // Navigate back to home page
+        .catch((e) => {
+          alert(e)
         })
-        .catch(alert)
-    }).catch((e) => {
-      alert(e)
-    })
-
+    }
   }
 
   return (

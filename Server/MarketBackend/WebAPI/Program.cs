@@ -41,8 +41,8 @@ namespace MyApp // Note: actual namespace depends on the project name.
             //Console.WriteLine("Market opened successfully!");
 
 
-            SetUpExample setup = new SetUpExample(so);
-            setup.SetUp();
+            //SetUpExample setup = new SetUpExample(so);
+            //setup.SetUp();
 
             var builder = WebApplication.CreateBuilder(args);
 

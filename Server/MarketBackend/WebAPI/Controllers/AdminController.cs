@@ -73,5 +73,15 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpPost("IsAdmin")]
+        public ActionResult<Response<bool>> IsAdmin([FromBody] UserRequest request)
+        {
+            Response<bool> response = adminFacade.IsAdmin(request.UserId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
     }
 }

@@ -299,7 +299,7 @@ namespace MarketBackend.ServiceLayer
         }
 
         //done
-        public Response<int> OpenStore(int userId, string storeName)
+        public Response<int> OpenNewStore(int userId, string storeName)
         {
             try
             {

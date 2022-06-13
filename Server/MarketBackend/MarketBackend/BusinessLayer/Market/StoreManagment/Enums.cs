@@ -17,7 +17,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		RecieiveRolesInfo,
 		DiscountPolicyManagement,
 		purchasePolicyManagement,
-		handlingBids
+		handlingBids,
+		ManageInventory
 	};
 	public enum PurchaseOption
 	{

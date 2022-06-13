@@ -295,10 +295,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         }
 
         // r.4.1
-        public int AddNewProduct(int memberId, string productName, double pricePerUnit, string category)
-        {
-            // we allow this only to coOwners
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not add a new product: ");
+        public int AddNewProduct(int memberId, string productName, double pricePerUnit, string category) {
+            string permError = CheckAtLeastManagerWithPermission(memberId, Permission.ManageInventory);
+            if (permError != null)
+                throw new MarketException("Could not add product: " + permError);
             if (pricePerUnit <= 0)
                 throw new MarketException("Cannot add product with price smaller or equal to 0!");
             Product newProduct = new Product(productName, pricePerUnit, category);
@@ -306,18 +306,19 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return newProduct.id;
         }
         // r.4.1
-        public virtual void AddProductToInventory(int memberId, int productId, int amount)
-        {
-            // we allow this only to coOwners
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not add to inventory: ");
+        public virtual void AddProductToInventory(int memberId, int productId, int amount) {
+            string permError = CheckAtLeastManagerWithPermission(memberId, Permission.ManageInventory);
+            if (permError != null)
+                throw new MarketException("Could not change inventory: " + permError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not add to inventory:\n there isn't such a product with product id {productId}"));
             products[productId].AddToInventory(amount);
         }
         // r.4.1
-        public void RemoveProduct(int memberId, int productId)
-        {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not remove a product: ");
+        public void RemoveProduct(int memberId, int productId) {
+            string permError = CheckAtLeastManagerWithPermission(memberId, Permission.ManageInventory);
+            if (permError != null)
+                throw new MarketException("Could not remove product: " + permError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not remove a product:\n there isn't such a product with product id {productId}"));
             products.Remove(productId);
@@ -326,7 +327,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // c.9
         public virtual void DecreaseProductAmountFromInventory(int memberId, int productId, int amount)
         {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not take from inventory: ");
+            string permError = CheckAtLeastManagerWithPermission(memberId, Permission.ManageInventory);
+            if (permError != null)
+                throw new MarketException("Could not change inventory: " + permError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not take from inventory:\n there isn't such a product with product id {productId}"));
             try
@@ -346,7 +349,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r.4.1
         public void SetProductPrice(int memberId, int productId, double productPrice)
         {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product price per unit: ");
+            string permError = CheckAtLeastManagerWithPermission(memberId, Permission.ManageInventory);
+            if (permError != null)
+                throw new MarketException("Could not set the product price per unit: " + permError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not set the product price per unit:\n there isn't such a product with product id {productId}"));
             products[productId].SetProductPriceByUnit(productPrice);
@@ -354,7 +359,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r.4.1
         public void SetProductDiscountPercentage(int memberId, int productId, double discountPercentage)
         {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product's discount percentage: ");
+            string permError = CheckAtLeastManagerWithPermission(memberId, Permission.ManageInventory);
+            if (permError != null)
+                throw new MarketException("Could not set the product's discount percentage: " + permError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not set the product's discount percentage:\n there isn't such a product with product id: {productId}"));
             products[productId].SetProductDiscountPercentage(discountPercentage);
@@ -362,7 +369,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r.4.1
         public void SetProductCategory(int memberId, int productId, string category)
         {
-            EnforceAtLeastCoOwnerPermission(memberId, "Could not set the product's category: ");
+            string permError = CheckAtLeastManagerWithPermission(memberId, Permission.ManageInventory);
+            if (permError != null)
+                throw new MarketException("Could not set the product's category: " + permError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not set the product's category:\n there isn't such a product with product id: {productId}"));
             products[productId].SetProductCategory(category);
@@ -386,7 +395,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             purchaseHistory.Add(purchase);
         }
 
-        // TODO: amit and david should disscus it
         public IList<Purchase> GetPurchaseHistory()
         {
             lock (isOpenMutex)
@@ -400,7 +408,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // 6.4, 4.13
         public IList<Purchase> GetPurchaseHistory(int memberId)
         {
-            EnforceAtLeastCoOwnerPermission(memberId, "could not get the purchase history: ");
+            string permError = CheckAtLeastManagerWithPermission(memberId, Permission.ManageInventory);
+            if (permError != null)
+                throw new MarketException("Could not get the purchase history: " + permError);
             lock (isOpenMutex)
             {
                 if (!isOpen)

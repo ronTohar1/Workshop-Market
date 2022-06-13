@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from '@mui/material';
 import { fetchResponse } from '../../services/GeneralService';
 import { getBuyerId } from '../../services/SessionService';
-import { removeMember } from '../../services/AdminService';
+import { serverRemoveMember } from '../../services/AdminService';
 
 export default function RemoveAMember() {
   const [open, setOpen] = React.useState(false);
@@ -27,7 +27,7 @@ export default function RemoveAMember() {
     const data = new FormData(event.currentTarget)
     console.log("in search id")
     const buyerId = getBuyerId()
-    const responsePromise = removeMember(buyerId,Number(data.get("id")))
+    const responsePromise = serverRemoveMember(buyerId,Number(data.get("id")))
     console.log(responsePromise)
     fetchResponse(responsePromise).then((succedded)=>{
       console.log(succedded)

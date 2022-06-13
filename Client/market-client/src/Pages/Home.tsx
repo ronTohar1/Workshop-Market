@@ -71,12 +71,7 @@ const theme = createTheme({
     ].join(","),
   },
 })
-const styles = {
-  paperContainer: {
-    height: 1356,
-    backgroundImage: "https://images.unsplash.com/photo-1471193945509-9ad0617afabf",
-  },
-}
+
 export default function Home() {
   return (
     <ThemeProvider theme={theme} >

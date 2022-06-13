@@ -77,45 +77,25 @@ export default function Login() {
 
 
       const address = `ws://127.0.0.1:7890/${username}-notifications`
-      // const ws = new WebSocket(address)
-      // ws.addEventListener('message', function (event) {
-      //   alertFunc("Message from server:\n" + event.data);
-      // });
-
-      // ws.addEventListener('open', function (event) {
-      //   alertFunc("Opened")
-      // });
-
-      // ws.addEventListener('close', function (event) {
-      //   alertFunc("Closed")
-      // });
       initWebSocket(address)
-      addEventListener('message', function (event:any) {
-        alertFunc("Message from server:\n" + event.data);
-      })
 
-      addEventListener('open', function (event:any) {
-        alertFunc("Opened");
-      })
-
-      addEventListener('close', function (event:any) {
-        alertFunc("Closed");
-      })
       alert("Logged in successfully!")
       sessionService.setIsGuest(false)
       sessionService.setBuyerId(memberId)
       //@ts-ignore
       sessionService.setUsername(username)
+      if (username == "admin" && password == "admin")
+        sessionService.setIsAdmin(true)
 
       fetchResponse(serverGetPendingMessages(username))
         .then((messages: string[]) => messages.forEach(alertFunc))
+        .then(() => {
+          if (username == "admin" && password == "admin")
+            navigate(pathAdmin)
+
+          navigate(pathHome)
+        })
         .catch(alert)
-      
-      if (username=="admin" && password=="admin"){
-        navigate(pathAdmin)  
-        return;
-      }
-      navigate(pathHome)
     }).catch((e) => {
       alert(e)
     })

@@ -9,6 +9,7 @@ import List from "@mui/material/List";
 import Purchase from "../DTOs/Purchase";
 import Discount from "../DTOs/DiscountDTOs/Discount";
 import PurchasePolicy from "../DTOs/PurchaseDTOs/PurchasePolicy";
+import Permission from "../DTOs/Permission";
 
 
 const stores = [
@@ -138,7 +139,7 @@ export async function serverDecreaseProductAmount(
   return jsonResponse.json()
 }
 
-export async function makeCoOwner(
+export async function serverMakeCoOwner(
   userId: number,
   storeId: number,
   targetUserId: number
@@ -160,7 +161,7 @@ export async function makeCoOwner(
   return jsonResponse.json()
 }
 
-export async function removeCoOwner(
+export async function serverRemoveCoOwner(
   userId: number,
   storeId: number,
   targetUserId: number
@@ -182,7 +183,7 @@ export async function removeCoOwner(
   return jsonResponse.json()
 }
 
-export async function makeCoManager(
+export async function serverMakeCoManager(
   userId: number,
   storeId: number,
   targetUserId: number
@@ -246,11 +247,11 @@ export async function getFounder(
   return jsonResponse.json()
 }
 
-export async function getManagerPermission(
+export async function serverGetManagerPermission(
   userId: number,
   storeId: number,
   targetUserId: number
-): Promise<ClientResponse<number[]>> {
+): Promise<ClientResponse<Permission[]>> {
   const uri = serverPort + "/api/Stores/ManagerPermissions"
   const jsonResponse = await fetch(uri, {
     method: "POST",
@@ -268,7 +269,7 @@ export async function getManagerPermission(
   return jsonResponse.json()
 }
 
-export async function setManagerPermission(
+export async function serverSetManagerPermission(
   userId: number,
   storeId: number,
   targetUserId: number,
@@ -445,4 +446,48 @@ export async function serverRemoveDiscountPolicy(
 
   const response = jsonResponse.json();
   return response
+}
+
+export async function serverAddProductReview(
+  storeId: number,
+  memberId: number, 
+  productId:number,
+  review:string
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/AddProductReview";
+  const jsonResponse = await fetch('https://localhost:7242/api/Stores/AddProductReview', {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "storeId": 0,\n  "memberId": 0,\n  "productId": 0,\n  "review": "string"\n}',
+    body: JSON.stringify({
+        'storeId': storeId,
+        'memberId': memberId,
+        'productId': productId,
+        'review': review
+    })
+});
+  return jsonResponse.json();
+}
+
+export async function serverGetProductReview(
+  storeId: number, 
+  productId: number
+): Promise<ClientResponse<Map<string, string[]>>> {
+  const uri = serverPort + "/api/Stores/GetProductReviews";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "storeId": 0,\n  "productId": 0\n}',
+    body: JSON.stringify({
+        'storeId': storeId,
+        'productId': productId
+    })
+});
+  return jsonResponse.json();
 }

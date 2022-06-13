@@ -359,11 +359,12 @@ namespace TestMarketBackend.Acceptance
         [TestCaseSource("DataSuccessfulRemoveIfWithNoRolesHasRoles")]
         public void SuccessfulRemoveIfWithNoRolesHasRoles(Func<int> requestingId, Func<int> memberToRemoveId)
         {
-            IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemoveId());
+            int memberToRemove = memberToRemoveId();
+            IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemove);
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
 
-            Assert.IsTrue(!response.IsErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
 
             // checking that member still exists
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());

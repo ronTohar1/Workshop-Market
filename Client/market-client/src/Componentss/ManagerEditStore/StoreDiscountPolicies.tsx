@@ -49,6 +49,11 @@ const columns: GridColDef[] = [
         flex: 3,
         align: "left",
         headerAlign: "left",
+        renderCell: ({ value }) => (
+            <span style={{ overflow: "scroll" }}>
+              {value}
+            </span>
+          )
     },
 ]
 
@@ -67,6 +72,22 @@ export default function StorePurchasePolicies({
     const [selectionModel, setSelectionModel] = React.useState<number[]>([])
     const [chosenIds, setChosenIds] = React.useState<number[]>([])
 
+    //------------------------------
+    const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false)
+    const [failureProductMsg, setFailureProductMsg] = React.useState<string>("")
+    const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false)
+    const [successProductMsg, setSuccessProductMsg] = React.useState<string>("")
+    const showSuccessSnack = (msg: string) => {
+        setOpenSuccSnack(true)
+        setSuccessProductMsg(msg)
+    }
+
+    const showFailureSnack = (msg: string) => {
+        setOpenFailSnack(true)
+        setFailureProductMsg(msg)
+    }
+    //------------------------------
+
     const handleSelectionChanged = (newSelection: any) => {
         const chosenIds: number[] = newSelection//.map((id:number)=>rows[id].id)
         setSelectionModel(newSelection)
@@ -74,19 +95,20 @@ export default function StorePurchasePolicies({
     }
 
     const handleRemovePolicy = () => {
-        console.log("chosenIds")
-        console.log(chosenIds)
 
         if (chosenIds.length === 0) {
-            alert("Please select a policy to remove")
+            showFailureSnack("Please select a policy to remove")
         }
         else {
             fetchResponse(serverRemoveDiscountPolicy(getBuyerId(), store.id, chosenIds[0]))
-            .then((success:boolean)=>{
-                if (success) handleChangedStore(store)
-                else alert("Coludnt remove this policy")
-            })
-            .catch(alert)
+                .then((success: boolean) => {
+                    if (success) {
+                        handleChangedStore(store)
+                        showSuccessSnack("Removed Policy Successfully")
+                    }
+                    else showFailureSnack("Coludnt remove this policy")
+                })
+                .catch(showFailureSnack)
         }
     }
 
@@ -128,24 +150,34 @@ export default function StorePurchasePolicies({
                                 // Selection:
                                 onSelectionModelChange={handleSelectionChanged}
                             />
+                            <Stack direction='row' justifyContent='space-between' width={'95vw'}>
+
+                                <Box>
+                                    <Button variant="contained" sx={{ mt: 1 }} onClick={() => navigate(pathDiscount, { state: store })}>
+                                        Add New Policies
+                                    </Button>
+
+                                </Box>
+                                <Box>
+                                    <Button sx={{ mt: 1 }} color="error" variant="contained" disabled={chosenIds.length === 0} onClick={handleRemovePolicy}>
+                                        Remove Selected Policy
+                                    </Button>
+                                </Box>
+                            </Stack>
                         </div>
                     </div>
                 </div>
-                <Stack direction='row' justifyContent='space-between'>
 
-                    <Box>
-                        <Button variant="contained" sx={{ml : 1}} onClick={() => navigate(pathDiscount, { state: store })}>
-                            Add New Policies
-                        </Button>
+                <Dialog open={openFailSnack}>
+                    {FailureSnackbar(failureProductMsg, openFailSnack, () =>
+                        setOpenFailSnack(false)
+                    )}
+                </Dialog>
+                {SuccessSnackbar(successProductMsg, openSuccSnack, () =>
+                    setOpenSuccSnack(false)
+                )}
 
-                    </Box>
-                    <Box>
-                        <Button sx={{ ml: 'auto', mr: '1vw' }} color="error" variant="contained" onClick={handleRemovePolicy}>
-                            Remove Selected Policy
-                        </Button>
-                    </Box>
-                </Stack>
-            </Box>
+            </Box >
 
         )
     }

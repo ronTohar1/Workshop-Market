@@ -17,7 +17,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
         {
             WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 7890);
             notificationServer.Start();
-            Console.WriteLine("WS server started on ws://127.0.0.1:7890");
+            //Console.WriteLine("WS server started on ws://127.0.0.1:7890");
 
             //SystemOperator so = new SystemOperator("admin", "admin"); // For easier testing
             SystemOperator so = new();
@@ -40,8 +40,8 @@ namespace MyApp // Note: actual namespace depends on the project name.
             //Console.WriteLine("Market opened successfully!");
 
 
-            SetUpExample setup = new SetUpExample(so);
-            setup.SetUp();
+            //SetUpExample setup = new SetUpExample(so);
+            //setup.SetUp();
 
             var builder = WebApplication.CreateBuilder(args);
 

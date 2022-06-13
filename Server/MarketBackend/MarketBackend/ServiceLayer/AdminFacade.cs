@@ -144,6 +144,26 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
+        public Response<bool> IsAdmin(int adminId)
+        {
+            try
+            {
+                bool res = adminManager.ContainAdmin(adminId);
+                logger.Info($"IsAdmin was called with id = {adminId}");
+                return new Response<bool>(res);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: IsAdmin ,parameters [adminId = {adminId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: IsAdmin ,parameters [adminId = {adminId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
         public Response<IList<ServiceMember>> GetLoggedInMembers(int requestingId)
         {
             try

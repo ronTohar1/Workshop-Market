@@ -13,6 +13,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
     {
         public double EvaluateDiscount(ShoppingBag bag, Store store);
 
+        public DataExpression IExpressionToDataExpression();
+
+        public void RemoveFromDB();
+
         public static IExpression DataExpressionToIExpression(DataExpression dataExpression)
         {
             // IDiscountExpression or ContidionalExpression

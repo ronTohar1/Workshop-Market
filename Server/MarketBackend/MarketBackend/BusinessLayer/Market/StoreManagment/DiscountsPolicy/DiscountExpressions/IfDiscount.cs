@@ -1,6 +1,8 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,24 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             if (test.EvaluatePredicate(bag, store))
                 return thenDis.EvaluateDiscount(bag, store);
             return elseDis.EvaluateDiscount(bag, store);
+        }
+
+        public DataExpression IExpressionToDataExpression()
+        {
+            return new DataIfDiscount()
+            {
+                Test = test.IPredicateExpressionToDataPredicateExpression(),
+                Then = (DataDiscountExpression)thenDis.IExpressionToDataExpression(),
+                Else = (DataDiscountExpression)elseDis.IExpressionToDataExpression()
+            };
+        }
+
+        public void RemoveFromDB()
+        {
+            test.RemoveFromDB();
+            thenDis.RemoveFromDB();
+            elseDis.RemoveFromDB();
+            // TODO myself
         }
     }
 }

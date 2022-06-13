@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.BasicDiscounts;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.BasicDiscounts;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,20 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
                 }
             }
             return 0;
+        }
+
+        public override DataExpression IExpressionToDataExpression()
+        {
+            return new DataOneProductDiscount()
+            {
+                ProductId = productId,
+                Discount = discount
+            };
+        }
+
+        public override void RemoveFromDB()
+        {
+            //TODO myself
         }
 
     }

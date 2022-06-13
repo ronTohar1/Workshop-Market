@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.NumericExpressions;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces;
 using System;
@@ -50,6 +51,28 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
                 }
             }
             return maxDis;
+        }
+
+        public DataExpression IExpressionToDataExpression()
+        {
+            IList<DataDiscountExpression> dataDis = new List<DataDiscountExpression>();
+            foreach (IDiscountExpression discount in discounts)
+            {
+                dataDis.Add((DataDiscountExpression)discount.IExpressionToDataExpression());
+            }
+            return new DataMaxExpression()
+            {
+                Discounts = dataDis
+            };
+        }
+
+        public void RemoveFromDB()
+        {
+            foreach(IDiscountExpression discount in discounts)
+            {
+                discount.RemoveFromDB();
+            }
+            //TODO myself
         }
     }
 }

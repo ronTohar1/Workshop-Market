@@ -6,6 +6,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpres
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.NumericExpressions;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
+using MarketBackend.DataLayer.DataManagers;
 using System.Collections.Concurrent;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
@@ -28,19 +29,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             this.discounts = discounts; 
         }
 
-        // r S 8
-        public static StoreDiscountPolicyManager DataSDPMToSDPM(DataStoreDiscountPolicyManager dataSDPM)
-        {
-            IDictionary<int, Discount> discounts = new ConcurrentDictionary<int, Discount>(); 
-            
-            foreach(DataDiscount dataDiscount in dataSDPM.Discounts)
-            {
-                discounts.Add(dataDiscount.Id, Discount.DataDiscountToDiscount(dataDiscount)); 
-            }
-            
-            return new StoreDiscountPolicyManager(discounts); 
-        }
-
         private int getId()
         {
             int res;
@@ -54,14 +42,28 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
         public int AddDiscount(string description ,IExpression dis)
         {
             int id = getId();
-            discounts.Add(id, new Discount(id, description, dis));
+            Discount discount = new Discount(id, description, dis);
+
+            DataDiscount dataDiscount = DiscountToDataDiscount(discount);
+            DiscountDataManager.GetInstance().Add(dataDiscount);
+            DiscountDataManager.GetInstance().Save();
+
+            discounts.Add(id, discount);
             return id;
         }
 
         public void RemoveDiscount(int did)
         {
             if (discounts.ContainsKey(did))
+            {
+                Discount dis = discounts[did];
+
+                dis.discountExpression.RemoveFromDB();
+                DiscountDataManager.GetInstance().Remove(did);
+                DiscountDataManager.GetInstance().Save();
+
                 discounts.Remove(did);
+            }
             else
                 throw new MarketException($"No Discount with id: {did}");
         }
@@ -86,6 +88,28 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             return sum;
         }
 
+        // r S 8 - database functions
+        public static StoreDiscountPolicyManager DataSDPMToSDPM(DataStoreDiscountPolicyManager dataSDPM)
+        {
+            IDictionary<int, Discount> discounts = new ConcurrentDictionary<int, Discount>();
+
+            foreach (DataDiscount dataDiscount in dataSDPM.Discounts)
+            {
+                discounts.Add(dataDiscount.Id, Discount.DataDiscountToDiscount(dataDiscount));
+            }
+
+            return new StoreDiscountPolicyManager(discounts);
+        }
+
+        public DataDiscount DiscountToDataDiscount(Discount dis)
+        {
+            return new DataDiscount()
+            {
+                Id = dis.id,
+                Description = dis.description,
+                DiscountExpression = dis.discountExpression.IExpressionToDataExpression()
+            };
+        }
 
         //-------------------------------- builders -----------------------------------------
 

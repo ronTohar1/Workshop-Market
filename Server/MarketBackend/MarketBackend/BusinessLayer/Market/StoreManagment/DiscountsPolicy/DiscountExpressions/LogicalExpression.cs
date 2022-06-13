@@ -3,6 +3,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpres
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions
 {
@@ -31,11 +32,20 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
                 throw new Exception("not supporting this inherent of LogicalExpression");
         }
 
-        //should be overrided
+        //should be overrided -- all of them
         public virtual bool EvaluatePredicate(ShoppingBag bag, Store store)
         {
             throw new NotSupportedException();
         }
 
+        public virtual DataPredicateExpression IPredicateExpressionToDataPredicateExpression()
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void RemoveFromDB()
+        {
+            throw new NotSupportedException();
+        }
     }
 }

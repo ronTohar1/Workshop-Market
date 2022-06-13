@@ -41,8 +41,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             };
         }
 
-        public void RemoveFromDB()
+        public void RemoveFromDB(DataPredicateExpression dpe)
         {
+            DataProductAmountPredicate dpap = (DataProductAmountPredicate)dpe;
             //TODO myself
         }
     }

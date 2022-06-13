@@ -36,10 +36,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             };
         }
 
-        public override void RemoveFromDB()
+        public override void RemoveFromDB(DataPredicateExpression dpe)
         {
-            firstExpression.RemoveFromDB();
-            secondExpression.RemoveFromDB();
+            DataXorExpression dae = (DataXorExpression)dpe;
+            firstExpression.RemoveFromDB(dae.First);
+            secondExpression.RemoveFromDB(dae.Second);
             //TODO myself
         }
     }

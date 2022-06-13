@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,22 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
                 }
             }
             return true;
+        }
+
+        public override DataIPurchasePolicy IPurchasePolicyToDataIPurchasePolicy()
+        {
+            return new DataAfterHourProductRestriction()
+            {
+                Hour = hour,
+                ProductId = productId,
+                Amount = amount
+            };
+        }
+
+        public override void RemoveFromDB(DataIPurchasePolicy dpp)
+        {
+            DataAfterHourProductRestriction dahpr = (DataAfterHourProductRestriction)dpp;
+            //TODO myself
         }
     }
 }

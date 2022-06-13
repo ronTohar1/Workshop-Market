@@ -216,7 +216,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 				throw new MarketException($"can't recieve an empty comment");
 
 			productDataManager.Update(id, product =>
-				product.Reviews.Add(ProductReviewToNewDataProductReview(review, memberId, productDataManager.Find(id)));
+				product.Reviews.Add(ProductReviewToNewDataProductReview(review, memberId, productDataManager.Find(id))));
 			saveChanges(); 
 
 			if (!reviews.ContainsKey(memberId))

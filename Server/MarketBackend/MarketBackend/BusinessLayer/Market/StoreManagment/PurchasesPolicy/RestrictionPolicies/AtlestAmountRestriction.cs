@@ -1,11 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.RestrictionPolicies
 {
@@ -39,6 +35,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
                 }
             }
             return false;
+        }
+
+        public virtual DataIPurchasePolicy IPurchasePolicyToDataIPurchasePolicy()
+        {
+            return new DataAtLeastAmountRestriction()
+            {
+                Amount = amount,
+                ProductId = productId
+            };
+        }
+
+        public virtual void RemoveFromDB(DataIPurchasePolicy dpp)
+        {
+            DataAtLeastAmountRestriction daar = (DataAtLeastAmountRestriction)dpp;
+            //TODO myself
         }
     }
 }

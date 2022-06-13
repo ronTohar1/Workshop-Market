@@ -18,7 +18,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountIn
     {
         public bool EvaluatePredicate(ShoppingBag bag, Store store);
         public DataPredicateExpression IPredicateExpressionToDataPredicateExpression();
-        public void RemoveFromDB();
+        public void RemoveFromDB(DataPredicateExpression dpe);
         public static IPredicateExpression DataPredicateExpressionToIPredicateExpression(DataPredicateExpression dataPredicateExpression)
         {
             // LogicalExpression or BagValuePredicate or ProductAmountPredicate

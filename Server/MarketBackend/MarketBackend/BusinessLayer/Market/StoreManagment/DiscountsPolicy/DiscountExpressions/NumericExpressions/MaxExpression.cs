@@ -66,12 +66,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             };
         }
 
-        public void RemoveFromDB()
+        public void RemoveFromDB(DataExpression dde)
         {
-            foreach(IDiscountExpression discount in discounts)
-            {
-                discount.RemoveFromDB();
-            }
+            DataMaxExpression dme = (DataMaxExpression)dde;
+            for(int i=0; i<discounts.Count;i++)
+                discounts.ElementAt(i).RemoveFromDB(dme.Discounts.ElementAt(i));
+
             //TODO myself
         }
     }

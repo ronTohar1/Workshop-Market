@@ -4,7 +4,6 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterf
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces;
-using MarketBackend.DataLayer.DataManagers.DiscountDataManagers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,10 +46,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             };
         }
 
-        public void RemoveFromDB()
+        public void RemoveFromDB(DataExpression de)
         {
-            pred.RemoveFromDB();
-            then.RemoveFromDB();
+            DataConditionDiscount dcd = (DataConditionDiscount)de;
+            pred.RemoveFromDB(dcd.Predicate);
+            then.RemoveFromDB(dcd.DiscountExpression);
             //TODO myself
         }
     }

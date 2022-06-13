@@ -90,7 +90,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataCheckProductLessPredicate> CheckProductLessPredicates { get; set; }
         public DbSet<DataCheckProductMoreEqualsPredicate> CheckProductMoreEqualsPredicates { get; set; }
         public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression> PruchasePredicateExpressions { get; set; }
-        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataIPurchasePolicy> InterfacesPurchasePolicies { get; set; }
+        public DbSet<DataIPurchasePolicy> InterfacesPurchasePolicies { get; set; }
         public DbSet<DataRestrictionExpression> RestrictionExpressions { get; set; }
         public DbSet<DataAfterHourProductRestriction> DataAfterHourProductRestrictions { get; set; }
         public DbSet<DataAfterHourRestriction> AfterHourRestrictions { get; set; }
@@ -99,6 +99,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataBeforeHourProductRestriction> BeforeHourProductRestrictions { get; set; }
         public DbSet<DataBeforeHourRestriction> BeforeHourRestrictions { get; set; }
         public DbSet<DataDateRestriction> DateRestrictions { get; set; }
+        public DbSet<DataPurchasePolicy> PurchasePolicies { get; set; }
+        
 
 
         // connection setup functions

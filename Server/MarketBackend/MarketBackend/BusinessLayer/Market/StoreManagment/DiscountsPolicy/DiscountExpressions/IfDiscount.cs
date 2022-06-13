@@ -51,11 +51,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             };
         }
 
-        public void RemoveFromDB()
+        public void RemoveFromDB(DataExpression de)
         {
-            test.RemoveFromDB();
-            thenDis.RemoveFromDB();
-            elseDis.RemoveFromDB();
+            DataIfDiscount did = (DataIfDiscount)de;
+            test.RemoveFromDB(did.Test);
+            thenDis.RemoveFromDB(did.Then);
+            elseDis.RemoveFromDB(did.Else);
             // TODO myself
         }
     }

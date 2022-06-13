@@ -15,7 +15,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
 
         public DataExpression IExpressionToDataExpression();
 
-        public void RemoveFromDB();
+        public void RemoveFromDB(DataExpression de);
 
         public static IExpression DataExpressionToIExpression(DataExpression dataExpression)
         {

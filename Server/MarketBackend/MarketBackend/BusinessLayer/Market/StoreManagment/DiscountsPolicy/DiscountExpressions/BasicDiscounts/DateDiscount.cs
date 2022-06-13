@@ -64,8 +64,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             };
         }
 
-        public override void RemoveFromDB()
+        public override void RemoveFromDB(DataExpression de)
         {
+            DataDateDiscount ddd = (DataDateDiscount)de;
             //TODO myself
         }
     }

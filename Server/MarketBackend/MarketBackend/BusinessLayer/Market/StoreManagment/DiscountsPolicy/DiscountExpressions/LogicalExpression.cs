@@ -43,7 +43,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             throw new NotSupportedException();
         }
 
-        public virtual void RemoveFromDB()
+        public virtual void RemoveFromDB(DataPredicateExpression dpe)
         {
             throw new NotSupportedException();
         }

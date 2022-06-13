@@ -53,8 +53,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
             };
         }
 
-        public virtual void RemoveFromDB()
+        public virtual void RemoveFromDB(DataExpression de)
         {
+            DataStoreDiscount discount = (DataStoreDiscount)de;
             //TODO myself
         }
     }

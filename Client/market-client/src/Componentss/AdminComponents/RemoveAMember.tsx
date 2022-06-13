@@ -41,6 +41,7 @@ export default function RemoveAMember() {
   };
   return (
     <div>
+       <Box textAlign='center'>
       <Button
           onClick={handleClickOpen}
           style={{ height: 50, width: 500 }}
@@ -56,6 +57,7 @@ export default function RemoveAMember() {
         }}>
           Remove a member
         </Button>
+        </Box>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Remove a member</DialogTitle>
         <DialogContent>

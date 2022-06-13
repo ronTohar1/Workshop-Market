@@ -820,28 +820,28 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        //public Response<double> GetStoreDailyProfit(int storeId, int memberId)
-        //{
-        //    try
-        //    {
-        //        Store? s = storeController.GetStore(storeId);
-        //        if (s == null)
-        //            return new Response<int>($"There isn't a store with an id {storeId}");
-        //        int id = s.AddBid(productId, memberId, storeId, bidPrice);
-        //        logger.Info($"AddBid was called with parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
-        //        return new Response<int>(id);
-        //    }
-        //    catch (MarketException mex)
-        //    {
-        //        logger.Error(mex, $"method: AddBid, parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
-        //        return new Response<int>(mex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.Error(ex, $"method: AddBid, parameters: [storeId {storeId}, productId = {productId}, memberId = {memberId}, bidPrice = {bidPrice}]");
-        //        return new Response<int>("Sorry, an unexpected error occured. Please try again");
-        //    }
-        //}
+        public Response<double> GetStoreDailyProfit(int storeId, int memberId)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<double>($"There isn't a store with an id {storeId}");
+                double profit = s.GetDailyProfit(memberId);
+                logger.Info($"GetStoreDailyProfit was called with parameters: [storeId {storeId}, memberId = {memberId}]");
+                return new Response<double>(profit);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetStoreDailyProfit, parameters: [storeId {storeId}, memberId = {memberId}]");
+                return new Response<double>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetStoreDailyProfit, parameters: [storeId {storeId}, memberId = {memberId}]");
+                return new Response<double>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
         //public Response<bool> ApproveBid(int storeId, int memberId, int bidId)
         //{
         //    try

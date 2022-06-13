@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import Member from "../../DTOs/Member";
 import { pathAdmin } from '../../Paths';
 
-export const membersDummy= [
+// export const membersDummy= [
     // new Member(0,"Nir",true),
     // new Member(1,"Ronto",true),
     // new Member(2,"Roi",false),
@@ -27,14 +27,14 @@ export const membersDummy= [
     // new Member(15,"Idan",false),
     // new Member(16,"Zivan",false),
     // new Member(17,"David",true),
-  ]
+  // ]
 
 export default function ShowLoggedInMembers() {
     
     const navigate = useNavigate()
     const [open, setOpen] = React.useState<boolean>(false);
     const [wasOpened, setWasOpened] = React.useState<boolean>(false);
-    const [members,setMembers] = React.useState<Member[]>(membersDummy);
+    const [members,setMembers] = React.useState<Member[]>([]);
     
     const handleClickOpen = () => {
       console.log("opened")

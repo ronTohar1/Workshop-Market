@@ -6,13 +6,9 @@ import Store from "../DTOs/Store"
 import { fetchResponse } from "./GeneralService"
 import { serverSearchProducts } from "./ProductsService"
 import {
-  dummyStore1,
-  dummyStore2,
-  serverGetMembersInRoles,
   serverGetStore,
 } from "./StoreService"
 
-export const dummyMember1 = new Member(0, "username1", true)
 
 export async function fetchStoresManagedBy(memberId: number): Promise<Store[]> {
   try {

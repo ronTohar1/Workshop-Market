@@ -93,8 +93,10 @@ export default function Login() {
       })
         .then((memberId: number) => fetchResponse(serverIsAdmin(memberId))) // Check is admin
         .then((isAdmin: boolean) => sessionService.setIsAdmin(isAdmin))     // Set is admin
-        .then(() => fetchResponse(serverGetPendingMessages(username)))      // Get pending notifications
-        .then((messages: string[]) => messages.forEach(alertFunc))          // Alert pending notifications
+
+        // uncomment for updates in login
+        // .then(() => fetchResponse(serverGetPendingMessages(username)))      // Get pending notifications
+        // .then((messages: string[]) => messages.forEach(alertFunc))          // Alert pending notifications
         .then(() => navigate(pathHome))                                     // Navigate back to home page
         .catch((e) => {
           alert(e)

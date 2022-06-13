@@ -16,8 +16,6 @@ const stores = [
   // new Store(0, "Ronto's", [], new Member(0, "ron", true), true),
   // new Store(1, "Mithcell's", [], new Member(0, "ron", true), true),
 ]
-export const dummyStore1 = null
-export const dummyStore2 = null
 
 export enum Roles {
   Manager,

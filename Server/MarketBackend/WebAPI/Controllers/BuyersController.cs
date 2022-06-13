@@ -13,7 +13,6 @@ namespace WebAPI.Controllers
     public class BuyersController : Controller
     {
         private readonly IBuyerFacade buyerFacade;
-        private const int port = 7890;
         private WebSocketServer notificationServer;
         private static IDictionary<int, string> buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
         private static IDictionary<string, IList<string>> buyerUnsentMessages = new Dictionary<string, IList<string>>();

@@ -130,5 +130,14 @@ namespace MarketBackend {
                 this["InitFilePath"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7890")]
+        public int websocketServerPort {
+            get {
+                return ((int)(this["websocketServerPort"]));
+            }
+        }
     }
 }

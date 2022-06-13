@@ -484,24 +484,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r 4.4
         public void MakeCoOwner(int requestingMemberId, int newCoOwnerMemberId)
         {
-            rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
             try
             {
+                rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
                 string permissionError = CheckAtLeastCoOwnerPermission(requestingMemberId);
                 if (permissionError != null)
                 {
-                    rolesAndPermissionsLock.ReleaseWriterLock();
                     throw new MarketException("Could not make owner: " + permissionError);
                 }
 
                 if (IsCoOwner(newCoOwnerMemberId))
                 {
-                    rolesAndPermissionsLock.ReleaseWriterLock();
                     throw new MarketException(StoreErrorMessage("The member is already a CoOwner"));
                 }
                 if (!IsMember(newCoOwnerMemberId))
                 {
-                    rolesAndPermissionsLock.ReleaseWriterLock();
                     throw new MarketException("The requested new CoOwner is not a member");
                 }
 
@@ -514,7 +511,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                     int parentId = managerInHierarchy.parent.value;
                     if (parentId != requestingMemberId)
                     {
-                        rolesAndPermissionsLock.ReleaseWriterLock();
                         throw new MarketException("The requesting member is not the one that appointed the member to a manager, so can not appoint it to be a coOwner");
                         // todo: also add tests for when the appointing coOwner is not the one that appointed the member of newCoOwnerId to be a manager
                     }
@@ -531,12 +527,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 rolesInStore[Role.Owner].Add(newCoOwnerMemberId);
 
             }
-            catch (MarketException e)
-            {
-                if (rolesAndPermissionsLock.IsWriterLockHeld)
-                    rolesAndPermissionsLock.ReleaseWriterLock();
-                throw e;
-            }
             finally
             {
                 if (rolesAndPermissionsLock.IsWriterLockHeld)
@@ -548,32 +538,24 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r 4.5
         public void RemoveCoOwner(int requestingMemberId, int toRemoveCoOwnerMemberId)
         {
-            rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
             try
             {
+                rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
                 string permissionError = CheckAtLeastCoOwnerPermission(requestingMemberId);
                 if (permissionError != null)
                 {
-                    rolesAndPermissionsLock.ReleaseWriterLock();
                     throw new MarketException("Could not remove co owner: " + permissionError);
                 }
 
                 permissionError = CheckAtLeastCoOwnerPermission(toRemoveCoOwnerMemberId);
                 if (permissionError != null)
                 {
-                    rolesAndPermissionsLock.ReleaseWriterLock();
                     throw new MarketException("Could not remove co owner: " + permissionError);
                 }
 
                 Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId);
 
                 RemovedByOwnerBranchUpdate(removedBrance, $"We regeret to inform you that you've lost your position at {this.name}");
-            }
-            catch (MarketException e)
-            {
-                if (rolesAndPermissionsLock.IsWriterLockHeld)
-                    rolesAndPermissionsLock.ReleaseWriterLock();
-                throw e;
             }
             finally
             {
@@ -601,28 +583,24 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r 4.6, r 5
         public void MakeManager(int requestingMemberId, int newCoManagerMemberId)
         {
-            rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
             try
             {
+                rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
                 string permissionError = CheckAtLeastManagerWithPermission(requestingMemberId, Permission.MakeCoManager);
                 if (permissionError != null)
                 {
-                    rolesAndPermissionsLock.ReleaseWriterLock();
                     throw new MarketException("Could not make manager: " + permissionError);
                 }
                 if (IsCoOwner(newCoManagerMemberId))
                 {
-                    rolesAndPermissionsLock.ReleaseWriterLock();
                     throw new MarketException(StoreErrorMessage("The member is already a CoOwner"));
                 }
                 if (IsManager(newCoManagerMemberId))
                 {
-                    rolesAndPermissionsLock.ReleaseWriterLock();
                     throw new MarketException(StoreErrorMessage("The member is already a Manager"));
                 }
                 if (!IsMember(newCoManagerMemberId))
                 {
-                    rolesAndPermissionsLock.ReleaseWriterLock();
                     throw new MarketException("The requested new CoOwner is not a member");
                 }
 
@@ -634,12 +612,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 appointmentsHierarchy.AddToHierarchy(requestingMemberId, newCoManagerMemberId);
                 // todo: add tests checking this field has been changed
 
-            }
-            catch (MarketException e)
-            {
-                if (rolesAndPermissionsLock.IsWriterLockHeld)
-                    rolesAndPermissionsLock.ReleaseWriterLock();
-                throw e;
             }
             finally
             {
@@ -661,30 +633,24 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r 4.7, r 5
         public void ChangeManagerPermissions(int requestingMemberId, int managerMemberId, IList<Permission> newPermissions)
         {
-            rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
-            try { 
-            // we allow this only to coOwners
-            string permissionError = CheckAtLeastCoOwnerPermission(requestingMemberId);
+            try
+            {
+                rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
+                // we allow this only to coOwners
+                string permissionError = CheckAtLeastCoOwnerPermission(requestingMemberId);
             if (permissionError != null)
             {
-                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException("Could not change manager permissions: " + permissionError);
             }
 
             if (!IsManager(managerMemberId))
             {
-                rolesAndPermissionsLock.ReleaseWriterLock();
                 throw new MarketException(StoreErrorMessage("The id: " + managerMemberId + " is not of a managaer"));
             }
             managersPermissions[managerMemberId] = newPermissions;
 
             }
-            catch (MarketException e)
-            {
-                if (rolesAndPermissionsLock.IsWriterLockHeld)
-                    rolesAndPermissionsLock.ReleaseWriterLock();
-                throw e;
-            }
+           
             finally
             {
                 if (rolesAndPermissionsLock.IsWriterLockHeld)
@@ -735,11 +701,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (permissionError != null)
                 throw new MarketException("Error getting manager permissions: \n" + permissionError);
 
-            rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
-            try { 
+            try
+            {
+                rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
             if (!IsManager(managerMemberId))
             {
-                rolesAndPermissionsLock.ReleaseReaderLock();
                 throw new MarketException("The requested member is not a manager, so its permissions cant retrieved");
             }
             lock (isOpenMutex)
@@ -748,16 +714,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                     throw new MarketException($"Cant get purchase history because the store '{this.name}' is closed");
 
                 IList<Permission> result = new List<Permission>(managersPermissions[managerMemberId]);
-                rolesAndPermissionsLock.ReleaseReaderLock();
                 return result;
             }
+
             }
-            catch (MarketException e)
-            {
-                if (rolesAndPermissionsLock.IsReaderLockHeld)
-                    rolesAndPermissionsLock.ReleaseReaderLock();
-                throw e;
-            }
+            
             finally
             {
                 if (rolesAndPermissionsLock.IsReaderLockHeld)
@@ -785,23 +746,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         private bool HasPermission(int managerId, Permission permission)
         {
-            rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
-            try { 
-            if (!IsManager(managerId))
+            try
             {
-                rolesAndPermissionsLock.ReleaseReaderLock();
-                throw new ArgumentException(StoreErrorMessage("User with id " + managerId + " is not a managaer"));
+                rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
+                if (!IsManager(managerId))
+                {
+                    throw new ArgumentException(StoreErrorMessage("User with id " + managerId + " is not a managaer"));
 
-            }
-            bool result = managersPermissions[managerId].Contains(permission);
-            rolesAndPermissionsLock.ReleaseReaderLock();
-            return result;
-            }
-            catch (MarketException e)
-            {
-                if (rolesAndPermissionsLock.IsReaderLockHeld)
-                    rolesAndPermissionsLock.ReleaseReaderLock();
-                throw e;
+                }
+                bool result = managersPermissions[managerId] != null && managersPermissions[managerId].Contains(permission);
+                return result;
             }
             finally
             {
@@ -809,23 +763,17 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                     rolesAndPermissionsLock.ReleaseReaderLock();
             }
 
+
         }
 
 
         private bool IsManagerWithPermission(int memberId, Permission permission)
         {
-            rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
-            try { 
-            bool result = IsManager(memberId) && HasPermission(memberId, permission);
-            rolesAndPermissionsLock.ReleaseReaderLock();
-
-            return result;
-            }
-            catch (MarketException e)
+            try
             {
-                if (rolesAndPermissionsLock.IsReaderLockHeld)
-                    rolesAndPermissionsLock.ReleaseReaderLock();
-                throw e;
+                rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
+                bool result = IsManager(memberId) && HasPermission(memberId, permission);
+                return result;
             }
             finally
             {

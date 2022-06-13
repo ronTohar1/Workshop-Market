@@ -364,7 +364,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
 
-            Assert.IsTrue(!response.IsErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
 
             // checking that member still exists
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());

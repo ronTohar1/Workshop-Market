@@ -98,6 +98,11 @@ namespace MarketBackend.DataLayer.DataManagers
             TryFunction(() => db.Remove(exp));
         }
 
+        public virtual void RemoveAllTables()
+        {
+            db.RemoveAllTables();
+        }
+
         protected int MaxOrDefualt<T>(IEnumerable<T> list, Func<T, int> getNumber, int defaultValue)
         {
             if (!list.Any()) // if is empty 

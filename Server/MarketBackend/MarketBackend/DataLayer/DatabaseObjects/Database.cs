@@ -117,6 +117,11 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             optionsBuilder.UseSqlServer(localVMConnectionString); 
         }
 
+        //public void RemoveAllTables()
+        //{
+        //    this.GetType().GetProperties()
+        //}
+
         // setting (not defualt) primary keys
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)

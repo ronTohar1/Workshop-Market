@@ -18,6 +18,7 @@ namespace TestMarketBackend.BusinessLayer.Buyers
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers();
             Mock<IBuyersController> mock1 = new Mock<IBuyersController>();
             Mock<IBuyersController> mock2 = new Mock<IBuyersController>();
 

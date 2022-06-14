@@ -139,5 +139,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             this.bid = offer;
             offerLock.ReleaseMutex();
         }
+
+        public void DataRemove()
+        {
+            bidDataManager.Remove(id); 
+        }
     }
 }

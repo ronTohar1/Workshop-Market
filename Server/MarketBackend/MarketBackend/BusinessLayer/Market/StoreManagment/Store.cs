@@ -445,7 +445,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 DataNotifyAllStoreOwners(notification); 
                 storeDataManager.Save();
             });
-            notifyAllStoreOwners(notification); --> // todo: this should not save in the database 
+            notifyAllStoreOwnersNoSave(notification);
         }
         // 6.4, 4.13
         public virtual void AddPurchaseRecord(int memberId, Purchase purchase)
@@ -681,8 +681,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             int memberId = removedBranch.value;
             rolesInStore[Role.Owner].Remove(memberId);//doesn't do anything if not in collection
             rolesInStore[Role.Manager].Remove(memberId);
-            membersGetter(memberId).Notify(notification);
-            --> // should be without saving in the database 
+            membersGetter(memberId).NotifyNoSave(notification);
             foreach (Hierarchy<int> child in removedBranch.children) {
                 RemovedByOwnerBranchUpdate(child, notification);
             }
@@ -1015,9 +1014,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             Bid bid = bids[bidId];
             if (IsCoOwner(memberId) || IsManagerWithPermission(memberId, Permission.handlingBids))
             {
-                bids.Remove(bidId);
                 Member m = membersGetter.Invoke(bid.memberId);
-                m.Notify($"The bid you placed for the product {products[bid.productId].name} was denied for the cost of {bid.bid}");
+                string notification = $"The bid you placed for the product {products[bid.productId].name} was denied for the cost of {bid.bid}"; 
+
+                BidDataManager.GetInstance().Remove(bidId);
+                m.DataNotify(notification);
+                storeDataManager.Save(); 
+
+                bids.Remove(bidId);
+                m.NotifyNoSave(notification);
             }
         }
 
@@ -1048,8 +1053,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // actions for a member on his own bid
         public void RemoveBid(int memberId, int bidId)
         {
-            if (bids[bidId].memberId == memberId)
-                bids.Remove(bidId);
+            if (!bids.ContainsKey(bidId))
+            {
+                throw new MarketException("This bid does not exist in the system"); 
+            }
+            if (bids[bidId].memberId != memberId)
+            {
+                throw new MarketException("This bid belongs to another member"); 
+            }
+            BidDataManager.GetInstance().Remove(bidId);
+            storeDataManager.Save(); 
+
+            bids.Remove(bidId);
         }
 
         public void ApproveCounterOffer(int memberId, int bidId)
@@ -1057,9 +1072,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             Bid bid = bids[bidId];
             if (bid.memberId != memberId)
                 throw new MarketException("The counter offer cant be approved because it is not your bid!");
-            bid.approveCounterOffer();
-            notifyAllStoreOwners($"A counter offer on a bid has been made for the product {products[bid.productId].name} for the price of {bid.bid}");
-            notifyAllMembersWithRoleAndPermission($"A bid has been made for the product {products[bid.productId].name} for the price of {bid.bid}", Role.Manager, Permission.handlingBids);
+            string notification = $"A counter offer on a bid has been made for the product {products[bid.productId].name} for the price of {bid.bid}"; 
+            bid.approveCounterOffer(() =>
+            {
+                DataNotifyAllStoreOwners(notification);
+                storeDataManager.Save(); 
+            });
+            notifyAllStoreOwners(notification);
+            notifyAllMembersWithRoleAndPermissionNoSave($"A bid has been made for the product {products[bid.productId].name} for the price of {bid.bid}", Role.Manager, Permission.handlingBids);
         }
 
         public void DenyCounterOffer(int memberId, int bidId)
@@ -1127,6 +1147,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // 1.5, 1.6
         public virtual void notifyAllStoreOwners(string notificationMessage) 
             =>notifyAllMembersWithRole(notificationMessage, Role.Owner);
+        public virtual void notifyAllStoreOwnersNoSave(string notificationMessage)
+            => notifyAllMembersWithRoleNoSave(notificationMessage, Role.Owner);
         public void notifyAllStoreManagers(string notificationMessage)
             => notifyAllMembersWithRole(notificationMessage, Role.Manager);
 
@@ -1136,29 +1158,43 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         private void notifyAllMembersWithRole(string notificationMessage, Role roleAtStore)
         {
-            foreach (int memberId in rolesInStore[roleAtStore])
-                membersGetter(memberId).Notify(notificationMessage);
+            actionAllMembersWithRole(member => member.Notify(notificationMessage), roleAtStore);
+
         }
         private void DataNotifyAllMembersWithRole(string notificationMessage, Role roleAtStore)
         {
+            actionAllMembersWithRole(member => member.DataNotify(notificationMessage), roleAtStore); 
+        }
+        private void notifyAllMembersWithRoleNoSave(string notificationMessage, Role roleAtStore)
+        {
+            actionAllMembersWithRole(member => member.NotifyNoSave(notificationMessage), roleAtStore);
+        }
+        private void actionAllMembersWithRole(Action<Member> action, Role roleAtStore)
+        {
             foreach (int memberId in rolesInStore[roleAtStore])
-                membersGetter(memberId).DataNotify(notificationMessage);
+                action(membersGetter(memberId));
         }
         private void notifyAllMembersWithRoleAndPermission(string notificationMessage, Role roleAtStore, Permission permission)
         {
-            foreach (int memberId in rolesInStore[roleAtStore])
-            {
-                if (HasPermission(memberId, permission))
-                    membersGetter(memberId).Notify(notificationMessage);
-            }
+            actionAllMembersWithRoleAndPermission(member => member.Notify(notificationMessage), roleAtStore, permission); 
+        }
+
+        private void notifyAllMembersWithRoleAndPermissionNoSave(string notificationMessage, Role roleAtStore, Permission permission)
+        {
+            actionAllMembersWithRoleAndPermission(member => member.NotifyNoSave(notificationMessage), roleAtStore, permission);
         }
 
         private void DataNotifyAllMembersWithRoleAndPermission(string notificationMessage, Role roleAtStore, Permission permission)
         {
+            actionAllMembersWithRoleAndPermission(member => member.DataNotify(notificationMessage), roleAtStore, permission);
+        }
+
+        private void actionAllMembersWithRoleAndPermission(Action<Member> action, Role roleAtStore, Permission permission)
+        {
             foreach (int memberId in rolesInStore[roleAtStore])
             {
                 if (HasPermission(memberId, permission))
-                    membersGetter(memberId).DataNotify(notificationMessage);
+                    action(membersGetter(memberId));
             }
         }
 

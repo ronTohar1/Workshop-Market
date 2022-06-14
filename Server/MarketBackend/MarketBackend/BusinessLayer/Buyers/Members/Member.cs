@@ -133,6 +133,19 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             
         }
 
+        public virtual void NotifyNoSave(string[] notifications)
+        {
+
+            if (!LoggedIn || !notifier.tryToNotify(notifications))
+            {
+                foreach (string notification in notifications)
+                {
+                    pendingNotifications.Add(notification);
+                }
+            }
+
+        }
+
         public virtual void DataNotify(string[] notifications)
         {
             MemberDataManager memberDataManager = MemberDataManager.GetInstance();
@@ -148,6 +161,9 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
 
         public void Notify(string notification)
        => Notify(new string[] { notification });
+
+        public void NotifyNoSave(string notification)
+       => NotifyNoSave(new string[] { notification });
 
         public void DataNotify(string notification)
        => DataNotify(new string[] { notification });

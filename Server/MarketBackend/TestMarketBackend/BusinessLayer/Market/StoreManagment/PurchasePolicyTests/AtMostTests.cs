@@ -27,6 +27,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             storeId = 1;
             pid1 = 1;
             pid2 = 2;

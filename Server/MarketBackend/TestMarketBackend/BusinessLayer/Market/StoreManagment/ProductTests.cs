@@ -17,6 +17,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         [SetUp]
         public void setup() {
+            DataManagersMock.InitMockDataManagers();
+
             product = new Product("Chocolate", 5.90, "Dairy");
         }
 

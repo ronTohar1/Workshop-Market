@@ -19,6 +19,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         
         [SetUp]
         public void Setup1() {
+            DataManagersMock.InitMockDataManagers(); 
+
             hierarchy = new Hierarchy<string>(node1, (dataHierarchy, value) => { }); // the action here is not used because the dataManagers are mocked in the unit tests 
         }
 

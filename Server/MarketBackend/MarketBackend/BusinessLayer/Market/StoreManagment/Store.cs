@@ -234,7 +234,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 {
                     Product product = prod.Key;
                     int amount = prod.Value;
-                    product.AddToInventory(amount);
+                    product.AddToInventory(amount, new Action(() => storeDataManager.Save()));
                 }
                 transactions.Remove(transactionId);
             }
@@ -289,7 +289,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private void RevertTransaction(int transaction)
         {
             foreach (Product p in transactions[transaction].Keys)
-                p.AddToInventory(transactions[transaction][p]);
+                p.AddToInventory(transactions[transaction][p], new Action(() => storeDataManager.Save()));
         }
         // Removing the amount from the prodcut in the inventory 
         private string? ReserveSingleProduct(int buyerId, int productId, int amount)
@@ -461,7 +461,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException("Could not add review: " + permissionError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not add review: there isn't such a product with product id: {productId}"));
-            string notification = $"The member with id: {memberId} has written a new review of a product woth id: {productId} at {this.name}"
+            string notification = $"The member with id: {memberId} has written a new review of a product woth id: {productId} at {this.name}";
             products[productId].AddProductReview(memberId, review, () =>
             {
                 DataNotifyAllStoreOwners(notification); 
@@ -473,17 +473,6 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public virtual void AddPurchaseRecord(int memberId, Purchase purchase)
         {
             EnforceAtLeastCoOwnerPermission(memberId, "Could not add purchase option for the product: ");
-
-            DataPurchase dataPurchase = new DataPurchase() {
-                BuyerId = purchase.BuyerId,
-                PurchaseDate = purchase.purchaseDate,
-                PurchaseDescription = purchase.purchaseDescription,
-                PurchasePrice = purchase.purchasePrice,
-                Store = storeDataManager.Find(id)
-            };
-            storeDataManager.Update(id, store => store.PurchaseHistory.Add(dataPurchase)); 
-            --> // todo: check if need to save changes, or in purchases manager change this function 
-
             purchaseHistory.Add(purchase);
         }
 

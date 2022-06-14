@@ -118,8 +118,40 @@ public class StoreController
 		// todo: try again the synchronization here, maybe need to synchronize that the member exists, when 
     }
 
-	// returns null if can or an error message if not
-	private string CanAddOpenStore(string storeName)
+
+	// r S 8
+	public static StoreController LoadStoreController(MembersController membersController)
+	{
+		// trying to load data 
+
+		StoreDataManager storeDataManager = StoreDataManager.GetInstance();
+
+		IList<DataStore> dataOpenStores = storeDataManager.Find(store => store.IsOpen);
+		IList<DataStore> dataClosedStores = storeDataManager.Find(store => !store.IsOpen);
+
+		Func<int, Member> membersGetter = memberId => membersController.GetMember(memberId);
+
+		IDictionary<int, Store> openStores = DataStoresListToStoresDisctionary(dataOpenStores, membersGetter);
+		IDictionary<int, Store> closedStores = DataStoresListToStoresDisctionary(dataClosedStores, membersGetter);
+
+		return new StoreController(membersController, openStores, closedStores);
+	}
+
+	private static IDictionary<int, Store> DataStoresListToStoresDisctionary(IList<DataStore> dataStores, Func<int, Member> membersGetter)
+	{
+		IDictionary<int, Store> storesDictionary = new ConcurrentDictionary<int, Store>();
+		foreach (DataStore dataStore in dataStores)
+		{
+			storesDictionary.Add(dataStore.Id, Store.DataStoreToStore(dataStore, membersGetter));
+		}
+		return storesDictionary;
+	}
+
+
+
+
+		// returns null if can or an error message if not
+		private string CanAddOpenStore(string storeName)
 	{
 		if (StoreExists(storeName)){
 			return "A store with the name: " + storeName + " already exists"; 
@@ -225,6 +257,7 @@ public class StoreController
 	}
 	private bool PlaysRoleAtStore(Store store, int memeberId)
 		=> store.IsManager(memeberId) || store.IsCoOwner(memeberId) || store.IsFounder(memeberId);
+
 
 	//for tests
     public StoreController()

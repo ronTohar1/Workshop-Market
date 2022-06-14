@@ -87,10 +87,16 @@ namespace MarketBackend.DataLayer.DataManagers
             {
                 return function();
             }
-            catch (Exception exception) // todo: check if this is the exception that is needed to be catch here
+            catch (Exception) // todo: check if this is the exception that is needed to be catch here
             {
                 throw new MarketException("Action could not be saved, try again later");
             }
         }
+
+        public virtual void Remove<R>(R exp)
+        {
+            TryFunction(() => db.Remove(exp));
+        }
+
     }
 }

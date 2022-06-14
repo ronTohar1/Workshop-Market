@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.BasicDiscounts;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountEx
         public virtual double GetSum(ShoppingBag bag, Store store)
         {
             return sumOfCart(bag, store);
+        }
+
+        public override DataExpression IExpressionToDataExpression()
+        {
+            return new DataDateDiscount()
+            {
+                Year = this.year,
+                Month = this.month,
+                Day = this.day,
+                Discount = this.discount
+            };
+        }
+
+        public override void RemoveFromDB(DataExpression de)
+        {
+            DataDateDiscount ddd = (DataDateDiscount)de;
+            //TODO myself
         }
     }
 }

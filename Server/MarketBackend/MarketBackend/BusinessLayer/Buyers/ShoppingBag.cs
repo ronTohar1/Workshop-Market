@@ -51,24 +51,36 @@ namespace MarketBackend.BusinessLayer.Buyers
         /// <summary>
         /// Add given amount of product units to the bag. If product not exist in bag, it will be added to the bag
         /// </summary>
-        virtual public void AddProductToBag(ProductInBag product, int amount, int buyerId, bool isMember)
+        virtual public void AddProductToBag(ProductInBag product, int amount, int buyerId, bool isMember, DataMember dm, DataShoppingBag dsb)
         {
             if (product == null)
+            {
+                if (isMember)
+                    dm.Cart.ShoppingBags.Remove(dsb);
                 throw new ArgumentNullException("product");
+            }
             if (product.StoreId != this.StoreId)
+            {
+                if (isMember)
+                    dm.Cart.ShoppingBags.Remove(dsb);
                 throw new Exception("Product id in bag cannot be different from the store id of the bag");
+            }
             if (amount < 1)
+            {
+                if (isMember)
+                    dm.Cart.ShoppingBags.Remove(dsb);
                 throw new MarketException(nameof(amount) + " of product in cart cannot be lower than 1!!!!");
+            }
 
             if (productsAmounts.ContainsKey(product))
             {
                 if (isMember)
-                    UpdateProductAmountInDB(buyerId, product.ProductId, product.StoreId, amount);
+                    UpdateProductAmountInDB(buyerId, product.ProductId, product.StoreId, amount, dm);
                 productsAmounts[product] += amount;
             }
             else
             {
-                AddProductToDB(buyerId, product.ProductId, product.StoreId, amount);
+                AddProductToDB(buyerId, product.ProductId, product.StoreId, amount, dm);
                 productsAmounts.Add(product, amount);
             }
         }
@@ -137,9 +149,8 @@ namespace MarketBackend.BusinessLayer.Buyers
             };
         }
 
-        public void UpdateProductAmountInDB(int memberId, int productId, int storeId, int amount)
+        public void UpdateProductAmountInDB(int memberId, int productId, int storeId, int amount, DataMember dm)
         {
-            DataMember dm = MemberDataManager.GetInstance().Find(memberId);
             if (dm == null) return;
             DataCart? cart = dm.Cart;
             foreach (DataShoppingBag dsb in cart.ShoppingBags)
@@ -159,9 +170,8 @@ namespace MarketBackend.BusinessLayer.Buyers
             MemberDataManager.GetInstance().Save();
         }
 
-        public void AddProductToDB(int memberId, int productId, int storeId, int amount)
+        public void AddProductToDB(int memberId, int productId, int storeId, int amount, DataMember dm)
         {
-            DataMember dm = MemberDataManager.GetInstance().Find(memberId);
             if (dm == null) return;
             DataCart? cart = dm.Cart;
             foreach (DataShoppingBag dsb in cart.ShoppingBags)

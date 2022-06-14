@@ -23,5 +23,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Purc
             else
                 throw new Exception("not supporting this inherent of IPredicateExpression");
         }
+
+        public DataPredicateExpression PredicateExpressionToDataPredicateExpression();
+
+        public void RemoveFromDB(DataPredicateExpression dpe);
     }
 }

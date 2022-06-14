@@ -1,18 +1,10 @@
 ﻿using MarketBackend.ServiceLayer.ServiceDTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Admins;
 using MarketBackend.BusinessLayer.Market;
 using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Buyers.Guests;
 using MarketBackend.BusinessLayer.Buyers;
-using SystemLog;
 using MarketBackend.BusinessLayer;
-using NLog;
-using MarketBackend.BusinessLayer.System.ExternalServices;
 namespace MarketBackend.ServiceLayer
 {
     public class SystemOperator : ISystemOperator
@@ -36,16 +28,16 @@ namespace MarketBackend.ServiceLayer
                 throw new Exception("You can use this c'tor only when system should be loaded using init file. Please recheck appconfig file.");
 
             SystemLoader systemLoader = new SystemLoader(appConfig.InitFilePath, this);
-            bso = new BusiessSystemOperator(systemLoader.AdminUsername, systemLoader.AdminPassword); // will initialize the controllers if it's the first boot;
+            bso = new BusiessSystemOperator(systemLoader.AdminUsername, systemLoader.AdminPassword, false); // will initialize the controllers if it's the first boot;
             OpenMarket(systemLoader.AdminUsername, systemLoader.AdminPassword);
             systemLoader.LoadSystem();
         }
 
 
-        public SystemOperator(string username, string password)
+        public SystemOperator(string username, string password, bool loadDatabase=true)
         {
             MarketOpen = false;
-            bso = new BusiessSystemOperator(username, password); // will initialize the controllers if it's the first boot;
+            bso = new BusiessSystemOperator(username, password, loadDatabase); // will initialize the controllers if it's the first boot;
             adminFacade = null;
             buyerFacade = null;
             externalSystemFacade = null;
@@ -55,7 +47,7 @@ namespace MarketBackend.ServiceLayer
                 throw new Exception(response.ErrorMessage);
         }
 
-        public Response<int> OpenMarket(string username, string password)
+        public Response<int> OpenMarket(string username, string password, bool loadDatabase=true)
         {
             try
             {
@@ -65,7 +57,12 @@ namespace MarketBackend.ServiceLayer
                     return new("Market is already open.");     
                 }
                 if (!bso.MarketOpen)
-                    bso.OpenMarket(username, password);
+                {
+                    if (loadDatabase)
+                        bso.OpenMarketWithDatabase(username, password);
+                    else
+                        bso.OpenMarket(username, password);
+                }
                 int adminId = bso.MarketOpenerAdminId;
                 InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
                 MarketOpen = true;
@@ -84,12 +81,12 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<bool> CloseMarket()
+        public Response<bool> CloseMarket(bool clearDatabase=false)
         {
             try
             {
-                bso.CloseMarket();
-                InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
+                bso.CloseMarket(clearDatabase);
+                //InitFacades(bso.membersController, bso.guestsController, bso.storeController, bso.buyersController, bso.adminManager, bso.purchasesManager);
                 bso.logger.Info("method CloseMarket was called");
                 MarketOpen = false;
                 RemoveFacades();

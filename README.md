@@ -8,7 +8,7 @@ In this project the server is implemented in C# whereas the client is implemente
   - Visual Studio  
   - [.Net Frameowrk 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 - Open the [MarketBackend](Server\MarketBackend\MarketBackend.sln) project via Visual Studio as an existing project
-- Open the [Solution Explorer](https://docs.microsoft.com/en-us/visualstudio/ide/use-solution-explorer?view=vs-2022) and right-click on the WebAPI project ![WebAPI project](Images\SolutionExplorerScreenshot.jpg).
+- Open the [Solution Explorer](https://docs.microsoft.com/en-us/visualstudio/ide/use-solution-explorer?view=vs-2022) and right-click on the WebAPI project ![WebAPI project](https://github.com/ronTohar1/Workshop-Market/tree/Adding-readme/Images\SolutionExplorerScreenshot.jpg).
 - Now select "Set as Startup Project".
 - Click the "Run" button at the top of the screen.
 - After running the project, a browser page named "Swagger" should open automatically. You can ignore that.

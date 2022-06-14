@@ -13,6 +13,7 @@ using MarketBackend.BusinessLayer;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using System.Threading;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -1537,7 +1538,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             Bid b = new Bid(productId1, memberId1, storeId, bid);
-            b.approveBid(founderMemberId);
+            b.approveBid(founderMemberId, new Action(() => Thread.Sleep(0)));
             store.CheckAllApproved(b);
         }
 

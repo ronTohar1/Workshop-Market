@@ -225,27 +225,27 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             newExp.discounts = l;
             return newExp;
         }
-        public IDiscountExpression NewAddativeExpression(IList<IDiscountExpression> l)
-        {
-            AddativeExpression newExp = new AddativeExpression();
-            newExp.discounts = l;
-            return newExp;
-        }
-        public IDiscountExpression NewXorDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
-        {
-            OrDiscount newExp = new OrDiscount(firstDis, secondDis);
-            return newExp;
-        }
-        public IDiscountExpression NewOrDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
-        {
-            OrDiscount newExp = new OrDiscount(firstDis, secondDis);
-            return newExp;
-        }
-        public IDiscountExpression NewAndDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
-        {
-            AndDiscount newExp = new AndDiscount(firstDis, secondDis);
-            return newExp;
-        }
+        //public IDiscountExpression NewAddativeExpression(IList<IDiscountExpression> l)
+        //{
+        //    AddativeExpression newExp = new AddativeExpression();
+        //    newExp.discounts = l;
+        //    return newExp;
+        //}
+        //public IDiscountExpression NewXorDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
+        //{
+        //    OrDiscount newExp = new OrDiscount(firstDis, secondDis);
+        //    return newExp;
+        //}
+        //public IDiscountExpression NewOrDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
+        //{
+        //    OrDiscount newExp = new OrDiscount(firstDis, secondDis);
+        //    return newExp;
+        //}
+        //public IDiscountExpression NewAndDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
+        //{
+        //    AndDiscount newExp = new AndDiscount(firstDis, secondDis);
+        //    return newExp;
+        //}
         //-------Discount compound operations------
 
         //-------------------------------- builders -----------------------------------------

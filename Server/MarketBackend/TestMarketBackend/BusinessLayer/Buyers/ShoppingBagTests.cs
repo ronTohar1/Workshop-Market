@@ -25,6 +25,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [SetUp]
         public void Setup()
         {
+            DataManagersMock.InitMockDataManagers();
             var products = new Dictionary<ProductInBag, int>();
             products.Add(pInBag_1, 1);
             products.Add(pInBag_2, 2);

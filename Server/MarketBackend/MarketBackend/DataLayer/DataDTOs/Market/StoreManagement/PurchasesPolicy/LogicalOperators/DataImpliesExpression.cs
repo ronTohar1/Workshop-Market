@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators
 {
-    public class DataImpliesExpression : DataPurchasePolicy
+    public class DataImpliesExpression : DataIPurchasePolicy
     {
         public DataPredicateExpression? Condition { get; set; }
         public DataPredicateExpression? Allowing { get; set; }

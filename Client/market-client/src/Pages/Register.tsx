@@ -1,49 +1,50 @@
-import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { serverRegister } from "../services/BuyersService";
-import { useNavigate } from "react-router-dom";
-import { pathLogin } from "../Paths";
+import * as React from "react"
+import Avatar from "@mui/material/Avatar"
+import Button from "@mui/material/Button"
+import CssBaseline from "@mui/material/CssBaseline"
+import TextField from "@mui/material/TextField"
+import FormControlLabel from "@mui/material/FormControlLabel"
+import Checkbox from "@mui/material/Checkbox"
+import Link from "@mui/material/Link"
+import Paper from "@mui/material/Paper"
+import Grid from "@mui/material/Grid"
+import Box from "@mui/material/Box"
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import Typography from "@mui/material/Typography"
+import Container from "@mui/material/Container"
+import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { serverRegister } from "../services/BuyersService"
+import { useNavigate } from "react-router-dom"
+import { pathHome, pathLogin } from "../Paths"
+import HomeIcon from "@mui/icons-material/Home"
 
-const theme = createTheme();
+const theme = createTheme()
 const backgroundImages = [
   "https://images.unsplash.com/photo-1595853035070-59a39fe84de3",
-];
+]
 
 const randBackgroundImage = () =>
-  backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+  backgroundImages[Math.floor(Math.random() * backgroundImages.length)]
 
 export default function Register() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const username = data.get("username")?.toString();
-    const password = data.get("password")?.toString();
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    const username = data.get("username")?.toString()
+    const password = data.get("password")?.toString()
     try {
-      const serverResponse = await serverRegister(username, password);
-      if (serverResponse.errorOccured) alert(serverResponse.errorMessage);
+      const serverResponse = await serverRegister(username, password)
+      if (serverResponse.errorOccured) alert(serverResponse.errorMessage)
       else {
-        alert(`${username} Registered sucessfully!`);
-        navigate(pathLogin);
+        alert(`${username} Registered sucessfully!`)
+        navigate(pathLogin)
       }
     } catch (e) {
-      alert("Error occured! Whoops");
+      alert("Error occured! Whoops")
     }
-  };
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -102,6 +103,17 @@ export default function Register() {
                 Register
               </Button>
               <Grid container justifyContent="flex-end">
+                <Grid item xs>
+                  <Button
+                    variant="contained"
+                    href={pathHome}
+                    color="secondary"
+                    // sx={{ position: "absolute", top: "0px", right: "0px" }}
+                    endIcon={<HomeIcon />}
+                  >
+                    Home
+                  </Button>
+                </Grid>
                 <Grid item>
                   <Link href="/login" variant="body2">
                     Already have an account? Sign in
@@ -129,5 +141,5 @@ export default function Register() {
         />
       </Grid>
     </ThemeProvider>
-  );
+  )
 }

@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Moq;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer;
+using System.Threading;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -25,7 +26,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCase(100000)]
         public void AddToInventoryCheck(int amountToAdd) {
             int amountBefore = product.amountInInventory;
-            product.AddToInventory(amountToAdd);
+            product.AddToInventory(amountToAdd, new Action(() => Thread.Sleep(0)));
             int amountAfter = product.amountInInventory;
             Assert.IsTrue(amountBefore + amountToAdd == amountAfter);
         }
@@ -42,7 +43,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             setUpInitialInventory();
             int amountBefore = product.amountInInventory;
-            product.RemoveFromInventory(amountToRemove);
+            product.RemoveFromInventory(amountToRemove, new Action(() => Thread.Sleep(0)));
             int amountAfter = product.amountInInventory;
             Assert.IsTrue(amountBefore - amountToRemove == amountAfter);
         }
@@ -54,7 +55,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             setUpInitialInventory();
             int amountBefore = product.amountInInventory;
-            Assert.Throws<MarketException>(() => product.RemoveFromInventory(amounToRemove));
+            Assert.Throws<MarketException>(() => product.RemoveFromInventory(amounToRemove, new Action(() => Thread.Sleep(0))));
             int amountAfter = product.amountInInventory;
             Assert.IsTrue(amountBefore == amountAfter);
         }
@@ -68,7 +69,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void AddPurchaseOptionSuccess(PurchaseOption purchaseOptionToAdd)
         {
             int amountBefore = product.purchaseOptions.Count;
-            product.AddPurchaseOption(purchaseOptionToAdd);
+            product.AddPurchaseOption(purchaseOptionToAdd, new Action(() => Thread.Sleep(0)));
             int amountAfter = product.purchaseOptions.Count;
             Assert.IsTrue(product.purchaseOptions.Contains(purchaseOptionToAdd) && amountBefore + 1 == amountAfter);
         }
@@ -84,7 +85,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             setUpInitialPurchasesOptions();
             int amountBefore = product.purchaseOptions.Count;
-            product.RemovePurchaseOption(purchaseOptionToRemove);
+            product.RemovePurchaseOption(purchaseOptionToRemove, new Action(() => Thread.Sleep(0)));
             int amountAfter = product.purchaseOptions.Count;
             Assert.IsTrue(!product.purchaseOptions.Contains(purchaseOptionToRemove) && amountBefore - 1 == amountAfter);
         }
@@ -96,7 +97,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             setUpInitialPurchasesOptions();
             int amountBefore = product.purchaseOptions.Count;
-            Assert.Throws<MarketException>(() => product.RemovePurchaseOption(purchaseOptionToRemove));
+            Assert.Throws<MarketException>(() => product.RemovePurchaseOption(purchaseOptionToRemove, new Action(() => Thread.Sleep(0))));
             int amountAfter = product.purchaseOptions.Count;
             Assert.IsTrue(amountBefore == amountAfter);
         }
@@ -108,7 +109,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void AddReview(int memberId, string reviewContent)
         {
             int amountOfReviewsBefore = product.reviews.Count;
-            product.AddProductReview(memberId, reviewContent);
+            product.AddProductReview(memberId, reviewContent, new Action(() => Thread.Sleep(0)));
             int amountOfReviewsAfter = product.reviews.Count;
             Assert.IsTrue(amountOfReviewsBefore +1 == amountOfReviewsAfter);
         }
@@ -118,7 +119,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCase(95.2)]
         public void SetPriceByUnit(double newPriceByUnit)
         {
-            product.SetProductPriceByUnit(newPriceByUnit);
+            product.SetProductPriceByUnit(newPriceByUnit, new Action(() => Thread.Sleep(0)));
             Assert.True(product.pricePerUnit == newPriceByUnit);
         }
         // SetDiscount test
@@ -128,7 +129,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void SetDiscountPercentage(double discount)
         {
             Assert.True(product.productdicount == 0.0);
-            product.SetProductDiscountPercentage(discount);
+            product.SetProductDiscountPercentage(discount, new Action(() => Thread.Sleep(0)));
             Assert.True(product.productdicount == discount/100);
         }
         // SetCategory test
@@ -138,7 +139,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void SetCategory(string category)
         {
             Assert.False(product.category.Equals(category));
-            product.SetProductCategory(category);
+            product.SetProductCategory(category, new Action(() => Thread.Sleep(0)));
             Assert.True(product.category.Equals(category));
         }
     }

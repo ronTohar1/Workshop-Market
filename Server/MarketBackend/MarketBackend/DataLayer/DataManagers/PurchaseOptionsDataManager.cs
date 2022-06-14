@@ -1,13 +1,29 @@
 ﻿using MarketBackend.DataLayer.DatabaseObjects;
 using MarketBackend.DataLayer.DataDTOs;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
-using MarketBackend.DataLayer.DataManagementObjects;
 
 namespace MarketBackend.DataLayer.DataManagers
 {
-    internal class PurchaseOptionsDataManager : ObjectDataManager<DataPurchaseOption, int>
+    public class PurchaseOptionsDataManager : ObjectDataManager<DataPurchaseOption, int>
     {
-        public PurchaseOptionsDataManager(Database db) : base(db)
+        private static PurchaseOptionsDataManager instance = null;
+
+        public static PurchaseOptionsDataManager GetInstance()
+        {
+            if (instance == null)
+                instance = new PurchaseOptionsDataManager();
+            return instance;
+        }
+
+        public static void ForTestingSetInstance(PurchaseOptionsDataManager argumentInstance)
+        {
+            if (argumentInstance == null)
+                throw new ArgumentException("this function is for testing, and needs to get a not null instance");
+            instance = argumentInstance;
+        }
+
+        // protected for testing
+        protected PurchaseOptionsDataManager()
         {
         }
 

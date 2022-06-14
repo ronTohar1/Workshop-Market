@@ -1,5 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
 
         public AtMostAmountRestriction(int productId, int amount) : base(productId, amount) { }
 
+        public static AtMostAmountRestriction DataAtMostAmountRestrictionToAtMostAmountRestriction(DataAtMostAmountRestriction dataAtMostAmountRestriction)
+        {
+            return new AtMostAmountRestriction(dataAtMostAmountRestriction.ProductId, dataAtMostAmountRestriction.Amount); 
+        }
+
         public override bool IsSatisfied(ShoppingBag bag)
         {
             foreach (ProductInBag pib in bag.ProductsAmounts.Keys)
@@ -23,6 +30,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
                 }
             }
             return true;
+        }
+
+        public override DataIPurchasePolicy IPurchasePolicyToDataIPurchasePolicy()
+        {
+            return new DataAtMostAmountRestriction()
+            {
+                Amount = amount,
+                ProductId = productId
+            };
+        }
+
+        public override void RemoveFromDB(DataIPurchasePolicy dpp)
+        {
+            DataAtMostAmountRestriction daar = (DataAtMostAmountRestriction)dpp;
+            //TODO myself
         }
     }
 }

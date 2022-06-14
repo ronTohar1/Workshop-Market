@@ -8,35 +8,35 @@ import { useNavigate } from 'react-router-dom';
 import Member from "../../DTOs/Member";
 import { pathAdmin } from '../../Paths';
 
-export const membersDummy= [
-    new Member(0,"Nir",true),
-    new Member(1,"Ronto",true),
-    new Member(2,"Roi",false),
-    new Member(3,"Idan",false),
-    new Member(4,"Zivan",false),
-    new Member(5,"David",true),
-    new Member(6,"Nir",true),
-    new Member(7,"Ronto",true),
-    new Member(8,"Roi",false),
-    new Member(9,"Idan",false),
-    new Member(10,"Zivan",false),
-    new Member(11,"David",true),
-    new Member(12,"Nir",true),
-    new Member(13,"Ronto",true),
-    new Member(14,"Roi",false),
-    new Member(15,"Idan",false),
-    new Member(16,"Zivan",false),
-    new Member(17,"David",true),
-  ]
+// export const membersDummy= [
+    // new Member(0,"Nir",true),
+    // new Member(1,"Ronto",true),
+    // new Member(2,"Roi",false),
+    // new Member(3,"Idan",false),
+    // new Member(4,"Zivan",false),
+    // new Member(5,"David",true),
+    // new Member(6,"Nir",true),
+    // new Member(7,"Ronto",true),
+    // new Member(8,"Roi",false),
+    // new Member(9,"Idan",false),
+    // new Member(10,"Zivan",false),
+    // new Member(11,"David",true),
+    // new Member(12,"Nir",true),
+    // new Member(13,"Ronto",true),
+    // new Member(14,"Roi",false),
+    // new Member(15,"Idan",false),
+    // new Member(16,"Zivan",false),
+    // new Member(17,"David",true),
+  // ]
 
 export default function ShowLoggedInMembers() {
     
     const navigate = useNavigate()
     const [open, setOpen] = React.useState<boolean>(false);
-    const [members,setMembers] = React.useState<Member[]>(membersDummy);
+    const [wasOpened, setWasOpened] = React.useState<boolean>(false);
+    const [members,setMembers] = React.useState<Member[]>([]);
     
     const handleClickOpen = () => {
-      
       console.log("opened")
       setOpen(true);
     };
@@ -45,14 +45,17 @@ export default function ShowLoggedInMembers() {
       console.log("closed")
       setOpen(false);
       navigate(pathAdmin);
+      setWasOpened(false);
     };
 
     React.useEffect(() =>{
-      if (open){
+      if (!wasOpened && open){
         const buyerId = getBuyerId()
         const responsePromise = serverGetLoggedInMembers(buyerId)
         fetchResponse(responsePromise).then((newMembers)=>{
+          console.log(newMembers)
           setMembers(newMembers)
+          setWasOpened(true);
         })
         .catch((e) => {
           alert(e)
@@ -85,12 +88,12 @@ export default function ShowLoggedInMembers() {
             Display logged in members
             </DialogContentText>
           </DialogContent> */}
-          <Container style={{maxHeight: '100%', overflow: 'auto'}} >
+          <Container style={{maxHeight: '5%', overflow: 'auto'}}>
         <Grid container spacing={3} >
           {members.map(currMember => (
-            <Grid item xs={12} md={6} lg={4}>
-                 <MemberCard member={currMember}/>
-            </Grid>
+             <Grid style={{maxWidth: '100%'}} item xs={20} md={24} lg={11}>
+                <MemberCard member={currMember}/>
+             </Grid>
           ))}
         </Grid>
       </Container>
@@ -101,4 +104,15 @@ export default function ShowLoggedInMembers() {
       </div>
     );
 }
- 
+// </DialogContent>
+// <Container style={{maxHeight: '5%', overflow: 'auto'}} >
+//   {member==memberDummy? 
+//   (<Grid item xs={12} md={6} lg={4}>
+//     </Grid>):
+//   (<Grid item xs={12} md={6} lg={4}>
+//   <MemberCard member={member}/>
+//   </Grid>)
+//   }
+
+// </Container>
+// <DialogActions>

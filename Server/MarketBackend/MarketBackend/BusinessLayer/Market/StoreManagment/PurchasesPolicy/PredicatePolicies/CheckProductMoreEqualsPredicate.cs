@@ -1,10 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
-using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PredicatePolicies;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
+
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PredicatePolicies
 {
@@ -12,9 +9,29 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Pred
     {
         public CheckProductMoreEqualsPredicate(int productId, int amount ) : base(productId, amount) { }
 
+        public static CheckProductMoreEqualsPredicate DataCheckProductMoreEqualsPredicateToCheckProductMoreEqualsPredicate(DataCheckProductMoreEqualsPredicate dataCheckProductMoreEqualsPredicate)
+        {
+            return new CheckProductMoreEqualsPredicate(dataCheckProductMoreEqualsPredicate.ProductId, dataCheckProductMoreEqualsPredicate.Amount); 
+        }
+
         public override bool IsSatisfied(ShoppingBag bag)
         {
             return !(base.IsSatisfied(bag));
+        }
+
+        public override DataPredicateExpression PredicateExpressionToDataPredicateExpression()
+        {
+            return new DataCheckProductMoreEqualsPredicate()
+            {
+                ProductId = this.productId,
+                Amount = this.amount
+            };
+        }
+
+        public override void RemoveFromDB(DataPredicateExpression dpe)
+        {
+            DataCheckProductMoreEqualsPredicate dcplp = (DataCheckProductMoreEqualsPredicate)dpe;
+            //TODO myself
         }
     }
 }

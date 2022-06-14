@@ -13,17 +13,20 @@ namespace WebAPI.Controllers
     public class BuyersController : Controller
     {
         private readonly IBuyerFacade buyerFacade;
-        private const int port = 7890;
         private WebSocketServer notificationServer;
-        private IDictionary<int, string> buyerIdToRelativeNotificationPath;
+        private static IDictionary<int, string> buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
+        private static IDictionary<string, IList<string>> buyerUnsentMessages = new Dictionary<string, IList<string>>();
         private class NotificationsService : WebSocketBehavior
         {
 
         }
 
-        public BuyersController(IBuyerFacade buyerFacade, WebSocketServer notificationServer) {
+        public BuyersController(IBuyerFacade buyerFacade, WebSocketServer notificationServer)
+        {
+            Console.WriteLine("new user?");
             this.buyerFacade = buyerFacade;
-            buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
+            //buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
+            //buyerUnsentMessages = new Dictionary<string, IList<string>>();
             this.notificationServer = notificationServer;
         }
 
@@ -126,7 +129,7 @@ namespace WebAPI.Controllers
         public ActionResult<Response<IDictionary<int, IList<ServiceProduct>>>> ProductsSearch([FromBody] SearchProductsRequest request)
         {
             Response<IDictionary<int, IList<ServiceProduct>>> response =
-                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword,request.ProductId, request.ProductIds);
+                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword, request.ProductId, request.ProductIds, request.memberInRole, request.storesWithProductsThatPassedFilter);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
@@ -145,33 +148,69 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpPost("GetUnsentMessages")]
+        public ActionResult<Response<IList<string>>> GetUnsentMessage([FromBody] UsernameRequest request)
+        {
+            string username = request.Username;
+            if (buyerUnsentMessages.ContainsKey(username))
+            {
+                IList<string> msgsCopy = buyerUnsentMessages[username].Select(e => e).ToList();
+               var actionResult =  Ok(new Response<IList<string>>(msgsCopy));
+                buyerUnsentMessages[username].Clear();
+                return actionResult;
+            }
+            return Ok(new Response<IList<string>>(new List<string>()));
+        }
+
+        private void AddUnsentMessage(string username, IList<string> messages)
+        {
+            buyerUnsentMessages[username] = messages;
+        }
+
+
         [HttpPost("Login")]
         public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
         {
             string relativeServicePath = "/" + request.UserName + "-notifications";
             try
             {
-                notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
-            }catch (ArgumentException ex) { } // in case the client tries to login again
+                if (notificationServer.WebSocketServices[relativeServicePath] == null)
+                    notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
+            }
+            catch (ArgumentException ex)
+            {
+                return new Response<int>("Sorry, but it seems that we cant connect you");
+            } // in case the client tries to login again
+
             Func<string[], bool> notifier = (msgs) =>
             {
-                Action<string[]> send = (msgs) =>
+                string username = request.UserName;
+                
+                // Try send, if not - add to unsent messages
+                if (notificationServer.WebSocketServices[relativeServicePath] == null ||  notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
                 {
-                    while (notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
-                        Thread.Sleep(1000);
-                    foreach (string msg in msgs)
-                        notificationServer.WebSocketServices[relativeServicePath].Sessions.Broadcast(msg);
-                };
+                    IList<string> unsentMsgs = new List<string>();
+                    if (buyerUnsentMessages.ContainsKey(username))
+                        unsentMsgs = buyerUnsentMessages[username];
 
-                Task task = new Task(() => send(msgs));
-                task.Start();
+                    // Adding new unsent messages
+                    foreach (string msg in msgs)
+                        unsentMsgs.Add(msg);
+
+                    //this.buyerUnsentMessages[username] = unsentMsgs;
+                    AddUnsentMessage(username, unsentMsgs);
+                    return true; // So msgs delete on member msgs queue
+                }
+
+                foreach (string msg in msgs)
+                    notificationServer.WebSocketServices[relativeServicePath].Sessions.Broadcast(msg);
                 return true;
             };
-            Response<int> response  = buyerFacade.Login(request.UserName, request.Password, notifier);
+            Response<int> response = buyerFacade.Login(request.UserName, request.Password, notifier);
 
             if (response.IsErrorOccured())
             {
-                notificationServer.RemoveWebSocketService("ws://127.0.0.1:" + port + relativeServicePath);
+                notificationServer.RemoveWebSocketService(relativeServicePath);
                 return BadRequest(response);
             }
 
@@ -187,8 +226,12 @@ namespace WebAPI.Controllers
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
-            notificationServer.RemoveWebSocketService("ws://127.0.0.1:" + port + 
-                buyerIdToRelativeNotificationPath[request.UserId]);
+            // Clearing the connection
+            if (buyerIdToRelativeNotificationPath.ContainsKey(request.UserId))
+            {
+                notificationServer.RemoveWebSocketService(buyerIdToRelativeNotificationPath[request.UserId]);
+                buyerIdToRelativeNotificationPath.Remove(request.UserId);
+            }
             return Ok(response);
         }
 

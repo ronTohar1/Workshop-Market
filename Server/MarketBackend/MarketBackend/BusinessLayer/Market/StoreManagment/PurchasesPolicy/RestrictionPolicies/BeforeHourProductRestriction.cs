@@ -1,4 +1,6 @@
 ﻿    using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
             this.amount = amount;
         }
 
+        public static BeforeHourProductRestriction DataBeforeHourProductRestrictionToBeforeHourProductRestriction(DataBeforeHourProductRestriction dataBeforeHourProductRestriction)
+        {
+            return new BeforeHourProductRestriction(dataBeforeHourProductRestriction.Hour,
+                dataBeforeHourProductRestriction.ProductId,
+                dataBeforeHourProductRestriction.Amount); 
+        }
+
         public override bool IsSatisfied(ShoppingBag bag)
         {
             //true if after hours, false if before
@@ -35,6 +44,22 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
                 }
             }
             return true;
+        }
+
+        public override DataIPurchasePolicy IPurchasePolicyToDataIPurchasePolicy()
+        {
+            return new DataBeforeHourProductRestriction()
+            {
+                Hour = hour,
+                ProductId = productId,
+                Amount = amount
+            };
+        }
+
+        public override void RemoveFromDB(DataIPurchasePolicy dpp)
+        {
+            DataBeforeHourProductRestriction dahpr = (DataBeforeHourProductRestriction)dpp;
+            //TODO myself
         }
 
     }

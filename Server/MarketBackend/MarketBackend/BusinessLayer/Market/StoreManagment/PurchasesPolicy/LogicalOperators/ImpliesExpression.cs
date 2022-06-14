@@ -1,10 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.LogicalOperators
 {
@@ -32,6 +29,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Logi
             this.allowing = allowing;
         }
 
+        public static ImpliesExpression DataImpliesExpressionToImpliesExpression(DataImpliesExpression dataImpliesExpression)
+        {
+            return new ImpliesExpression(
+                IPredicateExpression.DataPredicateExpressionToIPredicateExpression(dataImpliesExpression.Condition),
+                IPredicateExpression.DataPredicateExpressionToIPredicateExpression(dataImpliesExpression.Allowing)
+                );
+        }
+
         public bool IsSatisfied(ShoppingBag bag)
         {
             bool cond = condition.IsSatisfied(bag);
@@ -39,6 +44,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Logi
                 return allowing.IsSatisfied(bag);
             else
                 return true;
+        }
+
+        public DataIPurchasePolicy IPurchasePolicyToDataIPurchasePolicy()
+        {
+            return new DataImpliesExpression()
+            {
+                Condition = (DataPredicateExpression)condition,
+                Allowing = (DataPredicateExpression)allowing
+            };
+        }
+
+        public void RemoveFromDB(DataIPurchasePolicy dpp)
+        {
+            DataImpliesExpression die = (DataImpliesExpression)dpp;
+            condition.RemoveFromDB(die.Condition);
+            allowing.RemoveFromDB(die.Allowing);
+            //TODO myself
         }
     }
 }

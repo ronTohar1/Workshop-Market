@@ -8,6 +8,8 @@ using MarketBackend.BusinessLayer.Market;
 using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
 
 namespace MarketBackend.BusinessLayer.Admins
 {
@@ -19,12 +21,34 @@ namespace MarketBackend.BusinessLayer.Admins
         private MembersController membersController;
         
 
-        public AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController)
+        public AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController) 
+            : this(storeController, buyersController, membersController, new SynchronizedCollection<int>())
         {
-            admins = new SynchronizedCollection<int>();
+
+        }
+
+        private AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController, ICollection<int> admins)
+        {
+            this.admins = admins;
             this.storeController = storeController;
             this.buyersController = buyersController;
             this.membersController = membersController;
+        }
+
+        // r S 8
+        public static AdminManager LoadAdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController)
+        {
+            MemberDataManager memberDataManager = MemberDataManager.GetInstance();
+
+            IList<DataMember> dataAdmins = memberDataManager.Find(dataMember => dataMember.IsAdmin);
+
+            ICollection<int> adminsIds = new SynchronizedCollection<int>();
+            foreach (DataMember dataAdmin in dataAdmins)
+            {
+                adminsIds.Add(dataAdmin.Id);
+            }
+
+            return new AdminManager(storeController, buyersController, membersController, adminsIds); 
         }
 
         private void VerifyAdmin(int adminId)
@@ -85,7 +109,7 @@ namespace MarketBackend.BusinessLayer.Admins
         {
             VerifyAdmin(adminId);
             if (storeController.HasRolesInMarket(memberToRemoveId))
-                return false;
+                throw new MarketException("Sorry dear admin, but this user has a role in a store");
             //from this point it's legal to ask the removal of a member from the memberController
             membersController.RemoveMember(memberToRemoveId);
             return true;

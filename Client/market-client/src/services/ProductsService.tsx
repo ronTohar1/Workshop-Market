@@ -1,4 +1,5 @@
 import Cart from "../DTOs/Cart"
+import MemberInRole from "../DTOs/MemberInRole"
 import Product from "../DTOs/Product"
 import ShoppingBag from "../DTOs/ShoppingBag"
 import Store from "../DTOs/Store"
@@ -13,7 +14,7 @@ export const getCartProducts = (
   const prodsIds = []
   const prodsToQuantity: Map<number, number> = new Map()
   // Getting all products ids in order to fetch the products from the server
-  if (cart.shoppingBags !== undefined) {
+  if (cart != null && cart.shoppingBags !== undefined) {
     const shoppingBags: any = cart.shoppingBags //Store id to shopping bag
     for (const storeId in shoppingBags) {
       const shoppingBag: ShoppingBag = shoppingBags[Number(storeId)]
@@ -27,7 +28,7 @@ export const getCartProducts = (
   }
   return [prodsIds, prodsToQuantity] as const // Array of [product ids, Product to quantity map]
 }
-// should be async
+
 export const fetchProducts = async (
   storeToProdPromise: Promise<ClientResponse<Map<number, Product[]>>>
 ): Promise<Product[]> => {
@@ -49,7 +50,7 @@ export const fetchProducts = async (
     const products = allProducts
     return products
   } catch (e) {
-    alert("Sorry but an unknown error happend when tried to search products")
+    alert("Sorry but an unknown error happend when tried to search products!\n" + e)
     return []
   }
 }
@@ -70,11 +71,11 @@ export const fetchProductsByStore = async (
 
     for (const storeId in productsByStore) {
       const prodsOfStore: Product[] = productsByStore[Number(storeId)] // Products of store (Product[] type)
-      allProducts.push(prodsOfStore)
+      if (prodsOfStore.length > 0) allProducts.push(prodsOfStore)
     }
     return allProducts
   } catch (e) {
-    alert("Sorry but an unknown error happend when tried to search products")
+    alert("Sorry but an unknown error happend when tried to search products\n" + e)
     return []
   }
 }
@@ -107,12 +108,14 @@ export function groupByStore(products: Product[]): Product[][] {
 //                        Server Communication
 
 export async function serverSearchProducts(
-  storeName: string | null,
-  productName: string | null,
-  category: string | null,
-  keyword: string | null,
-  productId: number | null,
-  productIds: number[] | null
+  storeName: string | null = null,
+  productName: string | null = null,
+  category: string | null = null,
+  keyword: string | null = null,
+  productId: number | null = null,
+  productIds: number[] | null = null,
+  memberInRole: MemberInRole | null = null,
+  storesWithProductsThatPassedFilter: boolean = true,
 ): Promise<ClientResponse<Map<number, Product[]>>> {
   const uri = serverPort + "/api/Buyers/SerachProducts"
   const jsonResponse = await fetch(uri, {
@@ -121,7 +124,6 @@ export async function serverSearchProducts(
       accept: "text/plain",
       "Content-Type": "application/json",
     },
-    // body: '{\n  "userId": 0,\n  "productId": 0,\n  "storeId": 0\n}',
     body: JSON.stringify({
       storeName: storeName,
       productName: productName,
@@ -129,6 +131,9 @@ export async function serverSearchProducts(
       keyword: keyword,
       productId: productId,
       productIds: productIds,
+      memberInRole: memberInRole,
+      storesWithProductsThatPassedFilter: storesWithProductsThatPassedFilter,
+
     }),
   })
 

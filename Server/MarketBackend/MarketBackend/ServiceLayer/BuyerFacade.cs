@@ -74,8 +74,9 @@ namespace MarketBackend.ServiceLayer
                 if (failMsg != null)
                     return new Response<bool>(failMsg);
 
+                Buyer? b = buyersController.GetBuyer(userId);
                 // Can add product to cart
-                c.AddProductToCart(new ProductInBag(productId, storeId), amount);
+                c.AddProductToCart(new ProductInBag(productId, storeId), amount, userId, b is Member);
                 logger.Info($"AddProdcutToCart was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(true);
             }
@@ -99,7 +100,8 @@ namespace MarketBackend.ServiceLayer
                 Cart? c = buyersController.GetCart(userId);
                 if (c == null)
                     return new Response<bool>($"No cart with user id {userId}");
-                c.RemoveProductFromCart(new ProductInBag(productId, storeId));
+                Buyer? b = buyersController.GetBuyer(storeId);
+                c.RemoveProductFromCart(new ProductInBag(productId, storeId), userId, b is Member);
                 logger.Info($"RemoveProductFromCart was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}]");
                 return new Response<bool>(true);
             }
@@ -120,10 +122,10 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Cart? c = buyersController.GetCart(userId);
-                if (c == null)
+                Buyer? b = buyersController.GetBuyer(userId);
+                if (b == null)
                     return new Response<bool>($"No cart with user id {userId}");
-                c.ChangeProductAmount(new ProductInBag(productId, storeId), amount);
+                b.ChangeProductAmount(new ProductInBag(productId, storeId), amount, userId);
                 logger.Info($"changeProductAmountInCart was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(true);
             }

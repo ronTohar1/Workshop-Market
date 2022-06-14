@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Market;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
 
 namespace MarketBackend.BusinessLayer.Buyers.Members;
 
@@ -13,10 +16,29 @@ public class MembersController : IBuyersController
     private readonly IDictionary<int, Member> members;
     private Mutex mutex;
 
-    public MembersController()
+    public MembersController() : this(new ConcurrentDictionary<int, Member>())
     {
-        members = new ConcurrentDictionary<int, Member>();
+    }
+
+    private MembersController(IDictionary<int, Member> members)
+    {
+        this.members = members; 
         this.mutex = new Mutex();
+    }
+
+    public static MembersController LoadMembersController()
+    {
+        MemberDataManager memberDataManager = MemberDataManager.GetInstance();
+
+        IList<DataMember> dataMembers = memberDataManager.Find(dataMember => true);
+
+        IDictionary<int, Member> members = new ConcurrentDictionary<int, Member>();
+        foreach(DataMember dataMember in dataMembers)
+        {
+            members.Add(dataMember.Id, Member.DataMemberToMember(dataMember, new Security())); 
+        }
+
+        return new MembersController(members);
     }
 
     public Buyer? GetBuyer(int buyerId)
@@ -24,7 +46,7 @@ public class MembersController : IBuyersController
         return GetMember(buyerId);
     }
 
-
+    //r S 8
     /*  Registers a new member to the controller.
     *   First, validates the username and password.
     *   Second, checks the username is unique.
@@ -68,12 +90,17 @@ public class MembersController : IBuyersController
         return null;
     }
 
+    //r S 8
     public void RemoveMember(int memberId) {
         lock (mutex)
         {
             if (!members.Keys.Contains(memberId))
                 throw new MarketException($"Failed to remove, there isn't such member with id: {memberId}");
+            members[memberId].RemoveCartFromDB(MemberDataManager.GetInstance().Find(memberId));
+            MemberDataManager.GetInstance().Remove(memberId);
+            MemberDataManager.GetInstance().Save();
             members.Remove(memberId);
+
         }
     }
     public IDictionary<int, Member> GetLoggedInMembers()
@@ -81,7 +108,7 @@ public class MembersController : IBuyersController
     
     private Member createNewMember(string username,string password)
     {
-        return new Member(username,password,new Security());
+        return new Member(username, password, new Security());
     }
 
     private bool IsUsernameExists(string username)
@@ -92,8 +119,11 @@ public class MembersController : IBuyersController
         return false;
     }
 
+    //r S 8
     private bool AddMember(Member member)
     {
+        MemberDataManager.GetInstance().Add(member.MemberToDataMember());
+        MemberDataManager.GetInstance().Save();
         return this.members.TryAdd(member.Id, member);
     }
 

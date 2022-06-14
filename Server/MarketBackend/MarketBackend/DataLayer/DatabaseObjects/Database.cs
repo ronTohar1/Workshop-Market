@@ -1,6 +1,7 @@
 ﻿using MarketBackend.DataLayer.DataDTOs;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
 using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataDTOs.Market;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions;
@@ -17,6 +18,7 @@ using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.Re
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,12 +28,21 @@ namespace MarketBackend.DataLayer.DatabaseObjects
     public class Database : DbContext
     {
 
-        private const string databaseName = "MarketDatabase";
-        private const string instanceName = "SQLEXPRESS";
-        private const string ip = "192.168.56.101";
-        private const string port = "50488";
-        private const string databaseUsername = "amitZivan";
-        private const string databasePassword = "passMarket";
+        private static Database instance = null; 
+
+        public static Database GetInstance()
+        {
+            if (instance == null)
+                instance = new Database();  
+            return instance;
+        }
+
+        // needs to be private (or protected for testing), sometimes is public for adding migrations to the database 
+        private Database() : base()
+        {
+
+        }
+
 
         public DbSet<DataMember> Members { get; set; }
         public DbSet<DataStore> Stores { get; set; }
@@ -42,7 +53,11 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataPurchaseOption> PurchaseOptions { get; set; }
         public DbSet<DataStoreMemberRoles> StoreMemberRoles { get; set; }
         public DbSet<DataProductReview> ProductReview { get; set; }
-        
+        public DbSet<DataAppointmentsNode> AppointmentsNodes { get; set; }
+        public DbSet<DataShoppingBag> ShoppingBags { get; set; }
+        public DbSet<DataProductInBag> ProductInBags { get; set; }
+        public DbSet<DataPurchase> Purchases { get; set; }
+
         // discounts hierarchies
 
         public DbSet<DataDateDiscount> DateDiscounts { get; set; }
@@ -54,10 +69,10 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataMaxExpression> MaxExpressions { get; set; }
         public DbSet<DataBagValuePredicate> BagValuePredicates { get; set; }
         public DbSet<DataProductAmountPredicate> ProductAmountPredicates { get; set; }
-        public DbSet<DataConditionExpression> ConditionDiscounts { get; set; }
+        public DbSet<DataConditionDiscount> ConditionDiscounts { get; set; }
         public DbSet<DataIfDiscount> IfDiscounts { get; set; }
         public DbSet<DataLogicalExpression> LogicalExpressions { get; set; }
-        public DbSet<DataConditionExpression> ConditionExpressions { get; set; }
+        public DbSet<DataConditionDiscount> ConditionExpressions { get; set; }
         public DbSet<DataDiscountExpression> DiscountExpressions { get; set; }
         public DbSet<DataExpression> Expressions { get; set; }
         public DbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression> DiscountPredicateExpressions { get; set; }
@@ -71,7 +86,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataCheckProductLessPredicate> CheckProductLessPredicates { get; set; }
         public DbSet<DataCheckProductMoreEqualsPredicate> CheckProductMoreEqualsPredicates { get; set; }
         public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression> PruchasePredicateExpressions { get; set; }
-        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPurchasePolicy> InterfacesPurchasePolicies { get; set; }
+        public DbSet<DataIPurchasePolicy> InterfacesPurchasePolicies { get; set; }
         public DbSet<DataRestrictionExpression> RestrictionExpressions { get; set; }
         public DbSet<DataAfterHourProductRestriction> DataAfterHourProductRestrictions { get; set; }
         public DbSet<DataAfterHourRestriction> AfterHourRestrictions { get; set; }
@@ -80,31 +95,40 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataBeforeHourProductRestriction> BeforeHourProductRestrictions { get; set; }
         public DbSet<DataBeforeHourRestriction> BeforeHourRestrictions { get; set; }
         public DbSet<DataDateRestriction> DateRestrictions { get; set; }
+        public DbSet<DataPurchasePolicy> PurchasePolicies { get; set; }
+        
 
 
         // connection setup functions
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string localVMConnectionString = "Data Source = tcp:" + ip + "\\" + instanceName + "." + databaseName + "," + port + "; " +
-                "Database=" + databaseName + "; " +
+            var dbConfigs = new AppConfig();
+
+            string localVMConnectionString = "Data Source = tcp:" + dbConfigs.ip + "\\" + dbConfigs.instanceName + "." + dbConfigs.databaseName + "," + dbConfigs.port + "; " +
+                "Database=" + dbConfigs.databaseName + "; " +
                 "Integrated Security = False; " +
-                "User Id = " + databaseUsername + "; " +
-                "Password = " + databasePassword + "; " +
+                "User Id = " + dbConfigs.databaseUsername + "; " +
+                "Password = " + dbConfigs.databasePassword + "; " +
                 "Encrypt = True; " +
                 "TrustServerCertificate = True; " +
                 "MultipleActiveResultSets = True";  // todo: check if need more security 
-
+            
             optionsBuilder.UseSqlServer(localVMConnectionString); 
         }
 
+        //public void RemoveAllTables()
+        //{
+        //    this.GetType().GetProperties()
+        //}
+
         // setting (not defualt) primary keys
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<DataStoreMemberRoles>()
-                .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<DataStoreMemberRoles>()
+        //        .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
+        //}
 
         //private void DiscountsWithoutCascades(ModelBuilder modelBuilder)
         //{

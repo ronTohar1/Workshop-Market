@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO
 {
-    internal class ServiceProductDiscount : ServiceStoreDiscount
+    public class ServiceProductDiscount : ServiceStoreDiscount
     {
         public int productId { get; set; }
 
-        public ServiceProductDiscount(int productId, int discount) : base(discount)
+        public ServiceProductDiscount(int productId, int discount,string tag = "") : base(discount, tag)
         {
             this.productId = productId;
         }

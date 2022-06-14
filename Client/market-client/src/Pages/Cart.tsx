@@ -8,13 +8,14 @@ import DialogTwoOptions from "../Componentss/CartComponents/DialogTwoOptions"
 import ProductCard from "../Componentss/CartComponents/ProductCard"
 import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
 import LargeMessage from "../Componentss/LargeMessage"
+import LoadingCircle from "../Componentss/LoadingCircle"
 import Navbar from "../Componentss/Navbar"
 import Cart from "../DTOs/Cart"
 import Product from "../DTOs/Product"
 import ShoppingBag from "../DTOs/ShoppingBag"
-import { pathHome } from "../Paths"
+import { pathCheckout, pathHome } from "../Paths"
 import {
-  serverChangeProductAmount,
+  serverChangeProductAmountInCart,
   serverGetCart,
   serverRemoveFromCart,
 } from "../services/BuyersService"
@@ -63,7 +64,7 @@ const getProductQuantity = (
   return quantity
 }
 
-function convertToCartProduct(
+export function convertToCartProduct(
   products: Product[],
   quantities: Map<number, number>
 ): CartProduct[] {
@@ -90,7 +91,7 @@ function MakeProductCard(
     //     alignItems: "center",
     //   }}
     // >
-    <Box sx={{m:2}}>
+    <Box sx={{ m: 2 }}>
       {ProductCard(
         product,
         quantity,
@@ -104,7 +105,7 @@ function MakeProductCard(
 
 export default function CartPage() {
   const navigate = useNavigate()
-  const [cartProducts, setCartProducts] = React.useState<CartProduct[]>([])
+  const [cartProducts, setCartProducts] = React.useState<CartProduct[] | null>(null)
   const [openRemoveDialog, setOpenRemoveDialog] = React.useState<boolean>(false)
   const [renderProducts, setRenderProducts] = React.useState<boolean>(false)
   const [ProductToRemove, setProductToRemove] = React.useState<Product | null>(
@@ -122,8 +123,10 @@ export default function CartPage() {
         const [prodsIds, prodsToQuantity] = getCartProducts(cart)
         fetchProducts(
           serverSearchProducts(null, null, null, null, null, prodsIds)
-        ).then((products: Product[]) =>
-          setCartProducts(convertToCartProduct(products, prodsToQuantity))
+        ).then((products: Product[]) => {
+          const newCartProducts = convertToCartProduct(products, prodsToQuantity)
+          setCartProducts(newCartProducts)
+        }
         )
       })
       .catch((e) => {
@@ -134,17 +137,17 @@ export default function CartPage() {
 
   const reloadCartProducts = () => setRenderProducts(!renderProducts)
 
-  const calulateTotal = (): number => {
+  const calulateTotal = (cartProducts: CartProduct[]): number => {
     return cartProducts.reduce(
       (total: number, cartProduct: CartProduct) =>
-        total + cartProduct.product.price,
+        total + cartProduct.product.price * cartProduct.quantity,
       0
     )
   }
 
   const handleUpdateQuantity = (product: Product, newQuan: number) => {
     fetchResponse(
-      serverChangeProductAmount(
+      serverChangeProductAmountInCart(
         getBuyerId(),
         product.id,
         product.storeId,
@@ -180,9 +183,11 @@ export default function CartPage() {
     setOpenRemoveDialog(true)
   }
 
-  const handlePurchase = () => alert("Purchasing.....")
+  const handlePurchase = () => {
+    navigate(pathCheckout)
+  }
 
-  return (
+  return cartProducts === null ? LoadingCircle() : (
     <ThemeProvider theme={theme}>
       <Navbar />
       <Stack direction="row">
@@ -196,19 +201,19 @@ export default function CartPage() {
           >
             {cartProducts.length > 0
               ? cartProducts.map((cartProduct: CartProduct) =>
-                  MakeProductCard(
-                    cartProduct.product,
-                    cartProduct.quantity,
-                    handleRemoveProductCanClick,
-                    handleUpdateQuantity
-                  )
+                MakeProductCard(
+                  cartProduct.product,
+                  cartProduct.quantity,
+                  handleRemoveProductCanClick,
+                  handleUpdateQuantity
                 )
+              )
               : LargeMessage("No Products In Cart....")}
           </Grid>
         </Box>
         <Box sx={{ width: "20%", mt: 2 }}>
           {CartSummary(
-            calulateTotal(),
+            calulateTotal(cartProducts),
             -1,
             cartProducts,
             expandSummary,
@@ -221,10 +226,10 @@ export default function CartPage() {
 
       {ProductToRemove !== null
         ? DialogTwoOptions(
-            ProductToRemove,
-            openRemoveDialog,
-            handleCloseRemoveDialog
-          )
+          ProductToRemove,
+          openRemoveDialog,
+          handleCloseRemoveDialog
+        )
         : null}
 
       {SuccessSnackbar(

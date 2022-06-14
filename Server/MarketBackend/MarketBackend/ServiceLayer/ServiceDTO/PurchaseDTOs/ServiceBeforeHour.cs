@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    internal class ServiceBeforeHour : ServiceAfterHour
+    public class ServiceBeforeHour : ServiceAfterHour
     {
-        public ServiceBeforeHour(int hour) : base(hour) { }
+        public ServiceBeforeHour(int hour, string tag = ""): base(hour, tag) { }
     }
 }

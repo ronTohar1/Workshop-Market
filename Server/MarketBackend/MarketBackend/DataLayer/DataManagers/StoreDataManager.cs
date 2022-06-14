@@ -1,12 +1,28 @@
 ﻿using MarketBackend.DataLayer.DatabaseObjects;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
-using MarketBackend.DataLayer.DataManagementObjects;
 
 namespace MarketBackend.DataLayer.DataManagers
 {
-    internal class StoreDataManager : ObjectDataManager<DataStore, int>
+    public class StoreDataManager : ObjectDataManager<DataStore, int>
     {
-        public StoreDataManager(Database db) : base(db)
+        private static StoreDataManager instance = null;
+
+        public static StoreDataManager GetInstance()
+        {
+            if (instance == null)
+                instance = new StoreDataManager();
+            return instance;
+        }
+
+        public static void ForTestingSetInstance(StoreDataManager argumentInstance)
+        {
+            if (argumentInstance == null)
+                throw new ArgumentException("this function is for testing, and needs to get a not null instance");
+            instance = argumentInstance;
+        }
+
+        // protected for testing
+        protected StoreDataManager()
         {
         }
 
@@ -34,6 +50,11 @@ namespace MarketBackend.DataLayer.DataManagers
             if (data == null)
                 throw new Exception("cannot be found in the database");
             return data;
+        }
+
+        public virtual int GetNextId()
+        {
+            return this.MaxOrDefualt(db.Stores, dataObject => dataObject.Id, 0) + 1;
         }
     }
 }

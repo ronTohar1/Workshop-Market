@@ -3,6 +3,8 @@ using System;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using MarketBackend.DataLayer.DataManagers;
 
 namespace MarketBackend.BusinessLayer.Market; 
 public class StoreController
@@ -18,17 +20,29 @@ public class StoreController
 	private Mutex openStoresMutex; 
 	private Mutex closedStoresMutex;
 
+	private StoreDataManager storeDataManager;
+
 	// creates a new StoreController without stores yet
-	public StoreController(MembersController membersController)
+	public StoreController(MembersController membersController) : 
+		this(membersController, new ConcurrentDictionary<int, Store>(), new ConcurrentDictionary<int, Store>())
+	{
+
+	}
+
+	private StoreController(MembersController membersController, 
+		IDictionary<int, Store> openStores, IDictionary<int, Store> closedStores)
 	{
 		this.membersController = membersController;
 
-		this.openStores = new ConcurrentDictionary<int, Store>(); 
-		this.closedStores = new ConcurrentDictionary<int, Store>();
+		this.openStores = openStores;
+		this.closedStores = closedStores;
 
-		this.openStoresMutex = new Mutex(); 
+		this.openStoresMutex = new Mutex();
 		this.closedStoresMutex = new Mutex();
+
+		this.storeDataManager = StoreDataManager.GetInstance();  
 	}
+
 
 
 	public Store? GetStore(int storeId)
@@ -73,7 +87,7 @@ public class StoreController
 	// r 3.2
 	// opens a new store and returns its id
 	public int OpenNewStore(int memberId, string storeName)
-    {
+	{
 		Member storeFounder = membersController.GetMember(memberId);
 		if (storeFounder == null)
 			throw new MarketException("The member id: " + memberId + " does not exists in the system");
@@ -84,13 +98,19 @@ public class StoreController
 		openStoresMutex.WaitOne();
 
 		string errorDescription = CanAddOpenStore(storeName);
-		if (errorDescription != null){
+		if (errorDescription != null) {
 			openStoresMutex.ReleaseMutex();
-			throw new MarketException(errorDescription); 
-        }
+			throw new MarketException(errorDescription);
+		}
 
-		int newStoreId = GenerateStoreId(); 
-		openStores.Add(newStoreId, new Store(storeName, storeFounder, (memberId) => membersController.GetMember(memberId)));
+		Store newStore = new Store(storeName, storeFounder, (memberId) => membersController.GetMember(memberId));
+		DataStore dataStore = newStore.ToNewDataStore(); 
+		storeDataManager.Add(dataStore);
+
+		storeDataManager.Save();
+
+		int newStoreId = dataStore.Id; 
+		openStores.Add(newStoreId, newStore);
 
 		openStoresMutex.ReleaseMutex(); 
 
@@ -137,7 +157,7 @@ public class StoreController
 
 		try // catching and throwing to release the mutexes
 		{
-			store.CloseStore(memberId); // the store checks permission so it needs to be at least a member
+			store.CloseStore(memberId, storeId); // the store checks permission so it needs to be at least a member
 		}
 		catch (Exception exception)
         {

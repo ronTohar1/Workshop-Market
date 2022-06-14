@@ -8,12 +8,15 @@ import {
   Typography,
   TextField,
   CardActions,
+  Dialog,
 } from "@mui/material"
 import UpdateIcon from "@mui/icons-material/Update"
 import Product from "../../DTOs/Product"
 import { Currency } from "../../Utils"
 import RemoveProductCan from "./RemoveProductCan"
-
+import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import ProductReview from "../ProductReview"
 function UpdateQuantityComponent(
   product: Product,
   handleUpdateQuantity: (product: Product, newQuan: number) => void
@@ -67,8 +70,15 @@ function ProductContent(product: Product, quantity: number) {
       </Typography>
       <Typography variant="h6">
         Price ({Currency}): {product.price}
+
       </Typography>
-      <Typography variant="h6">Quantity: {quantity}</Typography>
+      <Typography variant="h6">
+        Quantity: {quantity}
+        <br></br>
+        Store : {product.storeName}</Typography>
+      <br></br>
+      <ProductReview product={product} />
+      
     </div>
   )
 }
@@ -85,7 +95,7 @@ export default function ProductCard(
       <CardActions disableSpacing>
         {UpdateQuantityComponent(product, handleUpdateQuantity)}
 
-        <Box sx={{ ml: "auto",mt:"auto" }}>
+        <Box sx={{ ml: "auto", mt: "auto" }}>
           {RemoveProductCan(product, handleRemoveProductClick)}
         </Box>
       </CardActions>

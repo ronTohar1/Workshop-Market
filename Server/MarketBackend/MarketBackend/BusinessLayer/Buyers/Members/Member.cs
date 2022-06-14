@@ -207,7 +207,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         {
             DataMember dMember = new DataMember()
             {
-                Id = Id,
+                Id = this.Id,
                 Username = Username,
                 Password = password,
                 Cart = Cart.CartToDataCart(),

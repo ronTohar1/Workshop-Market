@@ -15,10 +15,33 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
     //this whole class and related classes implement r II.4.2
     public class StoreDiscountPolicyManager
     {
-        private static Mutex idMutex = new Mutex(false);
-        private static int discountId = 0;
 
         public IDictionary<int, Discount> discounts { get; private set; }
+
+        private static Mutex idMutex = new Mutex(false);
+        private const int ID_COUNTER_NOT_INITIALIZED = -1;
+        private static int discountId = ID_COUNTER_NOT_INITIALIZED;
+
+        private static void InitializeIdCounter()
+        {
+            discountId = DiscountDataManager.GetInstance().GetNextId();
+        }
+
+        private static int GetNextId()
+        {
+            int temp;
+            idMutex.WaitOne();
+
+            if (discountId == ID_COUNTER_NOT_INITIALIZED)
+                InitializeIdCounter();
+
+            temp = discountId;
+            discountId++;
+
+            idMutex.ReleaseMutex();
+
+            return temp;
+        }
 
         public StoreDiscountPolicyManager() : this(new ConcurrentDictionary<int, Discount>())
         {
@@ -30,19 +53,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             this.discounts = discounts; 
         }
 
-        private int getId()
-        {
-            int res;
-            idMutex.WaitOne();
-            res = discountId;
-            discountId++;
-            idMutex.ReleaseMutex();
-            return res;
-        }
-
         public int AddDiscount(string description ,IExpression dis)
         {
-            int id = getId();
+            int id = GetNextId();
             Discount discount = new Discount(id, description, dis);
 
             DataDiscount dataDiscount = DiscountToDataDiscount(discount);

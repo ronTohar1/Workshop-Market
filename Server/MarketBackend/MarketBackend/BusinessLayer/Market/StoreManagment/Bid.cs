@@ -12,7 +12,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
     public class Bid
     {
-        private static int idCounter = 1;
+        private const int ID_COUNTER_NOT_INITIALIZED = -1;
+        private static int idCounter = ID_COUNTER_NOT_INITIALIZED; 
         private static Mutex counterLock = new Mutex(false);
         private static Mutex offerLock = new Mutex(false);
         public int id { get; }
@@ -31,11 +32,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             int temp;
             counterLock.WaitOne();
+
+            if (idCounter == ID_COUNTER_NOT_INITIALIZED)
+                InitializeIdCounter(); 
+
             temp = idCounter;
             idCounter++;
             counterLock.ReleaseMutex();
             return temp;
         }
+
+        private static void InitializeIdCounter()
+        {
+            idCounter = BidDataManager.GetInstance().GetNextId();
+        }
+
         public Bid(int productId, int memberId, int storeId ,double bid) 
             : this(
                   getId(), storeId, productId, memberId, bid,
@@ -82,6 +93,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return new DataBid()
             {
+                Id = this.id, 
                 Product = ProductDataManager.GetInstance().Find(productId),
                 Member = MemberDataManager.GetInstance().Find(memberId),
                 Bid = bid,

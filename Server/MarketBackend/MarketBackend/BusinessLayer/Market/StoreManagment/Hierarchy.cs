@@ -14,24 +14,55 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		private Mutex hierarchyMutex;
 
 		private Action<DataAppointmentsNode, T> initializeValue; 
-		private HierarchyDataManager hierarchyDataManager; 
+		private HierarchyDataManager hierarchyDataManager;
 
-		public Hierarchy(T value, Action<DataAppointmentsNode, T> initializeValue, Hierarchy<T> parent = null)
+		private const int ID_COUNTER_NOT_INITIALIZED = -1;
+		private static int idCounter = ID_COUNTER_NOT_INITIALIZED;
+		private static Mutex counterLock = new Mutex();
+
+		private static int GetNextId()
 		{
+			int temp; 
+			counterLock.WaitOne();
+
+			if (idCounter == ID_COUNTER_NOT_INITIALIZED)
+				InitializeIdCounter();
+
+			temp = idCounter;
+			idCounter++;
+
+			counterLock.ReleaseMutex();
+
+			return temp;
+		}
+
+		private static void InitializeIdCounter()
+		{
+			idCounter = HierarchyDataManager.GetInstance().GetNextId();
+		}
+
+		private Hierarchy(int id, T value, Action<DataAppointmentsNode, T> initializeValue, Hierarchy<T> parent = null)
+		{
+			this.id = id; 
 			this.value = value;
 			this.children = new SynchronizedCollection<Hierarchy<T>>();
 			this.parent = parent;
 			hierarchyMutex = new Mutex();
 
-			this.initializeValue = initializeValue; 
+			this.initializeValue = initializeValue;
 			this.hierarchyDataManager = HierarchyDataManager.GetInstance();
+		}
+
+		public Hierarchy(T value, Action<DataAppointmentsNode, T> initializeValue, Hierarchy<T> parent = null) 
+			: this(GetNextId(), value, initializeValue, parent)
+		{
+			
 		}
 
 		// r S 8
 		public static Hierarchy<int> DataHierarchyToHierarchy(DataAppointmentsNode dataHierarchy, Hierarchy<int> parent = null)
 		{
-			Hierarchy<int> result = new Hierarchy<int>(dataHierarchy.MemberId, (dataHierarchy, value) => dataHierarchy.MemberId = value, parent);
-			result.id = dataHierarchy.Id;
+			Hierarchy<int> result = new Hierarchy<int>(dataHierarchy.Id, dataHierarchy.MemberId, (dataHierarchy, value) => dataHierarchy.MemberId = value, parent);
 			result.AddChildrenNoSave(dataHierarchy.Children.
 				Select(childDataHierarchy =>
 					DataHierarchyToHierarchy(childDataHierarchy, result))
@@ -43,6 +74,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		{
 			DataAppointmentsNode result = new DataAppointmentsNode()
 			{
+				Id = id, 
 				Children = children.Select(child => child.ToNewDataAppointmentsNode()).ToList()
 			};
 			initializeValue(result, value);

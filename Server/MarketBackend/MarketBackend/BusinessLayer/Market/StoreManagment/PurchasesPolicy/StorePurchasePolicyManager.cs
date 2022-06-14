@@ -20,7 +20,29 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
         public IDictionary<int, PurchasePolicy> purchases { get; set; }
 
         private static Mutex idMutex = new Mutex(false);
-        private static int discountId = 0;
+        private const int ID_COUNTER_NOT_INITIALIZED = -1;
+        private static int discountId = ID_COUNTER_NOT_INITIALIZED;
+
+        private static void InitializeIdCounter()
+        {
+            discountId = DiscountDataManager.GetInstance().GetNextId();
+        }
+
+        private static int GetNextId()
+        {
+            int temp;
+            idMutex.WaitOne();
+
+            if (discountId == ID_COUNTER_NOT_INITIALIZED)
+                InitializeIdCounter();
+
+            temp = discountId;
+            discountId++;
+
+            idMutex.ReleaseMutex();
+
+            return temp;
+        }
 
         public StorePurchasePolicyManager() : this(new ConcurrentDictionary<int, PurchasePolicy>())
         {
@@ -32,19 +54,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
             this.purchases = purchasesPolicies;
         }
 
-        private int getId()
-        {
-            int res;
-            idMutex.WaitOne();
-            res = discountId;
-            discountId++;
-            idMutex.ReleaseMutex();
-            return res;
-        }
-
         public int AddPurchasePolicy(string description, IPurchasePolicy policy)
         {
-            int id = getId();
+            int id = GetNextId();
             PurchasePolicy purchasePolicy = new PurchasePolicy(id, description, policy);
             
             DataPurchasePolicy dpp = PurchasePolicyToDataPurchasePolicy(purchasePolicy);

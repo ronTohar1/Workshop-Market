@@ -53,5 +53,9 @@ namespace MarketBackend.DataLayer.DataManagementObjects
             return dp;
         }
 
+        public virtual int GetNextId()
+        {
+            return this.MaxOrDefualt(db.Products, dataObject => dataObject.Id, 0) + 1;
+        }
     }
 }

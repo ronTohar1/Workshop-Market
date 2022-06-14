@@ -16,7 +16,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 		public virtual string category { get; private set; }
 		public double productdicount { get; set; }
 
-		private static int storeIdCounter = 0; // the next store id
+		private const int ID_COUNTER_NOT_INITIALIZED = -1;
+		private static int storeIdCounter = ID_COUNTER_NOT_INITIALIZED;
 		private static Mutex storeIdCounterMutex = new Mutex();
 
 		private Mutex amountInInventoryMutex;
@@ -99,7 +100,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
 			DataProduct result = new DataProduct()
 			{
-				// id is in the data layer 
+				Id = this.id, 
 				Name = name,
 				AmountInInventory = amountInInventory,
 				PricePerUnit = pricePerUnit,
@@ -284,16 +285,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			}
 		}
 
+		private static void InitializeIdCounter()
+		{
+			storeIdCounter = ProductDataManager.GetInstance().GetNextId();
+		}
+
 		private static int GenerateProductId()
 		{
+			int temp;
 			storeIdCounterMutex.WaitOne();
 
-			int result = storeIdCounter;
+			if (storeIdCounter == ID_COUNTER_NOT_INITIALIZED)
+				InitializeIdCounter();
+
+			temp = storeIdCounter;
 			storeIdCounter++;
-
 			storeIdCounterMutex.ReleaseMutex();
-
-			return result;
+			return temp;
 		}
 
 		public bool ContainsPurchasePolicy(PurchaseOption purchaseOption)

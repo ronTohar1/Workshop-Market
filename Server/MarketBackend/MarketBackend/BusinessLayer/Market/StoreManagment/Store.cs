@@ -40,7 +40,32 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public IDictionary<int, Bid> bids { get; }
         private Mutex approvebidLock;
 
-        int id; 
+        int id;
+
+        private const int ID_COUNTER_NOT_INITIALIZED = -1;
+        private static int idCounter = ID_COUNTER_NOT_INITIALIZED;
+        private static Mutex counterLock = new Mutex();
+
+        private static void InitializeIdCounter()
+        {
+            idCounter = StoreDataManager.GetInstance().GetNextId();
+        }
+
+        private static int GetNextId()
+        {
+            int temp;
+            counterLock.WaitOne();
+
+            if (idCounter == ID_COUNTER_NOT_INITIALIZED)
+                InitializeIdCounter();
+
+            temp = idCounter;
+            idCounter++;
+
+            counterLock.ReleaseMutex();
+
+            return temp;
+        }
 
         private StoreDataManager storeDataManager; // r S 8
 
@@ -48,6 +73,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // cc 6
         public Store(string storeName, Member founder, Func<int, Member> membersGetter)
             : this(
+                  GetNextId(), 
                   storeName,
                   founder,
                   true,
@@ -63,12 +89,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         }
 
-        private Store(string name, Member founder, bool isOpen, Hierarchy<int> appointmentsHierarchy,
+        private Store(int id, string name, Member founder, bool isOpen, Hierarchy<int> appointmentsHierarchy,
             IDictionary<int, Product> products, IList<Purchase> purchaseHistory,
             IDictionary<int, IList<Permission>> managersPermissions, Func<int, Member> membersGetter,
             StoreDiscountPolicyManager discountManager, StorePurchasePolicyManager purchaseManager,
             IDictionary<int, Bid> bids, IDictionary<Role, IList<int>> rolesInStore = null)
         {
+            this.id = id; 
             this.name = name;
             this.founder = founder;
             this.isOpen = isOpen;
@@ -141,7 +168,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 bids[dataBid.Id] = Bid.DataBidToBid(dataBid, dataStore.Id);
             }
 
-            return new Store(dataStore.Name, founder, dataStore.IsOpen, appointmentsHierarchy, products, purchaseHistory,
+            return new Store(dataStore.Id, dataStore.Name, founder, dataStore.IsOpen, appointmentsHierarchy, products, purchaseHistory,
                 managersPermissions, membersGetter, discountManager, purchaseManager, bids, rolesInStore);
         }
 
@@ -152,6 +179,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             DataStore result = new DataStore()
             {
+                Id = id, 
                 Name = name,
                 Founder = MemberDataManager.GetInstance().Find(founder.Id),
                 IsOpen = isOpen,

@@ -291,7 +291,7 @@ namespace TestMarketBackend.Acceptance
         [SetUp]
         public void SetUp()
         {
-            systemOperator = new SystemOperator(adminUsername, adminPassword);
+            systemOperator = new SystemOperator(adminUsername, adminPassword, false);
             adminId = systemOperator.MarketOpenerAdminId;
             if (adminId < 0)
                 throw new Exception("Unable to open market successfully");

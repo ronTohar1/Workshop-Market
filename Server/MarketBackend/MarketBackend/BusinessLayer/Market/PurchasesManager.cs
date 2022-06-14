@@ -3,6 +3,10 @@ using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using MarketBackend.DataLayer.DataManagers;
 
 namespace MarketBackend.BusinessLayer.Market;
 public class PurchasesManager
@@ -57,6 +61,7 @@ public class PurchasesManager
     // cc 10
     // r I 3, r I 4
     // r 1.5
+    //r S 8
     public Purchase PurchaseCartContent(int buyerId, PaymentDetails paymentDetails, SupplyDetails supplyDetails)
     {
         Buyer buyer = this.GetBuyerOrThrowException(buyerId);
@@ -97,13 +102,18 @@ public class PurchasesManager
 
         ICollection<ShoppingBag> shoppingBagsInPurchase = new List<ShoppingBag>(shoppingBags); 
         UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
-        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts);
+        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts, new Action(() => {
+            externalServicesController.CancelPayment(transactionId);
+            TryRollback(storesTransactions);
+            throw new MarketException("Could not make the purchase, pls try again later!");
+        })); //r S 8
 
         string finalReceipt = String.Join("", receipts.Values);
         return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
     }
 
     //an adaptation of the purchase cart for cases where its for a bid
+    //r S 8
     public Purchase PurchaseBid(Bid bid, int memberId, PaymentDetails paymentDetails, SupplyDetails supplyDetails)
     {
         if (bid.memberId != memberId)
@@ -164,7 +174,11 @@ public class PurchasesManager
 
         ICollection<ShoppingBag> shoppingBagsInPurchase = new List<ShoppingBag>(shoppingBags);
         UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
-        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts);
+        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts, new Action(() => {
+            externalServicesController.CancelPayment(transactionId);
+            TryRollback(storesTransactions);
+            throw new MarketException("Could not make the purchase, pls try again later!");
+        })); //r S 8
 
         string finalReceipt = String.Join("", receipts.Values);
         return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
@@ -205,20 +219,72 @@ public class PurchasesManager
     }
 
     //Adding record of purchase for buyer and store
-    private void AddRecord(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, double> storesTotal, IDictionary<int, string> receipts)
+    //r S 8
+    private void AddRecord(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, double> storesTotal, IDictionary<int, string> receipts, Action onDBFail)
     {
         double purchaseTotal = storesTotal.Values.Sum(x => x);
         string finalReceipt = String.Join("", receipts.Values);
-        buyer.AddPurchase(new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt));
 
+
+        Purchase p = new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
+
+        //DB stuff
+        if (buyer is Member) {
+            DataPurchase dp = PurchaseToDataPurchase(p);
+            try
+            {
+                DataMember dm = MemberDataManager.GetInstance().Find(buyer.Id);
+                dm.PurchaseHistory.Add(dp);
+            } catch (Exception) { onDBFail(); }
+        }
+
+        IDictionary<int, Purchase> purchases = new Dictionary<int, Purchase>();
         //Adding record of the purchase from the stores
         foreach (ShoppingBag bag in shoppingBags)
         {
-            Store store = storeController.GetStore(bag.StoreId);
-            store.AddPurchaseRecord(store.founder.Id, new Purchase(buyer.Id, DateTime.Now, storesTotal[bag.StoreId], receipts[bag.StoreId]));
+            int storeId = bag.StoreId;
+            Purchase sp = new Purchase(buyer.Id, DateTime.Now, storesTotal[storeId], receipts[storeId]);
+            //DB stuff
+            try
+            {
+                DataPurchase dsp = PurchaseToDataPurchase(sp, storeId);
+                DataStore ds = StoreDataManager.GetInstance().Find(storeId);
+                ds.PurchaseHistory.Add(dsp);
+            } catch { onDBFail(); }
+
+            purchases.Add(storeId, sp);
+        }
+
+        try
+        {
+            MemberDataManager.GetInstance().Save();
+        } catch { onDBFail(); }
+
+        buyer.AddPurchase(p);
+        foreach (int id in purchases.Keys)
+        {
+            Store store = storeController.GetStore(id);
+            store.AddPurchaseRecord(store.founder.Id, purchases[id]);
         }
     }
 
+    private DataPurchase PurchaseToDataPurchase(Purchase p, int storeId = -1)
+    {
+        DataStore ds = null;
+        if (storeId != -1)
+            ds = StoreDataManager.GetInstance().Find(storeId);
+        return new DataPurchase()
+        {
+            BuyerId = p.BuyerId,
+            Store = ds,
+            PurchaseDate = p.purchaseDate,
+            PurchasePrice = p.purchasePrice,
+            PurchaseDescription = p.purchaseDescription
+        };
+
+    }
+
+    //r S 8
     private void UpdateBuyerAndStore(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, int> storesTransactions)
     {
         foreach (ShoppingBag shoppingBag in shoppingBags)
@@ -234,7 +300,7 @@ public class PurchasesManager
                 int amount = prod.Value;
 
                 //Remove from cart
-                buyer.Cart.RemoveProductFromCart(productInBag, buyer.Id, buyer is Member);
+                buyer.Cart.RemoveProductFromCart(productInBag, buyer.Id, buyer is Member); //r S 8
             }
             store.notifyAllStoreOwners($"The buyer with the id:{buyer.Id} has purchased at the store: {store.name}");
         }
@@ -405,7 +471,7 @@ public class PurchasesManager
             throw new MarketException("The product amount has to be positive.\n Amount given was " + amount);
     }
 
-    // for tests
+    // for tests - roi
     public void RemoveProductFromCartt(int buyerId, int storeId, int productId, int amount)
     {
         VerifyValidProductAmount(amount); // checking first for efficiency 

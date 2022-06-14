@@ -11,13 +11,9 @@ using MarketBackend.BusinessLayer.Market;
 using MarketBackend.BusinessLayer;
 using MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
-using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
-using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions;
 using MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
-using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.RestrictionPolicies;
-using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PredicatePolicies;
 using MarketBackend.BusinessLayer.Buyers.Members;
 
 namespace MarketBackend.ServiceLayer

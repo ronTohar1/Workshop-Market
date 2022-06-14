@@ -76,7 +76,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			if (valueHierarchy != null)
 			{  // will prevent cyclic assignments
 				hierarchyMutex.ReleaseMutex();
-				throw new MarketException("allready in the hirearchy");
+				throw new MarketException("allready has a role");
 			}
 
 			Hierarchy<T> newHierarchy = new Hierarchy<T>(valueToAdd, initializeValue, adderHierarchy);
@@ -106,7 +106,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			Hierarchy<T> valueHierarchy = removerHierarchy.FindHierarchy(valueToRemove);
 			if (valueHierarchy == null) { 
 				hierarchyMutex.ReleaseMutex();
-				throw new MarketException("the remover doesn't have the appropriate hierarchy classification");
+				throw new MarketException("Sorry, but this is not a valid remove request");
 			}
 			Hierarchy<T> valueHierarchyParent = valueHierarchy.parent;
 			if (valueHierarchyParent != null) {

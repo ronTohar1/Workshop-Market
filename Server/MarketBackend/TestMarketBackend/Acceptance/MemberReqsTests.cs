@@ -23,7 +23,7 @@ namespace TestMarketBackend.Acceptance
         [Test]
         public void SuccessfulStoreCreation()
         {
-            Response<int> response = storeManagementFacade.OpenStore(member3Id, "VeryNewStoreName");
+            Response<int> response = storeManagementFacade.OpenNewStore(member3Id, "VeryNewStoreName");
 
             Assert.IsTrue(!response.IsErrorOccured());
         }
@@ -41,7 +41,7 @@ namespace TestMarketBackend.Acceptance
             for(int i = 0; i < threadsNumber; i++)
             {
                 int temp = i;
-                jobs[i] = () => { return storeManagementFacade.OpenStore(ids[temp], storeName); };
+                jobs[i] = () => { return storeManagementFacade.OpenNewStore(ids[temp], storeName); };
             }
 
             Response<int>[] responses = GetResponsesFromThreads(jobs);
@@ -54,7 +54,7 @@ namespace TestMarketBackend.Acceptance
         [TestCase("")]
         public void FailedCreationOfStoreWithInvalidDetails(string storeName)
         {
-            Response<int> response = storeManagementFacade.OpenStore(member3Id, storeName);
+            Response<int> response = storeManagementFacade.OpenNewStore(member3Id, storeName);
 
             Assert.IsTrue(response.IsErrorOccured());
         }
@@ -63,7 +63,7 @@ namespace TestMarketBackend.Acceptance
         [Test]
         public void FailedCreationOfStoreThatAlreadyExists()
         {
-            Response<int> response = storeManagementFacade.OpenStore(member3Id, storeName);
+            Response<int> response = storeManagementFacade.OpenNewStore(member3Id, storeName);
 
             Assert.IsTrue(response.IsErrorOccured());
         }

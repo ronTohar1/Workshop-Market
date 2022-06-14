@@ -11,7 +11,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 export default function SuccessSnackbar(message: String, isOpen:boolean, handleCloseSnack: () => void) {
-  const [openSnack, setOpenSnack] = React.useState(false);
   const snackBarPosition: SnackbarOrigin = {
     vertical: "top",
     horizontal: "center",

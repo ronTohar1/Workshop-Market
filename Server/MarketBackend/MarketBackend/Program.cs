@@ -1,29 +1,19 @@
-﻿using MarketBackend.BusinessLayer.Buyers.Guests;
-using System;
-using NLog;
-using SystemLog;
-namespace MyApp // Note: actual namespace depends on the project name.
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Configuration;
+
+
+namespace MarketBackend
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
-        {
-            log_example();
-        }
 
-        static void log_example()
+        public static void Main(String[] args)
         {
-            Logger logger = SystemLogger.getLogger();
-            try
-            {
-                logger.Info($"Guest with id: {123} purchased a {"banana"} !");
-                throw new Exception("BOOM!!!");
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, $"Guest with id: {123} doesn't have the right permission");
-            }
-
+            Console.WriteLine("Hello, Market!");
         }
     }
 }

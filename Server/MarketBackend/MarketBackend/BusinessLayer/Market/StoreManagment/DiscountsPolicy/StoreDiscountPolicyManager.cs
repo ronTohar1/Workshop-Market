@@ -2,6 +2,7 @@
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.BasicDiscounts;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.ConditionalDiscounts;
+using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalDiscounts;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalOperators;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.NumericExpressions;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
@@ -168,6 +169,27 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
         {
             MaxExpression newExp = new MaxExpression();
             newExp.discounts = l;
+            return newExp;
+        }
+        public IDiscountExpression NewAddativeExpression(IList<IDiscountExpression> l)
+        {
+            AddativeExpression newExp = new AddativeExpression();
+            newExp.discounts = l;
+            return newExp;
+        }
+        public IDiscountExpression NewXorDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
+        {
+            OrDiscount newExp = new OrDiscount(firstDis, secondDis);
+            return newExp;
+        }
+        public IDiscountExpression NewOrDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
+        {
+            OrDiscount newExp = new OrDiscount(firstDis, secondDis);
+            return newExp;
+        }
+        public IDiscountExpression NewAndDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
+        {
+            AndDiscount newExp = new AndDiscount(firstDis, secondDis);
             return newExp;
         }
         //-------Discount compound operations------

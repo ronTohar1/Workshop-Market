@@ -36,7 +36,7 @@ export default function MemberCardDialog(member:Member) {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                { `User name: ${member.username} `}
+                { `User name: ${member.userName} `}
                 </DialogContentText>
                 <DialogContentText id="alert-dialog-description">
                 { `user id: ${member.id} `}

@@ -64,23 +64,23 @@ export default function CartSummary(
           height: "auto",
         }}
       >
-        <Box sx={{ borderBottom: 2 }}>
+        <Box sx={{ borderBottom: 0 }}>
           <Typography sx={{ mb: 1.5, ml: 1 }} variant="h5">
             <br></br>
-            Total
+            Total: {totalBeforeDiscount} {Currency}
           </Typography>
-          <Typography sx={{ ml: "25%" }} variant="h6">
-            {totalBeforeDiscount} {Currency}
-          </Typography>
+          {/* <Typography sx={{ ml: "25%" }} variant="h6">
+          {totalBeforeDiscount} {Currency}
+          </Typography> */}
         </Box>
-        <Box sx={{ borderBottom: 0, mb: 3 }}>
+        {/* <Box sx={{ borderBottom: 0, mb: 3 }}>
           <Typography variant="h5" sx={{ mb: 1.5, mt: 1.5, ml: 1 }}>
             Total After Discount
           </Typography>
           <Typography sx={{ ml: "25%" }} variant="h6">
             {totalAfterDiscount} {Currency}
           </Typography>
-        </Box>
+        </Box> */}
       </Card>
 
       <Stack

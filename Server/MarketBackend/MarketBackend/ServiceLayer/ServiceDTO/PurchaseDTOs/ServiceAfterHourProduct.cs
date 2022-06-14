@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    internal class ServiceAfterHourProduct : ServiceAfterHour
+    public class ServiceAfterHourProduct : ServiceAfterHour
     {
         public int productId { get; set; }
         public int amount { get; set; }
 
-        public ServiceAfterHourProduct(int hour, int productId, int amount) : base(hour)
+        public ServiceAfterHourProduct(int hour, int productId, int amount, string tag = "") : base(hour, tag)
         {
             this.productId = productId;
             this.amount = amount;

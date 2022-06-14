@@ -170,6 +170,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
 
         //r S 8
         private void SendPending() {
+            
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
             {
                 DataMember dm = MemberDataManager.GetInstance().Find(Id);

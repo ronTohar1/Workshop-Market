@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs
 {
-    internal class ServiceAfterHour : IServiceRestriction
+    public class ServiceAfterHour : ServiceRestriction
     {
         public int hour { get; set; }
 
-        public ServiceAfterHour(int hour)
+        public ServiceAfterHour(int hour, string tag = "") : base(tag)
         {
             this.hour = hour;
         }

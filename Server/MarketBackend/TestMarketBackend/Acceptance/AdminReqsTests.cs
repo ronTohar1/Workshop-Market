@@ -31,6 +31,46 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(response.IsErrorOccured());
         }
 
+        public static IEnumerable<TestCaseData> DataFailedIsAdmin
+        {
+            get
+            {
+                yield return new TestCaseData(new Func<int>(() => member1Id));
+                yield return new TestCaseData(new Func<int>(() => member2Id));
+            }
+        }
+
+        // r 6.4
+        [Test]
+        [TestCaseSource("DataFailedIsAdmin")]
+        public void FailedIsAdmin(Func<int> adminId)
+        {
+            Response<bool> response = adminFacade.IsAdmin(adminId());
+
+            Assert.IsTrue(!response.IsErrorOccured());
+            Assert.IsFalse(response.Value);
+        }
+
+        public static IEnumerable<TestCaseData> DataSuccessIsAdmin
+        {
+            get
+            {
+                yield return new TestCaseData(new Func<int>(() => adminId));
+            }
+        }
+
+        // r 6.4
+        [Test]
+        [TestCaseSource("DataSuccessIsAdmin")]
+        public void SuccessIsAdmin(Func<int> adminId)
+        {
+            Response<bool> response = adminFacade.IsAdmin(adminId());
+
+            Assert.IsTrue(!response.IsErrorOccured());
+            Assert.IsTrue(response.Value);
+        }
+
+
         // r 6.4
         [Test]
         public void SuccessfulGetStorePurchaseHistory()
@@ -359,11 +399,12 @@ namespace TestMarketBackend.Acceptance
         [TestCaseSource("DataSuccessfulRemoveIfWithNoRolesHasRoles")]
         public void SuccessfulRemoveIfWithNoRolesHasRoles(Func<int> requestingId, Func<int> memberToRemoveId)
         {
-            IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemoveId());
+            int memberToRemove = memberToRemoveId();
+            IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemove);
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
 
-            Assert.IsTrue(!response.IsErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
 
             // checking that member still exists
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());

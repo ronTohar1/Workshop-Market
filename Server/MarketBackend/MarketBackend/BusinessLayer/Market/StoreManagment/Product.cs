@@ -157,7 +157,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			if (amountInInventory < amountToRemove)
 			{
 				amountInInventoryMutex.ReleaseMutex();
-				throw new MarketException($"Not enough products of {name} in storage");
+				throw new MarketException($"Not enough products of '{name}' in storage");
 			}
 
 			productDataManager.Update(id, product => product.AmountInInventory -= amountToRemove);
@@ -192,7 +192,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			if (!ContainsPurchasePolicy(purchaseOption))
 			{
 				purchaseOptionsMutex.ReleaseMutex();
-				throw new MarketException($"Not enough products of {name} in storage");
+				throw new MarketException($"Not enough products of '{name}' in storage");
 			}
 
 			productDataManager.Update(id, product =>

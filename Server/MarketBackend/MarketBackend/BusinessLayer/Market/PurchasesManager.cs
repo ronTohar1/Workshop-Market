@@ -234,7 +234,7 @@ public class PurchasesManager
                 //Remove from cart
                 buyer.Cart.RemoveProductFromCart(productInBag, buyer.Id, buyer is Member);
             }
-            store.notifyAllStoreOwners($"The buyer with the id:${buyer.Id} has purchased at the store: {store.name}");
+            store.notifyAllStoreOwners($"The buyer with the id:{buyer.Id} has purchased at the store: {store.name}");
         }
     }
 
@@ -400,7 +400,7 @@ public class PurchasesManager
     private void VerifyValidProductAmount(int amount)
     {
         if (amount <= 0)
-            throw new MarketException("The product amount has to be positive, given: " + amount);
+            throw new MarketException("The product amount has to be positive.\n Amount given was " + amount);
     }
 
     // for tests

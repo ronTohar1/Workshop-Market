@@ -1,4 +1,5 @@
-﻿namespace WebAPI.Requests
+﻿using MarketBackend.ServiceLayer.ServiceDTO;
+namespace WebAPI.Requests
 {
     public class SearchProductsRequest
     {
@@ -8,5 +9,11 @@
         public string? Keyword { get; set; }
         public int? ProductId { get; set; }
         public IList<int>? ProductIds { get; set; }
+
+        public ServiceMemberInRole? memberInRole { get; set; }
+
+        public bool storesWithProductsThatPassedFilter { get; set; }
+
+
     }
 }

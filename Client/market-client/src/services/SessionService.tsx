@@ -3,19 +3,24 @@ import { pathHome } from "../Paths"
 import { serverEnter } from "./BuyersService"
 import { fetchResponse } from "./GeneralService"
 
-const storage = sessionStorage
-const isInitOccured = "isInitOccured"
+interface Iuser {
+  username: string
+}
 
+export const storage = sessionStorage
+const isInitOccured = "isInitOccured"
+const userName = "userName"
 const isGuest = "isGuest"
 const buyerId = "buyerId"
+const isAdmin = "isAdmin"
+const notificationsArr = "notifications"
 
 export async function initSession() {
-  const didInit = storage.getItem(isInitOccured)
-  while (didInit === null) {
+  if (storage.getItem(isInitOccured) === null) {
     fetchResponse(serverEnter())
       .then((guestId: number) => {
         initFields(guestId)
-        alert("Hello, new guest!")
+        // alert("Hello, new guest!")
       })
       .catch((e) => {
         alert("Sorry, dear visitor, an unkown error has occured!")
@@ -24,9 +29,11 @@ export async function initSession() {
 }
 
 function initFields(id: number) {
-  storage.setItem(buyerId, String(id))
-  storage.setItem(isGuest, "true")
   storage.setItem(isInitOccured, "true")
+  setBuyerId(id)
+  setIsGuest(true)
+  setUsername("guest")
+  setIsAdmin(false)
 }
 
 export function clearSession() {
@@ -35,7 +42,13 @@ export function clearSession() {
 
 function createGetter<T>(field: string): () => T {
   const val = storage.getItem(field)
-  return () => (val === null ? val : JSON.parse(val))
+  return () => {
+    if (val === null || val === undefined)
+      return null
+    else {
+      return JSON.parse(val)
+    }
+  }
 }
 
 function createSetter<T>(field: string): (v: T) => void {
@@ -51,3 +64,23 @@ export const setIsGuest: (v: boolean) => void = createSetter(isGuest)
 export const getBuyerId: () => number = createGetter(buyerId)
 
 export const setBuyerId: (v: number) => void = createSetter(buyerId)
+
+// username setter getter
+
+export const getUsername: () => string = () => { return storage.getItem(userName) || "" }
+
+export const setUsername: (v: string) => void = (v) => storage.setItem(userName, v)
+
+// IsAdmin setter Getter
+export const getIsAdmin: () => boolean = createGetter(isAdmin)
+
+export const setIsAdmin: (v: boolean) => void = createSetter(isAdmin)
+// notifications
+
+// export const getNotifications: () => string[] = () => {
+//   const notifications = storage.getItem(notificationsArr)
+//   return notifications === null ? [] : JSON.parse(notifications)
+// }
+
+// export const addNotification: (v: string) => void = (v) => storage.setItem(userName, JSON.stringify(getNotifications().concat([v])))
+// // export const removeNotification: (v: string) => void = (v) => storage.setItem(userName, v)

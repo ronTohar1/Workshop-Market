@@ -67,7 +67,6 @@ export default function StorePage() {
       })
   }, [storeId])
 
- 
   const columns: GridColDef[] = [
     {
       field: fields.name,
@@ -121,33 +120,49 @@ export default function StorePage() {
   }
 
   const handleAddToCart = () => {
-    const failedToAdd: Product[] = []
-    const succeedToAdd: Product[] = []
-    products.forEach((prod: Product) => {
-      if (selectedProductsIds.includes(prod.id)) {
-        fetchResponse(serverAddToCart(getBuyerId(), prod.id, prod.storeId, 1))
-          .then((success: boolean) => {
-            success ? succeedToAdd.push(prod) : failedToAdd.push(prod)
+    // const failedToAdd: Product[] = []
+    // const succeedToAdd: Product[] = []
+    const chosenProducts = products.filter(p=>selectedProductsIds.includes(p.id))
+    const failedToAdd: Promise<Product[]> = chosenProducts.reduce(
+      (failedProducts: Promise<Product[]>, currProd: Product) => {
+        return fetchResponse(
+          serverAddToCart(getBuyerId(), currProd.id, currProd.storeId, 1)
+        )
+          .then(async (success: boolean) => {
+            return success
+              ? failedProducts
+              : failedProducts.then((failedProducts: Product[]) =>
+                failedProducts.concat(currProd)
+              )
           })
           .catch((e) => {
-            failedToAdd.push(prod)
-            alert(e)
+            // alert(e)
+            return failedProducts.then((failedProducts: Product[]) =>
+              failedProducts.concat(currProd)
+            )
           })
-      }
-    })
+      },
+      Promise.resolve([])
+    )
 
-    if (failedToAdd.length === 0) {
-      setAddToCartMsg("Added "  + " products to cart")
-      setOpenSnack(true)
-    } else handleFailToAdd(failedToAdd)
-    updateSelection([])
+    failedToAdd
+      .then((failedToAdd: Product[]) => {
+        if (failedToAdd.length === 0) {
+          //Didnt fail to add
+          // console.log(failedToAdd)
+          setAddToCartMsg("Added products to cart")
+          setOpenSnack(true)
+        } else handleFailToAdd(failedToAdd)
+        updateSelection([])
+      })
+      .catch(alert)
   }
 
   return (
     <Box>
       <Navbar />
       {toolBar(selectedProductsIds.length, store, handleAddToCart)}
-      <Stack direction="row">{}</Stack>
+      <Stack direction="row">{ }</Stack>
       <div style={{ height: "50vh", width: "100%" }}>
         <div style={{ display: "flex", height: "100%" }}>
           <div style={{ flexGrow: 1 }}>

@@ -1,6 +1,7 @@
 ﻿using MarketBackend.DataLayer.DataDTOs;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
 using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataDTOs.Market;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions;
@@ -53,9 +54,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataStoreMemberRoles> StoreMemberRoles { get; set; }
         public DbSet<DataProductReview> ProductReview { get; set; }
         public DbSet<DataAppointmentsNode> AppointmentsNodes { get; set; }
-        
         public DbSet<DataShoppingBag> ShoppingBags { get; set; }
         public DbSet<DataProductInBag> ProductInBags { get; set; }
+        public DbSet<DataPurchase> Purchases { get; set; }
 
         // discounts hierarchies
 

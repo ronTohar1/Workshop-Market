@@ -3,6 +3,10 @@ using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using MarketBackend.DataLayer.DataManagers;
 
 namespace MarketBackend.BusinessLayer.Market;
 public class PurchasesManager
@@ -97,7 +101,10 @@ public class PurchasesManager
 
         ICollection<ShoppingBag> shoppingBagsInPurchase = new List<ShoppingBag>(shoppingBags); 
         UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
-        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts);
+        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts, new Action(() => {
+            externalServicesController.CancelPayment(transactionId);
+            TryRollback(storesTransactions);
+        }));
 
         string finalReceipt = String.Join("", receipts.Values);
         return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
@@ -164,7 +171,10 @@ public class PurchasesManager
 
         ICollection<ShoppingBag> shoppingBagsInPurchase = new List<ShoppingBag>(shoppingBags);
         UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
-        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts);
+        AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts, new Action(() => {
+            externalServicesController.CancelPayment(transactionId);
+            TryRollback(storesTransactions);
+        }));
 
         string finalReceipt = String.Join("", receipts.Values);
         return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
@@ -205,18 +215,57 @@ public class PurchasesManager
     }
 
     //Adding record of purchase for buyer and store
-    private void AddRecord(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, double> storesTotal, IDictionary<int, string> receipts)
+    private void AddRecord(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, double> storesTotal, IDictionary<int, string> receipts, Action onDBFail)
     {
         double purchaseTotal = storesTotal.Values.Sum(x => x);
         string finalReceipt = String.Join("", receipts.Values);
-        buyer.AddPurchase(new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt));
+
+
+        Purchase p = new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
+
+        //DB stuff
+        if (buyer is Member) {
+            DataPurchase dp = PurchaseToDataPurchase(p);
+            try
+            {
+                DataMember dm = MemberDataManager.GetInstance().Find(buyer.Id);
+                dm.PurchaseHistory.Add(dp);
+            } catch (Exception) { onDBFail(); }
+        }
+
+        buyer.AddPurchase(p);
 
         //Adding record of the purchase from the stores
         foreach (ShoppingBag bag in shoppingBags)
         {
-            Store store = storeController.GetStore(bag.StoreId);
-            store.AddPurchaseRecord(store.founder.Id, new Purchase(buyer.Id, DateTime.Now, storesTotal[bag.StoreId], receipts[bag.StoreId]));
+            int storeId = bag.StoreId;
+            Store store = storeController.GetStore(storeId);
+
+            Purchase sp = new Purchase(buyer.Id, DateTime.Now, storesTotal[storeId], receipts[storeId]);
+
+            //DB stuff
+            DataPurchase dsp = PurchaseToDataPurchase(sp, storeId);
+            DataStore ds = StoreDataManager.GetInstance().Find(storeId);
+            ds.PurchaseHistory.Add(dsp);
+
+            store.AddPurchaseRecord(store.founder.Id, sp);
         }
+    }
+
+    private DataPurchase PurchaseToDataPurchase(Purchase p, int storeId = -1)
+    {
+        DataStore ds = null;
+        if (storeId != -1)
+            ds = StoreDataManager.GetInstance().Find(storeId);
+        return new DataPurchase()
+        {
+            BuyerId = p.BuyerId,
+            Store = ds,
+            PurchaseDate = p.purchaseDate,
+            PurchasePrice = p.purchasePrice,
+            PurchaseDescription = p.purchaseDescription
+        };
+
     }
 
     private void UpdateBuyerAndStore(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, int> storesTransactions)

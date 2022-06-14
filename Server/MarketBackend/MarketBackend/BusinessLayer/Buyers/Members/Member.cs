@@ -122,11 +122,14 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
                 foreach (string notification in notifications)
                 {
                     DataMember dm = MemberDataManager.GetInstance().Find(Id);
-                    dm.PendingNotifications.Add(new DataNotification()
+                    if (dm != null)
                     {
-                        Notification = notification
-                    });
-                    MemberDataManager.GetInstance().Save();
+                        dm.PendingNotifications.Add(new DataNotification()
+                        {
+                            Notification = notification
+                        });
+                        MemberDataManager.GetInstance().Save();
+                    }
                     pendingNotifications.Add(notification);
                 }
             }
@@ -174,8 +177,11 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
             {
                 DataMember dm = MemberDataManager.GetInstance().Find(Id);
-                dm.PendingNotifications.Clear();
-                MemberDataManager.GetInstance().Save();
+                if (dm != null)
+                {
+                    dm.PendingNotifications.Clear();
+                    MemberDataManager.GetInstance().Save();
+                }
                 pendingNotifications.Clear();
             }
         }

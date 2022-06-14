@@ -315,12 +315,13 @@ namespace TestMarketBackend.Acceptance
         public void TearDown()
         {
             systemOperator.CloseMarket();
+            // TODO: clear db
         }
 
 
-        protected void ResetMarket()
+        protected void ReopenMarket()
         {
-            TearDown();
+            systemOperator.CloseMarket();
             SetUp();
         }
 

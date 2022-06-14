@@ -88,6 +88,8 @@ namespace TestMarketBackend.Acceptance
             Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
             Assert.IsTrue(!purchaseResponse.IsErrorOccured());
 
+            ReopenMarket();
+
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.IsErrorOccured());
             Assert.AreEqual(1, response.Value.Count); 
@@ -132,7 +134,9 @@ namespace TestMarketBackend.Acceptance
 
             SetUpShoppingCarts();
             Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
-            Assert.IsTrue(!purchaseResponse.IsErrorOccured()); 
+            Assert.IsTrue(!purchaseResponse.IsErrorOccured());
+
+            ReopenMarket();
 
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.IsErrorOccured());
@@ -353,8 +357,9 @@ namespace TestMarketBackend.Acceptance
             bool memberExsited = memberExistsResponse.Value;
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
-
             Assert.IsTrue(response.IsErrorOccured());
+
+            ReopenMarket();
 
             // checking that member still exists if existed before
             memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
@@ -370,8 +375,9 @@ namespace TestMarketBackend.Acceptance
             int memberToRemoveId = member1Id; 
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId, memberToRemoveId);
-
             Assert.IsTrue(!response.IsErrorOccured());
+
+            ReopenMarket();
 
             // checking that member does not exist
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
@@ -403,8 +409,9 @@ namespace TestMarketBackend.Acceptance
             IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemove);
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
-
             Assert.IsTrue(response.IsErrorOccured());
+            
+            ReopenMarket();
 
             // checking that member still exists
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
@@ -440,6 +447,8 @@ namespace TestMarketBackend.Acceptance
             Response<bool>[] responses = GetResponsesFromThreads(jobs);
 
             Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+
+            ReopenMarket();
 
             // checking that member does not exist
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);

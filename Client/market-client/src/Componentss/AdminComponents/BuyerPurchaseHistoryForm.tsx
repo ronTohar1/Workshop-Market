@@ -79,6 +79,7 @@ export default function BuyerPurchaseHistoryForm() {
 
   return (
     <div>
+      <Box textAlign='center'>
       <Button
         onClick={handleClickOpen}
         style={{ height: 50, width: 500 }}
@@ -94,6 +95,7 @@ export default function BuyerPurchaseHistoryForm() {
         }}>
         Display A buyer purchases
       </Button>
+      </Box>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Search a buyer purchases</DialogTitle>
         <DialogContent style={{ overflow: "hidden" }}>

@@ -13,6 +13,7 @@ import {
   serverChangeProductAmountInInventory,
   serverGetMembersInRoles,
   serverGetPurchaseHistory,
+  serverGetDailyStoreProfit,
   serverGetStore,
 } from "../../services/StoreService"
 import { pathHome } from "../../Paths"
@@ -88,6 +89,7 @@ export default function StorePurchases({
 
   const [pageSize, setPageSize] = React.useState<number>(initSize)
   const [rows, setRows] = React.useState<Purchase[]>([])
+  const [dailyProfit, setDailyProfit] = React.useState<number>(-1)
 
   React.useEffect(() => {
     fetchResponse(serverGetPurchaseHistory(getBuyerId(), store.id))
@@ -103,6 +105,14 @@ export default function StorePurchases({
       .catch(alert)
   }, [])
 
+  React.useEffect(() => {
+    fetchResponse(serverGetDailyStoreProfit(store.id,getBuyerId()))
+      .then((profit) => {
+        setDailyProfit(profit)
+      })
+      .catch((e)=>{})//it could be a manager, so we don't want to alert unnecesserly, we just won't display it
+  }, [])
+
 
   const storePurchases = () => {
     return (
@@ -116,6 +126,7 @@ export default function StorePurchases({
         >
           {store != null ? store.name + "'s Purchases" : "Error- store not exist"}
         </Typography>
+        <Stack direction="column" spacing={17}>
         <div style={{ height: "40vh", width: "100%" }}>
           <div style={{ display: "flex", height: "100%" }}>
             <div style={{ flexGrow: 1 }}>
@@ -142,7 +153,17 @@ export default function StorePurchases({
             </div>
           </div>
         </div>
+        <Typography
+                  color="inherit"
+                  align="center"
+                  variant="h5"
+                  sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}
+                >
+                 {dailyProfit != -1 ? `the store's daily profit so far is ${dailyProfit} ₪` : ""}
+        </Typography>
+        </Stack>
       </Box>
+      
     )
   }
   return <div>{store === null ? LoadingCircle() : storePurchases()}</div> // return  store === null ? LoadingComponent() : storePreview()

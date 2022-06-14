@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataManagers.DataManagersInherentsForTesting
 {
-    internal class ForTestingDiscountDataManager : DiscountDataManager
+    public class ForTestingDiscountDataManager : DiscountDataManager
     {
         public ForTestingDiscountDataManager() : base()
         {

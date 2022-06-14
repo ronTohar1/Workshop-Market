@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataManagers.DataManagersInherentsForTesting
 {
-    public class ForTestingPurchaseOptionsDataManager : PurchaseOptionsDataManager
+    public class ForTestingPurchasePolicyDataManager : PurchasePolicyDataManager
     {
-        public ForTestingPurchaseOptionsDataManager() : base() { }
+        public ForTestingPurchasePolicyDataManager() : base() { }
     }
 }

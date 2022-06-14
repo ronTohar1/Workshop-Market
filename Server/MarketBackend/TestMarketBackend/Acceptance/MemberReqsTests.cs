@@ -73,9 +73,14 @@ namespace TestMarketBackend.Acceptance
         [TestCase("The quality is great. Shipment was very quick. Would recommend.")]
         public void SuccessfulProductReview(string review)
         {
-            Response<bool> response = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
+            int reviewsAmount = storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value.Count();
 
+            Response<bool> response = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
             Assert.IsTrue(!response.IsErrorOccured());
+
+            ReopenMarket();
+
+            Assert.AreEqual(reviewsAmount + 1, storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value.Count());
         }
 
         // r.3.3
@@ -94,11 +99,17 @@ namespace TestMarketBackend.Acceptance
         [TestCase("The quality is great. Shipment was very quick. Would recommend.")]
         public void SuccessDoubleProductReview(string review)
         {
+            int reviewsAmount = storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value.Count();
+
             Response<bool> firstResponse = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
             Response<bool> secondResponse = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
             Assert.IsTrue(!firstResponse.IsErrorOccured() && !secondResponse.IsErrorOccured());
+
+            ReopenMarket();
+
+            Assert.AreEqual(reviewsAmount + 2, storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value.Count());
         }
 
         // testing member notifications 

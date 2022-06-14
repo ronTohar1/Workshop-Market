@@ -44,6 +44,12 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private Bid(int id, int storeId, int productId, int memberId, double bid,
             IList<int> aprovingIds, bool counterOffer, double offer)
         {
+            if (storeId < 0 || productId < 0 || memberId < 0)
+                throw new Exception("Illegal id given");
+
+            if (bid < 0)
+                throw new MarketException("bid cannot be negative");
+
             this.id = id;
             this.storeId = storeId;
             this.productId = productId;

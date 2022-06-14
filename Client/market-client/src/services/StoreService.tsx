@@ -489,3 +489,23 @@ export async function serverGetProductReview(
 });
   return jsonResponse.json();
 }
+
+export async function serverGetDailyStoreProfit(
+  storeId: number, 
+  memberId: number
+): Promise<ClientResponse<number>> {
+  const uri = serverPort + "/api/Stores/GetDailyProfit";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "storeId": 0,\n  "memberId": 0\n}',
+    body: JSON.stringify({
+        'storeId': storeId,
+        'memberId': memberId
+    })
+});
+  return jsonResponse.json();
+}

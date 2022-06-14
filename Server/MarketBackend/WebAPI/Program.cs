@@ -20,7 +20,6 @@ namespace MyApp // Note: actual namespace depends on the project name.
             notificationServer.Start();
             Console.WriteLine($"WS server started on ws://127.0.0.1:{appConfig.websocketServerPort}");
 
-            //SystemOperator so = new SystemOperator("admin", "admin"); // For easier testing
             SystemOperator so = new();
             if (!so.MarketOpen)
             {

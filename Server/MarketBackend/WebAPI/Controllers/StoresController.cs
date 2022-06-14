@@ -338,6 +338,17 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
+        [HttpPost("GetDailyProfit")]
+        public ActionResult<Response<double>> GetDailyProfit([FromBody] GetStoreDailyProfitRequest request)
+        {
+            Response<double> response = storeManagementFacade.GetStoreDailyProfit(
+                request.StoreId,request.MemberId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
 
 
 

@@ -1,10 +1,9 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
-using System;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Buyers;
-using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 
 namespace MarketBackend.BusinessLayer.Market; 
 public class StoreController

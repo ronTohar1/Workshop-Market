@@ -83,5 +83,16 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost("GetSystemDailyProfit")]
+        public ActionResult<Response<double>> GetSystemDailyProfit([FromBody] GetStoreDailyProfitRequestAdmin request)
+        {
+            Response<double> response = adminFacade.GetSystemDailyProfit(request.MemberId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
     }
 }

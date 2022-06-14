@@ -10,6 +10,7 @@ using MarketBackend.DataLayer.DataManagers;
 using MarketBackend.DataLayer.DataManagers.DataManagersInherentsForTesting;
 using Moq;
 using System;
+using System.Collections.Generic;
 
 namespace TestMarketBackend
 {
@@ -80,7 +81,18 @@ namespace TestMarketBackend
             store.Setup(x => x.Add(It.IsAny<DataStore>()));
             store.Setup(x => x.Remove(It.IsAny<int>()));
             store.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataStore>>()));
-            store.Setup(x => x.Find(It.IsAny<int>())).Returns(new DataStore());
+            store.Setup(x => x.Find(It.IsAny<int>())).Returns(new DataStore() 
+            { 
+                // initializing objects so they won't be null 
+                Appointments = new DataAppointmentsNode(), 
+                Bids = new List<DataBid>(), 
+                DiscountManager = new DataStoreDiscountPolicyManager(), 
+                PurchaseManager = new DataStorePurchasePolicyManager(), 
+                Founder = new DataMember(), 
+                MembersPermissions = new List<DataStoreMemberRoles>(), 
+                Products = new List<DataProduct>(), 
+                PurchaseHistory = new List<DataPurchase>()
+            });
             store.Setup(x => x.Save());
             StoreDataManager.ForTestingSetInstance(store.Object);
 
@@ -128,7 +140,12 @@ namespace TestMarketBackend
             product.Setup(x => x.Add(It.IsAny<DataProduct>()));
             product.Setup(x => x.Remove(It.IsAny<int>()));
             product.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataProduct>>()));
-            product.Setup(x => x.Find(It.IsAny<int>())).Returns(new DataProduct());
+            product.Setup(x => x.Find(It.IsAny<int>())).Returns(new DataProduct()
+            {
+                // initializing fields so they won't be null
+                PurchaseOptions = new List<DataPurchaseOption>(), 
+                Reviews = new List<DataProductReview>()
+            });
             product.Setup(x => x.Save());
             ProductDataManager.ForTestingSetInstance(product.Object);
 

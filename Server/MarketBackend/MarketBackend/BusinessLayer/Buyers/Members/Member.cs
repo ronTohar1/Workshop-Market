@@ -166,7 +166,9 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
        => Notify(new string[] { notification });
 
         public void NotifyNoSave(string notification)
-       => NotifyNoSave(new string[] { notification });
+        {
+            NotifyNoSave(new string[] { notification });
+        }
 
         public void DataNotify(string notification)
        => DataNotify(new string[] { notification });

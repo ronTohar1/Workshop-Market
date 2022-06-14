@@ -120,6 +120,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             memberMock.Setup(member =>
                member.Notify(It.IsAny<string[]>())).
                    Callback(() => wasNotified[memberId] = true);
+            memberMock.Setup(member =>
+               member.NotifyNoSave(It.IsAny<string[]>())).
+                   Callback(() => wasNotified[memberId] = true);
 
             return memberMock.Object;
         }

@@ -2,7 +2,7 @@
 
 namespace MarketBackend.DataLayer.DataManagers
 {
-    internal class DiscountDataManager : ObjectDataManager<DataDiscount, int>
+    public class DiscountDataManager : ObjectDataManager<DataDiscount, int>
     {
         private static DiscountDataManager instance = null;
 

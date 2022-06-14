@@ -102,7 +102,7 @@ namespace MarketBackend.BusinessLayer.Buyers
                 Store = StoreDataManager.GetInstance().Find(storeId),
                 ProductsAmounts = new List<DataProductInBag>()
             };
-            dm.Cart.ShoppingBags.Add(dsb);
+            MemberDataManager.GetInstance().Update(dm.Id, dm => dm.Cart.ShoppingBags.Add(dsb));             
             return dsb;
         }
 

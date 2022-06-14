@@ -234,7 +234,8 @@ public class PurchasesManager
             try
             {
                 DataMember dm = MemberDataManager.GetInstance().Find(buyer.Id);
-                dm.PurchaseHistory.Add(dp);
+                if (dm.PurchaseHistory != null)
+                    dm.PurchaseHistory.Add(dp);
             } catch (Exception) { onDBFail(); }
         }
 
@@ -249,7 +250,8 @@ public class PurchasesManager
             {
                 DataPurchase dsp = PurchaseToDataPurchase(sp, storeId);
                 DataStore ds = StoreDataManager.GetInstance().Find(storeId);
-                ds.PurchaseHistory.Add(dsp);
+                if (ds.PurchaseHistory != null)
+                    ds.PurchaseHistory.Add(dsp);
             } catch { onDBFail(); }
 
             purchases.Add(storeId, sp);

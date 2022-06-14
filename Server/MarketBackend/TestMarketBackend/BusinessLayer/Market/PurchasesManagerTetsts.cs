@@ -274,7 +274,12 @@ namespace TestMarketBackend.BusinessLayer.Market
             cartMock.Setup(cart =>
                     cart.RemoveProductFromCart(It.Is<ProductInBag>(p => p != null && productsId.Contains(p.ProductId)))).
                         Callback<ProductInBag>((p) => removeFromStoreFromCart[p.ProductId] = true);
-            
+            cartMock.Setup(cart =>
+                   cart.RemoveProductFromCart(It.Is<ProductInBag>(p => p != null && productsId.Contains(p.ProductId)), It.IsAny<int>(), It.IsAny<bool>())).
+                      Callback<ProductInBag, int, bool>((p, i, m) => removeFromStoreFromCart[p.ProductId] = true);
+
+
+
             Dictionary<ProductInBag, int> productInBag = new Dictionary<ProductInBag, int>();
             
             foreach (int index in productsId) {

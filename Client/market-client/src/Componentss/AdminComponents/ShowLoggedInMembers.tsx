@@ -66,6 +66,7 @@ export default function ShowLoggedInMembers() {
   
     return (
       <div>
+        <Box textAlign='center'>
          <Button
           onClick={handleClickOpen}
           style={{ height: 50, width: 500 }}
@@ -81,6 +82,7 @@ export default function ShowLoggedInMembers() {
         }}>
           Display logged in members
         </Button>
+        </Box>
         <Dialog open={open} onClose={handleClose} >
           <DialogTitle>Display logged in members</DialogTitle>
           {/* <DialogContent style={{ overflow: "hidden" }} >

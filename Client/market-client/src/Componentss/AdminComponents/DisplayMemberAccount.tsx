@@ -53,6 +53,7 @@ export default function DisplayMemberAccount() {
   };
   return (
     <div>
+      <Box textAlign='center'>
       <Button
         onClick={handleClickOpen}
         style={{ height: 50, width: 500 }}
@@ -68,6 +69,7 @@ export default function DisplayMemberAccount() {
         }}>
         Display a member account
       </Button>
+      </Box>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Search a member account</DialogTitle>
         <DialogContent style={{ overflow: "hidden" }}>

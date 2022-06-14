@@ -119,3 +119,22 @@ export async function serverIsAdmin(
   console.log(response);
   return response;
 }
+
+export async function serverGetDailyProfitOfAllStores(
+  adminId: number
+): Promise<ClientResponse<number>> {
+  const uri = serverPort + "/api/Admin/GetSystemDailyProfit";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "memberId": 0\n}',
+    body: JSON.stringify({
+        'memberId': adminId
+    })
+});
+  const response = jsonResponse.json();
+  return response;
+}

@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Moq;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer;
+using System.Threading;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -43,7 +44,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestApproveBids(int howMany)
         {
             for (int i = 0; i < howMany; i++)
-                b1.approveBid(i);
+                b1.approveBid(i, new Action(() => Thread.Sleep(0)));
             IList<int> a = b1.aprovingIds;
             for (int i = 0; i < howMany; i++)
                 Assert.IsTrue(a.Contains(i));
@@ -64,14 +65,14 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestApproveCounterOfferSuccess(int sum)
         {
             b1.CounterOffer(sum);
-            b1.approveCounterOffer();
+            b1.approveCounterOffer(new Action(() => Thread.Sleep(0)));
             Assert.IsTrue(!b1.counterOffer);
         }
 
         [Test]
         public void TestApproveCounterOfferFail()
         {
-            Assert.Throws<MarketException>(() => b1.approveCounterOffer());
+            Assert.Throws<MarketException>(() => b1.approveCounterOffer(new Action(() => Thread.Sleep(0))));
         }
 
     }

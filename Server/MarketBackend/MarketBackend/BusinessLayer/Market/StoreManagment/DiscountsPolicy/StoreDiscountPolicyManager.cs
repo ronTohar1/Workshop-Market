@@ -7,6 +7,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpres
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.NumericExpressions;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
+using MarketBackend.DataLayer.DataManagers;
 using System.Collections.Concurrent;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
@@ -14,10 +15,33 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
     //this whole class and related classes implement r II.4.2
     public class StoreDiscountPolicyManager
     {
-        private static Mutex idMutex = new Mutex(false);
-        private static int discountId = 0;
 
         public IDictionary<int, Discount> discounts { get; private set; }
+
+        private static Mutex idMutex = new Mutex(false);
+        private const int ID_COUNTER_NOT_INITIALIZED = -1;
+        private static int discountId = ID_COUNTER_NOT_INITIALIZED;
+
+        private static void InitializeIdCounter()
+        {
+            discountId = DiscountDataManager.GetInstance().GetNextId();
+        }
+
+        private static int GetNextId()
+        {
+            int temp;
+            idMutex.WaitOne();
+
+            if (discountId == ID_COUNTER_NOT_INITIALIZED)
+                InitializeIdCounter();
+
+            temp = discountId;
+            discountId++;
+
+            idMutex.ReleaseMutex();
+
+            return temp;
+        }
 
         public StoreDiscountPolicyManager() : this(new ConcurrentDictionary<int, Discount>())
         {
@@ -29,40 +53,32 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             this.discounts = discounts; 
         }
 
-        // r S 8
-        public static StoreDiscountPolicyManager DataSDPMToSDPM(DataStoreDiscountPolicyManager dataSDPM)
-        {
-            IDictionary<int, Discount> discounts = new ConcurrentDictionary<int, Discount>(); 
-            
-            foreach(DataDiscount dataDiscount in dataSDPM.Discounts)
-            {
-                discounts.Add(dataDiscount.Id, Discount.DataDiscountToDiscount(dataDiscount)); 
-            }
-            
-            return new StoreDiscountPolicyManager(discounts); 
-        }
-
-        private int getId()
-        {
-            int res;
-            idMutex.WaitOne();
-            res = discountId;
-            discountId++;
-            idMutex.ReleaseMutex();
-            return res;
-        }
-
         public int AddDiscount(string description ,IExpression dis)
         {
-            int id = getId();
-            discounts.Add(id, new Discount(id, description, dis));
+            int id = GetNextId();
+            Discount discount = new Discount(id, description, dis);
+
+            DataDiscount dataDiscount = DiscountToDataDiscount(discount);
+            DiscountDataManager.GetInstance().Add(dataDiscount);
+            DiscountDataManager.GetInstance().Save();
+
+            discounts.Add(id, discount);
             return id;
         }
 
         public void RemoveDiscount(int did)
         {
             if (discounts.ContainsKey(did))
+            {
+                Discount dis = discounts[did];
+                DataDiscount dd = DiscountDataManager.GetInstance().Find(did);
+                dis.discountExpression.RemoveFromDB(dd.DiscountExpression);
+
+                DiscountDataManager.GetInstance().Remove(did);
+                DiscountDataManager.GetInstance().Save();
+
                 discounts.Remove(did);
+            }
             else
                 throw new MarketException($"No Discount with id: {did}");
         }
@@ -87,6 +103,44 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             return sum;
         }
 
+        // r S 8 - database functions
+        public static StoreDiscountPolicyManager DataSDPMToSDPM(DataStoreDiscountPolicyManager dataSDPM)
+        {
+            int maxid = 0;
+            IDictionary<int, Discount> discounts = new ConcurrentDictionary<int, Discount>();
+
+            foreach (DataDiscount dataDiscount in dataSDPM.Discounts)
+            {
+                if (dataDiscount.Id > maxid)
+                    maxid = dataDiscount.Id;
+                discounts.Add(dataDiscount.Id, Discount.DataDiscountToDiscount(dataDiscount));
+            }
+            discountId = maxid + 1;
+            return new StoreDiscountPolicyManager(discounts);
+        }
+
+        private DataDiscount DiscountToDataDiscount(Discount dis)
+        {
+            return new DataDiscount()
+            {
+                Id = dis.id,
+                Description = dis.description,
+                DiscountExpression = dis.discountExpression.IExpressionToDataExpression()
+            };
+        }
+
+        public DataStoreDiscountPolicyManager SDPMToDSDPM()
+        {
+            IList<DataDiscount> dataDiscounts = new List<DataDiscount>();
+            foreach (Discount pp in discounts.Values)
+            {
+                dataDiscounts.Add(DiscountToDataDiscount(pp));
+            }
+            return new DataStoreDiscountPolicyManager()
+            {
+                Discounts = dataDiscounts
+            };
+        }
 
         //-------------------------------- builders -----------------------------------------
 
@@ -171,27 +225,27 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             newExp.discounts = l;
             return newExp;
         }
-        public IDiscountExpression NewAddativeExpression(IList<IDiscountExpression> l)
-        {
-            AddativeExpression newExp = new AddativeExpression();
-            newExp.discounts = l;
-            return newExp;
-        }
-        public IDiscountExpression NewXorDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
-        {
-            OrDiscount newExp = new OrDiscount(firstDis, secondDis);
-            return newExp;
-        }
-        public IDiscountExpression NewOrDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
-        {
-            OrDiscount newExp = new OrDiscount(firstDis, secondDis);
-            return newExp;
-        }
-        public IDiscountExpression NewAndDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
-        {
-            AndDiscount newExp = new AndDiscount(firstDis, secondDis);
-            return newExp;
-        }
+        //public IDiscountExpression NewAddativeExpression(IList<IDiscountExpression> l)
+        //{
+        //    AddativeExpression newExp = new AddativeExpression();
+        //    newExp.discounts = l;
+        //    return newExp;
+        //}
+        //public IDiscountExpression NewXorDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
+        //{
+        //    OrDiscount newExp = new OrDiscount(firstDis, secondDis);
+        //    return newExp;
+        //}
+        //public IDiscountExpression NewOrDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
+        //{
+        //    OrDiscount newExp = new OrDiscount(firstDis, secondDis);
+        //    return newExp;
+        //}
+        //public IDiscountExpression NewAndDiscount(IDiscountExpression firstDis, IDiscountExpression secondDis)
+        //{
+        //    AndDiscount newExp = new AndDiscount(firstDis, secondDis);
+        //    return newExp;
+        //}
         //-------Discount compound operations------
 
         //-------------------------------- builders -----------------------------------------

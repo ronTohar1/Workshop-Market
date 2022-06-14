@@ -1,5 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataManagers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -112,23 +114,70 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             }
         }
 
+        //r S 8
         public virtual void Notify(string[] notifications) {
             
             if (!LoggedIn || !notifier.tryToNotify(notifications))
             {
                 foreach (string notification in notifications)
+                {
+                    DataMember dm = MemberDataManager.GetInstance().Find(Id);
+                    dm.PendingNotifications.Add(new DataNotification()
+                    {
+                        Notification = notification
+                    });
+                    MemberDataManager.GetInstance().Save();
                     pendingNotifications.Add(notification);
+                }
             }
             
+        }
+
+        public virtual void NotifyNoSave(string[] notifications)
+        {
+
+            if (!LoggedIn || !notifier.tryToNotify(notifications))
+            {
+                foreach (string notification in notifications)
+                {
+                    pendingNotifications.Add(notification);
+                }
+            }
+
+        }
+
+        public virtual void DataNotify(string[] notifications)
+        {
+            MemberDataManager memberDataManager = MemberDataManager.GetInstance();
+            DataMember dataMember = memberDataManager.Find(Id); 
+            if (!LoggedIn)
+            {
+                foreach (string notification in notifications)
+                {
+                    dataMember.PendingNotifications.Add(new DataNotification() { Notification = notification });
+                }
+            }
         }
 
         public void Notify(string notification)
        => Notify(new string[] { notification });
 
+        public void NotifyNoSave(string notification)
+       => NotifyNoSave(new string[] { notification });
+
+        public void DataNotify(string notification)
+       => DataNotify(new string[] { notification });
+
+        //r S 8
         private void SendPending() {
             
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
+            {
+                DataMember dm = MemberDataManager.GetInstance().Find(Id);
+                dm.PendingNotifications.Clear();
+                MemberDataManager.GetInstance().Save();
                 pendingNotifications.Clear();
+            }
         }
         public bool matchingPasswords(string password)
         => this.password == security.HashPassword(password);
@@ -143,5 +192,59 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             return synchronizedCollection;
         }
 
+        public override void ChangeProductAmount(ProductInBag product, int amount, int memberId)
+        {
+            int storeId = product.StoreId;
+
+            DataMember dm = MemberDataManager.GetInstance().Find(memberId);
+            DataProductInBag? dpib = FindDataProductInBag(dm, storeId, product.ProductId);
+
+            Cart.ShoppingBags[storeId].ChangeProductAmount(product, amount, dpib);
+        }
+
+        // r S 8 - database functions
+        public DataMember MemberToDataMember()
+        {
+            DataMember dMember = new DataMember()
+            {
+                Id = this.Id,
+                Username = Username,
+                Password = password,
+                Cart = Cart.CartToDataCart(),
+                IsAdmin = false
+            };
+            return dMember;
+        }
+
+        public void RemoveCartFromDB(DataMember member)
+        {
+            if (member == null) return;
+            DataCart? c = member.Cart;
+            if (c != null)
+            {
+                Cart.RemoveContentFromDB(c);
+                CartDataManager.GetInstance().Remove(c.Id);
+            }
+        }
+
+        public DataProductInBag? FindDataProductInBag(DataMember dm, int storeId, int productId)
+        {
+            if (dm == null) return null;
+            DataCart? dc = dm.Cart;
+            if (dc == null)
+                return null;
+            foreach (DataShoppingBag dsb in dc.ShoppingBags)
+            {
+                if (dsb.Store.Id == storeId)
+                {
+                    foreach (DataProductInBag dpib in dsb.ProductsAmounts)
+                    {
+                        if (dpib.ProductId == productId)
+                            return dpib;
+                    }
+                }
+            }
+            return null;
+        }            
     }
 }

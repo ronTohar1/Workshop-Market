@@ -10,6 +10,11 @@ namespace TestMarketBackend.Acceptance
 {
     internal class Guest_MemberReqsTests : AcceptanceTests
     {
+        //[SetUp]
+        //public void DataManagerSetup()
+        //{
+
+        //} 
 
         // r.1.2
         [Test]

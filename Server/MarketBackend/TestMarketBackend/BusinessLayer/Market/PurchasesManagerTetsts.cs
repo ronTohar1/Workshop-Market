@@ -15,6 +15,12 @@ using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
 using System.Net.Http;
 using MarketBackend.ServiceLayer.ServiceDTO;
+using MarketBackend.DataLayer.DataManagers.DataManagersInherentsForTesting;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using System.Threading;
 
 namespace TestMarketBackend.BusinessLayer.Market
 {
@@ -65,13 +71,58 @@ namespace TestMarketBackend.BusinessLayer.Market
 
 
         // ------- Setup helping functions -------------------------------------
+        [SetUp]
+        public void DataManagersSetup()
+        {
+            // database mocks
+            Mock<ForTestingCartDataManager> c = new Mock<ForTestingCartDataManager>();
+            Mock<ForTestingMemberDataManager> m = new Mock<ForTestingMemberDataManager>();
+            Mock<ForTestingProductInBagDataManager> pib = new Mock<ForTestingProductInBagDataManager>();
+            Mock<ForTestingShoppingBagDataManager> sb = new Mock<ForTestingShoppingBagDataManager>();
+            Mock<ForTestingStoreDataManager> s = new Mock<ForTestingStoreDataManager>();
+
+            c.Setup(x => x.Add(It.IsAny<DataCart>()));
+            c.Setup(x => x.Remove(It.IsAny<int>()));
+            c.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataCart>>()));
+            c.Setup(x => x.Find(It.IsAny<int>())).Returns((DataCart)null);
+            c.Setup(x => x.Save());
+            CartDataManager.ForTestingSetInstance(c.Object);
+
+            m.Setup(x => x.Add(It.IsAny<DataMember>()));
+            m.Setup(x => x.Remove(It.IsAny<int>()));
+            m.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataMember>>()));
+            m.Setup(x => x.Find(It.IsAny<int>())).Returns((DataMember)null);
+            m.Setup(x => x.Save());
+            MemberDataManager.ForTestingSetInstance(m.Object);
+
+            pib.Setup(x => x.Add(It.IsAny<DataProductInBag>()));
+            pib.Setup(x => x.Remove(It.IsAny<int>()));
+            pib.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataProductInBag>>()));
+            pib.Setup(x => x.Find(It.IsAny<int>())).Returns((DataProductInBag)null);
+            pib.Setup(x => x.Save());
+            ProductInBagDataManager.ForTestingSetInstance(pib.Object);
+
+            sb.Setup(x => x.Add(It.IsAny<DataShoppingBag>()));
+            sb.Setup(x => x.Remove(It.IsAny<int>()));
+            sb.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataShoppingBag>>()));
+            sb.Setup(x => x.Find(It.IsAny<int>())).Returns((DataShoppingBag)null);
+            sb.Setup(x => x.Save());
+            ShoppingBagDataManager.ForTestingSetInstance(sb.Object);
+
+            s.Setup(x => x.Add(It.IsAny<DataStore>()));
+            s.Setup(x => x.Remove(It.IsAny<int>()));
+            s.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataStore>>()));
+            s.Setup(x => x.Find(It.IsAny<int>())).Returns((DataStore)null);
+            s.Setup(x => x.Save());
+            StoreDataManager.ForTestingSetInstance(s.Object);
+        }
 
         private Cart MockCart()
         {
             Mock<Cart> cartMock = new Mock<Cart>();
 
             cartMock.Setup(cart =>
-                    cart.AddProductToCart(It.IsAny<ProductInBag>(), It.IsAny<int>())).
+                    cart.AddProductToCart(It.IsAny<ProductInBag>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>())).
                         Callback(() => { addedToCart = true; });
             cartMock.Setup(cart =>
                     cart.RemoveProductFromCart(It.IsAny<ProductInBag>())).
@@ -235,9 +286,9 @@ namespace TestMarketBackend.BusinessLayer.Market
             PassedValuesInitialization();
             FullPurchasesManagerSetup();
             if (isUserError)
-                Assert.Throws<MarketException>(() => purchasesManager.RemoveProductFromCart(buyerId, storeId, productId, amount));
+                Assert.Throws<MarketException>(() => purchasesManager.RemoveProductFromCartt(buyerId, storeId, productId, amount));
             else
-                Assert.Throws<ArgumentException>(() => purchasesManager.RemoveProductFromCart(buyerId, storeId, productId, amount));
+                Assert.Throws<ArgumentException>(() => purchasesManager.RemoveProductFromCartt(buyerId, storeId, productId, amount));
         }
 
         [Test]
@@ -247,7 +298,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         {
             PassedValuesInitialization();
             FullPurchasesManagerSetup();
-            purchasesManager.RemoveProductFromCart(buyerId, storeId, productId, amount);
+            purchasesManager.RemoveProductFromCartt(buyerId, storeId, productId, amount);
 
             Assert.IsTrue(removedFromCart); // cart is mocked to change this
         }
@@ -323,8 +374,8 @@ namespace TestMarketBackend.BusinessLayer.Market
                 else
                     productMock.Setup(product => product.amountInInventory).Returns(amount1);
                 productMock.Setup(product => product.id).Returns(idx);
-                productMock.Setup(product => product.AddToInventory(It.IsAny<int>())).Callback(()=>counter--);
-                productMock.Setup(product => product.RemoveFromInventory(It.IsAny<int>())).Callback(() => counter++);
+                productMock.Setup(product => product.AddToInventory(It.IsAny<int>(), new Action(() => Thread.Sleep(0)))).Callback(()=>counter--);
+                productMock.Setup(product => product.RemoveFromInventory(It.IsAny<int>(), new Action(() => Thread.Sleep(0)))).Callback(() => counter++);
                 
                 idsToProducts[idx] = productMock.Object;
             }

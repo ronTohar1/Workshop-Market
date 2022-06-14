@@ -9,7 +9,6 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountInterf
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalOperators;
-using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalDiscounts;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
 {

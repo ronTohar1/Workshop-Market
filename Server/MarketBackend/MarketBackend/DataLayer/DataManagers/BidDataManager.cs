@@ -52,5 +52,10 @@ namespace MarketBackend.DataLayer.DataManagers
                 throw new Exception("cannot be found in the database");
             return data;
         }
+
+        public virtual int GetNextId()
+        {
+            return this.MaxOrDefualt(db.Members, member => member.Id, 0) + 1;
+        }
     }
 }

@@ -54,6 +54,10 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
+        public virtual int GetNextId()
+        {
+            return this.MaxOrDefualt(db.Members, member => member.Id, 0) + 1; 
+        }
     }
 }
 

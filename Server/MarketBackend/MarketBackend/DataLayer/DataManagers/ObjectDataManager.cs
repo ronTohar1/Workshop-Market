@@ -24,27 +24,27 @@ namespace MarketBackend.DataLayer.DataManagers
             db = Database.GetInstance();
         }
 
-        public void Add(T toAdd)
+        public virtual void Add(T toAdd)
         {
             TryAction(() => AddThrows(toAdd));
         }
 
         protected abstract void AddThrows(T toAdd);
 
-        public T Find(U id)
+        public virtual T Find(U id)
         {
             return TryFunction(() => FindThrows(id));
         }
         protected abstract T FindThrows(U id);
 
-        public IList<T> Find(Predicate<T> predicate)
+        public virtual IList<T> Find(Predicate<T> predicate)
         {
             return TryFunction(() => FindThrows(predicate));
         }
 
         protected abstract IList<T> FindThrows(Predicate<T> predicate);
 
-        public void Update(U id, Action<T> action)
+        public virtual void Update(U id, Action<T> action)
         {
             TryAction(() => UpdateThrows(id, action));
         }
@@ -54,7 +54,7 @@ namespace MarketBackend.DataLayer.DataManagers
             action(FindThrows(id));
         }
 
-        public T Remove(U id)
+        public virtual T Remove(U id)
         {
             return TryFunction(() => RemoveThrows(id));
         }
@@ -66,7 +66,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         protected abstract T RemoveThrows(T toRemove);
 
-        public void Save()
+        public virtual void Save()
         {
             TryAction(() => SaveThrows());
         }
@@ -87,10 +87,23 @@ namespace MarketBackend.DataLayer.DataManagers
             {
                 return function();
             }
-            catch (Exception exception) // todo: check if this is the exception that is needed to be catch here
+            catch (Exception) // todo: check if this is the exception that is needed to be catch here
             {
                 throw new MarketException("Action could not be saved, try again later");
             }
+        }
+
+        public virtual void Remove<R>(R exp)
+        {
+            TryFunction(() => db.Remove(exp));
+        }
+
+        protected int MaxOrDefualt<T>(IEnumerable<T> list, Func<T, int> getNumber, int defaultValue)
+        {
+            if (!list.Any()) // if is empty 
+                return defaultValue;
+            int firstValue = getNumber(list.First()); 
+            return list.Aggregate(firstValue, (acc, element) => Math.Max(acc, getNumber(element)));
         }
     }
 }

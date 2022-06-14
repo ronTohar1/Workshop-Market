@@ -1,6 +1,7 @@
 ﻿using MarketBackend.DataLayer.DataDTOs;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
 using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataDTOs.Market;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions;
@@ -52,9 +53,11 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataPurchaseOption> PurchaseOptions { get; set; }
         public DbSet<DataStoreMemberRoles> StoreMemberRoles { get; set; }
         public DbSet<DataProductReview> ProductReview { get; set; }
-
         public DbSet<DataAppointmentsNode> AppointmentsNodes { get; set; }
-        
+        public DbSet<DataShoppingBag> ShoppingBags { get; set; }
+        public DbSet<DataProductInBag> ProductInBags { get; set; }
+        public DbSet<DataPurchase> Purchases { get; set; }
+
         // discounts hierarchies
 
         public DbSet<DataDateDiscount> DateDiscounts { get; set; }
@@ -83,7 +86,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataCheckProductLessPredicate> CheckProductLessPredicates { get; set; }
         public DbSet<DataCheckProductMoreEqualsPredicate> CheckProductMoreEqualsPredicates { get; set; }
         public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression> PruchasePredicateExpressions { get; set; }
-        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataIPurchasePolicy> InterfacesPurchasePolicies { get; set; }
+        public DbSet<DataIPurchasePolicy> InterfacesPurchasePolicies { get; set; }
         public DbSet<DataRestrictionExpression> RestrictionExpressions { get; set; }
         public DbSet<DataAfterHourProductRestriction> DataAfterHourProductRestrictions { get; set; }
         public DbSet<DataAfterHourRestriction> AfterHourRestrictions { get; set; }
@@ -92,6 +95,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataBeforeHourProductRestriction> BeforeHourProductRestrictions { get; set; }
         public DbSet<DataBeforeHourRestriction> BeforeHourRestrictions { get; set; }
         public DbSet<DataDateRestriction> DateRestrictions { get; set; }
+        public DbSet<DataPurchasePolicy> PurchasePolicies { get; set; }
+        
 
 
         // connection setup functions
@@ -112,13 +117,18 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             optionsBuilder.UseSqlServer(localVMConnectionString); 
         }
 
+        //public void RemoveAllTables()
+        //{
+        //    this.GetType().GetProperties()
+        //}
+
         // setting (not defualt) primary keys
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<DataStoreMemberRoles>()
-                .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<DataStoreMemberRoles>()
+        //        .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
+        //}
 
         //private void DiscountsWithoutCascades(ModelBuilder modelBuilder)
         //{

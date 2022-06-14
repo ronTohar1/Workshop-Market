@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts.DiscountExpressions.LogicalDiscounts
 {
-    public class AndDiscount : LogicalDiscount
-    {
-        public AndDiscount(IDiscountExpression firstExpression, IDiscountExpression secondExpression) : base(firstExpression, secondExpression)
-        {
-        }
+    //public class AndDiscount : LogicalDiscount
+    //{
+    //    public AndDiscount(IDiscountExpression firstExpression, IDiscountExpression secondExpression) : base(firstExpression, secondExpression)
+    //    {
+    //    }
 
-        //should be overrided
-        public double EvaluateDiscount(ShoppingBag bag, Store store)
-        => this.firstDiscount.EvaluateDiscount(bag, store)+ this.secondDiscount.EvaluateDiscount(bag, store);
-    }
+    //    //should be overrided
+    //    public double EvaluateDiscount(ShoppingBag bag, Store store)
+    //    => this.firstDiscount.EvaluateDiscount(bag, store)+ this.secondDiscount.EvaluateDiscount(bag, store);
+    //}
 }

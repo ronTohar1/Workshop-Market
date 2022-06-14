@@ -23,6 +23,7 @@ namespace TestMarketBackend.BusinessLayer.Buyers
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers();
             buyer = new Buyer();
             Mock<Purchase> purchaseMock = new Mock<Purchase>(buyer.Id, purchaseDate, purchasePrice,purhcaseDescription);
             purchase = purchaseMock.Object;

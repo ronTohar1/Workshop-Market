@@ -5,6 +5,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Predicat
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.RestrictionPolicies;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy;
+using MarketBackend.DataLayer.DataManagers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,7 +20,29 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
         public IDictionary<int, PurchasePolicy> purchases { get; set; }
 
         private static Mutex idMutex = new Mutex(false);
-        private static int discountId = 0;
+        private const int ID_COUNTER_NOT_INITIALIZED = -1;
+        private static int discountId = ID_COUNTER_NOT_INITIALIZED;
+
+        private static void InitializeIdCounter()
+        {
+            discountId = DiscountDataManager.GetInstance().GetNextId();
+        }
+
+        private static int GetNextId()
+        {
+            int temp;
+            idMutex.WaitOne();
+
+            if (discountId == ID_COUNTER_NOT_INITIALIZED)
+                InitializeIdCounter();
+
+            temp = discountId;
+            discountId++;
+
+            idMutex.ReleaseMutex();
+
+            return temp;
+        }
 
         public StorePurchasePolicyManager() : this(new ConcurrentDictionary<int, PurchasePolicy>())
         {
@@ -31,33 +54,16 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
             this.purchases = purchasesPolicies;
         }
 
-        // r S 8
-        public static StorePurchasePolicyManager DataSPPMToSPPM(DataStorePurchasePolicyManager dataSPPM)
-        {
-            IDictionary<int, PurchasePolicy> purchasePolicies = new ConcurrentDictionary<int, PurchasePolicy>();
-
-            foreach (DataPurchasePolicy dataPurchasePolicy in dataSPPM.PurchasesPolicies)
-            {
-                purchasePolicies.Add(dataPurchasePolicy.Id, PurchasePolicy.DataPurchasePolicyToPurchasePolicy(dataPurchasePolicy));
-            }
-
-            return new StorePurchasePolicyManager(purchasePolicies);
-        }
-
-        private int getId()
-        {
-            int res;
-            idMutex.WaitOne();
-            res = discountId;
-            discountId++;
-            idMutex.ReleaseMutex();
-            return res;
-        }
-
         public int AddPurchasePolicy(string description, IPurchasePolicy policy)
         {
-            int id = getId();
-            purchases.TryAdd(id, new PurchasePolicy(id, description, policy));
+            int id = GetNextId();
+            PurchasePolicy purchasePolicy = new PurchasePolicy(id, description, policy);
+            
+            DataPurchasePolicy dpp = PurchasePolicyToDataPurchasePolicy(purchasePolicy);
+            PurchasePolicyDataManager.GetInstance().Add(dpp);
+            PurchasePolicyDataManager.GetInstance().Save();
+
+            purchases.TryAdd(id, purchasePolicy);
             return id;
         }
 
@@ -65,6 +71,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
         {
             if (!purchases.ContainsKey(policyId))
                 throw new MarketException($"No purchase policy with id {policyId}");
+
+            PurchasePolicy purchasePolicy = purchases[policyId];
+            DataPurchasePolicy dpp = PurchasePolicyDataManager.GetInstance().Find(policyId);
+            purchasePolicy.policy.RemoveFromDB(dpp.Policy);
+
+            PurchasePolicyDataManager.GetInstance().Remove(policyId);
+            PurchasePolicyDataManager.GetInstance().Save();
+
             purchases.Remove(policyId);
         }
 
@@ -90,6 +104,44 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
             return problems;
         }
 
+        // r S 8
+        public static StorePurchasePolicyManager DataSPPMToSPPM(DataStorePurchasePolicyManager dataSPPM)
+        {
+            int maxid = 0;
+            IDictionary<int, PurchasePolicy> purchasePolicies = new ConcurrentDictionary<int, PurchasePolicy>();
+
+            foreach (DataPurchasePolicy dataPurchasePolicy in dataSPPM.PurchasesPolicies)
+            {
+                if (dataPurchasePolicy.Id > maxid)
+                    maxid = dataPurchasePolicy.Id;
+                purchasePolicies.Add(dataPurchasePolicy.Id, PurchasePolicy.DataPurchasePolicyToPurchasePolicy(dataPurchasePolicy));
+            }
+            discountId = maxid + 1;
+            return new StorePurchasePolicyManager(purchasePolicies);
+        }
+
+        private DataPurchasePolicy PurchasePolicyToDataPurchasePolicy(PurchasePolicy pp)
+        {
+            return new DataPurchasePolicy()
+            {
+                Id = pp.id,
+                Description = pp.description,
+                Policy = pp.policy.IPurchasePolicyToDataIPurchasePolicy()
+            };
+        }
+
+        public DataStorePurchasePolicyManager SPPMToDataDSPPM()
+        {
+            IList<DataPurchasePolicy> purchasePolicies = new List<DataPurchasePolicy>();
+            foreach (PurchasePolicy pp in purchases.Values)
+            {
+                purchasePolicies.Add(PurchasePolicyToDataPurchasePolicy(pp));
+            }
+            return new DataStorePurchasePolicyManager()
+            {
+                PurchasesPolicies = purchasePolicies
+            };
+        }
         //------------------------ builders ----------------------------
 
 

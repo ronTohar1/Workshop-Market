@@ -20,6 +20,7 @@ using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
 using MarketBackend.DataLayer.DataManagers;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using System.Threading;
 
 namespace TestMarketBackend.BusinessLayer.Market
 {
@@ -373,8 +374,8 @@ namespace TestMarketBackend.BusinessLayer.Market
                 else
                     productMock.Setup(product => product.amountInInventory).Returns(amount1);
                 productMock.Setup(product => product.id).Returns(idx);
-                productMock.Setup(product => product.AddToInventory(It.IsAny<int>())).Callback(()=>counter--);
-                productMock.Setup(product => product.RemoveFromInventory(It.IsAny<int>())).Callback(() => counter++);
+                productMock.Setup(product => product.AddToInventory(It.IsAny<int>(), new Action(() => Thread.Sleep(0)))).Callback(()=>counter--);
+                productMock.Setup(product => product.RemoveFromInventory(It.IsAny<int>(), new Action(() => Thread.Sleep(0)))).Callback(() => counter++);
                 
                 idsToProducts[idx] = productMock.Object;
             }

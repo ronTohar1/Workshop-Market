@@ -73,7 +73,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             StoreDataManager.ForTestingSetInstance(s.Object);
 
             cart.ShoppingBags[1] = bag1;
-            bag2.AddProductToBag(productInBag2, 2, 0, false);
+            bag2.AddProductToBag(productInBag2, 2, 0, false, null, null);
             cart.ShoppingBags[2] = bag2;
         }
 

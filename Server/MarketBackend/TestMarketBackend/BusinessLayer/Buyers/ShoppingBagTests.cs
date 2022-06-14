@@ -45,7 +45,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCaseSource("Data_TestAddProductToBag_Pass")]
         public void TestAddProductToBag_Pass(ProductInBag product, int amount, int expectedAmount)
         {
-            Assert.DoesNotThrow(() => bag.AddProductToBag(product, amount, 0, false));
+            Assert.DoesNotThrow(() => bag.AddProductToBag(product, amount, 0, false, null, null));
             Assert.True(bag.ProductsAmounts.ContainsKey(product));
             Assert.AreEqual(bag.ProductsAmounts[product], expectedAmount);  
         }
@@ -64,7 +64,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCaseSource("Data_TestAddProductToBag_Fail")]
         public void TestAddProductToBag_Fail(ProductInBag product, int amount)
         {
-            Assert.Catch<Exception>(() => bag.AddProductToBag(product, amount, 0, false));
+            Assert.Catch<Exception>(() => bag.AddProductToBag(product, amount, 0, false, null, null));
         }
 
 

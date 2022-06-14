@@ -117,6 +117,19 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
                 Policy = pp.policy.IPurchasePolicyToDataIPurchasePolicy()
             };
         }
+
+        public DataStorePurchasePolicyManager SPPMToDataDSPPM()
+        {
+            IList<DataPurchasePolicy> purchasePolicies = new List<DataPurchasePolicy>();
+            foreach (PurchasePolicy pp in purchases.Values)
+            {
+                purchasePolicies.Add(PurchasePolicyToDataPurchasePolicy(pp));
+            }
+            return new DataStorePurchasePolicyManager()
+            {
+                PurchasesPolicies = purchasePolicies
+            };
+        }
         //------------------------ builders ----------------------------
 
 

@@ -116,6 +116,19 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             };
         }
 
+        public DataStoreDiscountPolicyManager SDPMToDSDPM()
+        {
+            IList<DataDiscount> dataDiscounts = new List<DataDiscount>();
+            foreach (Discount pp in discounts.Values)
+            {
+                dataDiscounts.Add(DiscountToDataDiscount(pp));
+            }
+            return new DataStoreDiscountPolicyManager()
+            {
+                Discounts = dataDiscounts
+            };
+        }
+
         //-------------------------------- builders -----------------------------------------
 
         //-----Final expressions---------

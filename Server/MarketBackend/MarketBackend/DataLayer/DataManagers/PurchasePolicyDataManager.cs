@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataManagers
 {
-    internal class PurchasePolicyDataManager : ObjectDataManager<DataPurchasePolicy, int>
+    public class PurchasePolicyDataManager : ObjectDataManager<DataPurchasePolicy, int>
     {
         private static PurchasePolicyDataManager instance = null;
 

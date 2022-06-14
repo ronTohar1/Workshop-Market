@@ -159,8 +159,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 PurchaseHistory = purchaseHistory.Select(purchase => purchase.ToNewDataPurchase(null)).ToList(),
                 MembersPermissions = GetNewDataStoreMemberRoles(null),
                 Appointments = appointmentsHierarchy.ToNewDataAppointmentsNode(),
-                DiscountManager = , // ... 
-                PurchaseManager = , // ... 
+                DiscountManager = discountManager.SDPMToDSDPM(), 
+                PurchaseManager = purchaseManager.SPPMToDataDSPPM(), 
                 Bids = bids.Values.Select(bid => bid.ToNewDataBid()).ToList()
             };
             

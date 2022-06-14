@@ -44,6 +44,8 @@ namespace TestMarketBackend.Acceptance
 
             Assert.IsTrue(!response.IsErrorOccured());
 
+            ReopenMarket();
+
             // Checking that it is available
             response = buyerFacade.AddProdcutToCart(userId, storeId, productId, 5);
 
@@ -146,8 +148,10 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulStoreOwnerAppointment()
         {
             Response<bool> response = storeManagementFacade.MakeCoOwner(storeOwnerId, member1Id, storeId);
-
             Assert.IsTrue(!response.IsErrorOccured());
+
+            ReopenMarket();
+
             Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Owner));
         }
 
@@ -187,6 +191,8 @@ namespace TestMarketBackend.Acceptance
             Response<bool>[] responses = GetResponsesFromThreads(jobs);
 
             Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+
+            ReopenMarket();
 
             Response<IList<int>> ownersAfter =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
@@ -279,6 +285,8 @@ namespace TestMarketBackend.Acceptance
             Response<bool> response = storeManagementFacade.RemoveCoOwner(requestingId, coOwnerToRemoveId, storeId);
             Assert.IsTrue(!response.IsErrorOccured());
 
+            ReopenMarket();
+
             // check that roles in the store where changed as needed 
             IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId);
 
@@ -308,6 +316,8 @@ namespace TestMarketBackend.Acceptance
             Response<bool>[] responses = GetResponsesFromThreads(jobs);
             Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
 
+            ReopenMarket();
+
             // check that roles in the store where changed as needed 
             IDictionary<Role, IList<int>> roles = GetRolesInStore(storeId);
 
@@ -319,8 +329,10 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulStoreManagerAppointment()
         {
             Response<bool> response = storeManagementFacade.MakeCoManager(storeOwnerId, member1Id, storeId);
-
             Assert.IsTrue(!response.IsErrorOccured());
+
+            ReopenMarket();
+
             Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Manager));
         }
 
@@ -333,6 +345,8 @@ namespace TestMarketBackend.Acceptance
 
             // Appointing a store manager as a store manager
             Response<bool> response = storeManagementFacade.MakeCoManager(storeOwnerId, member4Id, storeId);
+
+            ReopenMarket();
 
             Response<IList<int>> managersAfter =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
@@ -363,6 +377,8 @@ namespace TestMarketBackend.Acceptance
         {
             Response<bool> response =
                 storeManagementFacade.ChangeManagerPermission(storeOwnerId, member4Id, storeId, permissions);
+
+            ReopenMarket();
 
             Response<IList<Permission>> newPermissionResponse =
                 storeManagementFacade.GetManagerPermissions(storeId, storeOwnerId, member4Id);
@@ -487,8 +503,9 @@ namespace TestMarketBackend.Acceptance
             Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
             Assert.IsTrue(response.IsErrorOccured());
 
-            // checking that discount description is not in discounts 
+            ReopenMarket();
 
+            // checking that discount description is not in discounts 
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
             if (!descriptionsResposne.IsErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
             {
@@ -988,7 +1005,9 @@ namespace TestMarketBackend.Acceptance
         {
             Response<int> response = storeManagementFacade.AddDiscountPolicy(discountExpression(), description, storeId(), memberId());
             Assert.IsTrue(!response.IsErrorOccured());
-            int discountId = response.Value; 
+            int discountId = response.Value;
+
+            ReopenMarket();
 
             // checking that discount description was added 
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetDiscountsDescriptions(storeId());
@@ -1046,8 +1065,9 @@ namespace TestMarketBackend.Acceptance
             Response<int> response = storeManagementFacade.AddPurchasePolicy(purchasePolicy(), description, storeId(), memberId());
             Assert.IsTrue(response.IsErrorOccured());
 
-            // checking that policy description is not in purchases policies  
+            ReopenMarket();
 
+            // checking that policy description is not in purchases policies  
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetPurchasePolicyDescriptions(storeId());
             if (!descriptionsResposne.IsErrorOccured()) // the arguments can make an expected error here, for example storeId does not exists 
             {
@@ -1689,6 +1709,8 @@ namespace TestMarketBackend.Acceptance
             Response<int> response = storeManagementFacade.AddPurchasePolicy(purchasePolicy(), description, storeId(), memberId());
             Assert.IsTrue(!response.IsErrorOccured());
             int purchasePolicyId = response.Value;
+
+            ReopenMarket();
 
             // checking that purchase policy description was added 
             Response<IDictionary<int, string>> descriptionsResposne = buyerFacade.GetPurchasePolicyDescriptions(storeId());

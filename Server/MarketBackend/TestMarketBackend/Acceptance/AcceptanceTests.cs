@@ -311,6 +311,21 @@ namespace TestMarketBackend.Acceptance
 
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            systemOperator.CloseMarket();
+            // TODO: clear db
+        }
+
+
+        protected void ReopenMarket()
+        {
+            systemOperator.CloseMarket();
+            SetUp();
+        }
+
+
         protected Response<T>[] GetResponsesFromThreads<T>(Func<Response<T>>[] jobs)
         {
             Response<T>[] responses = new Response<T>[jobs.Length];

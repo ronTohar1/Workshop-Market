@@ -28,7 +28,7 @@ export const getCartProducts = (
   }
   return [prodsIds, prodsToQuantity] as const // Array of [product ids, Product to quantity map]
 }
-// should be async
+
 export const fetchProducts = async (
   storeToProdPromise: Promise<ClientResponse<Map<number, Product[]>>>
 ): Promise<Product[]> => {
@@ -50,7 +50,7 @@ export const fetchProducts = async (
     const products = allProducts
     return products
   } catch (e) {
-    alert("Sorry but an unknown error happend when tried to search products")
+    alert("Sorry but an unknown error happend when tried to search products!\n" + e)
     return []
   }
 }
@@ -75,7 +75,7 @@ export const fetchProductsByStore = async (
     }
     return allProducts
   } catch (e) {
-    alert("Sorry but an unknown error happend when tried to search products")
+    alert("Sorry but an unknown error happend when tried to search products\n" + e)
     return []
   }
 }

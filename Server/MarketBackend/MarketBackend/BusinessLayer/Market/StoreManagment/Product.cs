@@ -257,6 +257,33 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			pricePerUnit = newPrice;
 			pricePerUnitMutex.ReleaseMutex();
 		}
+
+		public void RemoveData()
+        {
+			DataProduct product = productDataManager.Find(id);
+
+			DataRemoveReviews(product); 
+			DataRemovePurchaseOptions(product);
+
+			productDataManager.Remove(id); 
+        }
+
+		private void DataRemoveReviews(DataProduct product)
+        {
+			foreach (DataProductReview dataProductReview in product.Reviews)
+            {
+				productDataManager.Remove(dataProductReview);
+            }
+        }
+
+		private void DataRemovePurchaseOptions(DataProduct product)
+		{
+			foreach (DataPurchaseOption dataPurchaseOption in product.PurchaseOptions)
+			{
+				productDataManager.Remove(dataPurchaseOption);
+			}
+		}
+
 		private static int GenerateProductId()
 		{
 			storeIdCounterMutex.WaitOne();

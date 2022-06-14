@@ -157,8 +157,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 IsOpen = isOpen,
                 Products = products.Values.Select(product => product.ToNewDataProduct()).ToList(),
                 PurchaseHistory = purchaseHistory.Select(purchase => purchase.ToNewDataPurchase(null)).ToList(),
-                MembersPermissions = GetNewDataStoreMemberRoles(null), 
-                Appointments = appointmentsHierarchy.ToNewDataAppointmentsNode(), 
+                MembersPermissions = GetNewDataStoreMemberRoles(null),
+                Appointments = appointmentsHierarchy.ToNewDataAppointmentsNode(),
                 DiscountManager = , // ... 
                 PurchaseManager = , // ... 
                 Bids = bids.Values.Select(bid => bid.ToNewDataBid()).ToList()
@@ -390,9 +390,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 throw new MarketException("Could not remove product: " + permError);
             if (!products.ContainsKey(productId))
                 throw new MarketException(StoreErrorMessage($"Could not remove a product:\n there isn't such a product with product id {productId}"));
+            
+            Product product = products[productId];
+
+            product.RemoveData();
+            storeDataManager.Save(); 
+            
             products.Remove(productId);
-            --> // todo: implement updating the database 
         }
+
         // r.4.1
         // c.9
         public virtual void DecreaseProductAmountFromInventory(int memberId, int productId, int amount)
@@ -1215,15 +1221,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
 
         // 1.5, 1.6
-<<<<<<< HEAD
         public virtual void notifyAllStoreOwners(string notificationMessage) 
             =>notifyAllMembersWithRole(notificationMessage, Role.Owner);
         public virtual void notifyAllStoreOwnersNoSave(string notificationMessage)
             => notifyAllMembersWithRoleNoSave(notificationMessage, Role.Owner);
-=======
-        public virtual void notifyAllStoreOwners(string notificationMessage)
-            => notifyAllMembersWithRole(notificationMessage, Role.Owner);
->>>>>>> b6a7d38d0d2f1c6e55d2708a515bc22d1611c0d1
         public void notifyAllStoreManagers(string notificationMessage)
             => notifyAllMembersWithRole(notificationMessage, Role.Manager);
 

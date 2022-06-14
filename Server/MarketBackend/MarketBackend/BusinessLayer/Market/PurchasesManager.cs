@@ -103,9 +103,10 @@ public class PurchasesManager
         ICollection<ShoppingBag> shoppingBagsInPurchase = new List<ShoppingBag>(shoppingBags); 
         UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
         AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts, new Action(() => {
-            externalServicesController.CancelPayment(transactionId);
-            TryRollback(storesTransactions);
-            throw new MarketException("Could not make the purchase, pls try again later!");
+            //externalServicesController.CancelPayment(transactionId);
+            //externalServicesController.CancelDelivery(transactionId);
+            //TryRollback(storesTransactions);
+            //throw new MarketException("Could not make the purchase, pls try again later!");
         })); //r S 8
 
         string finalReceipt = String.Join("", receipts.Values);
@@ -229,14 +230,16 @@ public class PurchasesManager
         Purchase p = new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
 
         //DB stuff
-        if (buyer is Member) {
+        if (buyer is Member)
+        {
             DataPurchase dp = PurchaseToDataPurchase(p);
             try
             {
                 DataMember dm = MemberDataManager.GetInstance().Find(buyer.Id);
                 if (dm.PurchaseHistory != null)
                     dm.PurchaseHistory.Add(dp);
-            } catch (Exception) { onDBFail(); }
+            }
+            catch (Exception) { onDBFail(); }
         }
 
         IDictionary<int, Purchase> purchases = new Dictionary<int, Purchase>();
@@ -252,7 +255,8 @@ public class PurchasesManager
                 DataStore ds = StoreDataManager.GetInstance().Find(storeId);
                 if (ds.PurchaseHistory != null)
                     ds.PurchaseHistory.Add(dsp);
-            } catch { onDBFail(); }
+            }
+            catch { onDBFail(); }
 
             purchases.Add(storeId, sp);
         }

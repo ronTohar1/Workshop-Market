@@ -29,6 +29,10 @@ public class ExternalServicesController
 		return supplySystem.Supply(supplyDetails).Result;
 	}
 
+	public virtual int CancelDelivery(int transactionId)
+    {
+		return supplySystem.CancelSupply(transactionId).Result;
+    }
 	
 
 }

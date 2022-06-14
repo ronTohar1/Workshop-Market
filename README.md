@@ -20,7 +20,7 @@ It will be more comefortable to run the client from Visual Studio Code, but it's
 - Make sure you have installed:
   - [npm 8.6.0](https://nodejs.org/en/download/) or higher
 
-- Open a new terminal at [market-client](Client/market-client)
+- Open a new terminal at [market-client](Client/market-client) directory
 - Type "npm-install" or "npm i" and click enter. This will install all the dependencies for the project
 - Now type "npm start" and press enter.
  A browser window should open with the url: <http://localhost:3000/>
@@ -37,5 +37,5 @@ It will be more comefortable to run the client from Visual Studio Code, but it's
 ## running the server tests
 
 - In order to run the server tests, the server directory needs to be opened with Visual Studio, as explained earlier
-- Search for the [TestMarketBackend](Server/MarketBackend/TestMarketBackend) directory in the Solution Explorer. Right-click the directory, and  choose "Run Tests".
+- Right-click the [TestMarketBackend](Server/MarketBackend/TestMarketBackend) directory in the Solution Explorer and choose "Run Tests".
 - The Test Explorer window should open automatically and run the tests.

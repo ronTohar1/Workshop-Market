@@ -1162,8 +1162,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             Bid bid = bids[bidId];
             if (bid.memberId != memberId)
                 throw new MarketException("The counter offer cant be denied because it is not your bid!");
+
+            bid.DataRemove();
+            storeDataManager.Save(); 
+            
             bids.Remove(bidId);
-            --> // todo: update the database 
         }
 
         // ------------------------------ Daily profit -------------------------

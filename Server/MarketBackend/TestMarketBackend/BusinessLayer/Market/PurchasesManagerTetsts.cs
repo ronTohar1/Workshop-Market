@@ -75,46 +75,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         public void DataManagersSetup()
         {
             // database mocks
-            Mock<ForTestingCartDataManager> c = new Mock<ForTestingCartDataManager>();
-            Mock<ForTestingMemberDataManager> m = new Mock<ForTestingMemberDataManager>();
-            Mock<ForTestingProductInBagDataManager> pib = new Mock<ForTestingProductInBagDataManager>();
-            Mock<ForTestingShoppingBagDataManager> sb = new Mock<ForTestingShoppingBagDataManager>();
-            Mock<ForTestingStoreDataManager> s = new Mock<ForTestingStoreDataManager>();
-
-            c.Setup(x => x.Add(It.IsAny<DataCart>()));
-            c.Setup(x => x.Remove(It.IsAny<int>()));
-            c.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataCart>>()));
-            c.Setup(x => x.Find(It.IsAny<int>())).Returns((DataCart)null);
-            c.Setup(x => x.Save());
-            CartDataManager.ForTestingSetInstance(c.Object);
-
-            m.Setup(x => x.Add(It.IsAny<DataMember>()));
-            m.Setup(x => x.Remove(It.IsAny<int>()));
-            m.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataMember>>()));
-            m.Setup(x => x.Find(It.IsAny<int>())).Returns((DataMember)null);
-            m.Setup(x => x.Save());
-            MemberDataManager.ForTestingSetInstance(m.Object);
-
-            pib.Setup(x => x.Add(It.IsAny<DataProductInBag>()));
-            pib.Setup(x => x.Remove(It.IsAny<int>()));
-            pib.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataProductInBag>>()));
-            pib.Setup(x => x.Find(It.IsAny<int>())).Returns((DataProductInBag)null);
-            pib.Setup(x => x.Save());
-            ProductInBagDataManager.ForTestingSetInstance(pib.Object);
-
-            sb.Setup(x => x.Add(It.IsAny<DataShoppingBag>()));
-            sb.Setup(x => x.Remove(It.IsAny<int>()));
-            sb.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataShoppingBag>>()));
-            sb.Setup(x => x.Find(It.IsAny<int>())).Returns((DataShoppingBag)null);
-            sb.Setup(x => x.Save());
-            ShoppingBagDataManager.ForTestingSetInstance(sb.Object);
-
-            s.Setup(x => x.Add(It.IsAny<DataStore>()));
-            s.Setup(x => x.Remove(It.IsAny<int>()));
-            s.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataStore>>()));
-            s.Setup(x => x.Find(It.IsAny<int>())).Returns((DataStore)null);
-            s.Setup(x => x.Save());
-            StoreDataManager.ForTestingSetInstance(s.Object);
+            DataManagersMock.InitMockDataManagers(); 
         }
 
         private Cart MockCart()

@@ -24,6 +24,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             disAmount1 = 10;
             disAmount2 = 20;
 

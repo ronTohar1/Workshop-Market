@@ -14,6 +14,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
 {
     internal class XorTests
     {
+        [SetUp]
+        public void MockDataLayer()
+        {
+            DataManagersMock.InitMockDataManagers();
+        }
+
         [Test]
         [TestCase(true, true, false)]
         [TestCase(false, true, true)]

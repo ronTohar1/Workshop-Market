@@ -26,6 +26,8 @@ namespace TestMarketBackend.BusinessLayer
         [SetUp]
         public void SetupAdmin()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             adminId = 1;
 
             v1 = 10;

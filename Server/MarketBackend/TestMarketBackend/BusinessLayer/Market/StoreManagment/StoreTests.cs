@@ -102,6 +102,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private int bidId = 1;
         // ----------- Setup helping functions -----------------------------
 
+        [SetUp]
+        public void MockDataLayer()
+        {
+            DataManagersMock.InitMockDataManagers();
+        }
+
         private Member setupMcokedMember(int memberId)
         {
             Mock<Security> securityMock = new Mock<Security>();

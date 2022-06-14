@@ -61,6 +61,7 @@ public class PurchasesManager
     // cc 10
     // r I 3, r I 4
     // r 1.5
+    //r S 8
     public Purchase PurchaseCartContent(int buyerId, PaymentDetails paymentDetails, SupplyDetails supplyDetails)
     {
         Buyer buyer = this.GetBuyerOrThrowException(buyerId);
@@ -104,13 +105,15 @@ public class PurchasesManager
         AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts, new Action(() => {
             externalServicesController.CancelPayment(transactionId);
             TryRollback(storesTransactions);
-        }));
+            throw new MarketException("Could not make the purchase, pls try again later!");
+        })); //r S 8
 
         string finalReceipt = String.Join("", receipts.Values);
         return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
     }
 
     //an adaptation of the purchase cart for cases where its for a bid
+    //r S 8
     public Purchase PurchaseBid(Bid bid, int memberId, PaymentDetails paymentDetails, SupplyDetails supplyDetails)
     {
         if (bid.memberId != memberId)
@@ -174,7 +177,8 @@ public class PurchasesManager
         AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts, new Action(() => {
             externalServicesController.CancelPayment(transactionId);
             TryRollback(storesTransactions);
-        }));
+            throw new MarketException("Could not make the purchase, pls try again later!");
+        })); //r S 8
 
         string finalReceipt = String.Join("", receipts.Values);
         return new Purchase(buyer.Id, DateTime.Now, purchaseTotal, finalReceipt);
@@ -215,6 +219,7 @@ public class PurchasesManager
     }
 
     //Adding record of purchase for buyer and store
+    //r S 8
     private void AddRecord(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, double> storesTotal, IDictionary<int, string> receipts, Action onDBFail)
     {
         double purchaseTotal = storesTotal.Values.Sum(x => x);
@@ -233,22 +238,33 @@ public class PurchasesManager
             } catch (Exception) { onDBFail(); }
         }
 
-        buyer.AddPurchase(p);
-
+        IDictionary<int, Purchase> purchases = new Dictionary<int, Purchase>();
         //Adding record of the purchase from the stores
         foreach (ShoppingBag bag in shoppingBags)
         {
             int storeId = bag.StoreId;
-            Store store = storeController.GetStore(storeId);
-
             Purchase sp = new Purchase(buyer.Id, DateTime.Now, storesTotal[storeId], receipts[storeId]);
-
             //DB stuff
-            DataPurchase dsp = PurchaseToDataPurchase(sp, storeId);
-            DataStore ds = StoreDataManager.GetInstance().Find(storeId);
-            ds.PurchaseHistory.Add(dsp);
+            try
+            {
+                DataPurchase dsp = PurchaseToDataPurchase(sp, storeId);
+                DataStore ds = StoreDataManager.GetInstance().Find(storeId);
+                ds.PurchaseHistory.Add(dsp);
+            } catch { onDBFail(); }
 
-            store.AddPurchaseRecord(store.founder.Id, sp);
+            purchases.Add(storeId, sp);
+        }
+
+        try
+        {
+            MemberDataManager.GetInstance().Save();
+        } catch { onDBFail(); }
+
+        buyer.AddPurchase(p);
+        foreach (int id in purchases.Keys)
+        {
+            Store store = storeController.GetStore(id);
+            store.AddPurchaseRecord(store.founder.Id, purchases[id]);
         }
     }
 
@@ -268,6 +284,7 @@ public class PurchasesManager
 
     }
 
+    //r S 8
     private void UpdateBuyerAndStore(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, int> storesTransactions)
     {
         foreach (ShoppingBag shoppingBag in shoppingBags)
@@ -283,7 +300,7 @@ public class PurchasesManager
                 int amount = prod.Value;
 
                 //Remove from cart
-                buyer.Cart.RemoveProductFromCart(productInBag, buyer.Id, buyer is Member);
+                buyer.Cart.RemoveProductFromCart(productInBag, buyer.Id, buyer is Member); //r S 8
             }
             store.notifyAllStoreOwners($"The buyer with the id:{buyer.Id} has purchased at the store: {store.name}");
         }
@@ -454,7 +471,7 @@ public class PurchasesManager
             throw new MarketException("The product amount has to be positive.\n Amount given was " + amount);
     }
 
-    // for tests
+    // for tests - roi
     public void RemoveProductFromCartt(int buyerId, int storeId, int productId, int amount)
     {
         VerifyValidProductAmount(amount); // checking first for efficiency 

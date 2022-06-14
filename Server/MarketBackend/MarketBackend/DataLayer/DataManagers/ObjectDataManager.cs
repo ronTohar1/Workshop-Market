@@ -98,5 +98,12 @@ namespace MarketBackend.DataLayer.DataManagers
             TryFunction(() => db.Remove(exp));
         }
 
+        protected int MaxOrDefualt<T>(IEnumerable<T> list, Func<T, int> getNumber, int defaultValue)
+        {
+            if (!list.Any()) // if is empty 
+                return defaultValue;
+            int firstValue = getNumber(list.First()); 
+            return list.Aggregate(firstValue, (acc, element) => Math.Max(acc, getNumber(element)));
+        }
     }
 }

@@ -6,6 +6,8 @@ using MarketBackend.BusinessLayer.Buyers;
 using SystemLog;
 using NLog;
 using MarketBackend.BusinessLayer.System.ExternalServices;
+using MarketBackend.DataLayer.DataManagers;
+
 namespace MarketBackend.BusinessLayer
 {
     public class BusiessSystemOperator
@@ -131,5 +133,9 @@ namespace MarketBackend.BusinessLayer
             }
         }
 
+        internal void RemoveAllDatabaseContent()
+        {
+            StoreDataManager.GetInstance().RemoveAllTables();
+        }
     }
 }

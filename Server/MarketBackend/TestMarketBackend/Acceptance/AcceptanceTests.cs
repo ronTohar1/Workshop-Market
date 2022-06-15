@@ -315,7 +315,7 @@ namespace TestMarketBackend.Acceptance
         public void TearDown()
         {
             systemOperator.CloseMarket();
-            // TODO: clear db
+            systemOperator.RemoveAllDatabaseContent(); 
         }
 
 

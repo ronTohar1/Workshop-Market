@@ -56,7 +56,7 @@ namespace MarketBackend.Migrations
 
                     b.HasIndex("DataShoppingBagId");
 
-                    b.ToTable("DataProductInBag");
+                    b.ToTable("ProductInBags");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Buyers.Carts.DataShoppingBag", b =>
@@ -79,16 +79,13 @@ namespace MarketBackend.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("DataShoppingBag");
+                    b.ToTable("ShoppingBags");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Buyers.DataMember", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("CartId")
                         .HasColumnType("int");
@@ -134,16 +131,13 @@ namespace MarketBackend.Migrations
 
                     b.HasIndex("DataMemberId");
 
-                    b.ToTable("DataNotification");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.DataProduct", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AmountInInventory")
                         .HasColumnType("int");
@@ -253,16 +247,13 @@ namespace MarketBackend.Migrations
 
                     b.HasIndex("DataStore");
 
-                    b.ToTable("DataPurchase");
+                    b.ToTable("Purchases");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataAppointmentsNode", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("DataAppointmentsNodeId")
                         .HasColumnType("int");
@@ -280,10 +271,7 @@ namespace MarketBackend.Migrations
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataBid", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<double>("Bid")
                         .HasColumnType("float");
@@ -338,10 +326,7 @@ namespace MarketBackend.Migrations
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("AppointmentsId")
                         .HasColumnType("int");
@@ -402,10 +387,7 @@ namespace MarketBackend.Migrations
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DataDiscount", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("DataStoreDiscountPolicyManagerId")
                         .HasColumnType("int");
@@ -480,10 +462,7 @@ namespace MarketBackend.Migrations
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataPurchasePolicy", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("DataStorePurchasePolicyManagerId")
                         .HasColumnType("int");
@@ -501,7 +480,7 @@ namespace MarketBackend.Migrations
 
                     b.HasIndex("PolicyId");
 
-                    b.ToTable("DataPurchasePolicy");
+                    b.ToTable("PurchasePolicies");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataStorePurchasePolicyManager", b =>

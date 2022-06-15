@@ -38,7 +38,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         }
 
         // needs to be private (or protected for testing), sometimes is public for adding migrations to the database 
-        private Database() : base()
+        public Database() : base()
         {
             
         }

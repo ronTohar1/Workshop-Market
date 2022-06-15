@@ -14,13 +14,16 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import Product from '../../DTOs/Product';
 import Member from '../../DTOs/Member';
-import { Container, Grid, InputLabel, TextField } from '@mui/material';
-import { serverAddProductReview, serverGetProductReview } from '../../services/StoreService';
+import { Container, DialogActions, DialogContent, DialogTitle, Grid, InputLabel, TextField } from '@mui/material';
+import { serverAddBid, serverAddProductReview, serverGetProductReview } from '../../services/StoreService';
 import { fetchResponse } from "../../services/GeneralService"
 import { getBuyerId } from '../../services/SessionService';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import Bid from '../../DTOs/Bid';
-
+import { Currency } from '../../Utils';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import FailureSnackbar from '../Forms/FailureSnackbar';
+import SuccessSnackbar from '../Forms/SuccessSnackbar';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -34,36 +37,43 @@ const Transition = React.forwardRef(function Transition(
 // dummy.set("ronto", ["Great quality", "I like cats", "Shawarma"])
 // dummy.set("David", ["Abale", "Shawarma","Abale", "Shawarma","Abale", "Shawarma"])
 
-export default function ProductBidForm({ product, bid }: { product: Product, bid:Bid }) {
+export default function ProductBidForm({ product }: { product: Product }) {
   const [open, setOpen] = React.useState(false);
-  const [newComment, setNewComment] = React.useState('');
-  const [comments, setComments] = React.useState<Map<string, string[]>>(new Map<string, string[]>());
+  const [price, setPrice] = React.useState<number | null>(0);
 
-  const refreshReviews = () => {
-    const responsePromise = serverGetProductReview(product.storeId, product.id)
-    console.log(responsePromise)
-    fetchResponse(responsePromise).then((succeed: any) => {
-      const commentsMap = new Map<string, string[]>();
-      Object.keys(succeed).forEach(name => commentsMap.set(name, succeed[name]))
-      setComments(commentsMap)
-    })
-      .catch((e) => {
-        alert(e)
-        setOpen(false)
-      })
+  //------------------------------
+  const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false)
+  const [failureProductMsg, setFailureProductMsg] = React.useState<string>("")
+  const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false)
+  const [successProductMsg, setSuccessProductMsg] = React.useState<string>("")
+  const showSuccessSnack = (msg: string) => {
+    setOpenSuccSnack(true)
+    setSuccessProductMsg(msg)
   }
+
+  const showFailureSnack = (msg: string) => {
+    setOpenFailSnack(true)
+    setFailureProductMsg(msg)
+  }
+  //------------------------------
+
+
   const handleClickOpen = () => {
     setOpen(true);
-    refreshReviews();
-  };
+  }
   const handleSubmit = () => {
+    if (price === undefined || price === null) {
+      showFailureSnack("Please enter price")
+      return;
+    }
     const buyerId = getBuyerId()
-    const responsePromise = serverAddProductReview(product.storeId, buyerId, product.id, newComment)
+    const responsePromise = serverAddBid(product.storeId, product.id, buyerId, price)
     fetchResponse(responsePromise).then((succedded) => {
-      refreshReviews()
+      showSuccessSnack(`${product.name} bid successfully made. (${price} ${Currency})`)
+      setOpen(false)
     })
       .catch((e) => {
-        alert(e)
+        showFailureSnack(e)
         setOpen(false)
       })
   }
@@ -74,56 +84,40 @@ export default function ProductBidForm({ product, bid }: { product: Product, bid
 
   return (
     <div>
-      <Button onClick={handleClickOpen} variant="contained" color="success" endIcon={<RateReviewIcon />}>
-        View Reviews
+      <Button onClick={handleClickOpen} variant="contained" color="warning" endIcon={<CurrencyExchangeIcon />}>
+        Bid
       </Button>
-      <Dialog
-        fullScreen
-        sx={{marginTop:5}}
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Transition}
-      >
-        <AppBar sx={{ position: "relative" }}>
-          <Toolbar>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              {`${product.name} Reviews`}
-            </Typography>
-            <IconButton
-              edge="end"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
-            >
-              <CloseIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Container style={{ minHeight: '32vw', maxHeight: '32vw',overflow: 'auto' }} >
-          <Grid container spacing={3} sx={{mt:5}} >
-            {Array.from(comments).map(([member, reviews]) =>
-              reviews.map(review => (
-                <Grid item xs={12} md={11.7} sx={{borderBottom:0.5}}>
-                  <ListItemText primary={`Member: ${member}`} secondary={`Review:       ${review}`} />
-                </Grid>))
-            )}
-          </Grid>
-        </Container>
-        <Container style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }} >
-
-          <InputLabel id="demo-simple-select-standard-label">Give us your review!</InputLabel>
+      <Dialog open={open} onClose={handleClose} fullWidth>
+        <DialogTitle>Add Product</DialogTitle>
+        <DialogContent>
           <TextField
-            style={{ textAlign: "left" }}
-            multiline
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setNewComment(e.currentTarget.value); }}
-            id="comment"
-            margin="normal"
-            fullWidth // this may override your custom width
-            rows={3}
+            autoFocus
+            margin="dense"
+            id="bid-price"
+            label="Bid Price"
+            type="number"
+            value={price}
+            onChange={(e: any) => setPrice(e.target.value)}
+            fullWidth
+            variant="standard"
           />
-          <Button onClick={handleSubmit} variant="contained" disabled={newComment == ''}>submit</Button>
-        </Container>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSubmit} >
+            Submit
+          </Button>
+        </DialogActions>
       </Dialog>
+
+      <Dialog open={openFailSnack}>
+        {FailureSnackbar(failureProductMsg, openFailSnack, () =>
+          setOpenFailSnack(false)
+        )}
+      </Dialog>
+      {SuccessSnackbar(successProductMsg, openSuccSnack, () =>
+        setOpenSuccSnack(false)
+      )}
     </div>
   );
 }

@@ -88,7 +88,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PurchaseBid")]
-        public ActionResult<Response<bool>> PurchaseCartContent([FromBody] PurchaseBidRequest request)
+        public ActionResult<Response<bool>> PurchaseBid([FromBody] PurchaseBidRequest request)
         {
             ServicePaymentDetails paymentDetails = new ServicePaymentDetails(request.CardNumber, request.Month, request.Year, request.Holder, request.Ccv, request.Id);
             ServiceSupplyDetails supplyDetails = new ServiceSupplyDetails(request.ReceiverName, request.Address, request.City, request.Country, request.Zip);

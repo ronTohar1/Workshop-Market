@@ -94,12 +94,14 @@ export default function BidCard(
     product: Product,
     bid: Bid,
     handleRemoveProductClick: (product: Product) => void,
+    handlePurchase: (product: Product) => void,
 ) {
     return (
-        <Card sx={{ m: 1 }} elevation={6} component={Paper}>
+        <Card sx={{ m: 1, minWidth: "20vw" }} elevation={6} component={Paper}>
             <CardContent>{ProductContent(product, bid)}</CardContent>
             <CardActions disableSpacing>
-                <Box sx={{ ml: "auto", mt: "auto" }}>
+                <Button variant="contained" color="primary" onClick={() => handlePurchase(product)}> Purchase </Button>
+                <Box sx={{ ml: "auto" }}>
                     {RemoveProductCan(product, handleRemoveProductClick)}
                 </Box>
             </CardActions>

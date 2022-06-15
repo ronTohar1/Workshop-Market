@@ -19,6 +19,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 
         public ServiceBid(int bidId,int storeId, int productId, int memberId, double bid, IList<int> approvingIds, bool counterOffer)
         {
+            this.Id = bidId;
             this.storeId = storeId;
             this.productId = productId;
             this.memberId = memberId;

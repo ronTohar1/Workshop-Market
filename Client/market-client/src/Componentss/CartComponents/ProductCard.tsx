@@ -18,6 +18,7 @@ import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import ProductReview from "./ProductReview"
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import ProductBidForm from "../BidsComponents/ProductBidForm"
 function UpdateQuantityComponent(
   product: Product,
   handleUpdateQuantity: (product: Product, newQuan: number) => void
@@ -80,7 +81,7 @@ function ProductContent(product: Product, quantity: number) {
       <br></br>
       <ProductReview product={product} />
       <br />
-      <ProductReview product={product} />
+      <ProductBidForm product={product}/>
     </div>
   )
 }

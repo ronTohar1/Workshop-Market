@@ -564,7 +564,7 @@ export async function serverDenyBid(
 ): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Stores/DenyBid";
   const jsonResponse = await fetch(uri, {
-    method: 'POST',
+    method: 'Put',
     headers: {
         'accept': 'text/plain',
         'Content-Type': 'application/json'
@@ -585,7 +585,7 @@ export async function serverRemoveBid(
 ): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Stores/RemoveBid";
   const jsonResponse = await fetch(uri, {
-    method: 'POST',
+    method: 'Delete',
     headers: {
         'accept': 'text/plain',
         'Content-Type': 'application/json'
@@ -628,7 +628,7 @@ export async function serverDenyCounterOffer(
 ): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Stores/DenyCounterOffer";
   const jsonResponse = await fetch(uri, {
-    method: 'POST',
+    method: 'Put',
     headers: {
         'accept': 'text/plain',
         'Content-Type': 'application/json'

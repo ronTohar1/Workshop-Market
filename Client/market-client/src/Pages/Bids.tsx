@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@emotion/react"
-import { Box, createTheme, Grid, Stack } from "@mui/material"
+import { Box, createTheme, Dialog, Grid, Stack } from "@mui/material"
 import * as React from "react"
 import { useNavigate } from "react-router-dom"
 import { NumberParam, useQueryParam } from "use-query-params"
@@ -8,6 +8,7 @@ import DialogTwoOptionsBids from "../Componentss/BidsComponents/DialogTwoOptions
 import CartSummary from "../Componentss/CartComponents/CartSummary"
 import DialogTwoOptions from "../Componentss/CartComponents/DialogTwoOptions"
 import ProductCard from "../Componentss/CartComponents/ProductCard"
+import FailureSnackbar from "../Componentss/Forms/FailureSnackbar"
 import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
 import LargeMessage from "../Componentss/LargeMessage"
 import LoadingCircle from "../Componentss/LoadingCircle"
@@ -59,30 +60,30 @@ export interface BidProduct {
 }
 
 
-function MakeProductCard(
-    product: Product,
-    bid: Bid,
-    handleRemoveProductClick: (product: Product, bid: Bid) => void,
-) {
-    return (
-        // <Grid
-        //   item
-        //   sm={6}
-        //   md={4}
-        //   sx={{
-        //     alignItems: "center",
-        //   }}
-        // >
-        <Box sx={{ m: 2 }}>
-            {BidCard(
-                product,
-                bid,
-                (product: Product) => handleRemoveProductClick(product, bid),
-            )}
-        </Box>
-        // </Grid>
-    )
-}
+// function MakeProductCard(
+//     product: Product,
+//     bid: Bid,
+//     handleRemoveProductClick: (product: Product, bid: Bid) => void,
+// ) {
+//     return (
+//         // <Grid
+//         //   item
+//         //   sm={6}
+//         //   md={4}
+//         //   sx={{
+//         //     alignItems: "center",
+//         //   }}
+//         // >
+//         <Box sx={{ m: 2 }}>
+//             {BidCard(
+//                 product,
+//                 bid,
+//                 (product: Product) => handleRemoveProductClick(product, bid),
+//             )}
+//         </Box>
+//         // </Grid>
+//     )
+// }
 
 export default function BidsPage() {
     const navigate = useNavigate()
@@ -96,12 +97,22 @@ export default function BidsPage() {
     const [snackMessage, setSnackMessage] = React.useState<string>("")
     const [openRemoveProdSnackbar, setOpenRemoveProdSnackbar] =
         React.useState<boolean>(false)
-    // const [expandSummary, setExpandSummary] = React.useState<boolean>(false)
 
+    //------------------------------
+    const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false)
+    const [failureProductMsg, setFailureProductMsg] = React.useState<string>("")
+    const [openSuccSnack, setOpenSuccSnack] = React.useState<boolean>(false)
+    const [successProductMsg, setSuccessProductMsg] = React.useState<string>("")
     const showSuccessSnack = (msg: string) => {
-        setSnackMessage(msg)
-        setOpenRemoveProdSnackbar(true)
+        setSuccessProductMsg(msg)
+        setOpenSuccSnack(true)
     }
+
+    const showFailureSnack = (msg: string) => {
+        setOpenFailSnack(true)
+        setFailureProductMsg(msg)
+    }
+    //------------------------------
 
     // Fetching products from api once when rendered first time.
     React.useEffect(() => {
@@ -110,6 +121,8 @@ export default function BidsPage() {
             .then((myBids: [Bid[], Product[]]) => {
                 const bidProducts: BidProduct[] = zip(myBids[0], myBids[1]).map(bp => { return { product: bp[1], bid: bp[0] } })
                 setBidProducts(bidProducts)
+                console.log("bidProducts")
+                console.log(bidProducts)
             })
             .catch((e) => {
                 alert(e)
@@ -125,13 +138,13 @@ export default function BidsPage() {
         )
             .then((removedSuccess: boolean) => {
                 if (removedSuccess) {
-                   showSuccessSnack("Successfully removed bid on " + ProductToRemove?.name)
                     reloadBids()
+                    showSuccessSnack("Successfully removed bid on " + ProductToRemove?.name)
                 } // Reload products again from server
-                else alert("Couldn't remove bid")
+                else showFailureSnack("Couldn't remove bid")
             })
             .catch((e) => {
-                alert(e)
+                showFailureSnack(e)
             })
     }
     const handleCloseRemoveDialog = (remove: boolean, product: Product, bid: Bid) => {
@@ -145,8 +158,9 @@ export default function BidsPage() {
         setOpenRemoveDialog(true)
     }
 
-    const handlePurchase = () => {
-        navigate(pathCheckout)
+    const handlePurchaseBid = (product: Product, bid: Bid) => {
+        // navigate(pathCheckout)
+        showSuccessSnack("Purchasing")
     }
 
     return bidProducts === null ? LoadingCircle() : (
@@ -163,11 +177,14 @@ export default function BidsPage() {
                     >
                         {bidProducts.length > 0
                             ? bidProducts.map((bidProduct: BidProduct) =>
-                                MakeProductCard(
+                            (<Box sx={{ m: 2 }}>
+                                {BidCard(
                                     bidProduct.product,
                                     bidProduct.bid,
-                                    handleRemoveBidCanClick,
-                                )
+                                    (product: Product) => handleRemoveBidCanClick(product, bidProduct.bid),
+                                    (product: Product) => handlePurchaseBid(product, bidProduct.bid),
+                                )}
+                            </Box>)
                             )
                             : LargeMessage("You have no bids currently")}
                     </Grid>
@@ -184,10 +201,15 @@ export default function BidsPage() {
                 : null}
 
             {SuccessSnackbar(
-                snackMessage,
-                openRemoveProdSnackbar,
-                () => setOpenRemoveProdSnackbar(false)
+                successProductMsg,
+                openSuccSnack,
+                () => setOpenSuccSnack(false)
             )}
+            <Dialog open={openFailSnack}>
+                {FailureSnackbar(failureProductMsg, openFailSnack, () =>
+                    setOpenFailSnack(false)
+                )}
+            </Dialog>
         </ThemeProvider>
     )
 }

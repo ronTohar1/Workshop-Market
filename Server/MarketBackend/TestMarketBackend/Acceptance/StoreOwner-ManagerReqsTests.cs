@@ -1721,7 +1721,119 @@ namespace TestMarketBackend.Acceptance
             ServicePurchase resultPurchase = purchase(this); // including checking if purchase succeeds 
         }
 
+        public static IEnumerable<TestCaseData> DataSuccessfulApproveBid
+        {
+            get
+            {
+                yield return new TestCaseData(() => storeId, () => member2Id);
+            }
+        }
 
+        [Test]
+        [TestCaseSource("DataSuccessfulApproveBid")]
+        public void SuccessfulApproveBid(Func<int> getStoreId, Func<int> getMemberId)
+        {
+            int storeId = getStoreId();
+            int memberId = getMemberId();
+
+            // placing a bid
+            Response<int> bidResponse = storeManagementFacade.AddBid(storeId, iphoneProductId, memberId, 3000);
+            Assert.IsTrue(!bidResponse.IsErrorOccured());
+
+            Response<IList<int>> approvesResponse = storeManagementFacade.GetApproveForBid(storeId, memberId, bidResponse.Value);
+            Assert.IsTrue(!approvesResponse.IsErrorOccured());
+            IList<int> approvesBefore = approvesResponse.Value;
+
+            // approving the bid
+            Response<bool> response = storeManagementFacade.ApproveBid(storeId, memberId, bidResponse.Value);
+            Assert.IsTrue(!response.IsErrorOccured());
+
+            approvesResponse = storeManagementFacade.GetApproveForBid(storeId, memberId, bidResponse.Value);
+            Assert.IsTrue(!approvesResponse.IsErrorOccured());
+            IList<int> approvesAfter = approvesResponse.Value;
+
+            approvesBefore.Add(memberId);
+            Assert.AreEqual(approvesBefore, approvesAfter);
+        }
+
+        public static IEnumerable<TestCaseData> DataSuccessfulDenyBid
+        {
+            get
+            {
+                yield return new TestCaseData(() => storeId, () => member2Id);
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataSuccessfulDenyBid")]
+        public void SuccessfulDenyBid(Func<int> getStoreId, Func<int> getMemberId)
+        {
+            int storeId = getStoreId();
+            int memberId = getMemberId();
+
+            // placing a bid
+            Response<int> bidResponse = storeManagementFacade.AddBid(storeId, iphoneProductId, memberId, 3000);
+            Assert.IsTrue(!bidResponse.IsErrorOccured());
+
+            Response<IList<int>> approvesResponse = storeManagementFacade.GetApproveForBid(storeId, memberId, bidResponse.Value);
+            Assert.IsTrue(!approvesResponse.IsErrorOccured());
+            IList<int> approvesBefore = approvesResponse.Value;
+
+            // Denying the bid
+            Response<bool> response = storeManagementFacade.DenyBid(storeId, memberId, bidResponse.Value);
+            Assert.IsTrue(!response.IsErrorOccured());
+        }
+
+        private void purchaseFromStore()
+        {
+            Response<bool> response = buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, 2);
+            Assert.IsTrue(!response.IsErrorOccured());
+            response = buyerFacade.AddProdcutToCart(member3Id, storeId, calculatorProductId, 5);
+            Assert.IsTrue(!response.IsErrorOccured());
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
+            Assert.IsTrue(!purchaseResponse.IsErrorOccured());
+        }
+
+        private void purchaseFromStore2()
+        {
+            Response<bool> response = buyerFacade.AddProdcutToCart(member3Id, store2Id, galaxyProductId, 1);
+            Assert.IsTrue(!response.IsErrorOccured());
+            response = buyerFacade.AddProdcutToCart(member3Id, store2Id, usbChargerProductId, 1);
+            Assert.IsTrue(!response.IsErrorOccured());
+            response = buyerFacade.AddProdcutToCart(member3Id, store2Id, portableChargerProductId, 2);
+            Assert.IsTrue(!response.IsErrorOccured());
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
+            Assert.IsTrue(!purchaseResponse.IsErrorOccured());
+        }
+
+        public static IEnumerable<TestCaseData> DataSuccessfulGetStoreDailyProfit
+        {
+            get
+            {
+                yield return new TestCaseData(() => storeId, () => member2Id, 2 * iphoneProductPrice + 5 * calculatorProductPrice);
+                yield return new TestCaseData(() => storeId, () => member3Id, 2 * iphoneProductPrice + 5 * calculatorProductPrice);
+                yield return new TestCaseData(() => store2Id, () => member2Id, galaxyProductPrice + usbChargerProductPrice + 2 * portableChargerProductPrice);
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataSuccessfulGetStoreDailyProfit")]
+        public void SuccessfulGetStoreDailyProfit(Func<int> getStoreId, Func<int> getMemberId, double expectedProfit)
+        {
+            int storeId = getStoreId();
+            int memberId = getMemberId();
+
+            if (storeId == AcceptanceTests.storeId)
+                purchaseFromStore();
+            else if (storeId == AcceptanceTests.store2Id)
+                purchaseFromStore2();
+
+            Response<double> response = storeManagementFacade.GetStoreDailyProfit(storeId, memberId);
+            Assert.IsTrue(!response.IsErrorOccured());
+
+            Assert.AreEqual(response.Value, expectedProfit);
+            
+        }
 
         // todo: maybe add tests to cc 6.1 and cc 6.2 
 

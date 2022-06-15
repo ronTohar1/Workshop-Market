@@ -373,7 +373,72 @@ namespace TestMarketBackend.Acceptance
             Assert.AreEqual(cartBefore, cartAfter); 
         }
 
+        public static IEnumerable<TestCaseData> DataSucessfulBid
+        {
+            get
+            {
+                yield return new TestCaseData(() => storeId, ()=> iphoneProductId, () => member3Id, 4100);
+                yield return new TestCaseData(() => store2Id, ()=> galaxyProductId, () => member4Id, 4900);
+            }
+        }
 
+        [Test]
+        [TestCaseSource("DataSucessfulBid")]
+        public void SucessfulBid(Func<int> getStoreId, Func<int> getProductId, Func<int> getMemberId, double bidPrice)
+        {
+            int storeId = getStoreId();
+            int productId = getProductId();
+            int memberId = getMemberId();
+
+            Response<ServiceStore> storeResponse = buyerFacade.GetStoreInfo(storeId);
+            Assert.IsTrue(!storeResponse.IsErrorOccured());
+            IDictionary<int, ServiceBid> bidsBefore = storeResponse.Value.Bids;
+
+            Response<int> bidResponse = storeManagementFacade.AddBid(storeId, productId, memberId, bidPrice);
+            Assert.IsTrue(!bidResponse.IsErrorOccured());
+
+            // Checking that the bid actually got added to the store
+            storeResponse = buyerFacade.GetStoreInfo(storeId);
+            Assert.IsTrue(!storeResponse.IsErrorOccured());
+            IDictionary<int, ServiceBid> bidsAfter = storeResponse.Value.Bids;
+
+            bidsBefore.Add(bidResponse.Value, new ServiceBid(storeId, productId, memberId, bidPrice));
+            Assert.AreEqual(bidsBefore.Keys, bidsAfter.Keys);
+            Assert.AreEqual(bidsBefore.Values, bidsAfter.Values);
+        }
+
+        public static IEnumerable<TestCaseData> DataFailedBid
+        {
+            get
+            {
+                yield return new TestCaseData(() => storeId, () => -1, () => member3Id, 4100);
+                yield return new TestCaseData(() => store2Id, () => galaxyProductId, () => member4Id, -1);
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataFailedBid")]
+        public void FailedBid(Func<int> getStoreId, Func<int> getProductId, Func<int> getMemberId, double bidPrice)
+        {
+            int storeId = getStoreId();
+            int productId = getProductId();
+            int memberId = getMemberId();
+
+            Response<ServiceStore> storeResponse = buyerFacade.GetStoreInfo(storeId);
+            Assert.IsTrue(!storeResponse.IsErrorOccured());
+            IDictionary<int, ServiceBid> bidsBefore = storeResponse.Value.Bids;
+
+            Response<int> bidResponse = storeManagementFacade.AddBid(storeId, productId, memberId, bidPrice);
+            Assert.IsTrue(bidResponse.IsErrorOccured());
+
+            // Checking that the bid actually got added to the store
+            storeResponse = buyerFacade.GetStoreInfo(storeId);
+            Assert.IsTrue(!storeResponse.IsErrorOccured());
+            IDictionary<int, ServiceBid> bidsAfter = storeResponse.Value.Bids;
+
+            Assert.AreEqual(bidsBefore.Keys, bidsAfter.Keys);
+            Assert.AreEqual(bidsBefore.Values, bidsAfter.Values);
+        }
 
         /*
         // r.2.5

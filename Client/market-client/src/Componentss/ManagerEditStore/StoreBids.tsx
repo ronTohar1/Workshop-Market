@@ -54,30 +54,34 @@ function convertToBidRow(bid: Bid, store: Store): BidRow {
 
 const fields = {
     name: "productName",
-    description: "description",
+    bid: "bid",
+    counterOffer: "counterOffer",
 }
 
 
 const columns: GridColDef[] = [
     {
-        field: fields.id,
-        headerName: "Policy ID",
+        field: fields.name,
+        headerName: "Product Name",
+        type: "string",
+        flex: 2,
+        align: "left",
+        headerAlign: "left",
+    },
+    {
+        field: fields.bid,
+        headerName: "Bid Price",
         type: "number",
         flex: 1,
         align: "left",
         headerAlign: "left",
     },
     {
-        field: fields.description,
-        headerName: "Policy Description",
-        type: "string",
-        flex: 3,
+        field: fields.counterOffer,
+        headerName: "Counter Offer?",
+        type: "boolean",
+        flex: 1,
         align: "left",
-        renderCell: ({ value }) => (
-            <span style={{ overflow: "scroll" }}>
-                {value}
-            </span>
-        ),
         headerAlign: "left",
     },
 ]
@@ -93,7 +97,7 @@ export default function StoreBids({
 
     const navigate = useNavigate()
     const [pageSize, setPageSize] = React.useState<number>(initSize)
-    const [rows, setRows] = React.useState<PurchasePolicy[]>([])
+    const [rows, setRows] = React.useState<Bid[]>([])
     const [selectionModel, setSelectionModel] = React.useState<number[]>([])
     const [chosenIds, setChosenIds] = React.useState<number[]>([])
 
@@ -142,7 +146,7 @@ export default function StoreBids({
     }
 
     React.useEffect(() => {
-        setRows(store.bids)
+        setRows(store.bids.map(b => convertToBidRow(b, store)))
     }, [store])
 
 

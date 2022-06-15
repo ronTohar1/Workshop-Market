@@ -147,7 +147,7 @@ namespace TestMarketBackend.Acceptance
             Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
             Assert.IsTrue(!response.IsErrorOccured());
 
-            ReopenMarket();
+            // ReopenMarket();
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(userId());
 
@@ -175,7 +175,7 @@ namespace TestMarketBackend.Acceptance
             Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
             Assert.IsTrue(response.IsErrorOccured());
 
-            ReopenMarket();
+            // ReopenMarket();
 
             Response<ServiceCart> cartResponseAfter = buyerFacade.GetCart(userId());
             ServiceCart cartBefore = cartResponseBefore.Value;
@@ -225,7 +225,8 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> removeResponse = buyerFacade.RemoveProductFromCart(userId(), storeId(), productId());
 
-            ReopenMarket();
+            // is also on guests so not running the next line
+            // ReopenMarket(); 
 
             cartResponse = buyerFacade.GetCart(userId());
             Assert.IsFalse(cartResponse.IsErrorOccured());
@@ -254,7 +255,7 @@ namespace TestMarketBackend.Acceptance
 
             buyerFacade.changeProductAmountInCart(userId(), storeId(), productId(), amount / 2);
 
-            ReopenMarket();
+            // ReopenMarket();
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(userId());
             ServiceCart cart = cartResponse.Value;

@@ -43,8 +43,16 @@ namespace MarketBackend.BusinessLayer
             if (adminManager == null)   //meaning first 
             {
                 InitLogger();
+
                 membersController = MembersController.LoadMembersController();
-                // int adminId = membersController.Register(username, password);
+                Member member = membersController.GetMember(username);
+                if (member == null || !member.CheckPassword(password))
+                    throw new MarketException("At least one of the details you entered is not correct"); 
+                
+                int adminId = member.Id; 
+                if (!AdminManager.ContainsAdmin(adminId))
+                    throw new MarketException("Not an admin, only an admin is allowed to open the market");
+
                 //Init controllers
                 guestsController = new();
                 storeController = StoreController.LoadStoreController(membersController);
@@ -55,9 +63,8 @@ namespace MarketBackend.BusinessLayer
                 purchasesManager = new(storeController, buyersController, externalServicesController);
 
                 adminManager = AdminManager.LoadAdminManager(storeController, buyersController, membersController);
-                // adminManager.AddAdmin(adminId);
                 MarketOpen = true;
-                MarketOpenerAdminId = 1; // todo: change this 
+                MarketOpenerAdminId = adminId;
             }
             MarketOpen = true;
         }

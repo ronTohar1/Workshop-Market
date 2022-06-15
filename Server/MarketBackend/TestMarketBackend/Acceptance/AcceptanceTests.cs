@@ -291,17 +291,9 @@ namespace TestMarketBackend.Acceptance
         [SetUp]
         public void SetUp()
         {
-            SystemOperator.RemoveAllDatabaseContent(); 
+            SystemOperator.RemoveAllDatabaseContent();
 
-            systemOperator = new SystemOperator(adminUsername, adminPassword, false);
-            adminId = systemOperator.MarketOpenerAdminId;
-            if (adminId < 0)
-                throw new Exception("Unable to open market successfully");
-
-            buyerFacade = systemOperator.GetBuyerFacade().Value;
-            storeManagementFacade = systemOperator.GetStoreManagementFacade().Value;
-            adminFacade = systemOperator.GetAdminFacade().Value;
-            externalSystemFacade = systemOperator.GetExternalSystemFacade().Value;
+            SetUpFacaedes(false); 
 
             SetUpUsers();
 
@@ -311,6 +303,19 @@ namespace TestMarketBackend.Acceptance
 
             SetUpNotificationQueues(); 
 
+        }
+
+        private void SetUpFacaedes(bool loadFromDatabase)
+        {
+            systemOperator = new SystemOperator(adminUsername, adminPassword, loadFromDatabase);
+            adminId = systemOperator.MarketOpenerAdminId;
+            if (adminId < 0)
+                throw new Exception("Unable to open market successfully");
+
+            buyerFacade = systemOperator.GetBuyerFacade().Value;
+            storeManagementFacade = systemOperator.GetStoreManagementFacade().Value;
+            adminFacade = systemOperator.GetAdminFacade().Value;
+            externalSystemFacade = systemOperator.GetExternalSystemFacade().Value;
         }
 
         [TearDown]
@@ -323,7 +328,8 @@ namespace TestMarketBackend.Acceptance
         protected void ReopenMarket()
         {
             systemOperator.CloseMarket();
-            SetUp();
+
+            SetUpFacaedes(true); // loading from database 
         }
 
 

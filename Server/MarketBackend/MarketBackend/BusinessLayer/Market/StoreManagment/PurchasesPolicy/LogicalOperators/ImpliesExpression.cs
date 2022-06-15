@@ -50,8 +50,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Logi
         {
             return new DataImpliesExpression()
             {
-                Condition = (DataPredicateExpression)condition,
-                Allowing = (DataPredicateExpression)allowing
+                Condition = condition.PredicateExpressionToDataPredicateExpression(),
+                Allowing = allowing.PredicateExpressionToDataPredicateExpression()
             };
         }
 

@@ -95,7 +95,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             {
                 if (LoggedIn)
                     throw new MarketException("This user is already logged in!");
-                if (this.password == security.HashPassword(password))
+                if (CheckPassword(password))
                 {
                     this.notifier = new Notifier(notifyFunc);
                     LoggedIn = true;
@@ -103,6 +103,11 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
                 }
                 return LoggedIn;
             }
+        }
+
+        public bool CheckPassword(string password)
+        {
+            return this.password == security.HashPassword(password); 
         }
 
         public void Logout()

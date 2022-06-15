@@ -99,7 +99,12 @@ namespace TestMarketBackend.Acceptance
         [TestCase("The quality is great. Shipment was very quick. Would recommend.")]
         public void SuccessDoubleProductReview(string review)
         {
-            int reviewsAmount = storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value.Count();
+            IDictionary<string, IList<string>> reviewsByUsernames = storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value;
+            int reviewsAmount;
+            if (!reviewsByUsernames.ContainsKey(userName3))
+                reviewsAmount = 0;
+            else
+                reviewsAmount = reviewsByUsernames[userName3].Count(); 
 
             Response<bool> firstResponse = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
@@ -109,7 +114,7 @@ namespace TestMarketBackend.Acceptance
 
             ReopenMarket();
 
-            Assert.AreEqual(reviewsAmount + 2, storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value.Count());
+            Assert.AreEqual(reviewsAmount + 2, storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value[userName3].Count());
         }
 
         // testing member notifications 

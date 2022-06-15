@@ -53,13 +53,13 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             this.discounts = discounts; 
         }
 
-        public int AddDiscount(string description ,IExpression dis)
+        public int AddDiscount(string description ,IExpression dis, DataStoreDiscountPolicyManager dataStoreDiscountPolicyManager)
         {
             int id = GetNextId();
             Discount discount = new Discount(id, description, dis);
 
             DataDiscount dataDiscount = DiscountToDataDiscount(discount);
-            DiscountDataManager.GetInstance().Add(dataDiscount);
+            dataStoreDiscountPolicyManager.Discounts.Add(dataDiscount);
             DiscountDataManager.GetInstance().Save();
 
             discounts.Add(id, discount);

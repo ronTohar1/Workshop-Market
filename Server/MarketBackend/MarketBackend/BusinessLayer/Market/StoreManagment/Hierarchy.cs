@@ -143,7 +143,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			Hierarchy<T> valueHierarchyParent = valueHierarchy.parent;
 			if (valueHierarchyParent != null) {
 
-				DataRemove(); 
+				valueHierarchy.DataRemove(); 
 				saveChanges();
 
 				valueHierarchyParent.children.Remove(valueHierarchy);
@@ -152,6 +152,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 			hierarchyMutex.ReleaseMutex();
 			return valueHierarchy;
 		}
+
+		public IList<T> GetHierarchyValueList(T value)
+        {
+			return FindHierarchy(value).GetHierarchyValueList();
+        }
 
 		public IList<T> GetHierarchyValueList()
         {

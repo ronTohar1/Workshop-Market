@@ -183,6 +183,7 @@ namespace MarketBackend.BusinessLayer.Buyers
                         ProductId = productId,
                         Amount = amount
                     });
+                    MemberDataManager.GetInstance().Save();
                     return;
                 }
             }

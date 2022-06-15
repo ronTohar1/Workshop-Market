@@ -88,7 +88,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 					reviews[memberId] = new SynchronizedCollection<string>();
 
 				}
-				reviews[memberId].Append(dataReview.Review);
+				reviews[memberId].Add(dataReview.Review);
 			}
 
 			return new Product(dataProduct.Id, dataProduct.Name, dataProduct.AmountInInventory, 

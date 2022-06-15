@@ -692,7 +692,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
                 string notification = $"We regeret to inform you that you've lost your position at {this.name}";
 
-                IList<int> memberIdsToRemove = appointmentsHierarchy.GetHierarchyValueList();
+                IList<int> memberIdsToRemove = appointmentsHierarchy.GetHierarchyValueList(toRemoveCoOwnerMemberId);
                 Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId, () =>
                 {
                     DataStore dataStore = storeDataManager.Find(id);
@@ -711,6 +711,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
                         membersGetter(memberToRemoveId).DataNotify(notification);
                     }
+
+                    storeDataManager.Save(); 
 
                 });
                 RemovedByOwnerBranchUpdate(removedBrance, notification);
@@ -969,7 +971,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (permissionError != null)
                 throw new MarketException("Could not add discount policy: \n" + permissionError);
 
-            int id = discountManager.AddDiscount(descrption, exp);
+            int id = discountManager.AddDiscount(descrption, exp, storeDataManager.Find(this.id).DiscountManager);
             return id;
         }
 
@@ -992,7 +994,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (permissionError != null)
                 throw new MarketException("Could not add purchase policy: \n" + permissionError);
 
-            int id = purchaseManager.AddPurchasePolicy(descrption, exp);
+            int id = purchaseManager.AddPurchasePolicy(descrption, exp, storeDataManager.Find(this.id).PurchaseManager);
             return id;
         }
 

@@ -261,6 +261,9 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
                 }
             }
             return null;
-        }            
+        }  
+        
+        //for testing
+        public Member() { }
     }
 }

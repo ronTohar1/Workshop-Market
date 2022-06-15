@@ -59,6 +59,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             Discount discount = new Discount(id, description, dis);
 
             DataDiscount dataDiscount = DiscountToDataDiscount(discount);
+            if (dataStoreDiscountPolicyManager.Discounts == null)
+                dataStoreDiscountPolicyManager.Discounts = new List<DataDiscount>();
             dataStoreDiscountPolicyManager.Discounts.Add(dataDiscount);
             DiscountDataManager.GetInstance().Save();
 

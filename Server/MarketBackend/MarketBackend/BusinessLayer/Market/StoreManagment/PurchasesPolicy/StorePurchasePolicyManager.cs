@@ -60,6 +60,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
             PurchasePolicy purchasePolicy = new PurchasePolicy(id, description, policy);
             
             DataPurchasePolicy dpp = PurchasePolicyToDataPurchasePolicy(purchasePolicy);
+            if (dataStorePurchasePolicyManager.PurchasesPolicies == null)
+                dataStorePurchasePolicyManager.PurchasesPolicies = new List<DataPurchasePolicy>();
             dataStorePurchasePolicyManager.PurchasesPolicies.Add(dpp); 
             PurchasePolicyDataManager.GetInstance().Save();
 

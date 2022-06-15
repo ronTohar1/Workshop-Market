@@ -90,9 +90,6 @@ namespace MarketBackend.Migrations
                     b.Property<int?>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DataBidId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
 
@@ -106,8 +103,6 @@ namespace MarketBackend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CartId");
-
-                    b.HasIndex("DataBidId");
 
                     b.ToTable("Members");
                 });
@@ -282,24 +277,41 @@ namespace MarketBackend.Migrations
                     b.Property<int?>("DataStoreId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MemberId")
+                    b.Property<int>("MemberId")
                         .HasColumnType("int");
 
                     b.Property<double>("Offer")
                         .HasColumnType("float");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int>("ProdctId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DataStoreId");
 
-                    b.HasIndex("MemberId");
-
-                    b.HasIndex("ProductId");
-
                     b.ToTable("Bids");
+                });
+
+            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataBidMemberId", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("DataBidId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DataBidId");
+
+                    b.ToTable("DataBidMemberId");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataManagerPermission", b =>
@@ -878,10 +890,6 @@ namespace MarketBackend.Migrations
                         .WithMany()
                         .HasForeignKey("CartId");
 
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataBid", null)
-                        .WithMany("Approving")
-                        .HasForeignKey("DataBidId");
-
                     b.Navigation("Cart");
                 });
 
@@ -946,18 +954,13 @@ namespace MarketBackend.Migrations
                     b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", null)
                         .WithMany("Bids")
                         .HasForeignKey("DataStoreId");
+                });
 
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Buyers.DataMember", "Member")
-                        .WithMany()
-                        .HasForeignKey("MemberId");
-
-                    b.HasOne("MarketBackend.DataLayer.DataDTOs.DataProduct", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.Navigation("Member");
-
-                    b.Navigation("Product");
+            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataBidMemberId", b =>
+                {
+                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataBid", null)
+                        .WithMany("Approving")
+                        .HasForeignKey("DataBidId");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataManagerPermission", b =>

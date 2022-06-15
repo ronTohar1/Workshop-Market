@@ -19,6 +19,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Stack from "@mui/material/Stack";
 import {
   pathAdmin,
+  pathBids,
   pathCart,
   pathHome,
   pathLogin,
@@ -187,6 +188,12 @@ export default function Navbar() {
     else navigate(`${pathStoreManager}`);
   };
 
+  const handleMyBidsClick = () => {
+    setAnchorEl(null);
+    if (getIsGuest()) navigate(`${pathLogin}`);
+    else navigate(`${pathBids}`);
+  }
+
   const handleNameClick = () => {
     const isAdmin = getIsAdmin();
     console.log("isAdmin");
@@ -213,6 +220,7 @@ export default function Navbar() {
       open={Boolean(anchorEl)}
       onClose={handleMenuClose}>
       <MenuItem onClick={handleMyAccountClick}>My account</MenuItem>
+      <MenuItem onClick={handleMyBidsClick}>My bids</MenuItem>
     </Menu>
   );
 

@@ -8,6 +8,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     public class ServiceBid
     {
+        public int Id { get; set; }
         public int storeId { get; set; }
         public int productId { get; set; }
         public int memberId { get; set; }
@@ -16,7 +17,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 
         public bool counterOffer { get; set; }
 
-        public ServiceBid(int storeId, int productId, int memberId, double bid, IList<int> approvingIds, bool counterOffer)
+        public ServiceBid(int bidId,int storeId, int productId, int memberId, double bid, IList<int> approvingIds, bool counterOffer)
         {
             this.storeId = storeId;
             this.productId = productId;

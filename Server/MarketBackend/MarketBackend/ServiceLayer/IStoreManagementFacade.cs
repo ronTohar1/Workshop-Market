@@ -14,8 +14,8 @@ namespace MarketBackend.ServiceLayer
         Response<bool> DenyCounterOffer(int storeId, int memberId, int bidId);
         Response<bool> RemoveBid(int storeId, int memberId, int bidId);
         Response<bool> MakeCounterOffer(int storeId, int memberId, int bidId, double offer);
-
         Response<IList<int>> GetApproveForBid(int storeId, int memberId, int bidId);
+
         Response<int> AddDiscountPolicy(ServiceExpression expression, string description, int storeId, int memberId);
         Response<int> AddNewProduct(int userId, int storeId, string productName, double price, string category);
         Response<bool> AddProductReview(int storeId, int memberId, int productId, string review);

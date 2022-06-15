@@ -16,7 +16,8 @@ import { Currency } from "../../Utils"
 import RemoveProductCan from "./RemoveProductCan"
 import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
 import RateReviewIcon from '@mui/icons-material/RateReview';
-import ProductReview from "../ProductReview"
+import ProductReview from "./ProductReview"
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 function UpdateQuantityComponent(
   product: Product,
   handleUpdateQuantity: (product: Product, newQuan: number) => void
@@ -78,7 +79,8 @@ function ProductContent(product: Product, quantity: number) {
         Store : {product.storeName}</Typography>
       <br></br>
       <ProductReview product={product} />
-      
+      <br />
+      <ProductReview product={product} />
     </div>
   )
 }

@@ -21,7 +21,8 @@ import Member from "./DTOs/Member"
 import { createTheme, ThemeProvider } from "@mui/material"
 import MainPolicy from "./Componentss/PurchasePolicy/MainPolicy"
 import { initSession, storage } from "./services/SessionService"
-import ProductReview from "./Componentss/ProductReview"
+import ProductReview from "./Componentss/CartComponents/ProductReview"
+import BidsPage from "./Pages/Bids"
 
 
 const theme = createTheme({
@@ -106,6 +107,7 @@ const App = () => {
             <Route path={Paths.pathSearch} element={<SearchPage />} />
             <Route path={Paths.pathDiscount} element={<MainDiscount />} />
             <Route path={Paths.pathPolicy} element={<MainPolicy />} />
+            <Route path={Paths.pathBids} element={<BidsPage/>} />
             {/* <Route path={Paths.pathProductReview} element={<ProductReview product={new Product(0,"apple",0,"apple",0,"apple",0)}/>} /> */}
 
             {/* <Route

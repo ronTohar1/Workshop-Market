@@ -103,10 +103,10 @@ public class PurchasesManager
         ICollection<ShoppingBag> shoppingBagsInPurchase = new List<ShoppingBag>(shoppingBags); 
         UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
         AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts, new Action(() => {
-            //externalServicesController.CancelPayment(transactionId);
-            //externalServicesController.CancelDelivery(transactionId);
-            //TryRollback(storesTransactions);
-            //throw new MarketException("Could not make the purchase, pls try again later!");
+            externalServicesController.CancelPayment(transactionId);
+            externalServicesController.CancelDelivery(transactionId);
+            TryRollback(storesTransactions);
+            throw new MarketException("Could not make the purchase, pls try again later!");
         })); //r S 8
 
         string finalReceipt = String.Join("", receipts.Values);

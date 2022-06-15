@@ -76,18 +76,47 @@ public class PurchasesManager
         IDictionary<int, double> storesTotal = GetPurchaseTotal(shoppingBags);
         double purchaseTotal = storesTotal.Values.Sum(x => x); // Sum prices of all products
 
-        int transactionId = externalServicesController.makePayment(paymentDetails);
+        // Trying to pay--------------------------------
+
+        int transactionId;
+        try
+        {
+           transactionId = externalServicesController.makePayment(paymentDetails);
+        }
+        catch(Exception e) {
+            TryRollback(storesTransactions);
+            //throw new MarketException("Could not make payment");
+            throw new MarketException("Could not make payment\n"+e.Message);
+        }
         if (transactionId == -1)
         {
             TryRollback(storesTransactions);
             throw new MarketException("Could not make payment");
         }
-        if (externalServicesController.makeDelivery(supplyDetails) == -1)
+
+        // -----------------------------------------------
+
+        // Trying to deliver --------------------------------
+        int deliveryTransaction;
+        try
+        {
+            deliveryTransaction = externalServicesController.makeDelivery(supplyDetails);
+        }
+        catch (Exception e)
+        {
+            TryRollback(storesTransactions);
+            throw new MarketException("Could not send a delivery\n" + e.Message);
+        }
+
+        if (deliveryTransaction == -1)
         {
             externalServicesController.CancelPayment(transactionId);
             TryRollback(storesTransactions);
             throw new MarketException("Could not send a delivery");
         }
+        // -----------------------------------------------
+
+
 
         IDictionary<int, string> receipts = GetReceipt(storesTransactions,shoppingBags);
 

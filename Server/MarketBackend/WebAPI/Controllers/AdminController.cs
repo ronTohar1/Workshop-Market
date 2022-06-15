@@ -94,5 +94,25 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
+        [HttpPost("GetEventLogs")]
+        public ActionResult<Response<string>> GetEventLogs([FromBody] UserRequest request)
+        {
+            Response<string> response = adminFacade.GetEventLogs(request.UserId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPost("GetErrorLogs")]
+        public ActionResult<Response<string>> GetErrorLogs([FromBody] UserRequest request)
+        {
+            Response<string> response = adminFacade.GetErrorLogs(request.UserId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
     }
 }

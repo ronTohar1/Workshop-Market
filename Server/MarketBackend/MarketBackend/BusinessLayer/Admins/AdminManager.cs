@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Windows;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
@@ -136,6 +138,21 @@ namespace MarketBackend.BusinessLayer.Admins
             foreach (Store store in storeController.GetOpenStores().Values)
                 total += store.GetDailyProfit();
             return total;
+        }
+
+        internal string GetEventLogs(int userId)
+        {
+            VerifyAdmin(userId);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), @"..\MarketBackend\", @"SystemLog\event_logs.txt");
+            return File.ReadAllText(path);
+
+        }
+
+        internal string GetErrorLogs(int userId)
+        {
+            VerifyAdmin(userId);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), @"..\MarketBackend\", @"SystemLog\error_logs.txt");
+            return File.ReadAllText(path);
         }
     }
 }

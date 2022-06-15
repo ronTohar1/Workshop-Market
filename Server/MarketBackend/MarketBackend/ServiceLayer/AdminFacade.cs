@@ -226,5 +226,45 @@ namespace MarketBackend.ServiceLayer
                 return new Response<double>("Sorry, an unexpected error occured. Please try again");
             }
         }
+
+        public Response<string> GetEventLogs(int userId)
+        {
+            try
+            {
+                string logs = adminManager.GetEventLogs(userId);
+                logger.Info($"GetEventLogs was called with parameters: [userId = {userId}]");
+                return new Response<string>(logs);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetEventLogs, parameters: [userId = {userId}]");
+                return new Response<string>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetEventLogs, parameters: [userId = {userId}]");
+                return new Response<string>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+        public Response<string> GetErrorLogs(int userId)
+        {
+            try
+            {
+                string logs = adminManager.GetErrorLogs(userId);
+                logger.Info($"GetErrorLogs was called with parameters: [userId = {userId}]");
+                return new Response<string>(logs);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetErrorLogs, parameters: [userId = {userId}]");
+                return new Response<string>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetErrorLogs, parameters: [userId = {userId}]");
+                return new Response<string>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
     }
 }

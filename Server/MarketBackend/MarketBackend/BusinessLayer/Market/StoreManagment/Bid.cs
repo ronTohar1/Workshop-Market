@@ -91,7 +91,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 aprovingIds.Add(approingId); 
             }
 
-            return new Bid(dataBid.Id, storeId, dataBid.Product.Id, dataBid.Member.Id,
+            return new Bid(dataBid.Id, storeId, dataBid.ProdctId, dataBid.MemberId,
                 dataBid.Bid, aprovingIds, dataBid.CounterOffer, dataBid.Offer); 
         }
 
@@ -99,20 +99,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return new DataBid()
             {
-                Id = this.id, 
-                Product = ProductDataManager.GetInstance().Find(productId),
-                Member = MemberDataManager.GetInstance().Find(memberId),
+                Id = this.id,
+                ProdctId = productId,
+                MemberId = memberId,
                 Bid = bid,
-                Approving = MemberDataManager.GetInstance()
-                    .Find(dataMember => aprovingIds.Contains(dataMember.Id)),
+                Approving = aprovingIds.Select(approvingId => new DataBidMemberId() { MemberId = approvingId }).ToList(),
                 CounterOffer = counterOffer,
                 Offer = offer
-            }; 
+            };
         }
         public void approveBid(int memberId, Action saveChanges)
         {
-            DataMember dataMember = MemberDataManager.GetInstance().Find(memberId);
-            bidDataManager.Update(id, dataBid => dataBid.Approving.Add(dataMember));
+            bidDataManager.Update(id, dataBid => dataBid.Approving.Add(new DataBidMemberId { MemberId = memberId}));
 
             saveChanges(); 
 

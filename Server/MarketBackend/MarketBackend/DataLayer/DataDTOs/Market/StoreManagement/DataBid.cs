@@ -14,10 +14,10 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        public DataProduct? Product { get; set; }
-        public DataMember? Member { get; set; }
+        public int ProdctId { get; set; }
+        public int MemberId { get; set; }
         public double Bid { get; set; }
-        public IList<DataMember> Approving { get; set; }
+        public IList<DataBidMemberId> Approving { get; set; }
         public bool CounterOffer { get; set; }
         public double Offer { get; set; }
     }

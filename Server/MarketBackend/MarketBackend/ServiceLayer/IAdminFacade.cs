@@ -13,5 +13,7 @@ namespace MarketBackend.ServiceLayer
         Response<bool> RemoveMember(int requestingId, int memberToRemoveId);
         Response<bool> RemoveMemberIfHasNoRoles(int requestingId, int memberToRemoveId);
         Response<double> GetSystemDailyProfit(int memberId);
+        Response<string> GetEventLogs(int userId);
+        Response<string> GetErrorLogs(int userId);
     }
 }

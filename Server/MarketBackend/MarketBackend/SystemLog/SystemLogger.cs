@@ -16,7 +16,7 @@ namespace SystemLog
             {
                 //---------------- log setup: done only once when the system comes up --------------
                 string currentPath = Directory.GetCurrentDirectory();
-                string new_path = Path.Combine(currentPath, @"..\..\..\..", @"MarketBackend\SystemLog");
+                string new_path = Path.Combine(currentPath, @"..\MarketBackend\", @"SystemLog");
 
 
                 var config = new NLog.Config.LoggingConfiguration();

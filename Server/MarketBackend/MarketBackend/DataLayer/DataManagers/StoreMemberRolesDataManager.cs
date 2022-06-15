@@ -39,9 +39,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataStoreMemberRoles> FindThrows(Predicate<DataStoreMemberRoles> predicate)
+        protected override IList<DataStoreMemberRoles> FindAll()
         {
-            return db.StoreMemberRoles.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.StoreMemberRoles.ToList();
         }
 
         protected override DataStoreMemberRoles RemoveThrows(DataStoreMemberRoles toRemove)

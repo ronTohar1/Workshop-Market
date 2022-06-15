@@ -44,9 +44,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataShoppingBag> FindThrows(Predicate<DataShoppingBag> predicate)
+        protected override IList<DataShoppingBag> FindAll()
         {
-            return db.ShoppingBags.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.ShoppingBags.ToList();
         }
 
         protected override DataShoppingBag RemoveThrows(DataShoppingBag toRemove)

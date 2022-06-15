@@ -167,6 +167,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             this.BeforeHourRestrictions.RemoveRange(this.BeforeHourRestrictions);
             this.DateRestrictions.RemoveRange(this.DateRestrictions);
             this.PurchasePolicies.RemoveRange(this.PurchasePolicies);
+
+            this.SaveChanges(); 
         }
 
         // setting (not defualt) primary keys

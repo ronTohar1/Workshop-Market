@@ -39,9 +39,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataProductReview> FindThrows(Predicate<DataProductReview> predicate)
+        protected override IList<DataProductReview> FindAll()
         {
-            return db.ProductReview.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.ProductReview.ToList();
         }
 
         protected override DataProductReview RemoveThrows(DataProductReview toRemove)

@@ -39,9 +39,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataStore> FindThrows(Predicate<DataStore> predicate)
+        protected override IList<DataStore> FindAll()
         {
-            return db.Stores.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.Stores.ToList();
         }
 
         protected override DataStore RemoveThrows(DataStore toRemove)

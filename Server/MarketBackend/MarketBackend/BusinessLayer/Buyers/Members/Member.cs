@@ -1,6 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
 using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataDTOs.Market;
 using MarketBackend.DataLayer.DataManagers;
 using System;
 using System.Collections.Generic;
@@ -219,7 +220,9 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
                 Username = Username,
                 Password = password,
                 Cart = Cart.CartToDataCart(),
-                IsAdmin = false
+                IsAdmin = false,
+                PendingNotifications = new List<DataNotification>(),
+                PurchaseHistory = new List<DataPurchase>()
             };
             return dMember;
         }

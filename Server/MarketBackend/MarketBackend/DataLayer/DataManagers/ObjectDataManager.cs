@@ -42,7 +42,12 @@ namespace MarketBackend.DataLayer.DataManagers
             return TryFunction(() => FindThrows(predicate));
         }
 
-        protected abstract IList<T> FindThrows(Predicate<T> predicate);
+        protected IList<T> FindThrows(Predicate<T> predicate)
+        {
+            return FindAll().Where(dataObject => predicate(dataObject)).ToList(); 
+        }
+
+        protected abstract IList<T> FindAll(); 
 
         public virtual void Update(U id, Action<T> action)
         {

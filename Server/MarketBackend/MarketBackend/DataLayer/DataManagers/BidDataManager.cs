@@ -40,9 +40,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataBid> FindThrows(Predicate<DataBid> predicate)
+        protected override IList<DataBid> FindAll()
         {
-            return db.Bids.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.Bids.ToList();
         }
 
         protected override DataBid RemoveThrows(DataBid toRemove)

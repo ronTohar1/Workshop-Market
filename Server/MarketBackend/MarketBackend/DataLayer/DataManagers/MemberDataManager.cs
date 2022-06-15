@@ -41,9 +41,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataMember> FindThrows(Predicate<DataMember> predicate)
+        protected override IList<DataMember> FindAll()
         {
-            return db.Members.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.Members.ToList();
         }
 
         protected override DataMember RemoveThrows(DataMember toRemove)

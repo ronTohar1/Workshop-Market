@@ -44,7 +44,7 @@ namespace MarketBackend.BusinessLayer
             {
                 InitLogger();
                 membersController = MembersController.LoadMembersController();
-                int adminId = membersController.Register(username, password);
+                // int adminId = membersController.Register(username, password);
                 //Init controllers
                 guestsController = new();
                 storeController = StoreController.LoadStoreController(membersController);
@@ -55,9 +55,9 @@ namespace MarketBackend.BusinessLayer
                 purchasesManager = new(storeController, buyersController, externalServicesController);
 
                 adminManager = AdminManager.LoadAdminManager(storeController, buyersController, membersController);
-                adminManager.AddAdmin(adminId);
+                // adminManager.AddAdmin(adminId);
                 MarketOpen = true;
-                MarketOpenerAdminId = adminId;
+                MarketOpenerAdminId = 1; // todo: change this 
             }
             MarketOpen = true;
         }
@@ -133,7 +133,7 @@ namespace MarketBackend.BusinessLayer
             }
         }
 
-        internal void RemoveAllDatabaseContent()
+        internal static void RemoveAllDatabaseContent()
         {
             StoreDataManager.GetInstance().RemoveAllTables();
         }

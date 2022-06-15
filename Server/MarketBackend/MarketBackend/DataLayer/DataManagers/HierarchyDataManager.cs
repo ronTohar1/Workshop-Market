@@ -43,9 +43,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataAppointmentsNode> FindThrows(Predicate<DataAppointmentsNode> predicate)
+        protected override IList<DataAppointmentsNode> FindAll()
         {
-            return db.AppointmentsNodes.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.AppointmentsNodes.ToList();
         }
 
         protected override DataAppointmentsNode RemoveThrows(DataAppointmentsNode toRemove)

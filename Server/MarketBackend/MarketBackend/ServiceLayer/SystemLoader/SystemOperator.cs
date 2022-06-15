@@ -151,9 +151,9 @@ namespace MarketBackend.ServiceLayer
 
         }
 
-        internal void RemoveAllDatabaseContent()
+        internal static void RemoveAllDatabaseContent()
         {
-            bso.RemoveAllDatabaseContent(); 
+            BusiessSystemOperator.RemoveAllDatabaseContent(); 
         }
     }
 }

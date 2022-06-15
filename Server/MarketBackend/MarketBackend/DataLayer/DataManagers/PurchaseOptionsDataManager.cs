@@ -40,9 +40,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataPurchaseOption> FindThrows(Predicate<DataPurchaseOption> predicate)
+        protected override IList<DataPurchaseOption> FindAll()
         {
-            return db.PurchaseOptions.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.PurchaseOptions.ToList();
         }
 
         protected override DataPurchaseOption RemoveThrows(DataPurchaseOption toRemove)

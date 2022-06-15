@@ -291,6 +291,8 @@ namespace TestMarketBackend.Acceptance
         [SetUp]
         public void SetUp()
         {
+            SystemOperator.RemoveAllDatabaseContent(); 
+
             systemOperator = new SystemOperator(adminUsername, adminPassword, false);
             adminId = systemOperator.MarketOpenerAdminId;
             if (adminId < 0)
@@ -315,7 +317,6 @@ namespace TestMarketBackend.Acceptance
         public void TearDown()
         {
             systemOperator.CloseMarket();
-            systemOperator.RemoveAllDatabaseContent(); 
         }
 
 

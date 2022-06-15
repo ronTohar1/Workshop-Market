@@ -39,9 +39,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataManagerPermission> FindThrows(Predicate<DataManagerPermission> predicate)
+        protected override IList<DataManagerPermission> FindAll()
         {
-            return db.ManagerPermissions.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.ManagerPermissions.ToList();
         }
 
         protected override DataManagerPermission RemoveThrows(DataManagerPermission toRemove)

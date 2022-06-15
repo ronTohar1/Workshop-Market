@@ -38,9 +38,9 @@ namespace MarketBackend.DataLayer.DataManagers
             return data;
         }
 
-        protected override IList<DataDiscount> FindThrows(Predicate<DataDiscount> predicate)
+        protected override IList<DataDiscount> FindAll()
         {
-            return db.Discounts.Where(entity => predicate.Invoke(entity)).ToList();
+            return db.Discounts.ToList();
         }
 
         protected override DataDiscount RemoveThrows(DataDiscount toRemove)

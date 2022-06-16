@@ -14,11 +14,12 @@ import UpdateIcon from "@mui/icons-material/Update"
 import Product from "../../DTOs/Product"
 import { Currency } from "../../Utils"
 import RemoveProductCan from "./RemoveProductCan"
-import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
-import RateReviewIcon from '@mui/icons-material/RateReview';
+import ThumbsUpDownIcon from "@mui/icons-material/ThumbsUpDown"
+import RateReviewIcon from "@mui/icons-material/RateReview"
 import ProductReview from "./ProductReview"
-import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange"
 import ProductBidForm from "../BidsComponents/ProductBidForm"
+import { getIsGuest } from "../../services/SessionService"
 function UpdateQuantityComponent(
   product: Product,
   handleUpdateQuantity: (product: Product, newQuan: number) => void
@@ -72,16 +73,16 @@ function ProductContent(product: Product, quantity: number) {
       </Typography>
       <Typography variant="h6">
         Price ({Currency}): {product.price}
-
       </Typography>
       <Typography variant="h6">
         Quantity: {quantity}
         <br></br>
-        Store : {product.storeName}</Typography>
+        Store : {product.storeName}
+      </Typography>
       <br></br>
       <ProductReview product={product} />
       <br />
-      <ProductBidForm product={product}/>
+      {getIsGuest() ? null : <ProductBidForm product={product} />}
     </div>
   )
 }

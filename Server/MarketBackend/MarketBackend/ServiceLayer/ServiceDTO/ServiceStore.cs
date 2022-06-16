@@ -30,7 +30,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             Founder = new ServiceMember(store.founder);
             DiscountPolicies = store.discountManager.discounts.Values.Select(disc => new ServiceDiscountPolicy(disc.id, disc.description)).ToArray();
             PurchasePolicies = store.purchaseManager.purchases.Values.Select(purch => new ServicePurchasePolicy(purch.id, purch.description)).ToArray();
-            Bids = store.bids.Values.Select(bid => new ServiceBid(bid.id, bid.storeId, bid.productId, bid.memberId, bid.bid, bid.aprovingIds, bid.counterOffer)).ToArray();
+            Bids = store.bids.Values.Select(bid => new ServiceBid(bid.id, bid.storeId, bid.productId, bid.memberId, bid.bid, bid.aprovingIds, bid.counterOffer,bid.offer)).ToArray();
            
         }
 

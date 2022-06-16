@@ -16,8 +16,9 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public IList<int> approvingIds { get; }
 
         public bool counterOffer { get; set; }
+        public double Offer { get; set; }
 
-        public ServiceBid(int bidId,int storeId, int productId, int memberId, double bid, IList<int> approvingIds, bool counterOffer)
+        public ServiceBid(int bidId, int storeId, int productId, int memberId, double bid, IList<int> approvingIds, bool counterOffer, double offer)
         {
             this.Id = bidId;
             this.storeId = storeId;
@@ -26,6 +27,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             this.bid = bid;
             this.approvingIds = approvingIds;
             this.counterOffer = counterOffer;
+            Offer = offer;
         }
 
         public ServiceBid(int storeId, int productId, int memberId, double bid)
@@ -44,9 +46,9 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
                 return false;
             ServiceBid otherBid = (ServiceBid)other;
             bool approvingIdsEqual = true;
-            for(int i = 0; i < approvingIds.Count; i++)
+            for (int i = 0; i < approvingIds.Count; i++)
             {
-                if(approvingIds[i] != otherBid.approvingIds[i])
+                if (approvingIds[i] != otherBid.approvingIds[i])
                     approvingIdsEqual = false;
             }
             return storeId == otherBid.storeId

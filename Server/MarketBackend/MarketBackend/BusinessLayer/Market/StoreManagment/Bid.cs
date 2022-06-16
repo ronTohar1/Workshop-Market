@@ -20,7 +20,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public IList<int> aprovingIds { get; }
 
         public bool counterOffer { get; set; }
-        private double offer;
+        public double offer { get; set; }
 
         private static int getId()
         {

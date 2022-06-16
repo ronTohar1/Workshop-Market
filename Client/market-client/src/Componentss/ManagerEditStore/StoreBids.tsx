@@ -3,14 +3,17 @@ import {
     DataGrid,
     GridCellEditCommitParams,
     GridColDef,
+    GridRenderCellParams,
 } from "@mui/x-data-grid"
-import { Box, Button, Dialog, Stack, Typography } from "@mui/material"
+import { Box, Button, Dialog, Stack, SvgIcon, Typography } from "@mui/material"
 import Product from "../../DTOs/Product"
 import Store from "../../DTOs/Store"
 import {
     Roles,
     serverAddNewProduct,
+    serverApproveBid,
     serverChangeProductAmountInInventory,
+    serverDenyBid,
     serverGetMembersInRoles,
     serverGetPurchaseHistory,
     serverGetStore,
@@ -27,6 +30,9 @@ import { serverGetStorePurchaseHistory } from "../../services/AdminService"
 import Purchase from "../../DTOs/Purchase"
 import PurchasePolicy from "../../DTOs/PurchasePolicy"
 import Bid from "../../DTOs/Bid"
+import ThumbDownIcon from '@mui/icons-material/ThumbDown'
+import ThumbUpIcon from '@mui/icons-material/ThumbUp'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 
 interface BidRow {
     id: number,
@@ -53,38 +59,13 @@ function convertToBidRow(bid: Bid, store: Store): BidRow {
 }
 
 const fields = {
+    id: "id",
     name: "productName",
     bid: "bid",
     counterOffer: "counterOffer",
 }
 
 
-const columns: GridColDef[] = [
-    {
-        field: fields.name,
-        headerName: "Product Name",
-        type: "string",
-        flex: 2,
-        align: "left",
-        headerAlign: "left",
-    },
-    {
-        field: fields.bid,
-        headerName: "Bid Price",
-        type: "number",
-        flex: 1,
-        align: "left",
-        headerAlign: "left",
-    },
-    {
-        field: fields.counterOffer,
-        headerName: "Counter Offer?",
-        type: "boolean",
-        flex: 1,
-        align: "left",
-        headerAlign: "left",
-    },
-]
 
 export default function StoreBids({
     store,
@@ -119,16 +100,12 @@ export default function StoreBids({
 
 
     const handleSelectionChanged = (newSelection: any) => {
-        console.log(newSelection)
         const chosenIds: number[] = newSelection//.map((id:number)=>rows[id].id)
         setSelectionModel(newSelection)
         setChosenIds(chosenIds)
     }
 
     const handleRemovePolicy = () => {
-        console.log("chosenIds")
-        console.log(chosenIds)
-
         if (chosenIds.length === 0) {
             showFailureSnack("Please select a policy to remove")
         }
@@ -149,6 +126,72 @@ export default function StoreBids({
         setRows(store.bids.map(b => convertToBidRow(b, store)))
     }, [store])
 
+    const handleApproveBid = (bidId: number) => {
+        fetchResponse(serverApproveBid(store.id, getBuyerId(), bidId))
+            .then((success) => {
+                showSuccessSnack("Bid Approved")
+                handleChangedStore(store)
+            })
+            .catch(showFailureSnack)
+    }
+
+    const handleDenyBid = (bidId: number) => {
+        alert("the id is "+bidId)
+        fetchResponse(serverDenyBid(store.id, getBuyerId(), bidId))
+            .then((success) => {
+                showSuccessSnack("Bid Denyed")
+                handleChangedStore(store)
+            })
+            .catch(showFailureSnack)
+    }
+
+    const columns: GridColDef[] = [
+        {
+            field: fields.name,
+            headerName: "Product Name",
+            type: "string",
+            flex: 2,
+            align: "left",
+            headerAlign: "left",
+        },
+        {
+            field: fields.bid,
+            headerName: "Bid Price",
+            type: "number",
+            flex: 1,
+            align: "left",
+            headerAlign: "left",
+        },
+        {
+            field: fields.counterOffer,
+            headerName: "Counter Offer?",
+            type: "boolean",
+            flex: 1,
+            align: "left",
+            headerAlign: "left",
+        },
+        {
+            field: fields.id,
+            headerName: "Approve Bid",
+            type: "boolean",
+            flex: 1,
+            align: "left",
+            headerAlign: "left",
+            renderCell: (params: GridRenderCellParams<BidRow>) => {
+                const approved = params.row.approvingIds.includes(getBuyerId())
+                console.log(params.row)
+                return approved ? (<CheckCircleOutlineIcon />) : (
+                    <strong>
+                        <Button sx={{ mr: 1 }} variant="contained" onClick={() => handleApproveBid(params.row.id)} startIcon={<ThumbUpIcon />} color="success">
+                        </Button>
+                        <Button variant="contained" onClick={() => handleDenyBid(params.row.id)} startIcon={<ThumbDownIcon />} color="error"> </Button>
+
+                    </strong>
+                )
+            }
+        },
+
+    ]
 
     const storePolicies = () => {
         return (

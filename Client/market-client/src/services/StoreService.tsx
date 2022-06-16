@@ -537,7 +537,7 @@ export async function serverAddBid(
 
 
 export async function serverApproveBid(
-  storeId: number, 
+  storeId: number,
   memberId: number,
   bidId: number,
 ): Promise<ClientResponse<boolean>> {
@@ -545,20 +545,20 @@ export async function serverApproveBid(
   const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      storeId: storeId, 
-      memberId:memberId,
+      storeId: storeId,
+      memberId: memberId,
       bidId: bidId,
     })
-});
+  });
   return jsonResponse.json();
 }
 
 export async function serverDenyBid(
-  storeId: number, 
+  storeId: number,
   memberId: number,
   bidId: number,
 ): Promise<ClientResponse<boolean>> {
@@ -566,20 +566,20 @@ export async function serverDenyBid(
   const jsonResponse = await fetch(uri, {
     method: 'Put',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      storeId: storeId, 
-      memberId:memberId,
+      storeId: storeId,
+      memberId: memberId,
       bidId: bidId,
     })
-});
+  });
   return jsonResponse.json();
 }
 
 export async function serverRemoveBid(
-  storeId: number, 
+  storeId: number,
   memberId: number,
   bidId: number,
 ): Promise<ClientResponse<boolean>> {
@@ -587,20 +587,20 @@ export async function serverRemoveBid(
   const jsonResponse = await fetch(uri, {
     method: 'Delete',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      storeId: storeId, 
-      memberId:memberId,
+      storeId: storeId,
+      memberId: memberId,
       bidId: bidId,
     })
-});
+  });
   return jsonResponse.json();
 }
 
 export async function serverApproveCounterOffer(
-  storeId: number, 
+  storeId: number,
   memberId: number,
   bidId: number,
 ): Promise<ClientResponse<boolean>> {
@@ -608,21 +608,21 @@ export async function serverApproveCounterOffer(
   const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      storeId: storeId, 
-      memberId:memberId,
+      storeId: storeId,
+      memberId: memberId,
       bidId: bidId,
     })
-});
+  });
   return jsonResponse.json();
 }
 
 
 export async function serverDenyCounterOffer(
-  storeId: number, 
+  storeId: number,
   memberId: number,
   bidId: number,
 ): Promise<ClientResponse<boolean>> {
@@ -630,44 +630,44 @@ export async function serverDenyCounterOffer(
   const jsonResponse = await fetch(uri, {
     method: 'Put',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      storeId: storeId, 
-      memberId:memberId,
+      storeId: storeId,
+      memberId: memberId,
       bidId: bidId,
     })
-});
+  });
   return jsonResponse.json();
 }
 
 
 export async function serverMakeCounterOffer(
-  storeId: number, 
+  storeId: number,
   memberId: number,
   bidId: number,
-  offer:number,
+  offer: number,
 ): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Stores/MakeCounterOffer";
   const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      storeId: storeId, 
-      memberId:memberId,
+      storeId: storeId,
+      memberId: memberId,
       bidId: bidId,
       offer: offer
     })
-});
+  });
   return jsonResponse.json();
 }
 
 export async function serverGetApproveForBid(
-  storeId: number, 
+  storeId: number,
   memberId: number,
   bidId: number,
 ): Promise<ClientResponse<number[]>> {
@@ -675,15 +675,15 @@ export async function serverGetApproveForBid(
   const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      storeId: storeId, 
-      memberId:memberId,
+      storeId: storeId,
+      memberId: memberId,
       bidId: bidId,
     })
-});
+  });
   return jsonResponse.json();
 }
 

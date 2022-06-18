@@ -28,7 +28,7 @@ export default function Review({checkout}: {checkout:CheckoutDTOBid}) {
         <ListItem sx={{ py: 1, px: 0 }}>
           <ListItemText primary={checkout.bid?.description} />
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-          {`Price (${Currency}): ${checkout.bid?.bid}`}
+          {`${checkout.bid?.bid} (${Currency})`}
           </Typography>
         </ListItem>
          <ListItem sx={{ py: 1, px: 0 }}>

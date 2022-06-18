@@ -34,6 +34,7 @@ import { CartProduct, convertToCartProduct } from "./Cart";
 import LoadingCircle from "../Componentss/LoadingCircle";
 import Cart from "../DTOs/Cart";
 import CheckoutDTOBid from "../DTOs/CheckoutDTOBid";
+import Bid from "../DTOs/Bid";
 
 const backgroundImage =
   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf";
@@ -51,20 +52,20 @@ function Copyright() {
   );
 }
 
-const steps = ["Bidding Options","Shipping address", "Payment details", "Review your order"];
+const steps = ["Shipping address", "Payment details", "Review your order"];
 
 function getStepContent(
   step: number,
   checkout: CheckoutDTOBid,
 ) {
   switch (step) {
+    // case 0:
+    //   return <PurchaseBid checkout={checkout} />;
     case 0:
-      return <PurchaseBid checkout={checkout} />;
-    case 1:
       return <AddressForm checkout={checkout} />;
-    case 2:
+    case 1:
       return <PaymentForm checkout={checkout} />;
-    case 3:
+    case 2:
       return <Review checkout={checkout} />;
     default:
       throw new Error("Unknown step");
@@ -84,6 +85,7 @@ const theme = createTheme({
 const checkout = new CheckoutDTOBid();
 // {productsAmount}:{productsAmount:Map<Product,number>}
 export default function PurchaseBidCheckout() {
+  const bid: Bid = useLocation().state as Bid
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
   const [succeeded, setSucceeded] = React.useState<boolean>(false);
@@ -93,6 +95,7 @@ export default function PurchaseBidCheckout() {
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
+  checkout.bid=bid;
 
 
 

@@ -109,7 +109,7 @@ const App = () => {
             <Route path={Paths.pathDiscount} element={<MainDiscount />} />
             <Route path={Paths.pathPolicy} element={<MainPolicy />} />
             <Route path={Paths.pathBids} element={<BidsPage/>} />
-            <Route path={Paths.purchaseBid} element={<PurchaseBidCheckout/>} />
+             <Route path={Paths.pathPurchaseBid} element={<PurchaseBidCheckout/>} />
             {/* <Route path={Paths.pathProductReview} element={<ProductReview product={new Product(0,"apple",0,"apple",0,"apple",0)}/>} /> */}
 
             {/* <Route

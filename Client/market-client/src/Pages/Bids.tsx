@@ -17,7 +17,7 @@ import Bid from "../DTOs/Bid"
 import Cart from "../DTOs/Cart"
 import Product from "../DTOs/Product"
 import ShoppingBag from "../DTOs/ShoppingBag"
-import { pathCheckout, pathHome } from "../Paths"
+import { pathCheckout, pathHome, pathPurchaseBid } from "../Paths"
 import {
   serverChangeProductAmountInCart,
   serverGetCart,
@@ -37,6 +37,7 @@ import {
   serverRemoveBid,
 } from "../services/StoreService"
 import { zip } from "../Utils"
+import PurchaseBidCheckout from "./PurchaseBidCheckout"
 
 const theme = createTheme({
   palette: {
@@ -175,7 +176,8 @@ export default function BidsPage() {
 
   const handlePurchaseBid = (product: Product, bid: Bid) => {
     // navigate(pathCheckout)
-    showSuccessSnack("Purchasing")
+    bid.description = product.name+"from "+product.storeName;
+    navigate(pathPurchaseBid, { state: bid });
   }
 
   const handleCounterOffer = (approve: boolean, product: Product, bid: Bid) => {

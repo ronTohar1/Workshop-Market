@@ -13,13 +13,14 @@ import {
 import UpdateIcon from "@mui/icons-material/Update"
 import Product from "../../DTOs/Product"
 import { Currency } from "../../Utils"
-import RemoveProductCan from "./RemoveProductCan"
+import RemoveProductCan from "../CartComponents/RemoveProductCan"
 import ThumbsUpDownIcon from "@mui/icons-material/ThumbsUpDown"
 import RateReviewIcon from "@mui/icons-material/RateReview"
-import ProductReview from "./ProductReview"
-import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange"
-import ProductBidForm from "../BidsComponents/ProductBidForm"
-import { getIsGuest } from "../../services/SessionService"
+import ProductReview from "../CartComponents/ProductReview"
+import Bid from "../../DTOs/Bid"
+import DoneIcon from "@mui/icons-material/Done"
+import ClearIcon from "@mui/icons-material/Clear"
+
 function UpdateQuantityComponent(
   product: Product,
   handleUpdateQuantity: (product: Product, newQuan: number) => void
@@ -61,7 +62,7 @@ function UpdateQuantityComponent(
   )
 }
 
-function ProductContent(product: Product, quantity: number) {
+function ProductContent(product: Product, bid: Bid) {
   return (
     <div>
       <Typography variant="h3" component="div">
@@ -75,31 +76,66 @@ function ProductContent(product: Product, quantity: number) {
         Price ({Currency}): {product.price}
       </Typography>
       <Typography variant="h6">
-        Quantity: {quantity}
+        Bid Price: {bid.bid}
         <br></br>
         Store : {product.storeName}
       </Typography>
       <br></br>
       <ProductReview product={product} />
-      <br />
-      {getIsGuest() ? null : <ProductBidForm product={product} />}
     </div>
   )
 }
 
-export default function ProductCard(
+export default function BidCard(
   product: Product,
-  quantity: number,
+  bid: Bid,
   handleRemoveProductClick: (product: Product) => void,
-  handleUpdateQuantity: (product: Product, newQuan: number) => void
+  handlePurchase: (product: Product) => void,
+  handleCounterOffer: (accept: boolean, product: Product) => void
 ) {
+  function CounterOfferButtons() {
+    return bid.counterOffer ? (
+      <Box sx={{ border: 1, padding: 1, m: 1 }}>
+        <Typography variant="h5">Counter Offer: {bid.offer}</Typography>
+
+        <Stack direction="row">
+          <Button
+            sx={{ m: 1 }}
+            variant="contained"
+            color="success"
+            endIcon={<DoneIcon />}
+            onClick={() => handleCounterOffer(true, product)}
+          >
+            Accept
+          </Button>
+          <Button
+            sx={{ m: 1 }}
+            variant="contained"
+            color="error"
+            endIcon={<ClearIcon />}
+            onClick={() => handleCounterOffer(false, product)}
+          >
+            Deny
+          </Button>
+        </Stack>
+      </Box>
+    ) : null
+  }
   return (
     <Card sx={{ m: 1 }} elevation={6} component={Paper}>
-      <CardContent>{ProductContent(product, quantity)}</CardContent>
-      <CardActions disableSpacing>
-        {UpdateQuantityComponent(product, handleUpdateQuantity)}
-
-        <Box sx={{ ml: "auto", mt: "auto" }}>
+      <CardContent>{ProductContent(product, bid)}</CardContent>
+      <CardActions>
+        <div>{CounterOfferButtons()}</div>
+      </CardActions>
+      <CardActions>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handlePurchase(product)}
+        >
+          Purchase
+        </Button>
+        <Box sx={{ ml: "auto" }}>
           {RemoveProductCan(product, handleRemoveProductClick)}
         </Box>
       </CardActions>

@@ -1,6 +1,6 @@
 ﻿namespace WebAPI.Requests
 {
-    public class PurchaseCartRequest : UserRequest
+    public class PurchaseRequest : UserRequest
     {
         public string CardNumber { get; set; }
         public string Month { get; set; }
@@ -14,7 +14,7 @@
         public string Country { get; set; }
         public string Zip { get; set; }
 
-        public PurchaseCartRequest(
+        public PurchaseRequest(
             int userId, 
             string cardNumber, 
             string month, 

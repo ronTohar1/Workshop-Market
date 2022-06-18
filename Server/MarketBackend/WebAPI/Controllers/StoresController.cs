@@ -350,7 +350,16 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpPost("GetAllMemberBids")]
+        public ActionResult<Response<IList<ServiceBid>>> GetAllMemberBids([FromBody] UserRequest request)
+        {
+            Response<IList<ServiceBid>> response = storeManagementFacade.GetAllMemberBids(request.UserId);
 
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
 
 
 

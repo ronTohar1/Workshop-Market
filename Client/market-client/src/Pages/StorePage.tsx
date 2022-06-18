@@ -18,6 +18,7 @@ import toolBar from "../Componentss/StorePageToolbar"
 import { serverAddToCart } from "../services/BuyersService"
 import { getBuyerId } from "../services/SessionService"
 import SuccessSnackbar from "../Componentss/Forms/SuccessSnackbar"
+import LoadingCircle from "../Componentss/LoadingCircle"
 
 const fields = {
   name: "name",
@@ -49,7 +50,7 @@ export default function StorePage() {
     number[]
   >([])
   const isManager: boolean = true //TODO: change to real value. storeService.getMemberInRole(...)
-  const [products, setProducts] = React.useState<Product[]>([])
+  const [products, setProducts] = React.useState<Product[] | null>(null)
   const [storeId] = useQueryParam("id", NumberParam)
   const [store, setStore] = React.useState<Store | null>(null)
   const [openSnack, setOpenSnack] = React.useState<boolean>(false)
@@ -122,7 +123,8 @@ export default function StorePage() {
   const handleAddToCart = () => {
     // const failedToAdd: Product[] = []
     // const succeedToAdd: Product[] = []
-    const chosenProducts = products.filter(p=>selectedProductsIds.includes(p.id))
+    const prods = products || []
+    const chosenProducts = prods.filter(p => selectedProductsIds.includes(p.id))
     const failedToAdd: Promise<Product[]> = chosenProducts.reduce(
       (failedProducts: Promise<Product[]>, currProd: Product) => {
         return fetchResponse(
@@ -158,7 +160,7 @@ export default function StorePage() {
       .catch(alert)
   }
 
-  return (
+  return products === null ? LoadingCircle() : (
     <Box>
       <Navbar />
       {toolBar(selectedProductsIds.length, store, handleAddToCart)}

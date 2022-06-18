@@ -11,8 +11,6 @@ import Product from "../../DTOs/Product"
 import * as React from "react"
 import { TransitionProps } from "@mui/material/transitions"
 
-export const x = 5
-
 export default function DialogTwoOptions(
   product: Product,
   open: boolean,

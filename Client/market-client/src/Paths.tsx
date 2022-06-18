@@ -11,4 +11,6 @@ export const pathCheckout: string = "/checkout"
 export const pathDiscount: string = "/discounts"
 export const pathPolicy: string = "/policies"
 export const pathProductReview: string = "/review"
+export const pathBids: string = "/bids"
+export const pathPurchaseBid:string = "/purchaseBid"
 

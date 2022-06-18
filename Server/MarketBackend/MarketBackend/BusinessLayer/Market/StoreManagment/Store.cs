@@ -854,6 +854,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         //every member can add a bid
         public int AddBid(int productId, int memberId, int storeId, double bidPrice)
         {
+            if (membersGetter(memberId) == null)
+                throw new MarketException("Please login if you want to place a bid");
             Bid bid = new Bid(productId, memberId, storeId, bidPrice);
             bids.Add(bid.id, bid);
             notifyAllStoreOwners($"A bid has been made for the product {products[productId].name} for the price of {bidPrice}");
@@ -899,11 +901,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 approvebidLock.ReleaseMutex();
 
                 if (!CheckAllApproved(bid))
-                    return;
+                    return ;
 
                 Member m = membersGetter.Invoke(bid.memberId);
                 m.Notify($"The bid you placed for the product {products[bid.productId].name} was approved for the cost of {bid.bid}");
-
             }
         }
 
@@ -922,7 +923,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             Bid bid = bids[bidId];
             if (bid.counterOffer)
-                throw new MarketException("The bid cannot be approved beacause a counter offer has been made but not been approved by the member");
+                throw new MarketException("A counter offer has already been made!");
             if (IsCoOwner(memberId) || IsManagerWithPermission(memberId, Permission.handlingBids))
             {
                 bid.CounterOffer(offer);

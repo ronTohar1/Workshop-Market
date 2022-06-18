@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import CheckoutDTO from '../../DTOs/CheckoutDTO';
 import Product from '../../DTOs/Product';
 import CheckoutDTOBid from '../../DTOs/CheckoutDTOBid';
+import { Currency } from '../../Utils';
 
 
 
@@ -24,7 +25,12 @@ export default function Review({checkout}: {checkout:CheckoutDTOBid}) {
         Order summary
       </Typography>
       <List disablePadding>
-
+        <ListItem sx={{ py: 1, px: 0 }}>
+          <ListItemText primary={checkout.bid?.description} />
+          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+          {`Price (${Currency}): ${checkout.bid?.bid}`}
+          </Typography>
+        </ListItem>
          <ListItem sx={{ py: 1, px: 0 }}>
           <ListItemText primary="Shipping" />
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
@@ -34,7 +40,7 @@ export default function Review({checkout}: {checkout:CheckoutDTOBid}) {
         <ListItem sx={{ py: 1, px: 0 }}>
           <ListItemText primary="Total" />
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-          {/* {`${Array.from( productsAmounts ).reduce((sum, [product, amount])=>sum+(product.price*amount),0)} ₪`} */}
+          {`${checkout.bid?.bid} (${Currency})`}
           </Typography>
         </ListItem>
       </List>

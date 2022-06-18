@@ -49,7 +49,8 @@ export default function PurchaseBid({checkout}: {checkout:CheckoutDTOBid}) {
         label="Discount Id predicate true"
         onChange={(event: SelectChangeEvent) => {
             setSelectedBid(parseInt(event.target.value));
-            checkout.bid= bids.find((bid)=>bid.id==selectedBid);
+            checkout.bid= bids.find((bid)=>bid.id==parseInt(event.target.value));
+            console.log(checkout.bid)
         }}
       >
 

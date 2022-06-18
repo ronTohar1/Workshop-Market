@@ -1,6 +1,7 @@
 import { Box, Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material'
 import React from 'react';
 import Bid from '../../DTOs/Bid';
+import { Currency } from '../../Utils';
 
 export default function BidCard({bid}: {bid:Bid}) {
   const [open, setOpen] = React.useState(false);
@@ -40,6 +41,11 @@ export default function BidCard({bid}: {bid:Bid}) {
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               {`Description:    ${bid.description}`}
+            </DialogContentText>
+          </DialogContent>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {`Price (${Currency}):  ${bid.bid}`}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

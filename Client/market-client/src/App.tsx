@@ -23,6 +23,7 @@ import MainPolicy from "./Componentss/PurchasePolicy/MainPolicy"
 import { initSession, storage } from "./services/SessionService"
 import ProductReview from "./Componentss/CartComponents/ProductReview"
 import BidsPage from "./Pages/Bids"
+import PurchaseBidCheckout from "./Pages/PurchaseBidCheckout"
 
 
 const theme = createTheme({
@@ -108,6 +109,7 @@ const App = () => {
             <Route path={Paths.pathDiscount} element={<MainDiscount />} />
             <Route path={Paths.pathPolicy} element={<MainPolicy />} />
             <Route path={Paths.pathBids} element={<BidsPage/>} />
+            <Route path={Paths.purchaseBid} element={<PurchaseBidCheckout/>} />
             {/* <Route path={Paths.pathProductReview} element={<ProductReview product={new Product(0,"apple",0,"apple",0,"apple",0)}/>} /> */}
 
             {/* <Route

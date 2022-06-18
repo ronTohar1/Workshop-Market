@@ -7,6 +7,7 @@ interface Bid {
   approvingIds: number[]
   counterOffer: boolean
   offer: number
+  description: string
 }
 
 export default Bid

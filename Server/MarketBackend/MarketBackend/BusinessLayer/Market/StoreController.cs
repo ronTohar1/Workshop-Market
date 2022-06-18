@@ -257,4 +257,13 @@ public class StoreController
     {
 		return openStores;
     }
+
+    public IList<Bid> GetAllMemberBids(int memberId)
+    {
+		IList<Bid> bids = new List<Bid>();
+		openStores.Values.ToList().ForEach(openStore => 
+		bids.Concat(openStore.bids.Values.Where(bid => bid.memberId == memberId)
+		.ToList()));
+		return bids;
+	}
 }

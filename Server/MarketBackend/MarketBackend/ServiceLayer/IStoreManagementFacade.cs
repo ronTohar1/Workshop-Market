@@ -37,5 +37,6 @@ namespace MarketBackend.ServiceLayer
         Response<bool> RemoveDiscountPolicy(int disId, int storeId, int memberId);
         Response<bool> RemovePurchasePolicy(int policyId, int storeId, int memberId);
         Response<double> GetStoreDailyProfit(int storeId, int memberId);
+        Response<IList<ServiceBid>> GetAllMemberBids(int memberId);
     }
 }

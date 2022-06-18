@@ -10,6 +10,7 @@ import Purchase from "../DTOs/Purchase";
 import Discount from "../DTOs/DiscountDTOs/Discount";
 import PurchasePolicy from "../DTOs/PurchaseDTOs/PurchasePolicy";
 import Permission from "../DTOs/Permission";
+import Bid from "../DTOs/Bid";
 
 
 const stores = [
@@ -687,3 +688,20 @@ export async function serverGetApproveForBid(
   return jsonResponse.json();
 }
 
+export async function serverGetAllMemberBids(
+  memberId: number,
+): Promise<ClientResponse<Bid[]>> {
+  const uri = serverPort + "/api/Stores/GetAllMemberBids";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "userId": 0\n}',
+    body: JSON.stringify({
+        'userId': memberId
+    })
+});
+  return jsonResponse.json();
+}

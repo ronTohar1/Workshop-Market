@@ -18,7 +18,8 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public bool counterOffer { get; set; }
         public double Offer { get; set; }
 
-        public ServiceBid(int bidId, int storeId, int productId, int memberId, double bid, IList<int> approvingIds, bool counterOffer, double offer)
+        public string description { get; set; }
+        public ServiceBid(int bidId, int storeId, int productId, int memberId, double bid, IList<int> approvingIds, bool counterOffer, double offer, string description="")
         {
             this.Id = bidId;
             this.storeId = storeId;
@@ -28,9 +29,10 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             this.approvingIds = approvingIds;
             this.counterOffer = counterOffer;
             Offer = offer;
+            this.description = description;
         }
 
-        public ServiceBid(int storeId, int productId, int memberId, double bid)
+        public ServiceBid(int storeId, int productId, int memberId, double bid, string description = "")
         {
             this.storeId = storeId;
             this.productId = productId;
@@ -38,6 +40,8 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             this.bid = bid;
             approvingIds = new List<int>();
             counterOffer = false;
+            this.description = description;
+
         }
 
         public override bool Equals(object? other)

@@ -1,4 +1,5 @@
 ﻿using MarketBackend.DataLayer.DatabaseObjects;
+using MarketBackend.DataLayer.DatabaseObjects.DbSetMocks;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 
 
@@ -23,9 +24,9 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected BidDataManager()
+        protected BidDataManager() : base(db => db.Bids, dataObject => dataObject.Id)
         {
-            elements = db.Bids; 
+            
         }
 
         public virtual int GetNextId()

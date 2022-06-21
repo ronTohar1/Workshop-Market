@@ -22,9 +22,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected StoreDataManager()
+        protected StoreDataManager() : base(db => db.Stores, dataObject => dataObject.Id)
         {
-            elements = db.Stores; 
         }
 
         public virtual int GetNextId()

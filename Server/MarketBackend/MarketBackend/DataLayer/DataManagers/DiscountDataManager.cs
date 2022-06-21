@@ -21,9 +21,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected DiscountDataManager()
+        protected DiscountDataManager() : base(db => db.Discounts, dataObject => dataObject.Id)
         {
-            elements = db.Discounts; 
         }
 
         public virtual int GetNextId()

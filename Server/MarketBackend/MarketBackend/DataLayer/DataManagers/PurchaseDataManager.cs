@@ -26,9 +26,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected PurchaseDataManager()
+        protected PurchaseDataManager() : base(db => db.Purchases, dataObject => dataObject.Id)
         {
-            elements = db.Purchases; 
         }
     }
 }

@@ -23,9 +23,8 @@ namespace MarketBackend.DataLayer.DataManagementObjects
         }
 
         // protected for testing
-        protected ProductDataManager()
+        protected ProductDataManager() : base(db => db.Products, dataObject => dataObject.Id)
         {
-            elements = db.Products; 
         }
 
         public virtual int GetNextId()

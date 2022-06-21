@@ -26,9 +26,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected HierarchyDataManager()
+        protected HierarchyDataManager() : base(db => db.AppointmentsNodes, dataObject => dataObject.Id)
         {
-            elements = db.AppointmentsNodes; 
         }
 
         public virtual int GetNextId()

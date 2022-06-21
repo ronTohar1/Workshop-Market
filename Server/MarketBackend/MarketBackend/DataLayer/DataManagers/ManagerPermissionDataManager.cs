@@ -22,9 +22,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected ManagerPermissionDataManager()
+        protected ManagerPermissionDataManager() : base(db => db.ManagerPermissions, dataObject => dataObject.Id)
         {
-            elements = db.ManagerPermissions; 
         }
     }
 }

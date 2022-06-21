@@ -1,4 +1,5 @@
-﻿using MarketBackend.DataLayer.DataDTOs;
+﻿using MarketBackend.DataLayer.DatabaseObjects.DbSetMocks;
+using MarketBackend.DataLayer.DataDTOs;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
 using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
 using MarketBackend.DataLayer.DataDTOs.Market;
@@ -29,12 +30,12 @@ namespace MarketBackend.DataLayer.DatabaseObjects
     public class Database : DbContext, IDatabase
     {
 
-        private static Database instance = null; 
+        private static IDatabase instance = null; 
 
-        public static Database GetInstance()
+        public static IDatabase GetInstance()
         {
             if (instance == null)
-                instance = new Database();  
+                instance = new DatabaseMock();  
             return instance;
         }
 
@@ -43,7 +44,6 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         {
             
         }
-
 
         public DbSet<DataMember> Members { get; set; }
         public DbSet<DataStore> Stores { get; set; }

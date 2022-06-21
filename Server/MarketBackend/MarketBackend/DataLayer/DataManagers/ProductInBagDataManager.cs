@@ -27,9 +27,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected ProductInBagDataManager()
+        protected ProductInBagDataManager() : base(db => db.ProductInBags, dataObject => dataObject.Id)
         {
-            elements = db.ProductInBags;
         }
     }
 }

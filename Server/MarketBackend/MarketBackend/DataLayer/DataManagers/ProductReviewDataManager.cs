@@ -22,9 +22,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected ProductReviewDataManager()
+        protected ProductReviewDataManager() : base(db => db.ProductReview, dataObject => dataObject.Id)
         {
-            elements = db.ProductReview; 
         }
     }
 }

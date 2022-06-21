@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer;
 using MarketBackend.DataLayer.DatabaseObjects;
+using MarketBackend.DataLayer.DatabaseObjects.DbSetMocks;
 using MarketBackend.DataLayer.DataDTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,13 +19,24 @@ namespace MarketBackend.DataLayer.DataManagers
         // todo: when delivering objects to business layer check maybe need to cache so there will be one instance of each 
         // todo: implement tests 
 
-        protected IDatabase db;
-        protected DbSet<T> elements; 
+        private IDatabase db;
+        protected SimplifiedDbSet<T, U> elements; 
 
-        public ObjectDataManager()
+        public ObjectDataManager(Func<IDatabase, DbSet<T>> getDbSet, Func<T, U> getId)
         {
             db = Database.GetInstance();
-            // elements should be initialized in subclass 
+            elements = GetSimplifiedDbSet(getDbSet, getId); 
+            // elements = db.GetSimplifiedDbSet(getDbSet());
+            // elements = new SimplifiedDatabaseDbSet<T, U>(getDbSet(db));
+        }
+
+        private SimplifiedDbSet<T, U> GetSimplifiedDbSet(Func<IDatabase, DbSet<T>> getDbSet, Func<T, U> getId)
+        {
+            if (db is Database)
+                return new SimplifiedDatabaseDbSet<T, U>(getDbSet(db));
+            else if (db is DatabaseMock)
+                return new SimplifiedMockDbSet<T, U>(getId);
+            throw new Exception("Database type is not suuporetd in object data manager"); 
         }
 
         public virtual void Add(T toAdd)
@@ -126,7 +138,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         public virtual void RemoveAllTables()
         {
-            db.RemoveAllTables();
+            IDatabase.RemoveAllTables(db); 
         }
 
         protected int MaxOrDefualt<T>(IEnumerable<T> list, Func<T, int> getNumber, int defaultValue)

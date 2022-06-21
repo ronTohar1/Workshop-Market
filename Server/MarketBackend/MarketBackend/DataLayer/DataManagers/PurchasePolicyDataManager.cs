@@ -26,9 +26,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected PurchasePolicyDataManager()
+        protected PurchasePolicyDataManager() : base(db => db.PurchasePolicies, dataObject => dataObject.Id)
         {
-            elements = db.PurchasePolicies; 
         }
 
         public virtual int GetNextId()

@@ -22,9 +22,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected StoreMemberRolesDataManager()
+        protected StoreMemberRolesDataManager() : base(db => db.StoreMemberRoles, dataObject => dataObject.Id)
         {
-            elements = db.StoreMemberRoles; 
         }
     }
 }

@@ -23,32 +23,7 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected DiscountDataManager()
         {
-        }
-
-        protected override void AddThrows(DataDiscount toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataDiscount FindThrows(int id)
-        {
-            DataDiscount? data = db.FindAsync<DataDiscount>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataDiscount> FindAll()
-        {
-            return db.Discounts.ToList();
-        }
-
-        protected override DataDiscount RemoveThrows(DataDiscount toRemove)
-        {
-            DataDiscount? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            elements = db.Discounts; 
         }
 
         public virtual int GetNextId()

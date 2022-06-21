@@ -1,6 +1,7 @@
 ﻿using MarketBackend.BusinessLayer;
 using MarketBackend.DataLayer.DatabaseObjects;
 using MarketBackend.DataLayer.DataDTOs;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataManagers
 {
-    public abstract class ObjectDataManager<T, U>
+    public abstract class ObjectDataManager<T, U> where T : class
     {
 
         // todo: implement with async
@@ -17,11 +18,13 @@ namespace MarketBackend.DataLayer.DataManagers
         // todo: when delivering objects to business layer check maybe need to cache so there will be one instance of each 
         // todo: implement tests 
 
-        protected Database db;
+        protected IDatabase db;
+        protected DbSet<T> elements; 
 
         public ObjectDataManager()
         {
             db = Database.GetInstance();
+            // elements should be initialized in subclass 
         }
 
         public virtual void Add(T toAdd)
@@ -29,13 +32,22 @@ namespace MarketBackend.DataLayer.DataManagers
             TryAction(() => AddThrows(toAdd));
         }
 
-        protected abstract void AddThrows(T toAdd);
+        protected virtual void AddThrows(T toAdd)
+        {
+            elements.AddAsync(toAdd);
+        }
 
         public virtual T Find(U id)
         {
             return TryFunction(() => FindThrows(id));
         }
-        protected abstract T FindThrows(U id);
+        protected virtual T FindThrows(U id)
+        {
+            T? data = elements.FindAsync(id).Result;
+            if (data == null)
+                throw new Exception("cannot be found in the database");
+            return data;
+        }
 
         public virtual IList<T> Find(Predicate<T> predicate)
         {
@@ -47,7 +59,10 @@ namespace MarketBackend.DataLayer.DataManagers
             return FindAll().Where(dataObject => predicate(dataObject)).ToList(); 
         }
 
-        protected abstract IList<T> FindAll(); 
+        protected virtual IList<T> FindAll()
+        {
+            return elements.ToList();
+        }
 
         public virtual void Update(U id, Action<T> action)
         {
@@ -69,7 +84,13 @@ namespace MarketBackend.DataLayer.DataManagers
             return RemoveThrows(FindThrows(id));
         }
 
-        protected abstract T RemoveThrows(T toRemove);
+        protected virtual T RemoveThrows(T toRemove)
+        {
+            T? data = elements.Remove(toRemove).Entity;
+            if (data == null)
+                throw new Exception("cannot be found in the database");
+            return data;
+        }
 
         public virtual void Save()
         {

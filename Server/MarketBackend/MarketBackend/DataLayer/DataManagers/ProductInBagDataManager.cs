@@ -29,32 +29,7 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected ProductInBagDataManager()
         {
-        }
-
-        protected override void AddThrows(DataProductInBag toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataProductInBag FindThrows(int id)
-        {
-            DataProductInBag? data = db.FindAsync<DataProductInBag>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataProductInBag> FindAll()
-        {
-            return db.ProductInBags.ToList();
-        }
-
-        protected override DataProductInBag RemoveThrows(DataProductInBag toRemove)
-        {
-            DataProductInBag? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            elements = db.ProductInBags;
         }
     }
 }

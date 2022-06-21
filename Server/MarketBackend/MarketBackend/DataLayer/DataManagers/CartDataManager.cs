@@ -25,32 +25,7 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected CartDataManager()
         {
-        }
-
-        protected override void AddThrows(DataCart toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataCart FindThrows(int id)
-        {
-            DataCart? data = db.FindAsync<DataCart>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataCart> FindAll()
-        {
-            return db.Carts.ToList();
-        }
-
-        protected override DataCart RemoveThrows(DataCart toRemove)
-        {
-            DataCart? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            elements = db.Carts; 
         }
     }
 }

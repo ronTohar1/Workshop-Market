@@ -24,37 +24,12 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected StoreDataManager()
         {
-        }
-
-        protected override void AddThrows(DataStore toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataStore FindThrows(int id)
-        {
-            DataStore? data = db.FindAsync<DataStore>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataStore> FindAll()
-        {
-            return db.Stores.ToList();
-        }
-
-        protected override DataStore RemoveThrows(DataStore toRemove)
-        {
-            DataStore? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            elements = db.Stores; 
         }
 
         public virtual int GetNextId()
         {
-            return this.MaxOrDefualt(db.Stores, dataObject => dataObject.Id, 0) + 1;
+            return this.MaxOrDefualt(elements, dataObject => dataObject.Id, 0) + 1;
         }
     }
 }

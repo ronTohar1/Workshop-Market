@@ -25,32 +25,7 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected BidDataManager()
         {
-        }
-
-        protected override void AddThrows(DataBid toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataBid FindThrows(int id)
-        {
-            DataBid? data = db.FindAsync<DataBid>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataBid> FindAll()
-        {
-            return db.Bids.ToList();
-        }
-
-        protected override DataBid RemoveThrows(DataBid toRemove)
-        {
-            DataBid? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            elements = db.Bids; 
         }
 
         public virtual int GetNextId()

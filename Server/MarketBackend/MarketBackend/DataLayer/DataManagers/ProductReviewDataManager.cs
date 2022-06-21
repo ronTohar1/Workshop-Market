@@ -24,32 +24,7 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected ProductReviewDataManager()
         {
-        }
-
-        protected override void AddThrows(DataProductReview toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataProductReview FindThrows(int id)
-        {
-            DataProductReview? data = db.FindAsync<DataProductReview>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataProductReview> FindAll()
-        {
-            return db.ProductReview.ToList();
-        }
-
-        protected override DataProductReview RemoveThrows(DataProductReview toRemove)
-        {
-            DataProductReview? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            elements = db.ProductReview; 
         }
     }
 }

@@ -26,32 +26,7 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected MemberDataManager()
         {
-        }
-
-        protected override void AddThrows(DataMember toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataMember FindThrows(int id)
-        {
-            DataMember? data = db.FindAsync<DataMember>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataMember> FindAll()
-        {
-            return db.Members.ToList();
-        }
-
-        protected override DataMember RemoveThrows(DataMember toRemove)
-        {
-            DataMember? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            elements = db.Members; 
         }
 
         public virtual int GetNextId()

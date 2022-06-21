@@ -28,32 +28,7 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected PurchaseDataManager()
         {
-        }
-
-        protected override void AddThrows(DataPurchase toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataPurchase FindThrows(int id)
-        {
-            DataPurchase? data = db.FindAsync<DataPurchase>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataPurchase> FindAll()
-        {
-            return db.Purchases.ToList();
-        }
-
-        protected override DataPurchase RemoveThrows(DataPurchase toRemove)
-        {
-            DataPurchase? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            elements = db.Purchases; 
         }
     }
 }

@@ -24,32 +24,7 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected ManagerPermissionDataManager()
         {
-        }
-
-        protected override void AddThrows(DataManagerPermission toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataManagerPermission FindThrows(int id)
-        {
-            DataManagerPermission? data = db.FindAsync<DataManagerPermission>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataManagerPermission> FindAll()
-        {
-            return db.ManagerPermissions.ToList();
-        }
-
-        protected override DataManagerPermission RemoveThrows(DataManagerPermission toRemove)
-        {
-            DataManagerPermission? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            elements = db.ManagerPermissions; 
         }
     }
 }

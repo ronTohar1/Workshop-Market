@@ -340,8 +340,8 @@ namespace TestMarketBackend.BusinessLayer.Market
                 else
                     productMock.Setup(product => product.amountInInventory).Returns(amount1);
                 productMock.Setup(product => product.id).Returns(idx);
-                productMock.Setup(product => product.AddToInventory(It.IsAny<int>(), new Action(() => Thread.Sleep(0)))).Callback(()=>counter--);
-                productMock.Setup(product => product.RemoveFromInventory(It.IsAny<int>(), new Action(() => Thread.Sleep(0)))).Callback(() => counter++);
+                productMock.Setup(product => product.AddToInventory(It.IsAny<int>(),It.IsAny<Action>())).Callback(()=>counter--);
+                productMock.Setup(product => product.RemoveFromInventory(It.IsAny<int>(), It.IsAny<Action>())).Callback(() => counter++);
                 
                 idsToProducts[idx] = productMock.Object;
             }

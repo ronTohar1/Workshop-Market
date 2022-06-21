@@ -16,6 +16,7 @@ using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.Pr
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -25,7 +26,7 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DatabaseObjects
 {
-    public class Database : DbContext
+    public class Database : DbContext, IDatabase
     {
 
         private static Database instance = null; 
@@ -117,58 +118,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             optionsBuilder.UseSqlServer(localVMConnectionString); 
         }
 
-        public void RemoveAllTables()
+        public void Remove(object toRemove)
         {
-            this.Members.RemoveRange(this.Members);
-            this.Stores.RemoveRange(this.Stores);
-            this.Products.RemoveRange(this.Products);
-            this.Bids.RemoveRange(this.Bids);
-            this.Carts.RemoveRange(this.Carts);
-            this.ManagerPermissions.RemoveRange(this.ManagerPermissions);
-            this.PurchaseOptions.RemoveRange(this.PurchaseOptions);
-            this.StoreMemberRoles.RemoveRange(this.StoreMemberRoles);
-            this.ProductReview.RemoveRange(this.ProductReview);
-            this.AppointmentsNodes.RemoveRange(this.AppointmentsNodes);
-            this.ShoppingBags.RemoveRange(this.ShoppingBags);
-            this.ProductInBags.RemoveRange(this.ProductInBags);
-            this.Notifications.RemoveRange(this.Notifications);
-            this.Purchases.RemoveRange(this.Purchases);
-            this.DateDiscounts.RemoveRange(this.DateDiscounts);
-            this.OneProductDiscounts.RemoveRange(this.OneProductDiscounts);
-            this.Notifications.RemoveRange(this.Notifications);
-            this.StoreDiscounts.RemoveRange(this.StoreDiscounts);
-            this.DiscountOrExpressions.RemoveRange(this.DiscountOrExpressions);
-            this.DiscountAndExpressions.RemoveRange(this.DiscountAndExpressions);
-            this.XorExpressions.RemoveRange(this.XorExpressions);
-            this.MaxExpressions.RemoveRange(this.MaxExpressions);
-            this.BagValuePredicates.RemoveRange(this.BagValuePredicates);
-            this.ProductAmountPredicates.RemoveRange(this.ProductAmountPredicates);
-            this.ConditionDiscounts.RemoveRange(this.ConditionDiscounts);
-            this.IfDiscounts.RemoveRange(this.IfDiscounts);
-            this.LogicalExpressions.RemoveRange(this.LogicalExpressions);
-            this.ConditionExpressions.RemoveRange(this.ConditionExpressions);
-            this.DiscountExpressions.RemoveRange(this.DiscountExpressions);
-            this.Expressions.RemoveRange(this.Expressions);
-            this.DiscountPredicateExpressions.RemoveRange(this.DiscountPredicateExpressions);
-            this.Discounts.RemoveRange(this.Discounts);
-            this.PurchaseAndExpressions.RemoveRange(this.PurchaseAndExpressions);
-            this.ImpliesExpressions.RemoveRange(this.ImpliesExpressions);
-            this.PurchaseOrExpressions.RemoveRange(this.PurchaseOrExpressions);
-            this.CheckProductLessPredicates.RemoveRange(this.CheckProductLessPredicates);
-            this.CheckProductMoreEqualsPredicates.RemoveRange(this.CheckProductMoreEqualsPredicates);
-            this.PruchasePredicateExpressions.RemoveRange(this.PruchasePredicateExpressions);
-            this.InterfacesPurchasePolicies.RemoveRange(this.InterfacesPurchasePolicies);
-            this.RestrictionExpressions.RemoveRange(this.RestrictionExpressions);
-            this.DataAfterHourProductRestrictions.RemoveRange(this.DataAfterHourProductRestrictions);
-            this.AfterHourRestrictions.RemoveRange(this.AfterHourRestrictions);
-            this.AtLeastAmountRestrictions.RemoveRange(this.AtLeastAmountRestrictions);
-            this.AtMostAmountRestrictions.RemoveRange(this.AtMostAmountRestrictions);
-            this.BeforeHourProductRestrictions.RemoveRange(this.BeforeHourProductRestrictions);
-            this.BeforeHourRestrictions.RemoveRange(this.BeforeHourRestrictions);
-            this.DateRestrictions.RemoveRange(this.DateRestrictions);
-            this.PurchasePolicies.RemoveRange(this.PurchasePolicies);
-
-            this.SaveChanges(); 
+            base.Remove(toRemove);
         }
 
         // setting (not defualt) primary keys

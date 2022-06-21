@@ -121,7 +121,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         public virtual void Remove<R>(R exp)
         {
-            TryFunction(() => db.Remove(exp));
+            TryAction(() => db.Remove(exp));
         }
 
         public virtual void RemoveAllTables()

@@ -29,7 +29,7 @@ namespace MarketBackend.DataLayer.DataManagers
         // protected for testing
         protected ShoppingBagDataManager()
         {
-            elements = db.ShoppingBags; 
+            elements = db.ShoppingBags;
         }
     }
 }

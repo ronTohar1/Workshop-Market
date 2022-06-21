@@ -327,6 +327,7 @@ namespace TestMarketBackend.Acceptance
 
         protected void ReopenMarket()
         {
+            // todo: do this only if using the database (according to the configuration) 
             systemOperator.CloseMarket();
 
             SetUpFacaedes(true); // loading from database 

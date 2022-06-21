@@ -16,7 +16,9 @@ In this project the server is implemented in C# whereas the client is implemente
 
 ## Configure the server
 For running the server using the WebAPI project, you must config an inital scenario for the market, including the admin's credentials. \
-First, go to `Server/MarketBackend/MarketBackend/AppConfig.settings` using the vs editor, and set `RunInitFile = True` and  `initFilePath` to path of scenario configuration file.
+First, go to `Server/MarketBackend/MarketBackend/SystemSettings/App.config`, and set `ShouldRunInitFile = "True"` and  `InitFilePath` to path of scenario configuration file. \
+another configuration that you might want to check is `ShouldUpdateDatabase`. This is a flag for detaching the connection to the database. when off, the system will work without the persistence layer.
+
 
 ### Scenario configuration file
 This file should contain use cases for the system initialization. \

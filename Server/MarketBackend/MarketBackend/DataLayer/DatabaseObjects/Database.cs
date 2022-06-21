@@ -14,6 +14,7 @@ using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.Lo
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PredicatePolicies;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
+using MarketBackend.SystemSettings;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -98,13 +99,13 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var dbConfigs = new AppConfig();
+            var dbConfigs = AppConfigs.GetInstance();
 
-            string localVMConnectionString = "Data Source = tcp:" + dbConfigs.ip + "\\" + dbConfigs.instanceName + "." + dbConfigs.databaseName + "," + dbConfigs.port + "; " +
-                "Database=" + dbConfigs.databaseName + "; " +
+            string localVMConnectionString = "Data Source = tcp:" + dbConfigs.DatabaseIp + "\\" + dbConfigs.DatabaseInstanceName + "." + dbConfigs.DatabaseName + "," + dbConfigs.DatabasePort + "; " +
+                "Database=" + dbConfigs.DatabaseName + "; " +
                 "Integrated Security = False; " +
-                "User Id = " + dbConfigs.databaseUsername + "; " +
-                "Password = " + dbConfigs.databasePassword + "; " +
+                "User Id = " + dbConfigs.DatabaseUsername + "; " +
+                "Password = " + dbConfigs.DatabasePassword + "; " +
                 "Encrypt = True; " +
                 "TrustServerCertificate = True; " +
                 "MultipleActiveResultSets = True";  // todo: check if need more security 

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\MarketBackend\SystemSettings\App.config" Link="App.config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageReference Include="WebSocketSharp-netstandard" Version="1.0.1" />
@@ -14,21 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MarketBackend\MarketBackend.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="AppConfig.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>AppConfig.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="AppConfig.settings">
-      <LastGenOutput>AppConfig.Designer.cs</LastGenOutput>
-      <Generator>SettingsSingleFileGenerator</Generator>
-    </None>
   </ItemGroup>
 	
 

@@ -1,4 +1,7 @@
-﻿using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+﻿using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using MarketBackend.DataLayer.DataManagementObjects;
+using MarketBackend.DataLayer.DataManagers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,28 +12,41 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
     public class Bid
     {
-        private static int idCounter = 1;
+        private const int ID_COUNTER_NOT_INITIALIZED = -1;
+        private static int idCounter = ID_COUNTER_NOT_INITIALIZED; 
         private static Mutex counterLock = new Mutex(false);
         private static Mutex offerLock = new Mutex(false);
         public int id { get; }
         public int storeId { get; set; }
         public int productId { get; set; }
         public int memberId { get; set; }
-        public double bid { get; set; }
+        public double bid { get; private set; }
         public IList<int> aprovingIds { get; }
 
-        public bool counterOffer { get; set; }
+        public bool counterOffer { get; private set; }
         private double offer;
+
+        private BidDataManager bidDataManager;
 
         private static int getId()
         {
             int temp;
             counterLock.WaitOne();
+
+            if (idCounter == ID_COUNTER_NOT_INITIALIZED)
+                InitializeIdCounter(); 
+
             temp = idCounter;
             idCounter++;
             counterLock.ReleaseMutex();
             return temp;
         }
+
+        private static void InitializeIdCounter()
+        {
+            idCounter = BidDataManager.GetInstance().GetNextId();
+        }
+
         public Bid(int productId, int memberId, int storeId ,double bid) 
             : this(
                   getId(), storeId, productId, memberId, bid,
@@ -61,6 +77,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             this.offer = offer;
 
             this.aprovingIds = aprovingIds;
+
+            this.bidDataManager = BidDataManager.GetInstance();
         }
 
         // r S 8
@@ -73,12 +91,29 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 aprovingIds.Add(approingId); 
             }
 
-            return new Bid(dataBid.Id, storeId, dataBid.Product.Id, dataBid.Member.Id,
+            return new Bid(dataBid.Id, storeId, dataBid.ProdctId, dataBid.MemberId,
                 dataBid.Bid, aprovingIds, dataBid.CounterOffer, dataBid.Offer); 
         }
 
-        public void approveBid(int memberId)
+        public DataBid ToNewDataBid()
         {
+            return new DataBid()
+            {
+                Id = this.id,
+                ProdctId = productId,
+                MemberId = memberId,
+                Bid = bid,
+                Approving = aprovingIds.Select(approvingId => new DataBidMemberId() { MemberId = approvingId }).ToList(),
+                CounterOffer = counterOffer,
+                Offer = offer
+            };
+        }
+        public void approveBid(int memberId, Action saveChanges)
+        {
+            bidDataManager.Update(id, dataBid => dataBid.Approving.Add(new DataBidMemberId { MemberId = memberId}));
+
+            saveChanges(); 
+
             aprovingIds.Add(memberId);
         }
 
@@ -89,23 +124,41 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 offerLock.ReleaseMutex();
                 throw new MarketException("a counter offer has already been made to approve!");
             }
+            bidDataManager.Update(id, dataBid =>
+            {
+                dataBid.CounterOffer = true;
+                dataBid.Offer = offer;
+            });
+            bidDataManager.Save(); 
+
             counterOffer = true;
             this.offer = offer;
             offerLock.ReleaseMutex();
         }
 
-        public void approveCounterOffer()
+        public void approveCounterOffer(Action saveChanges)
         {
             offerLock.WaitOne();
             if (!counterOffer) { 
                 offerLock.ReleaseMutex();
                 throw new MarketException("No counter offer made to approve!");
             }
+
+            bidDataManager.Update(id, dataBid =>
+            {
+                dataBid.CounterOffer = false;
+                dataBid.Bid = offer;
+            });
+            saveChanges();
+
             counterOffer = false;
             this.bid = offer;
             offerLock.ReleaseMutex();
         }
 
-
+        public void DataRemove()
+        {
+            bidDataManager.Remove(id); 
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,20 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
         public override bool IsSatisfied(ShoppingBag bag)
         {
             return !base.IsSatisfied(bag);
+        }
+
+        public override DataIPurchasePolicy IPurchasePolicyToDataIPurchasePolicy()
+        {
+            return new DataBeforeHourRestriction()
+            {
+                Hour = hour
+            };
+        }
+
+        public override void RemoveFromDB(DataIPurchasePolicy dpp)
+        {
+            DataBeforeHourRestriction dbhr = (DataBeforeHourRestriction)dpp;
+            //TODO myself
         }
     }
 }

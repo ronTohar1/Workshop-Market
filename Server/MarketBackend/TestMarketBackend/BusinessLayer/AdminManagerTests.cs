@@ -26,6 +26,8 @@ namespace TestMarketBackend.BusinessLayer
         [SetUp]
         public void SetupAdmin()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             adminId = 1;
 
             v1 = 10;
@@ -44,7 +46,11 @@ namespace TestMarketBackend.BusinessLayer
             Mock<StoreController> ms = new Mock<StoreController>();
             ms.Setup(x => x.GetOpenStores()).Returns(stores);
 
-            adminManager = new AdminManager(ms.Object, It.IsAny<BuyersController>(), It.IsAny<MembersController>());
+            Mock<MembersController> mc = new Mock<MembersController>();
+            Mock<Member> m = new Mock<Member>();
+            mc.Setup(x => x.GetMember(It.IsAny<int>())).Returns(m.Object);
+
+            adminManager = new AdminManager(ms.Object, It.IsAny<BuyersController>(), mc.Object);
             adminManager.AddAdmin(adminId);
 
         }

@@ -18,6 +18,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
         [SetUp]
         public void StoreDiscountSetUp()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             discount1 = 20;
             discount2 = 50;
         }

@@ -6,17 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
-
+using MarketBackend.DataLayer.DataManagers;
 
 namespace MarketBackend.BusinessLayer.Buyers
 {
     public class Buyer
     {
-        private static int _nextId;
+        private const int ID_COUNTER_NOT_INITIALIZED = -1; 
+        private static int _nextId = ID_COUNTER_NOT_INITIALIZED; 
         public virtual Cart Cart { get; private set; }
         public virtual int Id { get; internal set; }
         private IList<Purchase> purchaseHistory;
-
 
         private static Mutex mutex = new Mutex();
 
@@ -26,6 +26,8 @@ namespace MarketBackend.BusinessLayer.Buyers
             {
                 lock (mutex)
                 {
+                    if (_nextId == ID_COUNTER_NOT_INITIALIZED)
+                        InitializeIdCounter();
                     int lastId = _nextId;
                     _nextId++;
                     return lastId;
@@ -35,6 +37,11 @@ namespace MarketBackend.BusinessLayer.Buyers
             {
                 _nextId = value;
             }
+        }
+
+        private static void InitializeIdCounter()
+        {
+            NextId = MemberDataManager.GetInstance().GetNextId(); 
         }
 
         public Buyer()
@@ -63,6 +70,12 @@ namespace MarketBackend.BusinessLayer.Buyers
         public IReadOnlyCollection<Purchase> GetPurchaseHistory() 
         {
             return new ReadOnlyCollection<Purchase>(this.purchaseHistory);
+        }
+
+        public virtual void ChangeProductAmount(ProductInBag product, int amount, int buyerId)
+        {
+            int storeId = product.StoreId;
+            Cart.ShoppingBags[storeId].ChangeProductAmount(product, amount, null);
         }
     }
 }

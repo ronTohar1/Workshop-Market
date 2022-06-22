@@ -42,7 +42,13 @@ namespace MarketBackend.BusinessLayer.Buyers
 
         public override int GetHashCode() => HashCode.Combine(ProductId,StoreId);
 
-
+        public DataProductInBag ProductInBagToDataProductInBag()
+        {
+            return new DataProductInBag()
+            {
+                ProductId = ProductId
+            };
+        } 
 
 
         // optional for the future - custom features like: color, type, size...

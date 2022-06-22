@@ -291,15 +291,9 @@ namespace TestMarketBackend.Acceptance
         [SetUp]
         public void SetUp()
         {
-            systemOperator = new SystemOperator(adminUsername, adminPassword, false);
-            adminId = systemOperator.MarketOpenerAdminId;
-            if (adminId < 0)
-                throw new Exception("Unable to open market successfully");
+            SystemOperator.RemoveAllDatabaseContent();
 
-            buyerFacade = systemOperator.GetBuyerFacade().Value;
-            storeManagementFacade = systemOperator.GetStoreManagementFacade().Value;
-            adminFacade = systemOperator.GetAdminFacade().Value;
-            externalSystemFacade = systemOperator.GetExternalSystemFacade().Value;
+            SetUpFacaedes(false); 
 
             SetUpUsers();
 
@@ -310,6 +304,41 @@ namespace TestMarketBackend.Acceptance
             SetUpNotificationQueues(); 
 
         }
+
+        private void SetUpFacaedes(bool loadFromDatabase)
+        {
+            systemOperator = new SystemOperator(adminUsername, adminPassword, loadFromDatabase);
+            adminId = systemOperator.MarketOpenerAdminId;
+            if (adminId < 0)
+                throw new Exception("Unable to open market successfully");
+
+            buyerFacade = systemOperator.GetBuyerFacade().Value;
+            storeManagementFacade = systemOperator.GetStoreManagementFacade().Value;
+            adminFacade = systemOperator.GetAdminFacade().Value;
+            externalSystemFacade = systemOperator.GetExternalSystemFacade().Value;
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            systemOperator.CloseMarket();
+        }
+
+
+        protected void ReopenMarket()
+        {
+            var dbConfigs = MarketBackend.SystemSettings.AppConfigs.GetInstance(); 
+            bool using_database = dbConfigs.ShouldUpdateDatabase;
+            // todo: do this only if using the database (according to the configuration) 
+
+            if (using_database)
+            {
+                systemOperator.CloseMarket();
+
+                SetUpFacaedes(true); // loading from database 
+            }
+        }
+
 
         protected Response<T>[] GetResponsesFromThreads<T>(Func<Response<T>>[] jobs)
         {

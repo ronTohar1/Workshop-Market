@@ -10,6 +10,11 @@ namespace TestMarketBackend.Acceptance
 {
     internal class Guest_MemberReqsTests : AcceptanceTests
     {
+        //[SetUp]
+        //public void DataManagerSetup()
+        //{
+
+        //} 
 
         // r.1.2
         [Test]
@@ -92,11 +97,6 @@ namespace TestMarketBackend.Acceptance
 
 
         // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
         // r.2.2
         //[Test]
         //[TestCase("aaaaa", null, null, "iphone")]
@@ -145,8 +145,9 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulProductKeeping(Func<int> userId, Func<int> storeId, Func<int> productId, int amount)
         {
             Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
-
             Assert.IsTrue(!response.IsErrorOccured());
+
+            // ReopenMarket();
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(userId());
 
@@ -171,16 +172,14 @@ namespace TestMarketBackend.Acceptance
         public void FailedProductKeeping(Func<int> userId, Func<int> storeId, Func<int> productId, int amount)
         {
             Response<ServiceCart> cartResponseBefore = buyerFacade.GetCart(userId());
-
             Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
-
             Assert.IsTrue(response.IsErrorOccured());
 
-            Response<ServiceCart> cartResponseAfter = buyerFacade.GetCart(userId());
+            // ReopenMarket();
 
+            Response<ServiceCart> cartResponseAfter = buyerFacade.GetCart(userId());
             ServiceCart cartBefore = cartResponseBefore.Value;
             ServiceCart cartAfter = cartResponseAfter.Value;
-
             Assert.IsTrue(cartBefore.Equals(cartAfter));
         }
 
@@ -226,6 +225,9 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> removeResponse = buyerFacade.RemoveProductFromCart(userId(), storeId(), productId());
 
+            // is also on guests so not running the next line
+            // ReopenMarket(); 
+
             cartResponse = buyerFacade.GetCart(userId());
             Assert.IsFalse(cartResponse.IsErrorOccured());
             ServiceCart cartAfter = cartResponse.Value;
@@ -252,6 +254,8 @@ namespace TestMarketBackend.Acceptance
             buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
 
             buyerFacade.changeProductAmountInCart(userId(), storeId(), productId(), amount / 2);
+
+            // ReopenMarket();
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(userId());
             ServiceCart cart = cartResponse.Value;

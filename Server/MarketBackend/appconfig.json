@@ -1,0 +1,12 @@
+{
+	"DatabaseName": "MarketDatabase",
+	"DatabaseInstanceName":"SQLEXPRESS",
+	"DatabaseIp":"192.168.56.101",
+	"DatabasePort":"50488",
+	"DatabaseUsername":"amitZivan",
+	"DatabasePassword":"passMarket",
+	"ShouldUpdateDatabase":false,
+	"ShouldRunInitFile":true,
+	"InitFilePath":"init.json",
+	"WebsocketServerPort":7890
+}

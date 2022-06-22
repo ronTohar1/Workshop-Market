@@ -33,6 +33,12 @@ namespace TestMarketBackend.BusinessLayer.Market
 
         // ------- Setup helping functions -------------------------------------
 
+        [SetUp]
+        public void MockDataLayer()
+        {
+            DataManagersMock.InitMockDataManagers();
+        }
+
         private void membersConrtollerMemberExistsSetup(int[] exsitingMembersIds)
         {
             membersControllerMock = new Mock<MembersController>();

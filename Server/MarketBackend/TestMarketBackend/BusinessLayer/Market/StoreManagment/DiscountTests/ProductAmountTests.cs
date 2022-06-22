@@ -27,6 +27,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             pid1 = 1;
             pid2 = 2;
 

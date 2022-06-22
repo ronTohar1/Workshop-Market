@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 using MarketBackend.SystemSettings;
+using Newtonsoft.Json;
 
 namespace MarketBackend
 {
@@ -14,7 +15,8 @@ namespace MarketBackend
         public static void Main(String[] args)
         {
             Console.WriteLine("Hello, Market!");
-            AppConfigs.GetInstance();
+            AppConfigs appConfigs = AppConfigs.GetInstance();
+            Console.WriteLine(appConfigs.DatabaseName);
         }
     }
 }

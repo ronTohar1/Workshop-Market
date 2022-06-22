@@ -19,6 +19,7 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Guests
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers();
             guestsController = new();
             Mock<Buyer> mockBuyer1 = new Mock<Buyer>();
             mockBuyer1.Setup(mockBuyer1 => mockBuyer1.Id).Returns(loggedInId);

@@ -29,14 +29,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
     {
         private static IDictionary<int, IDatabase> threadsToInstances = new ConcurrentDictionary<int, IDatabase>(); // threads ids 
 
-        private static int counter = 0; 
         public static IDatabase GetInstance()
         {
-            counter = counter + 1;
-
-            if (counter > 2000)
-                counter = 0; 
-
             int threadId = Thread.CurrentThread.ManagedThreadId; 
             if (!threadsToInstances.ContainsKey(threadId))
             {

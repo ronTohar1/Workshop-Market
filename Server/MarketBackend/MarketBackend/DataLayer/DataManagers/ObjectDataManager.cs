@@ -24,7 +24,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         public ObjectDataManager(Func<IDatabase, SimplifiedDbSet<T, U>> getSimplifiedDbSet)
         {
-            db = Database.GetInstance();
+            db = IDatabase.GetInstance();
             elements = getSimplifiedDbSet(db); 
         }
 

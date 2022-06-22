@@ -327,10 +327,15 @@ namespace TestMarketBackend.Acceptance
 
         protected void ReopenMarket()
         {
+            bool using_database = false; 
             // todo: do this only if using the database (according to the configuration) 
-            systemOperator.CloseMarket();
+            
+            if (using_database)
+            {
+                systemOperator.CloseMarket();
 
-            SetUpFacaedes(true); // loading from database 
+                SetUpFacaedes(true); // loading from database 
+            }
         }
 
 

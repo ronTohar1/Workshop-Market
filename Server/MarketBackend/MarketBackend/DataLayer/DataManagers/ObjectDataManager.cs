@@ -28,15 +28,6 @@ namespace MarketBackend.DataLayer.DataManagers
             elements = getSimplifiedDbSet(db); 
         }
 
-        private SimplifiedDbSet<T, U> GetSimplifiedDbSet(Func<IDatabase, DbSet<T>> getDbSet, Func<T, U> getId)
-        {
-            if (db is Database)
-                return new SimplifiedDatabaseDbSet<T, U>(getDbSet(db));
-            else if (db is DatabaseMock)
-                return new SimplifiedMockDbSet<T, U>(getId);
-            throw new Exception("Database type is not suuporetd in object data manager"); 
-        }
-
         public virtual void Add(T toAdd)
         {
             TryAction(() => AddThrows(toAdd));

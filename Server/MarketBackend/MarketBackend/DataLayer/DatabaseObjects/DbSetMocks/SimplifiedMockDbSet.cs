@@ -26,7 +26,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects.DbSetMocks
 
         public T? FindAsync(U id)
         {
-            return dictionary[id]; 
+            if (dictionary.ContainsKey(id))
+                return dictionary[id];
+            return null; 
         }
 
         public T? Remove(T toRemove)

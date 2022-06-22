@@ -28,13 +28,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 {
     public class DatabaseMock : IDatabase
     {
-        private static IDatabase instance = null;
-
-        public static IDatabase GetInstance()
+        public static IDatabase GetNewInstance()
         {
-            if (instance == null)
-                instance = new DatabaseMock();
-            return instance;
+            return new DatabaseMock(); 
         }
 
         public SimplifiedDbSet<DataMember, int> SimplifiedMembers { get; set; }
@@ -257,6 +253,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public int SaveChanges()
         {
             // not using database 
+
+            IDatabase.RemoveIDatabaseInstance();
+
             return 0; 
         }
     }

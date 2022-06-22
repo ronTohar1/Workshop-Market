@@ -19,13 +19,17 @@ namespace MarketBackend.DataLayer.DataManagers
         // todo: when delivering objects to business layer check maybe need to cache so there will be one instance of each 
         // todo: implement tests 
 
-        private IDatabase db;
-        protected SimplifiedDbSet<T, U> elements; 
+        private Func<IDatabase, SimplifiedDbSet<T, U>> getSimplifiedDbSet; 
 
         public ObjectDataManager(Func<IDatabase, SimplifiedDbSet<T, U>> getSimplifiedDbSet)
         {
-            db = IDatabase.GetInstance();
-            elements = getSimplifiedDbSet(db); 
+            this.getSimplifiedDbSet = getSimplifiedDbSet;
+        }
+
+        // to allow IDatabase to change the instance if needed (it is needed so we implemented it) 
+        protected SimplifiedDbSet<T, U> GetElements()
+        {
+            return getSimplifiedDbSet(IDatabase.GetInstance()); 
         }
 
         public virtual void Add(T toAdd)
@@ -35,7 +39,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         protected virtual void AddThrows(T toAdd)
         {
-            elements.AddAsync(toAdd);
+            GetElements().AddAsync(toAdd);
         }
 
         public virtual T Find(U id)
@@ -44,7 +48,7 @@ namespace MarketBackend.DataLayer.DataManagers
         }
         protected virtual T FindThrows(U id)
         {
-            T? data = elements.FindAsync(id);
+            T? data = GetElements().FindAsync(id);
             if (data == null)
                 throw new Exception("cannot be found in the database");
             return data;
@@ -62,7 +66,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         protected virtual IList<T> FindAll()
         {
-            return elements.ToList();
+            return GetElements().ToList();
         }
 
         public virtual void Update(U id, Action<T> action)
@@ -72,7 +76,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         protected void UpdateThrows(U id, Action<T> action)
         {
-            elements.Update(id, action); 
+            GetElements().Update(id, action); 
             // action(FindThrows(id));
         }
 
@@ -88,7 +92,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         protected virtual T RemoveThrows(T toRemove)
         {
-            T? data = elements.Remove(toRemove);
+            T? data = GetElements().Remove(toRemove);
             if (data == null)
                 throw new Exception("cannot be found in the database");
             return data;
@@ -101,7 +105,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         protected void SaveThrows()
         {
-            db.SaveChanges();
+            IDatabase.GetInstance().SaveChanges();
         }
 
         private void TryAction(Action action)
@@ -123,12 +127,12 @@ namespace MarketBackend.DataLayer.DataManagers
 
         public virtual void Remove<R>(R exp)
         {
-            TryAction(() => db.Remove(exp));
+            TryAction(() => IDatabase.GetInstance().Remove(exp));
         }
 
         public virtual void RemoveAllTables()
         {
-            IDatabase.RemoveAllTables(db); 
+            IDatabase.RemoveAllTables(IDatabase.GetInstance()); 
         }
 
         protected int MaxOrDefualt<T>(IEnumerable<T> list, Func<T, int> getNumber, int defaultValue)

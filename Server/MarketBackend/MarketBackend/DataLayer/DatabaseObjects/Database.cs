@@ -33,11 +33,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         private static IDatabase instance = null; 
 
-        public static IDatabase GetInstance()
+        public static IDatabase GetNewInstance()
         {
-            if (instance == null)
-                instance = new Database();  
-            return instance;
+            return new Database(); 
         }
 
         private static IDatabase newDatabaseInstance()
@@ -220,6 +218,15 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public SimplifiedDbSet<DataDateRestriction, int> SimplifiedDateRestrictions { get; set; }
         public SimplifiedDbSet<DataPurchasePolicy, int> SimplifiedPurchasePolicies { get; set; }
 
+
+        public override int SaveChanges()
+        {
+            int result = base.SaveChanges();
+
+            IDatabase.RemoveIDatabaseInstance();
+
+            return result;
+        }
 
         // connection setup functions
 

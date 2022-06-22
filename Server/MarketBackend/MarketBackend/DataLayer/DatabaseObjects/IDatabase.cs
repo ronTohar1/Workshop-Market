@@ -17,6 +17,7 @@ using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.Pu
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,23 +27,38 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 {
     public interface IDatabase
     {
-        private static IDatabase instance = null;
+        private static IDictionary<int, IDatabase> threadsToInstances = new ConcurrentDictionary<int, IDatabase>(); // threads ids 
 
+        private static int counter = 0; 
         public static IDatabase GetInstance()
         {
-            if (instance == null)
-                instance = GetDatabaseInstance();
-            return instance;
+            counter = counter + 1;
+
+            if (counter > 2000)
+                counter = 0; 
+
+            int threadId = Thread.CurrentThread.ManagedThreadId; 
+            if (!threadsToInstances.ContainsKey(threadId))
+            {
+                threadsToInstances.Add(threadId, GetNewDatabaseInstance());
+            }
+            return threadsToInstances[threadId];
         }
 
-        private static IDatabase GetDatabaseInstance()
+        private static IDatabase GetNewDatabaseInstance()
         {
             var dbConfigs = MarketBackend.SystemSettings.AppConfigs.GetInstance();
             bool using_database = dbConfigs.ShouldUpdateDatabase;
             if (using_database)
-                return Database.GetInstance(); 
+                return Database.GetNewInstance(); 
             else
-                return DatabaseMock.GetInstance();
+                return DatabaseMock.GetNewInstance();
+        }
+
+        public static void RemoveIDatabaseInstance()
+        {
+            int threadId = Thread.CurrentThread.ManagedThreadId;
+            threadsToInstances.Remove(threadId); 
         }
 
         public abstract SimplifiedDbSet<DataMember, int> SimplifiedMembers { get; set; }

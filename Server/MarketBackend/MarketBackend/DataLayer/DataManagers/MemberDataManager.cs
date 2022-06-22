@@ -30,7 +30,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         public virtual int GetNextId()
         {
-            return this.MaxOrDefualt(elements.ToList(), member => member.Id, 0) + 1; 
+            return this.MaxOrDefualt(GetElements().ToList(), member => member.Id, 0) + 1; 
         }
     }
 }

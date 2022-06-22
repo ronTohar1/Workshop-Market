@@ -22,13 +22,13 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected StoreDataManager() : base(db => db.Stores, dataObject => dataObject.Id)
+        protected StoreDataManager() : base(db => db.SimplifiedStores)
         {
         }
 
         public virtual int GetNextId()
         {
-            return this.MaxOrDefualt(elements, dataObject => dataObject.Id, 0) + 1;
+            return this.MaxOrDefualt(elements.ToList(), dataObject => dataObject.Id, 0) + 1;
         }
     }
 }

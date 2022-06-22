@@ -21,13 +21,13 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected DiscountDataManager() : base(db => db.Discounts, dataObject => dataObject.Id)
+        protected DiscountDataManager() : base(db => db.SimplifiedDiscounts)
         {
         }
 
         public virtual int GetNextId()
         {
-            return this.MaxOrDefualt(db.Discounts, dataObject => dataObject.Id, 0) + 1;
+            return this.MaxOrDefualt(elements.ToList(), dataObject => dataObject.Id, 0) + 1;
         }
     }
 }

@@ -22,12 +22,10 @@ namespace MarketBackend.DataLayer.DataManagers
         private IDatabase db;
         protected SimplifiedDbSet<T, U> elements; 
 
-        public ObjectDataManager(Func<IDatabase, DbSet<T>> getDbSet, Func<T, U> getId)
+        public ObjectDataManager(Func<IDatabase, SimplifiedDbSet<T, U>> getSimplifiedDbSet)
         {
             db = Database.GetInstance();
-            elements = GetSimplifiedDbSet(getDbSet, getId); 
-            // elements = db.GetSimplifiedDbSet(getDbSet());
-            // elements = new SimplifiedDatabaseDbSet<T, U>(getDbSet(db));
+            elements = getSimplifiedDbSet(db); 
         }
 
         private SimplifiedDbSet<T, U> GetSimplifiedDbSet(Func<IDatabase, DbSet<T>> getDbSet, Func<T, U> getId)
@@ -55,7 +53,7 @@ namespace MarketBackend.DataLayer.DataManagers
         }
         protected virtual T FindThrows(U id)
         {
-            T? data = elements.FindAsync(id).Result;
+            T? data = elements.FindAsync(id);
             if (data == null)
                 throw new Exception("cannot be found in the database");
             return data;
@@ -98,7 +96,7 @@ namespace MarketBackend.DataLayer.DataManagers
 
         protected virtual T RemoveThrows(T toRemove)
         {
-            T? data = elements.Remove(toRemove).Entity;
+            T? data = elements.Remove(toRemove);
             if (data == null)
                 throw new Exception("cannot be found in the database");
             return data;

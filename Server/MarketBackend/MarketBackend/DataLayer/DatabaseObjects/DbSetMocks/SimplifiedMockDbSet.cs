@@ -21,7 +21,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects.DbSetMocks
 
         public void AddAsync(T toAdd)
         {
-            dictionary.Add(getId(T), T); 
+            dictionary.Add(getId(toAdd), toAdd); 
         }
 
         public T? FindAsync(U id)
@@ -31,10 +31,18 @@ namespace MarketBackend.DataLayer.DatabaseObjects.DbSetMocks
 
         public T? Remove(T toRemove)
         {
-            bool removed = dictionary.Remove(getId(T), toRemove);
+            bool removed = dictionary.Remove(getId(toRemove));
             if (removed)
                 return toRemove;
             return null; 
+        }
+
+        public void RemoveRange(IList<T> toRemove)
+        {
+            foreach (T element in toRemove)
+            {
+                dictionary.Remove(getId(element)); 
+            }
         }
 
         public IList<T> ToList()

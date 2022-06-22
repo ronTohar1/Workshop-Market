@@ -23,7 +23,7 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected CartDataManager() : base(db => db.Carts, dataObject => dataObject.Id)
+        protected CartDataManager() : base(db => db.SimplifiedCarts)
         {
         }
     }

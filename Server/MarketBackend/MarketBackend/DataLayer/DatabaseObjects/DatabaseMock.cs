@@ -28,248 +28,248 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 {
     public class DatabaseMock : IDatabase
     {
-        private DbSetMock<DataMember> mockMembers;
-        public DbSet<DataMember> Members { get => mockMembers; set => mockMembers = GetIfDbSetMock(value); }
-        private DbSetMock<DataStore> mockStores;
-        public DbSet<DataStore> Stores { get => mockStores; set => mockStores = GetIfDbSetMock(value); }
-        private DbSetMock<DataProduct> mockProducts;
-        public DbSet<DataProduct> Products { get => mockProducts; set => mockProducts = GetIfDbSetMock(value); }
-        private DbSetMock<DataBid> mockBids;
-        public DbSet<DataBid> Bids { get => mockBids; set => mockBids = GetIfDbSetMock(value); }
-        private DbSetMock<DataCart> mockCarts;
-        public DbSet<DataCart> Carts { get => mockCarts; set => mockCarts = GetIfDbSetMock(value); }
-        private DbSetMock<DataManagerPermission> mockManagerPermissions;
-        public DbSet<DataManagerPermission> ManagerPermissions { get => mockManagerPermissions; set => mockManagerPermissions = GetIfDbSetMock(value); }
-        private DbSetMock<DataPurchaseOption> mockPurchaseOptions;
-        public DbSet<DataPurchaseOption> PurchaseOptions { get => mockPurchaseOptions; set => mockPurchaseOptions = GetIfDbSetMock(value); }
-        private DbSetMock<DataStoreMemberRoles> mockStoreMemberRoles;
-        public DbSet<DataStoreMemberRoles> StoreMemberRoles { get => mockStoreMemberRoles; set => mockStoreMemberRoles = GetIfDbSetMock(value); }
-        private DbSetMock<DataProductReview> mockProductReview;
-        public DbSet<DataProductReview> ProductReview { get => mockProductReview; set => mockProductReview = GetIfDbSetMock(value); }
-        private DbSetMock<DataAppointmentsNode> mockAppointmentsNodes;
-        public DbSet<DataAppointmentsNode> AppointmentsNodes { get => mockAppointmentsNodes; set => mockAppointmentsNodes = GetIfDbSetMock(value); }
-        private DbSetMock<DataShoppingBag> mockShoppingBags;
-        public DbSet<DataShoppingBag> ShoppingBags { get => mockShoppingBags; set => mockShoppingBags = GetIfDbSetMock(value); }
-        private DbSetMock<DataProductInBag> mockProductInBags;
-        public DbSet<DataProductInBag> ProductInBags { get => mockProductInBags; set => mockProductInBags = GetIfDbSetMock(value); }
-        private DbSetMock<DataNotification> mockNotifications;
-        public DbSet<DataNotification> Notifications { get => mockNotifications; set => mockNotifications = GetIfDbSetMock(value); }
-        private DbSetMock<DataPurchase> mockPurchases;
-        public DbSet<DataPurchase> Purchases { get => mockPurchases; set => mockPurchases = GetIfDbSetMock(value); }
-        private DbSetMock<DataDateDiscount> mockDateDiscounts;
-        public DbSet<DataDateDiscount> DateDiscounts { get => mockDateDiscounts; set => mockDateDiscounts = GetIfDbSetMock(value); }
-        private DbSetMock<DataOneProductDiscount> mockOneProductDiscounts;
-        public DbSet<DataOneProductDiscount> OneProductDiscounts { get => mockOneProductDiscounts; set => mockOneProductDiscounts = GetIfDbSetMock(value); }
-        private DbSetMock<DataStoreDiscount> mockStoreDiscounts;
-        public DbSet<DataStoreDiscount> StoreDiscounts { get => mockStoreDiscounts; set => mockStoreDiscounts = GetIfDbSetMock(value); }
-        private DbSetMock<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression> mockDiscountAndExpressions;
-        public DbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression> DiscountAndExpressions { get => mockDiscountAndExpressions; set => mockDiscountAndExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression> mockDiscountOrExpressions;
-        public DbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression> DiscountOrExpressions { get => mockDiscountOrExpressions; set => mockDiscountOrExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataXorExpression> mockXorExpressions;
-        public DbSet<DataXorExpression> XorExpressions { get => mockXorExpressions; set => mockXorExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataMaxExpression> mockMaxExpressions;
-        public DbSet<DataMaxExpression> MaxExpressions { get => mockMaxExpressions; set => mockMaxExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataBagValuePredicate> mockBagValuePredicates;
-        public DbSet<DataBagValuePredicate> BagValuePredicates { get => mockBagValuePredicates; set => mockBagValuePredicates = GetIfDbSetMock(value); }
-        private DbSetMock<DataProductAmountPredicate> mockProductAmountPredicates;
-        public DbSet<DataProductAmountPredicate> ProductAmountPredicates { get => mockProductAmountPredicates; set => mockProductAmountPredicates = GetIfDbSetMock(value); }
-        private DbSetMock<DataConditionDiscount> mockConditionDiscounts;
-        public DbSet<DataConditionDiscount> ConditionDiscounts { get => mockConditionDiscounts; set => mockConditionDiscounts = GetIfDbSetMock(value); }
-        private DbSetMock<DataIfDiscount> mockIfDiscounts;
-        public DbSet<DataIfDiscount> IfDiscounts { get => mockIfDiscounts; set => mockIfDiscounts = GetIfDbSetMock(value); }
-        private DbSetMock<DataLogicalExpression> mockLogicalExpressions;
-        public DbSet<DataLogicalExpression> LogicalExpressions { get => mockLogicalExpressions; set => mockLogicalExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataConditionDiscount> mockConditionExpressions;
-        public DbSet<DataConditionDiscount> ConditionExpressions { get => mockConditionExpressions; set => mockConditionExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataDiscountExpression> mockDiscountExpressions;
-        public DbSet<DataDiscountExpression> DiscountExpressions { get => mockDiscountExpressions; set => mockDiscountExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataExpression> mockExpressions;
-        public DbSet<DataExpression> Expressions { get => mockExpressions; set => mockExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression> mockDiscountPredicateExpressions;
-        public DbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression> DiscountPredicateExpressions { get => mockDiscountPredicateExpressions; set => mockDiscountPredicateExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataDiscount> mockDiscounts;
-        public DbSet<DataDiscount> Discounts { get => mockDiscounts; set => mockDiscounts = GetIfDbSetMock(value); }
-        private DbSetMock<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression> mockPurchaseAndExpressions;
-        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression> PurchaseAndExpressions { get => mockPurchaseAndExpressions; set => mockPurchaseAndExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataImpliesExpression> mockImpliesExpressions;
-        public DbSet<DataImpliesExpression> ImpliesExpressions { get => mockImpliesExpressions; set => mockImpliesExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression> mockPurchaseOrExpressions;
-        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression> PurchaseOrExpressions { get => mockPurchaseOrExpressions; set => mockPurchaseOrExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataCheckProductLessPredicate> mockCheckProductLessPredicates;
-        public DbSet<DataCheckProductLessPredicate> CheckProductLessPredicates { get => mockCheckProductLessPredicates; set => mockCheckProductLessPredicates = GetIfDbSetMock(value); }
-        private DbSetMock<DataCheckProductMoreEqualsPredicate> mockCheckProductMoreEqualsPredicates;
-        public DbSet<DataCheckProductMoreEqualsPredicate> CheckProductMoreEqualsPredicates { get => mockCheckProductMoreEqualsPredicates; set => mockCheckProductMoreEqualsPredicates = GetIfDbSetMock(value); }
-        private DbSetMock<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression> mockPruchasePredicateExpressions;
-        public DbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression> PruchasePredicateExpressions { get => mockPruchasePredicateExpressions; set => mockPruchasePredicateExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataIPurchasePolicy> mockInterfacesPurchasePolicies;
-        public DbSet<DataIPurchasePolicy> InterfacesPurchasePolicies { get => mockInterfacesPurchasePolicies; set => mockInterfacesPurchasePolicies = GetIfDbSetMock(value); }
-        private DbSetMock<DataRestrictionExpression> mockRestrictionExpressions;
-        public DbSet<DataRestrictionExpression> RestrictionExpressions { get => mockRestrictionExpressions; set => mockRestrictionExpressions = GetIfDbSetMock(value); }
-        private DbSetMock<DataAfterHourProductRestriction> mockDataAfterHourProductRestrictions;
-        public DbSet<DataAfterHourProductRestriction> DataAfterHourProductRestrictions { get => mockDataAfterHourProductRestrictions; set => mockDataAfterHourProductRestrictions = GetIfDbSetMock(value); }
-        private DbSetMock<DataAfterHourRestriction> mockAfterHourRestrictions;
-        public DbSet<DataAfterHourRestriction> AfterHourRestrictions { get => mockAfterHourRestrictions; set => mockAfterHourRestrictions = GetIfDbSetMock(value); }
-        private DbSetMock<DataAtLeastAmountRestriction> mockAtLeastAmountRestrictions;
-        public DbSet<DataAtLeastAmountRestriction> AtLeastAmountRestrictions { get => mockAtLeastAmountRestrictions; set => mockAtLeastAmountRestrictions = GetIfDbSetMock(value); }
-        private DbSetMock<DataAtMostAmountRestriction> mockAtMostAmountRestrictions;
-        public DbSet<DataAtMostAmountRestriction> AtMostAmountRestrictions { get => mockAtMostAmountRestrictions; set => mockAtMostAmountRestrictions = GetIfDbSetMock(value); }
-        private DbSetMock<DataBeforeHourProductRestriction> mockBeforeHourProductRestrictions;
-        public DbSet<DataBeforeHourProductRestriction> BeforeHourProductRestrictions { get => mockBeforeHourProductRestrictions; set => mockBeforeHourProductRestrictions = GetIfDbSetMock(value); }
-        private DbSetMock<DataBeforeHourRestriction> mockBeforeHourRestrictions;
-        public DbSet<DataBeforeHourRestriction> BeforeHourRestrictions { get => mockBeforeHourRestrictions; set => mockBeforeHourRestrictions = GetIfDbSetMock(value); }
-        private DbSetMock<DataDateRestriction> mockDateRestrictions;
-        public DbSet<DataDateRestriction> DateRestrictions { get => mockDateRestrictions; set => mockDateRestrictions = GetIfDbSetMock(value); }
-        private DbSetMock<DataPurchasePolicy> mockPurchasePolicies;
-        public DbSet<DataPurchasePolicy> PurchasePolicies { get => mockPurchasePolicies; set => mockPurchasePolicies = GetIfDbSetMock(value); }
+        private SimplifiedMockDbSet<DataMember, int> mockMembers;
+        public SimplifiedDbSet<DataMember, int> SimplifiedMembers { get => mockMembers; set => mockMembers = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataStore, int> mockStores;
+        public SimplifiedDbSet<DataStore, int> SimplifiedStores { get => mockStores; set => mockStores = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataProduct, int> mockProducts;
+        public SimplifiedDbSet<DataProduct, int> SimplifiedProducts { get => mockProducts; set => mockProducts = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataBid, int> mockBids;
+        public SimplifiedDbSet<DataBid, int> SimplifiedBids { get => mockBids; set => mockBids = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataCart, int> mockCarts;
+        public SimplifiedDbSet<DataCart, int> SimplifiedCarts { get => mockCarts; set => mockCarts = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataManagerPermission, int> mockManagerPermissions;
+        public SimplifiedDbSet<DataManagerPermission, int> SimplifiedManagerPermissions { get => mockManagerPermissions; set => mockManagerPermissions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataPurchaseOption, int> mockPurchaseOptions;
+        public SimplifiedDbSet<DataPurchaseOption, int> SimplifiedPurchaseOptions { get => mockPurchaseOptions; set => mockPurchaseOptions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataStoreMemberRoles, int> mockStoreMemberRoles;
+        public SimplifiedDbSet<DataStoreMemberRoles, int> SimplifiedStoreMemberRoles { get => mockStoreMemberRoles; set => mockStoreMemberRoles = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataProductReview, int> mockProductReview;
+        public SimplifiedDbSet<DataProductReview, int> SimplifiedProductReview { get => mockProductReview; set => mockProductReview = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataAppointmentsNode, int> mockAppointmentsNodes;
+        public SimplifiedDbSet<DataAppointmentsNode, int> SimplifiedAppointmentsNodes { get => mockAppointmentsNodes; set => mockAppointmentsNodes = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataShoppingBag, int> mockShoppingBags;
+        public SimplifiedDbSet<DataShoppingBag, int> SimplifiedShoppingBags { get => mockShoppingBags; set => mockShoppingBags = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataProductInBag, int> mockProductInBags;
+        public SimplifiedDbSet<DataProductInBag, int> SimplifiedProductInBags { get => mockProductInBags; set => mockProductInBags = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataNotification, int> mockNotifications;
+        public SimplifiedDbSet<DataNotification, int> SimplifiedNotifications { get => mockNotifications; set => mockNotifications = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataPurchase, int> mockPurchases;
+        public SimplifiedDbSet<DataPurchase, int> SimplifiedPurchases { get => mockPurchases; set => mockPurchases = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDateDiscount, int> mockDateDiscounts;
+        public SimplifiedDbSet<DataDateDiscount, int> SimplifiedDateDiscounts { get => mockDateDiscounts; set => mockDateDiscounts = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataOneProductDiscount, int> mockOneProductDiscounts;
+        public SimplifiedDbSet<DataOneProductDiscount, int> SimplifiedOneProductDiscounts { get => mockOneProductDiscounts; set => mockOneProductDiscounts = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataStoreDiscount, int> mockStoreDiscounts;
+        public SimplifiedDbSet<DataStoreDiscount, int> SimplifiedStoreDiscounts { get => mockStoreDiscounts; set => mockStoreDiscounts = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression, int> mockDiscountAndExpressions;
+        public SimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression, int> SimplifiedDiscountAndExpressions { get => mockDiscountAndExpressions; set => mockDiscountAndExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression, int> mockDiscountOrExpressions;
+        public SimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression, int> SimplifiedDiscountOrExpressions { get => mockDiscountOrExpressions; set => mockDiscountOrExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataXorExpression, int> mockXorExpressions;
+        public SimplifiedDbSet<DataXorExpression, int> SimplifiedXorExpressions { get => mockXorExpressions; set => mockXorExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataMaxExpression, int> mockMaxExpressions;
+        public SimplifiedDbSet<DataMaxExpression, int> SimplifiedMaxExpressions { get => mockMaxExpressions; set => mockMaxExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataBagValuePredicate, int> mockBagValuePredicates;
+        public SimplifiedDbSet<DataBagValuePredicate, int> SimplifiedBagValuePredicates { get => mockBagValuePredicates; set => mockBagValuePredicates = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataProductAmountPredicate, int> mockProductAmountPredicates;
+        public SimplifiedDbSet<DataProductAmountPredicate, int> SimplifiedProductAmountPredicates { get => mockProductAmountPredicates; set => mockProductAmountPredicates = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataConditionDiscount, int> mockConditionDiscounts;
+        public SimplifiedDbSet<DataConditionDiscount, int> SimplifiedConditionDiscounts { get => mockConditionDiscounts; set => mockConditionDiscounts = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataIfDiscount, int> mockIfDiscounts;
+        public SimplifiedDbSet<DataIfDiscount, int> SimplifiedIfDiscounts { get => mockIfDiscounts; set => mockIfDiscounts = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataLogicalExpression, int> mockLogicalExpressions;
+        public SimplifiedDbSet<DataLogicalExpression, int> SimplifiedLogicalExpressions { get => mockLogicalExpressions; set => mockLogicalExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataConditionDiscount, int> mockConditionExpressions;
+        public SimplifiedDbSet<DataConditionDiscount, int> SimplifiedConditionExpressions { get => mockConditionExpressions; set => mockConditionExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDiscountExpression, int> mockDiscountExpressions;
+        public SimplifiedDbSet<DataDiscountExpression, int> SimplifiedDiscountExpressions { get => mockDiscountExpressions; set => mockDiscountExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataExpression, int> mockExpressions;
+        public SimplifiedDbSet<DataExpression, int> SimplifiedExpressions { get => mockExpressions; set => mockExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression, int> mockDiscountPredicateExpressions;
+        public SimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression, int> SimplifiedDiscountPredicateExpressions { get => mockDiscountPredicateExpressions; set => mockDiscountPredicateExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDiscount, int> mockDiscounts;
+        public SimplifiedDbSet<DataDiscount, int> SimplifiedDiscounts { get => mockDiscounts; set => mockDiscounts = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression, int> mockPurchaseAndExpressions;
+        public SimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression, int> SimplifiedPurchaseAndExpressions { get => mockPurchaseAndExpressions; set => mockPurchaseAndExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataImpliesExpression, int> mockImpliesExpressions;
+        public SimplifiedDbSet<DataImpliesExpression, int> SimplifiedImpliesExpressions { get => mockImpliesExpressions; set => mockImpliesExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression, int> mockPurchaseOrExpressions;
+        public SimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression, int> SimplifiedPurchaseOrExpressions { get => mockPurchaseOrExpressions; set => mockPurchaseOrExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataCheckProductLessPredicate, int> mockCheckProductLessPredicates;
+        public SimplifiedDbSet<DataCheckProductLessPredicate, int> SimplifiedCheckProductLessPredicates { get => mockCheckProductLessPredicates; set => mockCheckProductLessPredicates = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataCheckProductMoreEqualsPredicate, int> mockCheckProductMoreEqualsPredicates;
+        public SimplifiedDbSet<DataCheckProductMoreEqualsPredicate, int> SimplifiedCheckProductMoreEqualsPredicates { get => mockCheckProductMoreEqualsPredicates; set => mockCheckProductMoreEqualsPredicates = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression, int> mockPruchasePredicateExpressions;
+        public SimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression, int> SimplifiedPruchasePredicateExpressions { get => mockPruchasePredicateExpressions; set => mockPruchasePredicateExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataIPurchasePolicy, int> mockInterfacesPurchasePolicies;
+        public SimplifiedDbSet<DataIPurchasePolicy, int> SimplifiedInterfacesPurchasePolicies { get => mockInterfacesPurchasePolicies; set => mockInterfacesPurchasePolicies = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataRestrictionExpression, int> mockRestrictionExpressions;
+        public SimplifiedDbSet<DataRestrictionExpression, int> SimplifiedRestrictionExpressions { get => mockRestrictionExpressions; set => mockRestrictionExpressions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataAfterHourProductRestriction, int> mockDataAfterHourProductRestrictions;
+        public SimplifiedDbSet<DataAfterHourProductRestriction, int> SimplifiedDataAfterHourProductRestrictions { get => mockDataAfterHourProductRestrictions; set => mockDataAfterHourProductRestrictions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataAfterHourRestriction, int> mockAfterHourRestrictions;
+        public SimplifiedDbSet<DataAfterHourRestriction, int> SimplifiedAfterHourRestrictions { get => mockAfterHourRestrictions; set => mockAfterHourRestrictions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataAtLeastAmountRestriction, int> mockAtLeastAmountRestrictions;
+        public SimplifiedDbSet<DataAtLeastAmountRestriction, int> SimplifiedAtLeastAmountRestrictions { get => mockAtLeastAmountRestrictions; set => mockAtLeastAmountRestrictions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataAtMostAmountRestriction, int> mockAtMostAmountRestrictions;
+        public SimplifiedDbSet<DataAtMostAmountRestriction, int> SimplifiedAtMostAmountRestrictions { get => mockAtMostAmountRestrictions; set => mockAtMostAmountRestrictions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataBeforeHourProductRestriction, int> mockBeforeHourProductRestrictions;
+        public SimplifiedDbSet<DataBeforeHourProductRestriction, int> SimplifiedBeforeHourProductRestrictions { get => mockBeforeHourProductRestrictions; set => mockBeforeHourProductRestrictions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataBeforeHourRestriction, int> mockBeforeHourRestrictions;
+        public SimplifiedDbSet<DataBeforeHourRestriction, int> SimplifiedBeforeHourRestrictions { get => mockBeforeHourRestrictions; set => mockBeforeHourRestrictions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataDateRestriction, int> mockDateRestrictions;
+        public SimplifiedDbSet<DataDateRestriction, int> SimplifiedDateRestrictions { get => mockDateRestrictions; set => mockDateRestrictions = GetIfSimplifiedMockDbSet(value); }
+        private SimplifiedMockDbSet<DataPurchasePolicy, int> mockPurchasePolicies;
+        public SimplifiedDbSet<DataPurchasePolicy, int> SimplifiedPurchasePolicies { get => mockPurchasePolicies; set => mockPurchasePolicies = GetIfSimplifiedMockDbSet(value); }
 
         public DatabaseMock()
         {
-            mockMembers = new DbSetMock<DataMember>();
-            mockStores = new DbSetMock<DataStore>();
-            mockProducts = new DbSetMock<DataProduct>();
-            mockBids = new DbSetMock<DataBid>();
-            mockCarts = new DbSetMock<DataCart>(); 
-            mockManagerPermissions = new DbSetMock<DataManagerPermission>();
-            mockPurchaseOptions = new DbSetMock<DataPurchaseOption>();
-            mockStoreMemberRoles = new DbSetMock<DataStoreMemberRoles>();
-            mockProductReview = new DbSetMock<DataProductReview>();
-            mockAppointmentsNodes = new DbSetMock<DataAppointmentsNode>();
-            mockShoppingBags = new DbSetMock<DataShoppingBag>();
-            mockProductInBags = new DbSetMock<DataProductInBag>();
-            mockNotifications = new DbSetMock<DataNotification>();
-            mockPurchases = new DbSetMock<DataPurchase>();
-            mockDateDiscounts = new DbSetMock<DataDateDiscount>();
-            mockOneProductDiscounts = new DbSetMock<DataOneProductDiscount>();
-            mockStoreDiscounts = new DbSetMock<DataStoreDiscount>();
-            mockDiscountAndExpressions = new DbSetMock<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression>();
-            mockDiscountOrExpressions = new DbSetMock<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression>();
-            mockXorExpressions = new DbSetMock<DataXorExpression>();
-            mockMaxExpressions = new DbSetMock<DataMaxExpression>();
-            mockBagValuePredicates = new DbSetMock<DataBagValuePredicate>();
-            mockProductAmountPredicates = new DbSetMock<DataProductAmountPredicate>();
-            mockConditionDiscounts = new DbSetMock<DataConditionDiscount>();
-            mockIfDiscounts = new DbSetMock<DataIfDiscount>();
-            mockLogicalExpressions = new DbSetMock<DataLogicalExpression>();
-            mockConditionExpressions = new DbSetMock<DataConditionDiscount>();
-            mockDiscountExpressions = new DbSetMock<DataDiscountExpression>();
-            mockExpressions = new DbSetMock<DataExpression>();
-            mockDiscountPredicateExpressions = new DbSetMock<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression>(); 
-            mockDiscounts = new DbSetMock<DataDiscount>(); 
-            mockPurchaseAndExpressions = new DbSetMock<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression>(); 
-            mockImpliesExpressions = new DbSetMock<DataImpliesExpression>(); 
-            mockPurchaseOrExpressions = new DbSetMock<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression>();
-            mockCheckProductLessPredicates = new DbSetMock<DataCheckProductLessPredicate>();
-            mockCheckProductMoreEqualsPredicates = new DbSetMock<DataCheckProductMoreEqualsPredicate>();
-            mockPruchasePredicateExpressions = new DbSetMock<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression>();
-            mockInterfacesPurchasePolicies = new DbSetMock<DataIPurchasePolicy>(); 
-            mockRestrictionExpressions = new DbSetMock<DataRestrictionExpression>();
-            mockDataAfterHourProductRestrictions = new DbSetMock<DataAfterHourProductRestriction>();
-            mockAfterHourRestrictions = new DbSetMock<DataAfterHourRestriction>();
-            mockAtLeastAmountRestrictions = new DbSetMock<DataAtLeastAmountRestriction>();
-            mockAtMostAmountRestrictions = new DbSetMock<DataAtMostAmountRestriction>();
-            mockBeforeHourProductRestrictions = new DbSetMock<DataBeforeHourProductRestriction>();
-            mockBeforeHourRestrictions = new DbSetMock<DataBeforeHourRestriction>();
-            mockDateRestrictions = new DbSetMock<DataDateRestriction>();
-            mockPurchasePolicies = new DbSetMock<DataPurchasePolicy>();
+            mockMembers = new SimplifiedMockDbSet<DataMember, int>(dataObject => dataObject.Id);
+            mockStores = new SimplifiedMockDbSet<DataStore, int>(dataObject => dataObject.Id);
+            mockProducts = new SimplifiedMockDbSet<DataProduct, int>(dataObject => dataObject.Id);
+            mockBids = new SimplifiedMockDbSet<DataBid, int>(dataObject => dataObject.Id);
+            mockCarts = new SimplifiedMockDbSet<DataCart, int>(dataObject => dataObject.Id); 
+            mockManagerPermissions = new SimplifiedMockDbSet<DataManagerPermission, int>(dataObject => dataObject.Id);
+            mockPurchaseOptions = new SimplifiedMockDbSet<DataPurchaseOption, int>(dataObject => dataObject.Id);
+            mockStoreMemberRoles = new SimplifiedMockDbSet<DataStoreMemberRoles, int>(dataObject => dataObject.Id);
+            mockProductReview = new SimplifiedMockDbSet<DataProductReview, int>(dataObject => dataObject.Id);
+            mockAppointmentsNodes = new SimplifiedMockDbSet<DataAppointmentsNode, int>(dataObject => dataObject.Id);
+            mockShoppingBags = new SimplifiedMockDbSet<DataShoppingBag, int>(dataObject => dataObject.Id);
+            mockProductInBags = new SimplifiedMockDbSet<DataProductInBag, int>(dataObject => dataObject.Id);
+            mockNotifications = new SimplifiedMockDbSet<DataNotification, int>(dataObject => dataObject.Id);
+            mockPurchases = new SimplifiedMockDbSet<DataPurchase, int>(dataObject => dataObject.Id);
+            mockDateDiscounts = new SimplifiedMockDbSet<DataDateDiscount, int>(dataObject => dataObject.Id);
+            mockOneProductDiscounts = new SimplifiedMockDbSet<DataOneProductDiscount, int>(dataObject => dataObject.Id);
+            mockStoreDiscounts = new SimplifiedMockDbSet<DataStoreDiscount, int>(dataObject => dataObject.Id);
+            mockDiscountAndExpressions = new SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression, int>(dataObject => dataObject.Id);
+            mockDiscountOrExpressions = new SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression, int>(dataObject => dataObject.Id);
+            mockXorExpressions = new SimplifiedMockDbSet<DataXorExpression, int>(dataObject => dataObject.Id);
+            mockMaxExpressions = new SimplifiedMockDbSet<DataMaxExpression, int>(dataObject => dataObject.Id);
+            mockBagValuePredicates = new SimplifiedMockDbSet<DataBagValuePredicate, int>(dataObject => dataObject.Id);
+            mockProductAmountPredicates = new SimplifiedMockDbSet<DataProductAmountPredicate, int>(dataObject => dataObject.Id);
+            mockConditionDiscounts = new SimplifiedMockDbSet<DataConditionDiscount, int>(dataObject => dataObject.Id);
+            mockIfDiscounts = new SimplifiedMockDbSet<DataIfDiscount, int>(dataObject => dataObject.Id);
+            mockLogicalExpressions = new SimplifiedMockDbSet<DataLogicalExpression, int>(dataObject => dataObject.Id);
+            mockConditionExpressions = new SimplifiedMockDbSet<DataConditionDiscount, int>(dataObject => dataObject.Id);
+            mockDiscountExpressions = new SimplifiedMockDbSet<DataDiscountExpression, int>(dataObject => dataObject.Id);
+            mockExpressions = new SimplifiedMockDbSet<DataExpression, int>(dataObject => dataObject.Id);
+            mockDiscountPredicateExpressions = new SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression, int>(dataObject => dataObject.Id); 
+            mockDiscounts = new SimplifiedMockDbSet<DataDiscount, int>(dataObject => dataObject.Id); 
+            mockPurchaseAndExpressions = new SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression, int>(dataObject => dataObject.Id); 
+            mockImpliesExpressions = new SimplifiedMockDbSet<DataImpliesExpression, int>(dataObject => dataObject.Id); 
+            mockPurchaseOrExpressions = new SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression, int>(dataObject => dataObject.Id);
+            mockCheckProductLessPredicates = new SimplifiedMockDbSet<DataCheckProductLessPredicate, int>(dataObject => dataObject.Id);
+            mockCheckProductMoreEqualsPredicates = new SimplifiedMockDbSet<DataCheckProductMoreEqualsPredicate, int>(dataObject => dataObject.Id);
+            mockPruchasePredicateExpressions = new SimplifiedMockDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression, int>(dataObject => dataObject.Id);
+            mockInterfacesPurchasePolicies = new SimplifiedMockDbSet<DataIPurchasePolicy, int>(dataObject => dataObject.Id); 
+            mockRestrictionExpressions = new SimplifiedMockDbSet<DataRestrictionExpression, int>(dataObject => dataObject.Id);
+            mockDataAfterHourProductRestrictions = new SimplifiedMockDbSet<DataAfterHourProductRestriction, int>(dataObject => dataObject.Id);
+            mockAfterHourRestrictions = new SimplifiedMockDbSet<DataAfterHourRestriction, int>(dataObject => dataObject.Id);
+            mockAtLeastAmountRestrictions = new SimplifiedMockDbSet<DataAtLeastAmountRestriction, int>(dataObject => dataObject.Id);
+            mockAtMostAmountRestrictions = new SimplifiedMockDbSet<DataAtMostAmountRestriction, int>(dataObject => dataObject.Id);
+            mockBeforeHourProductRestrictions = new SimplifiedMockDbSet<DataBeforeHourProductRestriction, int>(dataObject => dataObject.Id);
+            mockBeforeHourRestrictions = new SimplifiedMockDbSet<DataBeforeHourRestriction, int>(dataObject => dataObject.Id);
+            mockDateRestrictions = new SimplifiedMockDbSet<DataDateRestriction, int>(dataObject => dataObject.Id);
+            mockPurchasePolicies = new SimplifiedMockDbSet<DataPurchasePolicy, int>(dataObject => dataObject.Id);
         }
 
         public void Remove(Object toRemove)
         {
             if (toRemove.GetType() == typeof(DataMember))
-                Members.Remove((DataMember)toRemove);
+                SimplifiedMembers.Remove((DataMember)toRemove);
             else if (toRemove.GetType() == typeof(DataStore))
-                Stores.Remove((DataStore)toRemove);
+                SimplifiedStores.Remove((DataStore)toRemove);
             else if (toRemove.GetType() == typeof(DataProduct))
-                Products.Remove((DataProduct)toRemove);
+                SimplifiedProducts.Remove((DataProduct)toRemove);
             else if (toRemove.GetType() == typeof(DataBid))
-                Bids.Remove((DataBid)toRemove);
+                SimplifiedBids.Remove((DataBid)toRemove);
             else if (toRemove.GetType() == typeof(DataCart))
-                Carts.Remove((DataCart)toRemove);
+                SimplifiedCarts.Remove((DataCart)toRemove);
             else if (toRemove.GetType() == typeof(DataManagerPermission))
-                ManagerPermissions.Remove((DataManagerPermission)toRemove);
+                SimplifiedManagerPermissions.Remove((DataManagerPermission)toRemove);
             else if (toRemove.GetType() == typeof(DataPurchaseOption))
-                PurchaseOptions.Remove((DataPurchaseOption)toRemove);
+                SimplifiedPurchaseOptions.Remove((DataPurchaseOption)toRemove);
             else if (toRemove.GetType() == typeof(DataStoreMemberRoles))
-                StoreMemberRoles.Remove((DataStoreMemberRoles)toRemove);
+                SimplifiedStoreMemberRoles.Remove((DataStoreMemberRoles)toRemove);
             else if (toRemove.GetType() == typeof(DataProductReview))
-                ProductReview.Remove((DataProductReview)toRemove);
+                SimplifiedProductReview.Remove((DataProductReview)toRemove);
             else if (toRemove.GetType() == typeof(DataAppointmentsNode))
-                AppointmentsNodes.Remove((DataAppointmentsNode)toRemove);
+                SimplifiedAppointmentsNodes.Remove((DataAppointmentsNode)toRemove);
             else if (toRemove.GetType() == typeof(DataShoppingBag))
-                ShoppingBags.Remove((DataShoppingBag)toRemove);
+                SimplifiedShoppingBags.Remove((DataShoppingBag)toRemove);
             else if (toRemove.GetType() == typeof(DataProductInBag))
-                ProductInBags.Remove((DataProductInBag)toRemove);
+                SimplifiedProductInBags.Remove((DataProductInBag)toRemove);
             else if (toRemove.GetType() == typeof(DataNotification))
-                Notifications.Remove((DataNotification)toRemove);
+                SimplifiedNotifications.Remove((DataNotification)toRemove);
             else if (toRemove.GetType() == typeof(DataPurchase))
-                Purchases.Remove((DataPurchase)toRemove);
+                SimplifiedPurchases.Remove((DataPurchase)toRemove);
             else if (toRemove.GetType() == typeof(DataDateDiscount))
-                DateDiscounts.Remove((DataDateDiscount)toRemove);
+                SimplifiedDateDiscounts.Remove((DataDateDiscount)toRemove);
             else if (toRemove.GetType() == typeof(DataOneProductDiscount))
-                OneProductDiscounts.Remove((DataOneProductDiscount)toRemove);
+                SimplifiedOneProductDiscounts.Remove((DataOneProductDiscount)toRemove);
             else if (toRemove.GetType() == typeof(DataStoreDiscount))
-                StoreDiscounts.Remove((DataStoreDiscount)toRemove);
+                SimplifiedStoreDiscounts.Remove((DataStoreDiscount)toRemove);
             else if (toRemove.GetType() == typeof(DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression))
-                DiscountAndExpressions.Remove((DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression)toRemove);
+                SimplifiedDiscountAndExpressions.Remove((DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression))
-                DiscountOrExpressions.Remove((DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression)toRemove);
+                SimplifiedDiscountOrExpressions.Remove((DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataXorExpression))
-                XorExpressions.Remove((DataXorExpression)toRemove);
+                SimplifiedXorExpressions.Remove((DataXorExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataMaxExpression))
-                MaxExpressions.Remove((DataMaxExpression)toRemove);
+                SimplifiedMaxExpressions.Remove((DataMaxExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataBagValuePredicate))
-                BagValuePredicates.Remove((DataBagValuePredicate)toRemove);
+                SimplifiedBagValuePredicates.Remove((DataBagValuePredicate)toRemove);
             else if (toRemove.GetType() == typeof(DataProductAmountPredicate))
-                ProductAmountPredicates.Remove((DataProductAmountPredicate)toRemove);
+                SimplifiedProductAmountPredicates.Remove((DataProductAmountPredicate)toRemove);
             else if (toRemove.GetType() == typeof(DataConditionDiscount))
-                ConditionDiscounts.Remove((DataConditionDiscount)toRemove);
+                SimplifiedConditionDiscounts.Remove((DataConditionDiscount)toRemove);
             else if (toRemove.GetType() == typeof(DataIfDiscount))
-                IfDiscounts.Remove((DataIfDiscount)toRemove);
+                SimplifiedIfDiscounts.Remove((DataIfDiscount)toRemove);
             else if (toRemove.GetType() == typeof(DataLogicalExpression))
-                LogicalExpressions.Remove((DataLogicalExpression)toRemove);
+                SimplifiedLogicalExpressions.Remove((DataLogicalExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataConditionDiscount))
-                ConditionDiscounts.Remove((DataConditionDiscount)toRemove);
+                SimplifiedConditionDiscounts.Remove((DataConditionDiscount)toRemove);
             else if (toRemove.GetType() == typeof(DataDiscountExpression))
-                DiscountExpressions.Remove((DataDiscountExpression)toRemove);
+                SimplifiedDiscountExpressions.Remove((DataDiscountExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataExpression))
-                Expressions.Remove((DataExpression)toRemove);
+                SimplifiedExpressions.Remove((DataExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression))
-                DiscountPredicateExpressions.Remove((DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression)toRemove);
+                SimplifiedDiscountPredicateExpressions.Remove((DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataDiscount))
-                Discounts.Remove((DataDiscount)toRemove);
+                SimplifiedDiscounts.Remove((DataDiscount)toRemove);
             else if (toRemove.GetType() == typeof(DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression))
-                PurchaseAndExpressions.Remove((DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression)toRemove);
+                SimplifiedPurchaseAndExpressions.Remove((DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataImpliesExpression))
-                ImpliesExpressions.Remove((DataImpliesExpression)toRemove);
+                SimplifiedImpliesExpressions.Remove((DataImpliesExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression))
-                PurchaseOrExpressions.Remove((DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression)toRemove);
+                SimplifiedPurchaseOrExpressions.Remove((DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataCheckProductLessPredicate))
-                CheckProductLessPredicates.Remove((DataCheckProductLessPredicate)toRemove);
+                SimplifiedCheckProductLessPredicates.Remove((DataCheckProductLessPredicate)toRemove);
             else if (toRemove.GetType() == typeof(DataCheckProductMoreEqualsPredicate))
-                CheckProductMoreEqualsPredicates.Remove((DataCheckProductMoreEqualsPredicate)toRemove);
+                SimplifiedCheckProductMoreEqualsPredicates.Remove((DataCheckProductMoreEqualsPredicate)toRemove);
             else if (toRemove.GetType() == typeof(DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression))
-                PruchasePredicateExpressions.Remove((DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression)toRemove);
+                SimplifiedPruchasePredicateExpressions.Remove((DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataIPurchasePolicy))
-                InterfacesPurchasePolicies.Remove((DataIPurchasePolicy)toRemove);
+                SimplifiedInterfacesPurchasePolicies.Remove((DataIPurchasePolicy)toRemove);
             else if (toRemove.GetType() == typeof(DataRestrictionExpression))
-                RestrictionExpressions.Remove((DataRestrictionExpression)toRemove);
+                SimplifiedRestrictionExpressions.Remove((DataRestrictionExpression)toRemove);
             else if (toRemove.GetType() == typeof(DataAfterHourProductRestriction))
-                DataAfterHourProductRestrictions.Remove((DataAfterHourProductRestriction)toRemove);
+                SimplifiedDataAfterHourProductRestrictions.Remove((DataAfterHourProductRestriction)toRemove);
             else if (toRemove.GetType() == typeof(DataAfterHourRestriction))
-                AfterHourRestrictions.Remove((DataAfterHourRestriction)toRemove);
+                SimplifiedAfterHourRestrictions.Remove((DataAfterHourRestriction)toRemove);
             else if (toRemove.GetType() == typeof(DataAtLeastAmountRestriction))
-                AtLeastAmountRestrictions.Remove((DataAtLeastAmountRestriction)toRemove);
+                SimplifiedAtLeastAmountRestrictions.Remove((DataAtLeastAmountRestriction)toRemove);
             else if (toRemove.GetType() == typeof(DataAtMostAmountRestriction))
-                AtMostAmountRestrictions.Remove((DataAtMostAmountRestriction)toRemove);
+                SimplifiedAtMostAmountRestrictions.Remove((DataAtMostAmountRestriction)toRemove);
             else if (toRemove.GetType() == typeof(DataBeforeHourProductRestriction))
-                BeforeHourProductRestrictions.Remove((DataBeforeHourProductRestriction)toRemove);
+                SimplifiedBeforeHourProductRestrictions.Remove((DataBeforeHourProductRestriction)toRemove);
             else if (toRemove.GetType() == typeof(DataBeforeHourRestriction))
-                BeforeHourRestrictions.Remove((DataBeforeHourRestriction)toRemove);
+                SimplifiedBeforeHourRestrictions.Remove((DataBeforeHourRestriction)toRemove);
             else if (toRemove.GetType() == typeof(DataDateRestriction))
-                DateRestrictions.Remove((DataDateRestriction)toRemove);
+                SimplifiedDateRestrictions.Remove((DataDateRestriction)toRemove);
             else if (toRemove.GetType() == typeof(DataPurchasePolicy))
-                PurchasePolicies.Remove((DataPurchasePolicy)toRemove);
+                SimplifiedPurchasePolicies.Remove((DataPurchasePolicy)toRemove);
             else
                 throw new Exception("The given object's type is not in the database"); 
         }
@@ -280,11 +280,11 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             return 0; 
         }
 
-        private static DbSetMock<T> GetIfDbSetMock<T>(DbSet<T> elements) where T : class
+        private static SimplifiedMockDbSet<T, U> GetIfSimplifiedMockDbSet<T, U>(SimplifiedDbSet<T, U> elements) where T : class
         {
-            if (!(elements is DbSetMock<T>))
-                throw new Exception("type should be DbSetMock"); 
-            return (DbSetMock<T>)elements;
+            if (!(elements is SimplifiedMockDbSet<T, U>))
+                throw new Exception("type should be SimplifiedMockDbSet"); 
+            return (SimplifiedMockDbSet<T, U>)elements;
         }
     }
 }

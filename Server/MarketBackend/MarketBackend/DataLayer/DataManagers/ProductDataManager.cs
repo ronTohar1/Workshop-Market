@@ -23,13 +23,13 @@ namespace MarketBackend.DataLayer.DataManagementObjects
         }
 
         // protected for testing
-        protected ProductDataManager() : base(db => db.Products, dataObject => dataObject.Id)
+        protected ProductDataManager() : base(db => db.SimplifiedProducts)
         {
         }
 
         public virtual int GetNextId()
         {
-            return this.MaxOrDefualt(db.Products, dataObject => dataObject.Id, 0) + 1;
+            return this.MaxOrDefualt(elements.ToList(), dataObject => dataObject.Id, 0) + 1;
         }
     }
 }

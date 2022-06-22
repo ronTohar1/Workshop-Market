@@ -26,13 +26,13 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected PurchasePolicyDataManager() : base(db => db.PurchasePolicies, dataObject => dataObject.Id)
+        protected PurchasePolicyDataManager() : base(db => db.SimplifiedPurchasePolicies)
         {
         }
 
         public virtual int GetNextId()
         {
-            return this.MaxOrDefualt(db.PurchasePolicies, dataObject => dataObject.Id, 0) + 1;
+            return this.MaxOrDefualt(elements.ToList(), dataObject => dataObject.Id, 0) + 1;
         }
     }
 }

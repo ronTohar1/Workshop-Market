@@ -29,6 +29,11 @@ namespace MarketBackend.DataLayer.DatabaseObjects.DbSetMocks
             return dbSet.Remove(toRemove).Entity; 
         }
 
+        public void RemoveRange(IList<T> toRemove)
+        {
+            dbSet.RemoveRange(toRemove); 
+        }
+
         public IList<T> ToList()
         {
             return dbSet.ToList(); 

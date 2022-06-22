@@ -26,13 +26,13 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected HierarchyDataManager() : base(db => db.AppointmentsNodes, dataObject => dataObject.Id)
+        protected HierarchyDataManager() : base(db => db.SimplifiedAppointmentsNodes)
         {
         }
 
         public virtual int GetNextId()
         {
-            return this.MaxOrDefualt(db.Bids, dataObject => dataObject.Id, 0) + 1;
+            return this.MaxOrDefualt(elements.ToList(), dataObject => dataObject.Id, 0) + 1;
         }
     }
 }

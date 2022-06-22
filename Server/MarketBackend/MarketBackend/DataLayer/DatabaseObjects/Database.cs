@@ -44,9 +44,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         {
             bool using_database = false;
             if (using_database)
-                return new Database(); 
+                return new Database();
             else
-                return new DatabaseMock()
+                return new DatabaseMock(); 
         }
 
         // needs to be private (or protected for testing), sometimes is public for adding migrations to the database 

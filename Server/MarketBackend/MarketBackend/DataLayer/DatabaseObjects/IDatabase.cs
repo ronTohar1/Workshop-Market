@@ -37,7 +37,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         private static IDatabase GetDatabaseInstance()
         {
-            bool using_database = false;
+            var dbConfigs = MarketBackend.SystemSettings.AppConfigs.GetInstance();
+            bool using_database = dbConfigs.ShouldUpdateDatabase;
             if (using_database)
                 return Database.GetInstance(); 
             else

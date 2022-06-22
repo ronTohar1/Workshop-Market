@@ -327,8 +327,8 @@ namespace TestMarketBackend.Acceptance
 
         protected void ReopenMarket()
         {
-            var dbConfigs = new MarketBackend.AppConfig();
-            bool using_database = dbConfigs.updateDatabase;
+            var dbConfigs = MarketBackend.SystemSettings.AppConfigs.GetInstance(); 
+            bool using_database = dbConfigs.ShouldUpdateDatabase;
             // todo: do this only if using the database (according to the configuration) 
 
             if (using_database)

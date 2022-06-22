@@ -13,7 +13,7 @@
             StoreIdRef = storeIdRef;
         }
 
-        internal override void Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
+        internal override bool Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
         {
             int userId = (int)varsEnvironment[UserIdRef];
             int targetUserId = (int)varsEnvironment[TargetUserIdRef];
@@ -26,7 +26,9 @@
             {
                 varsEnvironment[Ret] = res.Value;
                 Console.WriteLine("Success");
+                return true;
             }
+            return false;
         }
 
         internal override string ArgsToString()

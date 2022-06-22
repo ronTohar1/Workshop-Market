@@ -13,8 +13,6 @@ namespace MarketBackend.SystemSettings
 {
     public class AppConfigs
     {
-        //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-        //Path.GetFullPath(@"..\..\..\") + "SystemSettings\\appconfig.json"
         private static readonly string PATH = Path.Combine(Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.IndexOf("MarketBackend") + "MarketBackend".Length), "appconfig.json");
 
         #region Singleton
@@ -25,7 +23,7 @@ namespace MarketBackend.SystemSettings
                 instance = new AppConfigs();
             return instance;
         }
-        private AppConfigs() 
+        private AppConfigs()
         {
             Console.WriteLine("path = " + PATH);
             string jsonText = File.ReadAllText(PATH);
@@ -36,7 +34,7 @@ namespace MarketBackend.SystemSettings
 
         #region Parsing
         private static dynamic JsonConfigObject { get; set; }
-        
+
         private static T Parse<T>(string name)
         {
             var val = (T)JsonConfigObject[name];
@@ -47,16 +45,16 @@ namespace MarketBackend.SystemSettings
 
         private void ParseConfigs()
         {
-            DatabaseName         = Parse<string>("DatabaseName");
+            DatabaseName = Parse<string>("DatabaseName");
             DatabaseInstanceName = Parse<string>("DatabaseInstanceName");
-            DatabaseIp           = Parse<string>("DatabaseIp");
-            DatabasePort         = Parse<string>("DatabasePort");
-            DatabaseUsername     = Parse<string>("DatabaseUsername");
-            DatabasePassword     = Parse<string>("DatabasePassword");
-            ShouldRunInitFile    = Parse<bool>("ShouldRunInitFile");
+            DatabaseIp = Parse<string>("DatabaseIp");
+            DatabasePort = Parse<string>("DatabasePort");
+            DatabaseUsername = Parse<string>("DatabaseUsername");
+            DatabasePassword = Parse<string>("DatabasePassword");
+            ShouldRunInitFile = Parse<bool>("ShouldRunInitFile");
             ShouldUpdateDatabase = Parse<bool>("ShouldUpdateDatabase");
-            InitFilePath         = Parse<string>("InitFilePath");
-            WebsocketServerPort  = Parse<int>("WebsocketServerPort");
+            InitFilePath = Parse<string>("InitFilePath");
+            WebsocketServerPort = Parse<int>("WebsocketServerPort");
         }
         #endregion
 

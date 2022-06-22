@@ -10,6 +10,13 @@ namespace MarketBackend.ServiceLayer
         public string AdminUsername { get { return Scenario.AdminUsername; } }
         public string AdminPassword { get { return Scenario.AdminPassword; } }
 
+        public SystemLoader(ScenarioDTO scenario, SystemOperator systemOperator)
+        {
+            Scenario = scenario;
+            SystemOperator = systemOperator;
+            VarsEnvironment = new Dictionary<string, object>();
+        }
+
         public SystemLoader(string initFilePath, SystemOperator systemOperator)
         {
             MakePresets();
@@ -18,10 +25,13 @@ namespace MarketBackend.ServiceLayer
             SystemOperator = systemOperator;
         }
 
-        internal void LoadSystem()
+        internal void LoadSystem(bool assertSuccess = false)
         {
             foreach (var usecase in Scenario.UseCases)
-                usecase.Apply(SystemOperator, VarsEnvironment);
+            {
+                if (!usecase.Apply(SystemOperator, VarsEnvironment) && assertSuccess)
+                    throw new Exception("Unable to perform: " + usecase);
+            }
         }
 
 
@@ -95,16 +105,20 @@ namespace MarketBackend.ServiceLayer
 
         private void MakePresets()
         {
-            var scenarios = new KeyValuePair<string, ScenarioDTO>[] 
-            { 
-                new KeyValuePair<string, ScenarioDTO>("init", InitScenario()), 
-                new KeyValuePair<string, ScenarioDTO>("scenario1", Scenario1()), 
-                new KeyValuePair<string, ScenarioDTO>("scenario2", Scenario2()), 
-            };
-            foreach (var scenario in scenarios)
+            var scenarios = new KeyValuePair<string, ScenarioDTO>[]
             {
-                ScenarioParser.SaveAsFile(scenario.Key + ".json", scenario.Value);
-            }
+                new KeyValuePair<string, ScenarioDTO>("init", InitScenario()),
+                new KeyValuePair<string, ScenarioDTO>("scenario1", Scenario1()),
+                new KeyValuePair<string, ScenarioDTO>("scenario2", Scenario2()),
+            };
+
+            //Create dir "Scenarios" if not exist
+            string BASE_SCENARIOS_DIR = "Scenarios";
+            if (!Directory.Exists(BASE_SCENARIOS_DIR))
+                Directory.CreateDirectory(BASE_SCENARIOS_DIR);
+
+            foreach (var scenario in scenarios)
+                ScenarioParser.SaveAsFile(Path.Combine(BASE_SCENARIOS_DIR, scenario.Key + ".json"), scenario.Value, false);
         }
 
         #endregion

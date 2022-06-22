@@ -13,20 +13,23 @@
         {
             UserIdRef = userIdRef;
             StoreIdRef = storeIdRef;
-            ProductName = productName;  
+            ProductName = productName;
             ProductCategory = productCategory;
             Price = price;
             Quantity = quantity;
         }
 
-        internal override void Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
+        internal override bool Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
         {
             int userId = (int)varsEnvironment[UserIdRef];
             int storeId = (int)varsEnvironment[StoreIdRef];
             PrintUseCaseStarting();
             var res1 = systemOperator.GetStoreManagementFacade().Value.AddNewProduct(userId, storeId, ProductName, Price, ProductCategory);
             if (res1.IsErrorOccured())
+            {
                 Console.WriteLine("Unable to perform: " + this + "\nError message: " + res1.ErrorMessage);
+                return false;
+            }
             else
             {
                 varsEnvironment[Ret] = res1.Value;
@@ -34,7 +37,11 @@
             }
             var res2 = systemOperator.GetStoreManagementFacade().Value.AddProductToInventory(userId, storeId, (int)varsEnvironment[Ret], Quantity);
             if (res2.IsErrorOccured())
+            {
                 Console.WriteLine("Unable to add quantity to inventory after adding new product." + "\nError message: " + res2.ErrorMessage);
+                return false;
+            }
+            return true;
         }
 
         internal override string ArgsToString()

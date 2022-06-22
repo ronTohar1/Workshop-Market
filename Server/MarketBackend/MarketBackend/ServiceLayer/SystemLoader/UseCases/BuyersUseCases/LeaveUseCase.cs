@@ -1,26 +1,27 @@
 ﻿namespace MarketBackend.ServiceLayer
 {
-    internal class LogoutUseCase : UseCase
+    internal class LeaveUseCase : UseCase
     {
         public string UserIdRef { get; set; }
-
-        public LogoutUseCase(string userIdRef, string ret = "_") : base("Logout", ret)
+        public LeaveUseCase(string userIdRef, string ret = "_") : base("Leave", ret)
         {
             UserIdRef = userIdRef;
         }
 
-        internal override void Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
+        internal override bool Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
         {
             int userId = (int)varsEnvironment[UserIdRef];
             PrintUseCaseStarting();
-            var res = systemOperator.GetBuyerFacade().Value.Logout(userId);
+            var res = systemOperator.GetBuyerFacade().Value.Leave(userId);
             if (res.IsErrorOccured())
                 Console.WriteLine("Unable to perform: " + this + "\nError message: " + res.ErrorMessage);
             else
             {
                 varsEnvironment[Ret] = res.Value;
                 Console.WriteLine("Success");
+                return true;
             }
+            return false;
         }
 
         internal override string ArgsToString()

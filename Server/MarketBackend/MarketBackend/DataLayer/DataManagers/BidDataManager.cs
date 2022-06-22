@@ -1,4 +1,5 @@
 ﻿using MarketBackend.DataLayer.DatabaseObjects;
+using MarketBackend.DataLayer.DatabaseObjects.DbSetMocks;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 
 
@@ -23,39 +24,14 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected BidDataManager()
+        protected BidDataManager() : base(db => db.SimplifiedBids)
         {
-        }
-
-        protected override void AddThrows(DataBid toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataBid FindThrows(int id)
-        {
-            DataBid? data = db.FindAsync<DataBid>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataBid> FindAll()
-        {
-            return db.Bids.ToList();
-        }
-
-        protected override DataBid RemoveThrows(DataBid toRemove)
-        {
-            DataBid? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            
         }
 
         public virtual int GetNextId()
         {
-            return this.MaxOrDefualt(db.Members, member => member.Id, 0) + 1;
+            return this.MaxOrDefualt(elements.ToList(), member => member.Id, 0) + 1;
         }
     }
 }

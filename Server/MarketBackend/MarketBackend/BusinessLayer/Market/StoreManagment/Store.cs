@@ -657,7 +657,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                             Store = dataStore,
                             MemberId = newCoOwnerMemberId
                         };
-                        dataStore.MembersPermissions.Add(dataRole);
+                        storeDataManager.Update(id, dataStore => { dataStore.MembersPermissions.Add(dataRole); });
                         storeDataManager.Save();
                     });
                     // todo: add tests checking this field has been changed (and for what happens when newCoOwnerId is of a manager)
@@ -695,22 +695,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 IList<int> memberIdsToRemove = appointmentsHierarchy.GetHierarchyValueList(toRemoveCoOwnerMemberId);
                 Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId, () =>
                 {
-                    DataStore dataStore = storeDataManager.Find(id);
-
-                    // remove roles in database
-                    // 
-                    foreach (int memberToRemoveId in memberIdsToRemove)
+                    storeDataManager.Update(id, dataStore =>
                     {
-                        IList<DataStoreMemberRoles> rolesToRemove = dataStore.MembersPermissions.Where(dataRole => dataRole.MemberId == memberToRemoveId).ToList();
-                        foreach (DataStoreMemberRoles roleToRemove in rolesToRemove)
+                        // remove roles in database
+                        // 
+                        foreach (int memberToRemoveId in memberIdsToRemove)
                         {
-                            StoreMemberRolesDataManager.GetInstance().Remove(roleToRemove.Id);
+                            IList<DataStoreMemberRoles> rolesToRemove = dataStore.MembersPermissions.Where(dataRole => dataRole.MemberId == memberToRemoveId).ToList();
+                            foreach (DataStoreMemberRoles roleToRemove in rolesToRemove)
+                            {
+                                StoreMemberRolesDataManager.GetInstance().Remove(roleToRemove.Id);
+                            }
+
+                            // notification in database 
+
+                            membersGetter(memberToRemoveId).DataNotify(notification);
                         }
-
-                        // notification in database 
-
-                        membersGetter(memberToRemoveId).DataNotify(notification);
-                    }
+                    });
 
                     storeDataManager.Save(); 
 
@@ -774,7 +775,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                         Store = dataStore,
                         MemberId = newCoManagerMemberId
                     };
-                    dataStore.MembersPermissions.Add(dataRole);
+                    storeDataManager.Update(id, dataStore => dataStore.MembersPermissions.Add(dataRole));
                     storeDataManager.Save();
                 });
 
@@ -971,7 +972,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (permissionError != null)
                 throw new MarketException("Could not add discount policy: \n" + permissionError);
 
-            int id = discountManager.AddDiscount(descrption, exp, storeDataManager.Find(this.id).DiscountManager);
+            int id = discountManager.AddDiscount(descrption, exp, (updateDataDiscountManager) => storeDataManager.Update(this.id, dataStore => updateDataDiscountManager(dataStore.DiscountManager)));
             return id;
         }
 
@@ -994,7 +995,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (permissionError != null)
                 throw new MarketException("Could not add purchase policy: \n" + permissionError);
 
-            int id = purchaseManager.AddPurchasePolicy(descrption, exp, storeDataManager.Find(this.id).PurchaseManager);
+            int id = purchaseManager.AddPurchasePolicy(descrption, exp, (updateDataPruchaseManager) => storeDataManager.Update(this.id, dataStore => updateDataPruchaseManager(dataStore.PurchaseManager)));
             return id;
         }
 

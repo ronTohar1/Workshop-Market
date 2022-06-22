@@ -127,15 +127,16 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             {
                 foreach (string notification in notifications)
                 {
-                    DataMember dm = MemberDataManager.GetInstance().Find(Id);
-                    if (dm != null)
+                    MemberDataManager.GetInstance().Update(Id, dm =>
                     {
                         dm.PendingNotifications.Add(new DataNotification()
                         {
                             Notification = notification
                         });
-                        MemberDataManager.GetInstance().Save();
-                    }
+                    });
+
+                    MemberDataManager.GetInstance().Save();
+
                     pendingNotifications.Add(notification);
                 }
             }
@@ -158,13 +159,15 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         public virtual void DataNotify(string[] notifications)
         {
             MemberDataManager memberDataManager = MemberDataManager.GetInstance();
-            DataMember dataMember = memberDataManager.Find(Id); 
             if (!LoggedIn)
             {
-                foreach (string notification in notifications)
+                memberDataManager.Update(Id, dataMember => 
                 {
-                    dataMember.PendingNotifications.Add(new DataNotification() { Notification = notification });
-                }
+                    foreach (string notification in notifications)
+                    {
+                        dataMember.PendingNotifications.Add(new DataNotification() { Notification = notification });
+                    }
+                }); 
             }
         }
 
@@ -184,12 +187,11 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
             {
-                DataMember dm = MemberDataManager.GetInstance().Find(Id);
-                if (dm != null)
+                MemberDataManager.GetInstance().Update(Id, dm =>
                 {
                     dm.PendingNotifications.Clear();
-                    MemberDataManager.GetInstance().Save();
-                }
+                });
+                MemberDataManager.GetInstance().Save();
                 pendingNotifications.Clear();
             }
         }
@@ -210,10 +212,15 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         {
             int storeId = product.StoreId;
 
-            DataMember dm = MemberDataManager.GetInstance().Find(memberId);
-            DataProductInBag? dpib = FindDataProductInBag(dm, storeId, product.ProductId);
+            
 
-            Cart.ShoppingBags[storeId].ChangeProductAmount(product, amount, dpib);
+            Cart.ShoppingBags[storeId].ChangeProductAmount(product, amount, (updateDataProductInBag =>
+            {
+                MemberDataManager.GetInstance().Update(memberId, dm => {
+                    DataProductInBag? dpib = FindDataProductInBag(dm, storeId, product.ProductId);
+                    updateDataProductInBag(dpib);
+                });
+            }));
         }
 
         // r S 8 - database functions

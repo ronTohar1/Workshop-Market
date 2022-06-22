@@ -26,39 +26,13 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected PurchasePolicyDataManager()
+        protected PurchasePolicyDataManager() : base(db => db.SimplifiedPurchasePolicies)
         {
-        }
-
-        protected override void AddThrows(DataPurchasePolicy toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataPurchasePolicy FindThrows(int id)
-        {
-            DataPurchasePolicy? data = db.FindAsync<DataPurchasePolicy>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataPurchasePolicy> FindAll()
-        {
-            return db.PurchasePolicies.ToList();
-        }
-
-        protected override DataPurchasePolicy RemoveThrows(DataPurchasePolicy toRemove)
-        {
-            DataPurchasePolicy? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
         }
 
         public virtual int GetNextId()
         {
-            return this.MaxOrDefualt(db.PurchasePolicies, dataObject => dataObject.Id, 0) + 1;
+            return this.MaxOrDefualt(elements.ToList(), dataObject => dataObject.Id, 0) + 1;
         }
     }
 }

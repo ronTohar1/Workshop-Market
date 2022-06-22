@@ -327,9 +327,16 @@ namespace TestMarketBackend.Acceptance
 
         protected void ReopenMarket()
         {
-            systemOperator.CloseMarket();
+            var dbConfigs = MarketBackend.SystemSettings.AppConfigs.GetInstance(); 
+            bool using_database = dbConfigs.ShouldUpdateDatabase;
+            // todo: do this only if using the database (according to the configuration) 
 
-            SetUpFacaedes(true); // loading from database 
+            if (using_database)
+            {
+                systemOperator.CloseMarket();
+
+                SetUpFacaedes(true); // loading from database 
+            }
         }
 
 

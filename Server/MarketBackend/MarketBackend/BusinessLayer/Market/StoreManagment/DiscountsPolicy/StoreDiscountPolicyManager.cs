@@ -53,15 +53,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.Discounts
             this.discounts = discounts; 
         }
 
-        public int AddDiscount(string description ,IExpression dis, DataStoreDiscountPolicyManager dataStoreDiscountPolicyManager)
+        public int AddDiscount(string description ,IExpression dis, Action<Action<DataStoreDiscountPolicyManager>> updateDataStoreDiscountPolicyManager)
         {
             int id = GetNextId();
             Discount discount = new Discount(id, description, dis);
 
             DataDiscount dataDiscount = DiscountToDataDiscount(discount);
-            if (dataStoreDiscountPolicyManager.Discounts == null)
-                dataStoreDiscountPolicyManager.Discounts = new List<DataDiscount>();
-            dataStoreDiscountPolicyManager.Discounts.Add(dataDiscount);
+            updateDataStoreDiscountPolicyManager(dataStoreDiscountPolicyManager =>
+            {
+                if (dataStoreDiscountPolicyManager.Discounts == null)
+                    dataStoreDiscountPolicyManager.Discounts = new List<DataDiscount>();
+                dataStoreDiscountPolicyManager.Discounts.Add(dataDiscount);
+            });
             DiscountDataManager.GetInstance().Save();
 
             discounts.Add(id, discount);

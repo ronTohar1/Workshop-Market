@@ -22,34 +22,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected StoreMemberRolesDataManager()
+        protected StoreMemberRolesDataManager() : base(db => db.SimplifiedStoreMemberRoles)
         {
-        }
-
-        protected override void AddThrows(DataStoreMemberRoles toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataStoreMemberRoles FindThrows(int id)
-        {
-            DataStoreMemberRoles? data = db.FindAsync<DataStoreMemberRoles>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataStoreMemberRoles> FindAll()
-        {
-            return db.StoreMemberRoles.ToList();
-        }
-
-        protected override DataStoreMemberRoles RemoveThrows(DataStoreMemberRoles toRemove)
-        {
-            DataStoreMemberRoles? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
         }
     }
 }

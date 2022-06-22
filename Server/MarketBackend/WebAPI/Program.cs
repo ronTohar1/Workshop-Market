@@ -8,6 +8,7 @@ using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using WebAPI;
 using WebSocketSharp.Server;
+using MarketBackend.SystemSettings;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
@@ -15,10 +16,10 @@ namespace MyApp // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            var appConfig = new AppConfig();
-            WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), appConfig.websocketServerPort);
+            var appConfig = AppConfigs.GetInstance();
+            WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), appConfig.WebsocketServerPort);
             notificationServer.Start();
-            Console.WriteLine($"WS server started on ws://127.0.0.1:{appConfig.websocketServerPort}");
+            Console.WriteLine($"WS server started on ws://127.0.0.1:{appConfig.WebsocketServerPort}");
 
             SystemOperator so = new();
             if (!so.MarketOpen)

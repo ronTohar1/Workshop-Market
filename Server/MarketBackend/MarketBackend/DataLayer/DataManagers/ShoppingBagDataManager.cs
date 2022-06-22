@@ -27,34 +27,8 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected ShoppingBagDataManager()
+        protected ShoppingBagDataManager() : base(db => db.SimplifiedShoppingBags)
         {
-        }
-
-        protected override void AddThrows(DataShoppingBag toAdd)
-        {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataShoppingBag FindThrows(int id)
-        {
-            DataShoppingBag? data = db.FindAsync<DataShoppingBag>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataShoppingBag> FindAll()
-        {
-            return db.ShoppingBags.ToList();
-        }
-
-        protected override DataShoppingBag RemoveThrows(DataShoppingBag toRemove)
-        {
-            DataShoppingBag? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
         }
     }
 }

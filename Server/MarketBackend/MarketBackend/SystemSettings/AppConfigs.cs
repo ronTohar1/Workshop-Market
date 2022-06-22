@@ -1,14 +1,22 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 namespace MarketBackend.SystemSettings
 {
     public class AppConfigs
     {
+        //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+        //Path.GetFullPath(@"..\..\..\") + "SystemSettings\\appconfig.json"
+        private static readonly string PATH = Path.Combine(Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.IndexOf("MarketBackend") + "MarketBackend".Length), "appconfig.json");
+
         #region Singleton
         private static AppConfigs? instance = null;
         public static AppConfigs GetInstance()
@@ -19,51 +27,36 @@ namespace MarketBackend.SystemSettings
         }
         private AppConfigs() 
         {
+            Console.WriteLine("path = " + PATH);
+            string jsonText = File.ReadAllText(PATH);
+            JsonConfigObject = JsonConvert.DeserializeObject<dynamic>(jsonText)!;
             ParseConfigs();
         }
         #endregion
 
         #region Parsing
-        private static string ParseString(string name)
+        private static dynamic JsonConfigObject { get; set; }
+        
+        private static T Parse<T>(string name)
         {
-            var val = ConfigurationManager.AppSettings[name];
+            var val = (T)JsonConfigObject[name];
             if (val == null)
                 throw new ConfigurationErrorsException($"Unable to parse user configs - field [{name}]");
             return val;
         }
-        private static bool ParseBool(string name)
-        {
-            var val = ConfigurationManager.AppSettings[name];
-            if (val == null)
-                throw new ConfigurationErrorsException($"Unable to parse user configs - field [{name}]");
-        
-            if (val.ToLower() == "true")
-                return true;
-            if (val.ToLower() == "false")  
-                return false;
-
-            throw new ConfigurationErrorsException($"Unable to parse user configs - boolean field [{name}] should be 'true' or 'false'");
-        }
-        private static int ParseInt(string name)
-        {
-            var val = ConfigurationManager.AppSettings[name];
-            if (val == null)
-                throw new ConfigurationErrorsException($"Unable to parse user configs - field [{name}]");
-            return int.Parse(val);
-        }
 
         private void ParseConfigs()
         {
-            DatabaseName         = ParseString("DatabaseName");
-            DatabaseInstanceName = ParseString("DatabaseInstanceName");
-            DatabaseIp           = ParseString("DatabaseIp");
-            DatabasePort         = ParseString("DatabasePort");
-            DatabaseUsername     = ParseString("DatabaseUsername");
-            DatabasePassword     = ParseString("DatabasePassword");
-            ShouldUpdateDatabase = ParseBool("ShouldUpdateDatabase");
-            ShouldRunInitFile    = ParseBool("ShouldRunInitFile");
-            InitFilePath         = ParseString("InitFilePath");
-            WebsocketServerPort  = ParseInt("WebsocketServerPort");
+            DatabaseName         = Parse<string>("DatabaseName");
+            DatabaseInstanceName = Parse<string>("DatabaseInstanceName");
+            DatabaseIp           = Parse<string>("DatabaseIp");
+            DatabasePort         = Parse<string>("DatabasePort");
+            DatabaseUsername     = Parse<string>("DatabaseUsername");
+            DatabasePassword     = Parse<string>("DatabasePassword");
+            ShouldRunInitFile    = Parse<bool>("ShouldRunInitFile");
+            ShouldUpdateDatabase = Parse<bool>("ShouldUpdateDatabase");
+            InitFilePath         = Parse<string>("InitFilePath");
+            WebsocketServerPort  = Parse<int>("WebsocketServerPort");
         }
         #endregion
 

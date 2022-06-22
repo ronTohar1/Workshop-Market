@@ -35,12 +35,21 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public static IDatabase GetInstance()
         {
             if (instance == null)
-                instance = new DatabaseMock();  
+                instance = new Database();  
             return instance;
         }
 
+        private static IDatabase newDatabaseInstance()
+        {
+            bool using_database = false;
+            if (using_database)
+                return new Database(); 
+            else
+                return new DatabaseMock()
+        }
+
         // needs to be private (or protected for testing), sometimes is public for adding migrations to the database 
-        public Database() : base()
+        protected Database() : base()
         {
             SimplifiedMembers = DbSetToSimplifiedDbSet<DataMember, int>(this.Members);
             SimplifiedStores = DbSetToSimplifiedDbSet<DataStore, int>(this.Stores);

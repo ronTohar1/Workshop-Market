@@ -26,6 +26,24 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 {
     public interface IDatabase
     {
+        private static IDatabase instance = null;
+
+        public static IDatabase GetInstance()
+        {
+            if (instance == null)
+                instance = GetDatabaseInstance();
+            return instance;
+        }
+
+        private static IDatabase GetDatabaseInstance()
+        {
+            bool using_database = false;
+            if (using_database)
+                return Database.GetInstance(); 
+            else
+                return DatabaseMock.GetInstance();
+        }
+
         public abstract SimplifiedDbSet<DataMember, int> SimplifiedMembers { get; set; }
         public abstract SimplifiedDbSet<DataStore, int> SimplifiedStores { get; set; }
         public abstract SimplifiedDbSet<DataProduct, int> SimplifiedProducts { get; set; }

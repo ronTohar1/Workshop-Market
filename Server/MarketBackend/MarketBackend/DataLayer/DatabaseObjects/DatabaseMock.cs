@@ -28,6 +28,15 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 {
     public class DatabaseMock : IDatabase
     {
+        private static IDatabase instance = null;
+
+        public static IDatabase GetInstance()
+        {
+            if (instance == null)
+                instance = new DatabaseMock();
+            return instance;
+        }
+
         public SimplifiedDbSet<DataMember, int> SimplifiedMembers { get; set; }
         public SimplifiedDbSet<DataStore, int> SimplifiedStores { get; set; }
         public SimplifiedDbSet<DataProduct, int> SimplifiedProducts { get; set; }

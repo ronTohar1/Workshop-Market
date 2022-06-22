@@ -72,7 +72,8 @@ namespace MarketBackend.DataLayer.DataManagers
 
         protected void UpdateThrows(U id, Action<T> action)
         {
-            action(FindThrows(id));
+            elements.Update(id, action); 
+            // action(FindThrows(id));
         }
 
         public virtual T Remove(U id)

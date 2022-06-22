@@ -11,7 +11,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public void AddAsync(T toAdd);
         public T? FindAsync(U id);
         public T? Remove(T toRemove);
-        public void RemoveRange(IList<T> toRemove); 
-        public IList<T> ToList();  
+        public void RemoveRange(IList<T> toRemove);
+        void Update(U id, Action<T> action);
+        public IList<T> ToList();
     }
 }

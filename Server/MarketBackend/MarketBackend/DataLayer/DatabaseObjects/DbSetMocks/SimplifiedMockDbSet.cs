@@ -10,46 +10,41 @@ namespace MarketBackend.DataLayer.DatabaseObjects.DbSetMocks
 {
     public class SimplifiedMockDbSet<T, U> : SimplifiedDbSet<T, U> where T : class
     {
-        private IDictionary<U, T> dictionary;
-        private Func<T, U> getId; 
+        private Func<T> generate; 
 
-        public SimplifiedMockDbSet(Func<T, U> getId)
+        public SimplifiedMockDbSet(Func<T> generate)
         {
-            this.getId = getId;
-            dictionary = new ConcurrentDictionary<U, T>(); 
+            this.generate = generate;
         }
 
         public void AddAsync(T toAdd)
         {
-            dictionary.Add(getId(toAdd), toAdd); 
+            
         }
 
         public T? FindAsync(U id)
         {
-            if (dictionary.ContainsKey(id))
-                return dictionary[id];
-            return null; 
+            return generate();
         }
 
         public T? Remove(T toRemove)
         {
-            bool removed = dictionary.Remove(getId(toRemove));
-            if (removed)
-                return toRemove;
-            return null; 
+            return toRemove; 
         }
 
         public void RemoveRange(IList<T> toRemove)
         {
-            foreach (T element in toRemove)
-            {
-                dictionary.Remove(getId(element)); 
-            }
+            
+        }
+
+        public void Update(U id, Action<T> action)
+        {
+            
         }
 
         public IList<T> ToList()
         {
-            return dictionary.Values.ToList(); 
+            return new List<T>() { generate() }; 
         }
     }
 }

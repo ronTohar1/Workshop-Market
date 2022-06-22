@@ -89,7 +89,7 @@ namespace MarketBackend.BusinessLayer.Buyers
         /// <summary>
         /// Sets new amount to the product, product must be exist
         /// </summary>
-        virtual public void ChangeProductAmount(ProductInBag product, int amount, DataProductInBag? dpib)
+        virtual public void ChangeProductAmount(ProductInBag product, int amount, Action<Action<DataProductInBag>> updateDataProductInBag)
         {
             if (product == null)
                 throw new ArgumentNullException("product");
@@ -99,11 +99,12 @@ namespace MarketBackend.BusinessLayer.Buyers
                 throw new ArgumentException(nameof(product) + "is not exist in cart");
             else
             {
-                if (dpib != null)
+                if (updateDataProductInBag != null)
                 {
-                    ProductInBagDataManager.GetInstance().Update(dpib.Id, x => x.Amount = amount);
+                    updateDataProductInBag(x => x.Amount = amount);
                     ProductInBagDataManager.GetInstance().Save();
                 }
+
                 productsAmounts[product] = amount;
             }
         }
@@ -174,6 +175,7 @@ namespace MarketBackend.BusinessLayer.Buyers
         {
             if (dm == null) return;
             DataCart? cart = dm.Cart;
+            if (cart == null) return; 
             foreach (DataShoppingBag dsb in cart.ShoppingBags)
             {
                 if (dsb.Store.Id == storeId)
@@ -195,6 +197,7 @@ namespace MarketBackend.BusinessLayer.Buyers
             DataMember dm = MemberDataManager.GetInstance().Find(memberId);
             if (dm == null) return;
             DataCart? cart = dm.Cart;
+            if (cart == null) return;
             foreach (DataShoppingBag dsb in cart.ShoppingBags)
             {
                 if (dsb.Store.Id == storeId)

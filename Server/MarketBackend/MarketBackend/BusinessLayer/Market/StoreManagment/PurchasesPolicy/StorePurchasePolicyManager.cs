@@ -54,15 +54,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy
             this.purchases = purchasesPolicies;
         }
 
-        public int AddPurchasePolicy(string description, IPurchasePolicy policy, DataStorePurchasePolicyManager dataStorePurchasePolicyManager)
+        public int AddPurchasePolicy(string description, IPurchasePolicy policy, Action<Action<DataStorePurchasePolicyManager>> updateDataStorePurchasePolicyManager)
         {
             int id = GetNextId();
             PurchasePolicy purchasePolicy = new PurchasePolicy(id, description, policy);
             
             DataPurchasePolicy dpp = PurchasePolicyToDataPurchasePolicy(purchasePolicy);
-            if (dataStorePurchasePolicyManager.PurchasesPolicies == null)
-                dataStorePurchasePolicyManager.PurchasesPolicies = new List<DataPurchasePolicy>();
-            dataStorePurchasePolicyManager.PurchasesPolicies.Add(dpp); 
+            updateDataStorePurchasePolicyManager((dataStorePurchasePolicyManager =>
+            {
+                if (dataStorePurchasePolicyManager.PurchasesPolicies == null)
+                    dataStorePurchasePolicyManager.PurchasesPolicies = new List<DataPurchasePolicy>();
+                dataStorePurchasePolicyManager.PurchasesPolicies.Add(dpp);
+            }));
             PurchasePolicyDataManager.GetInstance().Save();
 
             purchases.TryAdd(id, purchasePolicy);

@@ -34,6 +34,14 @@ namespace MarketBackend.DataLayer.DatabaseObjects.DbSetMocks
             dbSet.RemoveRange(toRemove); 
         }
 
+        public void Update(U id, Action<T> action)
+        {
+            T dataObject = dbSet.Find(id);
+            if (dataObject == null)
+                throw new Exception("Object of id: " + id + " is not in the database"); 
+            action(dataObject);
+        }
+
         public IList<T> ToList()
         {
             return dbSet.ToList(); 

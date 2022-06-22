@@ -87,58 +87,62 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         public DatabaseMock()
         {
-            SimplifiedMembers = CreateSimplifiedDbSet<DataMember, int>(dataObject => dataObject.Id);
-            SimplifiedStores = CreateSimplifiedDbSet<DataStore, int>(dataObject => dataObject.Id);
-            SimplifiedProducts = CreateSimplifiedDbSet<DataProduct, int>(dataObject => dataObject.Id);
-            SimplifiedBids = CreateSimplifiedDbSet<DataBid, int>(dataObject => dataObject.Id);
-            SimplifiedCarts = CreateSimplifiedDbSet<DataCart, int>(dataObject => dataObject.Id); 
-            SimplifiedManagerPermissions = CreateSimplifiedDbSet<DataManagerPermission, int>(dataObject => dataObject.Id);
-            SimplifiedPurchaseOptions = CreateSimplifiedDbSet<DataPurchaseOption, int>(dataObject => dataObject.Id);
-            SimplifiedStoreMemberRoles = CreateSimplifiedDbSet<DataStoreMemberRoles, int>(dataObject => dataObject.Id);
-            SimplifiedProductReview = CreateSimplifiedDbSet<DataProductReview, int>(dataObject => dataObject.Id);
-            SimplifiedAppointmentsNodes = CreateSimplifiedDbSet<DataAppointmentsNode, int>(dataObject => dataObject.Id);
-            SimplifiedShoppingBags = CreateSimplifiedDbSet<DataShoppingBag, int>(dataObject => dataObject.Id);
-            SimplifiedProductInBags = CreateSimplifiedDbSet<DataProductInBag, int>(dataObject => dataObject.Id);
-            SimplifiedNotifications = CreateSimplifiedDbSet<DataNotification, int>(dataObject => dataObject.Id);
-            SimplifiedPurchases = CreateSimplifiedDbSet<DataPurchase, int>(dataObject => dataObject.Id);
-            SimplifiedDateDiscounts = CreateSimplifiedDbSet<DataDateDiscount, int>(dataObject => dataObject.Id);
-            SimplifiedOneProductDiscounts = CreateSimplifiedDbSet<DataOneProductDiscount, int>(dataObject => dataObject.Id);
-            SimplifiedStoreDiscounts = CreateSimplifiedDbSet<DataStoreDiscount, int>(dataObject => dataObject.Id);
-            SimplifiedDiscountAndExpressions = CreateSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression, int>(dataObject => dataObject.Id);
-            SimplifiedDiscountOrExpressions = CreateSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression, int>(dataObject => dataObject.Id);
-            SimplifiedXorExpressions = CreateSimplifiedDbSet<DataXorExpression, int>(dataObject => dataObject.Id);
-            SimplifiedMaxExpressions = CreateSimplifiedDbSet<DataMaxExpression, int>(dataObject => dataObject.Id);
-            SimplifiedBagValuePredicates = CreateSimplifiedDbSet<DataBagValuePredicate, int>(dataObject => dataObject.Id);
-            SimplifiedProductAmountPredicates = CreateSimplifiedDbSet<DataProductAmountPredicate, int>(dataObject => dataObject.Id);
-            SimplifiedConditionDiscounts = CreateSimplifiedDbSet<DataConditionDiscount, int>(dataObject => dataObject.Id);
-            SimplifiedIfDiscounts = CreateSimplifiedDbSet<DataIfDiscount, int>(dataObject => dataObject.Id);
-            SimplifiedLogicalExpressions = CreateSimplifiedDbSet<DataLogicalExpression, int>(dataObject => dataObject.Id);
-            SimplifiedConditionExpressions = CreateSimplifiedDbSet<DataConditionDiscount, int>(dataObject => dataObject.Id);
-            SimplifiedDiscountExpressions = CreateSimplifiedDbSet<DataDiscountExpression, int>(dataObject => dataObject.Id);
-            SimplifiedExpressions = CreateSimplifiedDbSet<DataExpression, int>(dataObject => dataObject.Id);
-            SimplifiedDiscountPredicateExpressions = CreateSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression, int>(dataObject => dataObject.Id); 
-            SimplifiedDiscounts = CreateSimplifiedDbSet<DataDiscount, int>(dataObject => dataObject.Id); 
-            SimplifiedPurchaseAndExpressions = CreateSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression, int>(dataObject => dataObject.Id); 
-            SimplifiedImpliesExpressions = CreateSimplifiedDbSet<DataImpliesExpression, int>(dataObject => dataObject.Id); 
-            SimplifiedPurchaseOrExpressions = CreateSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression, int>(dataObject => dataObject.Id);
-            SimplifiedCheckProductLessPredicates = CreateSimplifiedDbSet<DataCheckProductLessPredicate, int>(dataObject => dataObject.Id);
-            SimplifiedCheckProductMoreEqualsPredicates = CreateSimplifiedDbSet<DataCheckProductMoreEqualsPredicate, int>(dataObject => dataObject.Id);
-            SimplifiedPruchasePredicateExpressions = CreateSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression, int>(dataObject => dataObject.Id);
-            SimplifiedInterfacesPurchasePolicies = CreateSimplifiedDbSet<DataIPurchasePolicy, int>(dataObject => dataObject.Id); 
-            SimplifiedRestrictionExpressions = CreateSimplifiedDbSet<DataRestrictionExpression, int>(dataObject => dataObject.Id);
-            SimplifiedDataAfterHourProductRestrictions = CreateSimplifiedDbSet<DataAfterHourProductRestriction, int>(dataObject => dataObject.Id);
-            SimplifiedAfterHourRestrictions = CreateSimplifiedDbSet<DataAfterHourRestriction, int>(dataObject => dataObject.Id);
-            SimplifiedAtLeastAmountRestrictions = CreateSimplifiedDbSet<DataAtLeastAmountRestriction, int>(dataObject => dataObject.Id);
-            SimplifiedAtMostAmountRestrictions = CreateSimplifiedDbSet<DataAtMostAmountRestriction, int>(dataObject => dataObject.Id);
-            SimplifiedBeforeHourProductRestrictions = CreateSimplifiedDbSet<DataBeforeHourProductRestriction, int>(dataObject => dataObject.Id);
-            SimplifiedBeforeHourRestrictions = CreateSimplifiedDbSet<DataBeforeHourRestriction, int>(dataObject => dataObject.Id);
-            SimplifiedDateRestrictions = CreateSimplifiedDbSet<DataDateRestriction, int>(dataObject => dataObject.Id);
-            SimplifiedPurchasePolicies = CreateSimplifiedDbSet<DataPurchasePolicy, int>(dataObject => dataObject.Id);
+            SimplifiedMembers = CreateSimplifiedDbSetClass<DataMember, int>();
+            SimplifiedStores = CreateSimplifiedDbSetClass<DataStore, int>();
+            SimplifiedProducts = CreateSimplifiedDbSetClass<DataProduct, int>();
+            SimplifiedBids = CreateSimplifiedDbSetClass<DataBid, int>();
+            SimplifiedCarts = CreateSimplifiedDbSetClass<DataCart, int>(); 
+            SimplifiedManagerPermissions = CreateSimplifiedDbSetClass<DataManagerPermission, int>();
+            SimplifiedPurchaseOptions = CreateSimplifiedDbSetClass<DataPurchaseOption, int>();
+            SimplifiedStoreMemberRoles = CreateSimplifiedDbSetClass<DataStoreMemberRoles, int>();
+            SimplifiedProductReview = CreateSimplifiedDbSetClass<DataProductReview, int>();
+            SimplifiedAppointmentsNodes = CreateSimplifiedDbSetClass<DataAppointmentsNode, int>();
+            SimplifiedShoppingBags = CreateSimplifiedDbSetClass<DataShoppingBag, int>();
+            SimplifiedProductInBags = CreateSimplifiedDbSetClass<DataProductInBag, int>();
+            SimplifiedNotifications = CreateSimplifiedDbSetClass<DataNotification, int>();
+            SimplifiedPurchases = CreateSimplifiedDbSetClass<DataPurchase, int>();
+            SimplifiedDateDiscounts = CreateSimplifiedDbSetClass<DataDateDiscount, int>();
+            SimplifiedOneProductDiscounts = CreateSimplifiedDbSetClass<DataOneProductDiscount, int>();
+            SimplifiedStoreDiscounts = CreateSimplifiedDbSetClass<DataStoreDiscount, int>();
+            SimplifiedDiscountAndExpressions = CreateSimplifiedDbSetClass<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression, int>();
+            SimplifiedDiscountOrExpressions = CreateSimplifiedDbSetClass<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression, int>();
+            SimplifiedXorExpressions = CreateSimplifiedDbSetClass<DataXorExpression, int>();
+            SimplifiedMaxExpressions = CreateSimplifiedDbSetClass<DataMaxExpression, int>();
+            SimplifiedBagValuePredicates = CreateSimplifiedDbSetClass<DataBagValuePredicate, int>();
+            SimplifiedProductAmountPredicates = CreateSimplifiedDbSetClass<DataProductAmountPredicate, int>();
+            SimplifiedConditionDiscounts = CreateSimplifiedDbSetClass<DataConditionDiscount, int>();
+            SimplifiedIfDiscounts = CreateSimplifiedDbSetClass<DataIfDiscount, int>();
+            SimplifiedLogicalExpressions = CreateSimplifiedDbSet<DataLogicalExpression, int>(() => new DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression());
+            SimplifiedConditionExpressions = CreateSimplifiedDbSetClass<DataConditionDiscount, int>();
+            SimplifiedDiscountExpressions = CreateSimplifiedDbSet<DataDiscountExpression, int>(() => new DataDateDiscount());
+            SimplifiedExpressions = CreateSimplifiedDbSet<DataExpression, int>(() => new DataDateDiscount());
+            SimplifiedDiscountPredicateExpressions = CreateSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression, int>(() => new DataBagValuePredicate()); 
+            SimplifiedDiscounts = CreateSimplifiedDbSetClass<DataDiscount, int>(); 
+            SimplifiedPurchaseAndExpressions = CreateSimplifiedDbSetClass<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression, int>(); 
+            SimplifiedImpliesExpressions = CreateSimplifiedDbSetClass<DataImpliesExpression, int>(); 
+            SimplifiedPurchaseOrExpressions = CreateSimplifiedDbSetClass<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression, int>();
+            SimplifiedCheckProductLessPredicates = CreateSimplifiedDbSetClass<DataCheckProductLessPredicate, int>();
+            SimplifiedCheckProductMoreEqualsPredicates = CreateSimplifiedDbSetClass<DataCheckProductMoreEqualsPredicate, int>();
+            SimplifiedPruchasePredicateExpressions = CreateSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression, int>(() => new DataCheckProductLessPredicate());
+            SimplifiedInterfacesPurchasePolicies = CreateSimplifiedDbSet<DataIPurchasePolicy, int>(() => new DataAfterHourRestriction()); 
+            SimplifiedRestrictionExpressions = CreateSimplifiedDbSet<DataRestrictionExpression, int>(() => new DataAfterHourRestriction());
+            SimplifiedDataAfterHourProductRestrictions = CreateSimplifiedDbSetClass<DataAfterHourProductRestriction, int>();
+            SimplifiedAfterHourRestrictions = CreateSimplifiedDbSetClass<DataAfterHourRestriction, int>();
+            SimplifiedAtLeastAmountRestrictions = CreateSimplifiedDbSetClass<DataAtLeastAmountRestriction, int>();
+            SimplifiedAtMostAmountRestrictions = CreateSimplifiedDbSetClass<DataAtMostAmountRestriction, int>();
+            SimplifiedBeforeHourProductRestrictions = CreateSimplifiedDbSetClass<DataBeforeHourProductRestriction, int>();
+            SimplifiedBeforeHourRestrictions = CreateSimplifiedDbSetClass<DataBeforeHourRestriction, int>();
+            SimplifiedDateRestrictions = CreateSimplifiedDbSetClass<DataDateRestriction, int>();
+            SimplifiedPurchasePolicies = CreateSimplifiedDbSetClass<DataPurchasePolicy, int>();
+        }
+        private static SimplifiedDbSet<T, U> CreateSimplifiedDbSetClass<T, U>() where T : class, new()
+        {
+            return CreateSimplifiedDbSet<T, U>(() => new T()); 
         }
 
-        private static SimplifiedDbSet<T, U> CreateSimplifiedDbSet<T, U>(Func<T, U> getId) where T : class
+        private static SimplifiedDbSet<T, U> CreateSimplifiedDbSet<T, U>(Func<T> generate) where T : class
         {
-            return new SimplifiedMockDbSet<T, U>(getId); 
+            return new SimplifiedMockDbSet<T, U>(generate); 
         }
 
         public void Remove(Object toRemove)

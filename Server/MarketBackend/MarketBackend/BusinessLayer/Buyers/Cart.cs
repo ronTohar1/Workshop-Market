@@ -45,7 +45,7 @@ namespace MarketBackend.BusinessLayer.Buyers
             {
                 if (isMember)
                 {
-                    dm = MemberDataManager.GetInstance().Find(buyerId);
+                    dm = MemberDataManager.GetInstance().Find(buyerId); // todo: change find here 
                     dsb = AddShoppingBagToDB(product.StoreId, dm); // r S 8 (no save)
                 }
                 shoppingBags[storeId] = new ShoppingBag(storeId);

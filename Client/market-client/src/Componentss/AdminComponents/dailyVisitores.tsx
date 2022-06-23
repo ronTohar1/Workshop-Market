@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Purchase from "../../DTOs/Purchase";
 import { Box, Container, FormControl, Grid, IconButton, InputLabel, Slide, Typography } from "@mui/material";
 import PurchaseCard from "./PurcaseCard";
-import { serverGetBuyerPurchaseHistory } from "../../services/AdminService";
+import { serverGetBuyerPurchaseHistory, serverGetDailyVisitores } from "../../services/AdminService";
 import { getBuyerId } from "../../services/SessionService";
 import { fetchResponse } from "../../services/GeneralService";
 import FailureSnackbar from "../Forms/FailureSnackbar";
@@ -18,30 +18,21 @@ import Chart from "react-google-charts";
 import { TransitionProps } from "@mui/material/transitions";
 import CloseIcon from '@mui/icons-material/Close';
 
-// export const purchasesDummy= [
-// new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-// new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
-// new Purchase("10/10/2021",10, "bought 3 apples", 0),
-// new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-// new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
-// new Purchase("10/10/2021",10, "bought 3 apples", 0),
-// new Purchase("12/12/2022",34.4, "bought 3 apples", 0),
-// new Purchase("10/02/2020",12.4, "bought 2 bananas", 1),
-// ]
 export const data = [
     ["Visitor", "Amount"],
-    ["Admins", 11],
-    ["Store Owners", 2],
-    ["Managers(without any stores)", 2],
-    ["Members(not managers or store owners)", 2],
-    ["Guests", 7],
+    ["Admins", 1],
+    ["Store Owners", 0],
+    ["Managers(without any stores)", 0],
+    ["Members(not managers or store owners)",0],
+    ["Guests", 0],
   ];
   
-  export const options = {
+export const options = {
     title: "Daily Visitors",
     is3D: true,
   };
-  const Transition = React.forwardRef(function Transition(
+
+const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
       children: React.ReactElement;
     },
@@ -50,9 +41,11 @@ export const data = [
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
+
+  
 export default function DailyVisitors() {
   const [open, setOpen] = React.useState<boolean>(false);
-  const [purchases, setPurchases] = React.useState<Purchase[]>([]);
+  const [chartData, setChartData] = React.useState(data);
 
   //------------------------------
   const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false);
@@ -81,35 +74,43 @@ export default function DailyVisitors() {
   };
   //------------------------------
 
-  const handleClickOpen = () => {
-    console.log("opened");
-    setOpen(true);
-  };
-  const handleClose = () => {
-    console.log("closed");
-    setOpen(false);
-  };
-  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log("in search");
+  const handleSearch = () => {
     const buyerId = getBuyerId();
-    const responsePromise = serverGetBuyerPurchaseHistory(
+    const responsePromise = serverGetDailyVisitores(
       buyerId,
-      Number(data.get("id"))
+      fromSelectedDay,
+      fromSelectedMonth,
+      fromSelectedYear,
+      toSelectedDay,
+      toSelectedMonth,
+      toSelectedYear
     );
     console.log(responsePromise);
     fetchResponse(responsePromise)
-      .then((newPurchases) => {
-        if (newPurchases.length === 0) {
-          showFailureSnack("No purchases for this user");
-        }
-        setPurchases(newPurchases);
+      .then((dailyVisits) => {
+        setChartData([
+            ["Visitor", "Amount"],
+            ["Admins", dailyVisits[0]],
+            ["Store Owners", dailyVisits[1]],
+            ["Managers(without any stores)", dailyVisits[2]],
+            ["Members(not managers or store owners)", dailyVisits[3]],
+            ["Guests", dailyVisits[4]],
+          ])
       })
       .catch((e) => {
         alert(e);
         setOpen(false);
       });
+  };
+
+  const handleClickOpen = () => {
+    console.log("opened");
+    setOpen(true);
+    //handleSearch();
+  };
+  const handleClose = () => {
+    console.log("closed");
+    setOpen(false);
   };
 
   return (
@@ -232,14 +233,14 @@ export default function DailyVisitors() {
         </Grid>
         </Grid>
         <Box textAlign='center'>
-             <Button onClick={()=>{}} >search</Button>
+             <Button onClick={handleSearch} >search</Button>
              </Box>
         </DialogContent>
         <Container
           style={{ maxHeight: "100%", maxWidth: "100%", overflow: "auto" }}>
             <Chart
             chartType="PieChart"
-            data={data}
+            data={chartData}
             options={options}
             width={"100%"}
             height={"400px"}

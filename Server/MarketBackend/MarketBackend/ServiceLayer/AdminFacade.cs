@@ -227,6 +227,7 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
+
         public Response<string> GetEventLogs(int userId)
         {
             try
@@ -265,6 +266,16 @@ namespace MarketBackend.ServiceLayer
                 logger.Error(ex, $"method: GetErrorLogs, parameters: [userId = {userId}]");
                 return new Response<string>("Sorry, an unexpected error occured. Please try again");
             }
+        }
+        public Response<int[]> GetDailyVisitores(int memberId, DateTime fromDate, DateTime toDate)
+        {
+            // this function should return the daily cut of visitores in a given interval of dates
+            // the output is an array of size 5 of all the given entries of visitores as follows:
+            // [number_of_admin_visits, number_of_storeOwners_visitors, number_of_managers_without_any_stores_visits,
+            // number_of_simple_members(not manager or store owner), number_of_guests]
+
+            // ** Imporatant ** check that memberId is admin, fromDate<=toDate, and that fromDate<=currentDate
+            throw new NotImplementedException();
         }
     }
 }

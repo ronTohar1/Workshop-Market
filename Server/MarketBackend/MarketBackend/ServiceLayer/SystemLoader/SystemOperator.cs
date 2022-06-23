@@ -5,6 +5,8 @@ using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Buyers.Guests;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer;
+using MarketBackend.SystemSettings;
+
 namespace MarketBackend.ServiceLayer
 {
     public class SystemOperator : ISystemOperator
@@ -23,8 +25,8 @@ namespace MarketBackend.ServiceLayer
         // for init from config file
         public SystemOperator()
         {
-            AppConfig appConfig = new AppConfig();
-            if (!appConfig.RunInitFile)
+            AppConfigs appConfig = AppConfigs.GetInstance();
+            if (!appConfig.ShouldRunInitFile)
                 throw new Exception("You can use this c'tor only when system should be loaded using init file. Please recheck appconfig file.");
 
             SystemLoader systemLoader = new SystemLoader(appConfig.InitFilePath, this);
@@ -151,6 +153,9 @@ namespace MarketBackend.ServiceLayer
 
         }
 
-
+        internal static void RemoveAllDatabaseContent()
+        {
+            BusiessSystemOperator.RemoveAllDatabaseContent(); 
+        }
     }
 }

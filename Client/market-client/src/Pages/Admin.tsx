@@ -22,6 +22,7 @@ import HomeIcon from "@mui/icons-material/Home"
 import { pathAdmin, pathHome } from "../Paths"
 import LoadingCircle from "../Componentss/LoadingCircle"
 import ShowLogs from "../Componentss/AdminComponents/ShowLogs"
+import DailyVisitors from "../Componentss/AdminComponents/dailyVisitores"
 
 const backgroundImage =
   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
@@ -120,6 +121,7 @@ export default function Admin() {
             {DisplayMemberAccount()}
             {RemoveAMember()}
             {ShowLogs()}
+            {DailyVisitors()}
           {/* <CardContent>
             
           </CardContent> */}

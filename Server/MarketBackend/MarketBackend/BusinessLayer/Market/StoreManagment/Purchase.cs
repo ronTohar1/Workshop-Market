@@ -1,4 +1,5 @@
 ﻿using MarketBackend.DataLayer.DataDTOs.Market;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         {
             return new Purchase(dataPurchase.BuyerId, dataPurchase.PurchaseDate, dataPurchase.PurchasePrice, 
                 dataPurchase.PurchaseDescription); 
+        }
+
+        public DataPurchase ToNewDataPurchase(DataStore dataStore)
+        {
+            return new DataPurchase()
+            {
+                BuyerId = this.BuyerId,
+                Store = dataStore,
+                PurchaseDate = this.purchaseDate,
+                PurchasePrice = this.purchasePrice,
+                PurchaseDescription = this.purchaseDescription
+            }; 
         }
 
         public virtual string GetPurchaseDescription()

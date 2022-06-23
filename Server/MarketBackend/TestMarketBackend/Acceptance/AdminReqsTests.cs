@@ -88,6 +88,8 @@ namespace TestMarketBackend.Acceptance
             Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
             Assert.IsTrue(!purchaseResponse.IsErrorOccured());
 
+            ReopenMarket();
+
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.IsErrorOccured());
             Assert.AreEqual(1, response.Value.Count); 
@@ -132,7 +134,9 @@ namespace TestMarketBackend.Acceptance
 
             SetUpShoppingCarts();
             Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
-            Assert.IsTrue(!purchaseResponse.IsErrorOccured()); 
+            Assert.IsTrue(!purchaseResponse.IsErrorOccured());
+
+            ReopenMarket();
 
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.IsErrorOccured());
@@ -353,8 +357,9 @@ namespace TestMarketBackend.Acceptance
             bool memberExsited = memberExistsResponse.Value;
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
-
             Assert.IsTrue(response.IsErrorOccured());
+
+            ReopenMarket();
 
             // checking that member still exists if existed before
             memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
@@ -370,8 +375,9 @@ namespace TestMarketBackend.Acceptance
             int memberToRemoveId = member1Id; 
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId, memberToRemoveId);
-
             Assert.IsTrue(!response.IsErrorOccured());
+
+            ReopenMarket();
 
             // checking that member does not exist
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
@@ -403,8 +409,9 @@ namespace TestMarketBackend.Acceptance
             IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemove);
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
-
             Assert.IsTrue(response.IsErrorOccured());
+            
+            ReopenMarket();
 
             // checking that member still exists
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
@@ -440,6 +447,8 @@ namespace TestMarketBackend.Acceptance
             Response<bool>[] responses = GetResponsesFromThreads(jobs);
 
             Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+
+            ReopenMarket();
 
             // checking that member does not exist
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
@@ -525,5 +534,56 @@ namespace TestMarketBackend.Acceptance
 
             Assert.AreEqual(expectedMember(), response.Value); 
         }
+
+        //public static IEnumerable<TestCaseData> DataFailedGetDailyCut
+        //{
+        //    get
+        //    {
+        //        // requesting is not an admin
+        //        yield return new TestCaseData(() => -1, () => new DateTime(2022, 23,6), () => new DateTime(2022, 23, 6));
+        //        yield return new TestCaseData(() => guest1Id, () => new DateTime(2022, 23, 6), () => new DateTime(2022, 23, 6));
+        //        yield return new TestCaseData(() => member1Id, () => new DateTime(2022, 23, 6), () => new DateTime(2022, 23, 6));
+        //        yield return new TestCaseData(() => member2Id, () => new DateTime(2022, 23, 6), () => new DateTime(2022, 23, 6));
+        //        // from date > to date
+        //        yield return new TestCaseData(() => adminId, () => new DateTime(2022, 23, 7), () => new DateTime(2022, 23, 6));
+        //        yield return new TestCaseData(() => adminId, () => new DateTime(2022, 23, 6), () => new DateTime(2021, 23, 6));
+        //        yield return new TestCaseData(() => adminId, () => new DateTime(2022, 23, 6), () => new DateTime(2022, 22, 6));
+        //        // from date > current date
+        //        yield return new TestCaseData(() => adminId, () => DateTime.Today.AddDays(1), () => DateTime.Today.AddDays(2));
+        //        yield return new TestCaseData(() => adminId, () => DateTime.Today.AddMonths(1), () => DateTime.Today.AddMonths(2));
+        //    }
+        //}
+
+        //// r 5.6
+        //[Test]
+        //[TestCaseSource("DataFailedGetDailyCut")]
+        //public void FailedGetDailyCut(Func<int> requestingId, Func<DateTime> fromDate, Func<DateTime> toDate)
+        //{
+        //    Response<int[]> response = adminFacade.GetDailyVisitores(requestingId(), fromDate(), toDate());
+
+        //    Assert.IsTrue(response.IsErrorOccured());
+        //}
+
+        //public static IEnumerable<TestCaseData> DataSuccessGetDailyCut
+        //{
+        //    get
+        //    {
+        //        yield return new TestCaseData(() => adminId, () => DateTime.Today, () => DateTime.Today);
+        //        yield return new TestCaseData(() => adminId, () => DateTime.Today.AddDays(-1), () => DateTime.Today);
+        //    }
+        //}
+
+        //// r 5.6
+        //[Test]
+        //[TestCaseSource("DataSuccessGetDailyCut")]
+        //public void SuccessGetDailyCut(Func<int> requestingId, Func<DateTime> fromDate, Func<DateTime> toDate)
+        //{
+        //    Response<int[]> response = adminFacade.GetDailyVisitores(requestingId(), fromDate(), toDate());
+
+        //    Assert.IsTrue(!response.IsErrorOccured() && response.Value.Length==5);
+
+        //    Assert.IsTrue(response.Value[4]>=4 && response.Value[3] >= 3); // in the set up of the acceptance testing there are at least 7 guests
+        //                                                                   //from which only 3 login
+        //}
     }
 }

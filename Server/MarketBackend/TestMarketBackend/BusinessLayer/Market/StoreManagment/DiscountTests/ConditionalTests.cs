@@ -23,6 +23,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             disAmount = 10;
 
             pred1 = new Mock<IPredicateExpression>();

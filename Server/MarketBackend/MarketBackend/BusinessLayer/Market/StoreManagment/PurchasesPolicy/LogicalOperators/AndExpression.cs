@@ -1,11 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
 
 namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.logicalOperators
 {
@@ -31,6 +27,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.logi
         public bool IsSatisfied(ShoppingBag bag)
         {
             return firstPred.IsSatisfied(bag) && secondPred.IsSatisfied(bag);
+        }
+
+        public DataIPurchasePolicy IPurchasePolicyToDataIPurchasePolicy()
+        {
+            return new DataAndExpression()
+            {
+                FirstPred = (DataRestrictionExpression)firstPred.IPurchasePolicyToDataIPurchasePolicy(),
+                SecondPred = (DataRestrictionExpression)secondPred.IPurchasePolicyToDataIPurchasePolicy()
+            };
+        }
+
+        public void RemoveFromDB(DataIPurchasePolicy dpp)
+        {
+            DataAndExpression dae = (DataAndExpression)dpp;
+            firstPred.RemoveFromDB(dae.FirstPred);
+            secondPred.RemoveFromDB(dae.SecondPred);
+            //TODO myself
         }
     }
 }

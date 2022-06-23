@@ -6,6 +6,8 @@ using MarketBackend.BusinessLayer.Buyers;
 using SystemLog;
 using NLog;
 using MarketBackend.BusinessLayer.System.ExternalServices;
+using MarketBackend.DataLayer.DataManagers;
+
 namespace MarketBackend.BusinessLayer
 {
     public class BusiessSystemOperator
@@ -41,8 +43,16 @@ namespace MarketBackend.BusinessLayer
             if (adminManager == null)   //meaning first 
             {
                 InitLogger();
+
                 membersController = MembersController.LoadMembersController();
-                int adminId = membersController.Register(username, password);
+                Member member = membersController.GetMember(username);
+                if (member == null || !member.CheckPassword(password))
+                    throw new MarketException("At least one of the details you entered is not correct"); 
+                
+                int adminId = member.Id; 
+                if (!AdminManager.ContainsAdmin(adminId))
+                    throw new MarketException("Not an admin, only an admin is allowed to open the market");
+
                 //Init controllers
                 guestsController = new();
                 storeController = StoreController.LoadStoreController(membersController);
@@ -53,7 +63,6 @@ namespace MarketBackend.BusinessLayer
                 purchasesManager = new(storeController, buyersController, externalServicesController);
 
                 adminManager = AdminManager.LoadAdminManager(storeController, buyersController, membersController);
-                adminManager.AddAdmin(adminId);
                 MarketOpen = true;
                 MarketOpenerAdminId = adminId;
             }
@@ -131,5 +140,9 @@ namespace MarketBackend.BusinessLayer
             }
         }
 
+        internal static void RemoveAllDatabaseContent()
+        {
+            StoreDataManager.GetInstance().RemoveAllTables();
+        }
     }
 }

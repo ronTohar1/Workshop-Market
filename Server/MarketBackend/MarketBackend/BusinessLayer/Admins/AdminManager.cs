@@ -53,6 +53,13 @@ namespace MarketBackend.BusinessLayer.Admins
             return new AdminManager(storeController, buyersController, membersController, adminsIds); 
         }
 
+        // to use before uplodaing all the system 
+        public static bool ContainsAdmin(int adminId)
+        {
+            DataMember dataMember = MemberDataManager.GetInstance().Find(adminId);
+            return dataMember != null && dataMember.IsAdmin;
+        }
+
         private void VerifyAdmin(int adminId)
         {
             if (!admins.Contains(adminId))
@@ -60,12 +67,20 @@ namespace MarketBackend.BusinessLayer.Admins
         }
 
         /// <summary>
-        /// Adds new system admin and returns if admin has added (false if already existed)
+        /// Adds new system admin and returns if admin has added (false if not a legal action)
         /// </summary>
         public bool AddAdmin(int id)
         {
             if (admins.Contains(id))
                 return false;
+
+            Member member = membersController.GetMember(id);
+            if (member == null)
+                return false;
+
+            MemberDataManager memberDataManager = MemberDataManager.GetInstance(); 
+            memberDataManager.Update(id, member => member.IsAdmin = true);
+            memberDataManager.Save(); 
 
             admins.Add(id);
             return true;
@@ -79,9 +94,15 @@ namespace MarketBackend.BusinessLayer.Admins
         /// </summary>
         public bool RemoveAdmin(int id)
         {
-            bool found = admins.Remove(id);
+            if (!ContainAdmin(id))
+                return false; 
+
+            MemberDataManager memberDataManager = MemberDataManager.GetInstance();
+            memberDataManager.Update(id, member => member.IsAdmin = false);
+            memberDataManager.Save();
+
             while (admins.Remove(id)) ;  // due to syncornization issues, it may be that admin inserted more than once (very unlikely)
-            return found;
+            return true;
         }
 
         public IReadOnlyCollection<Purchase> GetUserHistory(int adminId, int userId)

@@ -12,6 +12,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
 {
     internal class BeforeHourTests
     {
+        [SetUp]
+        public void MockDataLayer()
+        {
+            DataManagersMock.InitMockDataManagers();
+        }
+
         [Test]
         public void TestBeforeHour()
         {

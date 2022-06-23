@@ -13,6 +13,7 @@ using MarketBackend.BusinessLayer;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.Discounts;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using System.Threading;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -101,6 +102,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private int bidId = 1;
         // ----------- Setup helping functions -----------------------------
 
+        [SetUp]
+        public void MockDataLayer()
+        {
+            DataManagersMock.InitMockDataManagers();
+        }
+
         private Member setupMcokedMember(int memberId)
         {
             Mock<Security> securityMock = new Mock<Security>();
@@ -112,6 +119,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
             memberMock.Setup(member =>
                member.Notify(It.IsAny<string[]>())).
+                   Callback(() => wasNotified[memberId] = true);
+            memberMock.Setup(member =>
+               member.NotifyNoSave(It.IsAny<string[]>())).
                    Callback(() => wasNotified[memberId] = true);
 
             return memberMock.Object;
@@ -1238,7 +1248,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestCloseStoreSuccess()
         {
             SetupStoreNoPermissionsChange();
-            store.CloseStore(founder.Id);
+            store.CloseStore(founder.Id, storeId);
             foreach (int memberId in wasNotified.Keys)
             {
                 if (memberId == managerId1 || memberId == managerId2 || memberId == coOwnerId1 || memberId == coOwnerId2 || memberId == founder.Id)
@@ -1252,11 +1262,11 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestCloseStoreTwiceFail()
         {
             SetupStoreNoPermissionsChange();
-            store.CloseStore(founder.Id);
+            store.CloseStore(founder.Id, storeId);
 
             foreach (int memberId in wasNotified.Keys)//clean the notifications 
                 wasNotified[memberId] = false;
-            Assert.Throws<MarketException>(() => store.CloseStore(founder.Id));
+            Assert.Throws<MarketException>(() => store.CloseStore(founder.Id, storeId));
             foreach (int memberId in wasNotified.Keys)//check that no one was notified
                 Assert.False(wasNotified[memberId]);
             Assert.False(store.isOpen);
@@ -1269,7 +1279,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestCloseStoreByNonFounder(int id)
         {
             SetupStoreNoPermissionsChange();
-            Assert.Throws<MarketException>(() => store.CloseStore(id));
+            Assert.Throws<MarketException>(() => store.CloseStore(id, storeId));
             foreach (int memberId in wasNotified.Keys)//check that no one was notified
                 Assert.False(wasNotified[memberId]);
             Assert.True(store.isOpen);
@@ -1278,7 +1288,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestGetInformationAfterStoreClosed()
         {
             SetupStoreNoPermissionsChange();
-            store.CloseStore(founder.Id);
+            store.CloseStore(founder.Id, storeId);
             Assert.Throws<MarketException>(() => store.GetMembersInRole(founder.Id, Role.Owner));
             Assert.Throws<MarketException>(() => store.GetManagerPermissions(founder.Id, managerId1));
         }
@@ -1537,7 +1547,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             SetupStoreNoRoles();
             Bid b = new Bid(productId1, memberId1, storeId, bid);
-            b.approveBid(founderMemberId);
+            b.approveBid(founderMemberId, new Action(() => Thread.Sleep(0)));
             store.CheckAllApproved(b);
         }
 

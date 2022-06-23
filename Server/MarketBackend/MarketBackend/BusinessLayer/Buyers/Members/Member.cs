@@ -1,5 +1,8 @@
 ﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataDTOs.Market;
+using MarketBackend.DataLayer.DataManagers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,7 +95,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             {
                 if (LoggedIn)
                     throw new MarketException("This user is already logged in!");
-                if (this.password == security.HashPassword(password))
+                if (CheckPassword(password))
                 {
                     this.notifier = new Notifier(notifyFunc);
                     LoggedIn = true;
@@ -100,6 +103,11 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
                 }
                 return LoggedIn;
             }
+        }
+
+        public bool CheckPassword(string password)
+        {
+            return this.password == security.HashPassword(password); 
         }
 
         public void Logout()
@@ -112,23 +120,80 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             }
         }
 
+        //r S 8
         public virtual void Notify(string[] notifications) {
             
             if (!LoggedIn || !notifier.tryToNotify(notifications))
             {
                 foreach (string notification in notifications)
+                {
+                    MemberDataManager.GetInstance().Update(Id, dm =>
+                    {
+                        dm.PendingNotifications.Add(new DataNotification()
+                        {
+                            Notification = notification
+                        });
+                    });
+
+                    MemberDataManager.GetInstance().Save();
+
                     pendingNotifications.Add(notification);
+                }
             }
             
+        }
+
+        public virtual void NotifyNoSave(string[] notifications)
+        {
+
+            if (!LoggedIn || !notifier.tryToNotify(notifications))
+            {
+                foreach (string notification in notifications)
+                {
+                    pendingNotifications.Add(notification);
+                }
+            }
+
+        }
+
+        public virtual void DataNotify(string[] notifications)
+        {
+            MemberDataManager memberDataManager = MemberDataManager.GetInstance();
+            if (!LoggedIn)
+            {
+                memberDataManager.Update(Id, dataMember => 
+                {
+                    foreach (string notification in notifications)
+                    {
+                        dataMember.PendingNotifications.Add(new DataNotification() { Notification = notification });
+                    }
+                }); 
+            }
         }
 
         public void Notify(string notification)
        => Notify(new string[] { notification });
 
+        public void NotifyNoSave(string notification)
+        {
+            NotifyNoSave(new string[] { notification });
+        }
+
+        public void DataNotify(string notification)
+       => DataNotify(new string[] { notification });
+
+        //r S 8
         private void SendPending() {
             
             if (pendingNotifications.Count > 0 && notifier.tryToNotify(pendingNotifications.ToArray()))
+            {
+                MemberDataManager.GetInstance().Update(Id, dm =>
+                {
+                    dm.PendingNotifications.Clear();
+                });
+                MemberDataManager.GetInstance().Save();
                 pendingNotifications.Clear();
+            }
         }
         public bool matchingPasswords(string password)
         => this.password == security.HashPassword(password);
@@ -143,5 +208,69 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             return synchronizedCollection;
         }
 
+        public override void ChangeProductAmount(ProductInBag product, int amount, int memberId)
+        {
+            int storeId = product.StoreId;
+
+            
+
+            Cart.ShoppingBags[storeId].ChangeProductAmount(product, amount, (updateDataProductInBag =>
+            {
+                MemberDataManager.GetInstance().Update(memberId, dm => {
+                    DataProductInBag? dpib = FindDataProductInBag(dm, storeId, product.ProductId);
+                    updateDataProductInBag(dpib);
+                });
+            }));
+        }
+
+        // r S 8 - database functions
+        public DataMember MemberToDataMember()
+        {
+            DataMember dMember = new DataMember()
+            {
+                Id = this.Id,
+                Username = Username,
+                Password = password,
+                Cart = Cart.CartToDataCart(),
+                IsAdmin = false,
+                PendingNotifications = new List<DataNotification>(),
+                PurchaseHistory = new List<DataPurchase>()
+            };
+            return dMember;
+        }
+
+        public void RemoveCartFromDB(DataMember member)
+        {
+            if (member == null) return;
+            DataCart? c = member.Cart;
+            if (c != null)
+            {
+                Cart.RemoveContentFromDB(c);
+                CartDataManager.GetInstance().Remove(c.Id);
+            }
+        }
+
+        public DataProductInBag? FindDataProductInBag(DataMember dm, int storeId, int productId)
+        {
+            if (dm == null) return null;
+            DataCart? dc = dm.Cart;
+            if (dc == null)
+                return null;
+            foreach (DataShoppingBag dsb in dc.ShoppingBags)
+            {
+                if (dsb.Store.Id == storeId)
+                {
+                    foreach (DataProductInBag dpib in dsb.ProductsAmounts)
+                    {
+                        if (dpib.ProductId == productId)
+                            return dpib;
+                    }
+                }
+            }
+            return null;
+        }  
+        
+        //for testing
+        public Member() { }
     }
 }

@@ -29,6 +29,8 @@ namespace TestMarketBackend.BusinessLayer.Market
         [SetUp]
         public void SetupInitialProductsSearchFilter()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             productsSearchFilter = new ProductsSearchFilter();
         }
 

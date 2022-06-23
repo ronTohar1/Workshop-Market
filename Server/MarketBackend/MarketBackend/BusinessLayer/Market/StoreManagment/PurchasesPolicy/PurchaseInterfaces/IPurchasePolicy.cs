@@ -31,5 +31,9 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Purc
             else
                 throw new Exception("not supporting this inherent of IPurchasePolicy"); 
         }
+
+        public DataIPurchasePolicy IPurchasePolicyToDataIPurchasePolicy();
+
+        public void RemoveFromDB(DataIPurchasePolicy dpp);
     }
 }

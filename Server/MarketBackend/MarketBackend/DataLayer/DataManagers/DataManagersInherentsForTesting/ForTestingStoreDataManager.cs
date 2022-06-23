@@ -8,5 +8,6 @@ namespace MarketBackend.DataLayer.DataManagers.DataManagersInherentsForTesting
 {
     public class ForTestingStoreDataManager : StoreDataManager
     {
+        public ForTestingStoreDataManager() : base() { }
     }
 }

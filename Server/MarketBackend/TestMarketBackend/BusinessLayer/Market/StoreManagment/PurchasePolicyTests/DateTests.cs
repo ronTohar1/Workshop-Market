@@ -12,6 +12,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
 {
     internal class DateTests
     {
+        [SetUp]
+        public void MockDataLayer()
+        {
+            DataManagersMock.InitMockDataManagers();
+        }
+
         [Test]
         public void TestDateRestriction()
         {

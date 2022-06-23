@@ -15,5 +15,6 @@ namespace MarketBackend.ServiceLayer
         Response<double> GetSystemDailyProfit(int memberId);
         Response<string> GetEventLogs(int userId);
         Response<string> GetErrorLogs(int userId);
+        Response<int[]> GetDailyVisitores(int memberId, DateTime fromDate, DateTime toDate);
     }
 }

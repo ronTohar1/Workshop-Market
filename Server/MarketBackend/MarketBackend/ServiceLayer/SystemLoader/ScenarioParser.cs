@@ -86,6 +86,8 @@ namespace MarketBackend.ServiceLayer
                     return JsonConvert.DeserializeObject<AddPurchasePolicyUseCase>(usecaseJson)!;
                 case "RemoveDiscountPolicy":
                     return JsonConvert.DeserializeObject<RemoveDiscountPolicyUseCase>(usecaseJson)!;
+                case "AddBid":
+                    return JsonConvert.DeserializeObject<AddBidUseCase>(usecaseJson)!;
             }
             throw new Exception("Unable to parse init file properly, unknown tag");
         }

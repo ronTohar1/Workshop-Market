@@ -233,6 +233,8 @@ namespace MarketBackend.ServiceLayer
             // the output is an array of size 5 of all the given entries of visitores as follows:
             // [number_of_admin_visits, number_of_storeOwners_visitors, number_of_managers_without_any_stores_visits,
             // number_of_simple_members(not manager or store owner), number_of_guests]
+
+            // ** Imporatant ** check that memberId is admin, fromDate<=toDate, and that fromDate<=currentDate
             throw new NotImplementedException();
         }
     }

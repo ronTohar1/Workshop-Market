@@ -24,7 +24,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         public IList<int> aprovingIds { get; }
 
         public bool counterOffer { get; private set; }
-        private double offer;
+        public double offer;
 
         private BidDataManager bidDataManager;
 

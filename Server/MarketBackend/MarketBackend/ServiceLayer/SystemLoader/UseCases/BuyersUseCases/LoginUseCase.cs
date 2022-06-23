@@ -1,27 +1,29 @@
 ﻿namespace MarketBackend.ServiceLayer
 {
-    internal class RegisterUseCase : UseCase
+    internal class LoginUseCase : UseCase
     {
-        public string Username { get; set; }    
+        public string Username { get; set; }
         public string Password { get; set; }
 
-        public RegisterUseCase(string username, string password, string ret = "_") : base("Register", ret)
+        public LoginUseCase(string username, string password, string ret = "_") : base("Login", ret)
         {
             Username = username;
             Password = password;
         }
 
-        internal override void Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
+        internal override bool Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
         {
             PrintUseCaseStarting();
-            var res = systemOperator.GetBuyerFacade().Value.Register(Username, Password);
+            var res = systemOperator.GetBuyerFacade().Value.Login(Username, Password, _ => true);
             if (res.IsErrorOccured())
                 Console.WriteLine("Unable to perform: " + this + "\nError message: " + res.ErrorMessage);
             else
             {
                 varsEnvironment[Ret] = res.Value;
-                Console.WriteLine($"Success: {Ret} = {varsEnvironment[Ret]}");
+                Console.WriteLine("Success");
+                return true;
             }
+            return false;
         }
 
         internal override string ArgsToString()

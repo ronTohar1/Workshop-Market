@@ -772,15 +772,16 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<IDictionary<string, IList<string>>> GetProductReviews(int storeId, int productId) {
+        public Response<IDictionary<string, IList<string>>> GetProductReviews(int storeId, int productId)
+        {
             try
             {
                 Store? s = storeController.GetStore(storeId);
                 if (s == null)
                     return new Response<IDictionary<string, IList<string>>>($"There isn't a store with an id {storeId}");
-                IDictionary<Member, IList<string>> memberReviews= s.GetProductReviews(productId);
+                IDictionary<Member, IList<string>> memberReviews = s.GetProductReviews(productId);
                 logger.Info($"GetProductReviews was called with parameters: [storeId {storeId}, productId = {productId}]");
-                return new Response<IDictionary<string, IList<string>>>(memberReviews.Keys.ToDictionary(x => x.Username, x=>memberReviews[x]));
+                return new Response<IDictionary<string, IList<string>>>(memberReviews.Keys.ToDictionary(x => x.Username, x => memberReviews[x]));
             }
             catch (MarketException mex)
             {
@@ -1015,5 +1016,11 @@ namespace MarketBackend.ServiceLayer
         //        return new Response<double>("Sorry, an unexpected error occured. Please try again");
         //    }
         //}
+
+        // For testing
+        internal int GetStoresCount() =>
+            storeController.GetOpenStores().Count();
+
+
     }
 }

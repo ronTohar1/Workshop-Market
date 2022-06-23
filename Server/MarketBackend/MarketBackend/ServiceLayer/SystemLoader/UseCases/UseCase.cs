@@ -11,7 +11,7 @@
             Ret = ret;
         }
 
-        abstract internal void Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment);
+        abstract internal bool Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment);
         abstract internal string ArgsToString();
 
         protected void PrintUseCaseStarting() => Console.WriteLine(">>> " + this);

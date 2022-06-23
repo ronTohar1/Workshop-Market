@@ -7,7 +7,7 @@ namespace MarketBackend.ServiceLayer
         public string UserIdRef { get; set; }
         public string TargetUserIdRef { get; set; }
         public string StoreIdRef { get; set; }
-        public IList<Permission> Permissions { get; set; }    
+        public IList<Permission> Permissions { get; set; }
 
         public ChangeManagerPermissionUseCase(string userIdRef, string targerUserIdRef, string storeIdRef, IList<Permission> permissions, string ret = "_") : base("ChangeManagerPermission", ret)
         {
@@ -17,7 +17,7 @@ namespace MarketBackend.ServiceLayer
             Permissions = permissions;
         }
 
-        internal override void Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
+        internal override bool Apply(SystemOperator systemOperator, IDictionary<string, object> varsEnvironment)
         {
             int userId = (int)varsEnvironment[UserIdRef];
             int targetUserId = (int)varsEnvironment[TargetUserIdRef];
@@ -30,7 +30,9 @@ namespace MarketBackend.ServiceLayer
             {
                 varsEnvironment[Ret] = res.Value;
                 Console.WriteLine("Success");
+                return true;
             }
+            return false;
         }
 
         internal override string ArgsToString()

@@ -48,7 +48,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         }
 
         // needs to be private (or protected for testing), sometimes is public for adding migrations to the database 
-        protected Database() : base()
+        public Database() : base()
         {
             SimplifiedMembers = DbSetToSimplifiedDbSet<DataMember, int>(this.Members);
             SimplifiedStores = DbSetToSimplifiedDbSet<DataStore, int>(this.Stores);

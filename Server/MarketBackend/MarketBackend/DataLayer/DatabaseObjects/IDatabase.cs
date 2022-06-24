@@ -62,13 +62,28 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         private static void RemoveIDatabaseInstance(int threadId)
         {
-            threadsToInstances.Remove(threadId); 
+            if (threadsToInstances.ContainsKey(threadId))
+            {
+                threadsToInstances[threadId].Dispose();
+                threadsToInstances.Remove(threadId);
+            }
         }
+
+        public static void RemoveInstances()
+        {
+            foreach (int threadId in threadsToInstances.Keys)
+            {
+                RemoveIDatabaseInstance(threadId); 
+            }
+        }
+
+        protected void Dispose();
 
         public abstract SimplifiedDbSet<DataMember, int> SimplifiedMembers { get; set; }
         public abstract SimplifiedDbSet<DataStore, int> SimplifiedStores { get; set; }
         public abstract SimplifiedDbSet<DataProduct, int> SimplifiedProducts { get; set; }
         public abstract SimplifiedDbSet<DataBid, int> SimplifiedBids { get; set; }
+        public abstract SimplifiedDbSet<DataBidMemberId, int> SimplifiedBidMemberIds { get; set; }
         public abstract SimplifiedDbSet<DataCart, int> SimplifiedCarts { get; set; }
         public abstract SimplifiedDbSet<DataManagerPermission, int> SimplifiedManagerPermissions { get; set; }
         public abstract SimplifiedDbSet<DataPurchaseOption, int> SimplifiedPurchaseOptions { get; set; }
@@ -129,6 +144,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             db.SimplifiedStores.RemoveRange(db.SimplifiedStores.ToList());
             db.SimplifiedProducts.RemoveRange(db.SimplifiedProducts.ToList());
             db.SimplifiedBids.RemoveRange(db.SimplifiedBids.ToList());
+            db.SimplifiedBidMemberIds.RemoveRange(db.SimplifiedBidMemberIds.ToList());
             db.SimplifiedCarts.RemoveRange(db.SimplifiedCarts.ToList());
             db.SimplifiedManagerPermissions.RemoveRange(db.SimplifiedManagerPermissions.ToList());
             db.SimplifiedPurchaseOptions.RemoveRange(db.SimplifiedPurchaseOptions.ToList());

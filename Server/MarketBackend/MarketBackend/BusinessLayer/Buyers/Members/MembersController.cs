@@ -122,7 +122,8 @@ public class MembersController : IBuyersController
     //r S 8
     private bool AddMember(Member member)
     {
-        MemberDataManager.GetInstance().Add(member.MemberToDataMember());
+        DataMember dataMemebr = member.MemberToDataMember();
+        MemberDataManager.GetInstance().Add(dataMemebr);
         MemberDataManager.GetInstance().Save();
         return this.members.TryAdd(member.Id, member);
     }

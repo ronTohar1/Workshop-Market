@@ -19,6 +19,7 @@ using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.Re
 using MarketBackend.SystemSettings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -35,16 +36,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         public static Database GetNewInstance()
         {
-            return new Database(); 
-        }
+            Database db = new Database();
 
-        private static IDatabase newDatabaseInstance()
-        {
-            bool using_database = false;
-            if (using_database)
-                return new Database();
-            else
-                return new DatabaseMock(); 
+            return db; 
         }
 
         // needs to be private (or protected for testing), sometimes is public for adding migrations to the database 
@@ -54,6 +48,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             SimplifiedStores = DbSetToSimplifiedDbSet<DataStore, int>(this.Stores, dataObject => dataObject.Id);
             SimplifiedProducts = DbSetToSimplifiedDbSet<DataProduct, int>(this.Products, dataObject => dataObject.Id);
             SimplifiedBids = DbSetToSimplifiedDbSet<DataBid, int>(this.Bids, dataObject => dataObject.Id);
+            SimplifiedBidMemberIds = DbSetToSimplifiedDbSet<DataBidMemberId, int>(this.BidMemberIds, dataObject => dataObject.Id);
             SimplifiedCarts = DbSetToSimplifiedDbSet<DataCart, int>(this.Carts, dataObject => dataObject.Id);
             SimplifiedManagerPermissions = DbSetToSimplifiedDbSet<DataManagerPermission, int>(this.ManagerPermissions, dataObject => dataObject.Id);
             SimplifiedPurchaseOptions = DbSetToSimplifiedDbSet<DataPurchaseOption, int>(this.PurchaseOptions, dataObject => dataObject.Id);
@@ -108,6 +103,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataStore> Stores { get; set; }
         public DbSet<DataProduct> Products { get; set; }
         public DbSet<DataBid> Bids { get; set; }
+        public DbSet<DataBidMemberId> BidMemberIds { get; set; }
         public DbSet<DataCart> Carts { get; set; }
         public DbSet<DataManagerPermission> ManagerPermissions { get; set; }
         public DbSet<DataPurchaseOption> PurchaseOptions { get; set; }
@@ -165,6 +161,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public SimplifiedDbSet<DataStore, int> SimplifiedStores { get; set; }
         public SimplifiedDbSet<DataProduct, int> SimplifiedProducts { get; set; }
         public SimplifiedDbSet<DataBid, int> SimplifiedBids { get; set; }
+        public SimplifiedDbSet<DataBidMemberId, int> SimplifiedBidMemberIds { get; set; }
         public SimplifiedDbSet<DataCart, int> SimplifiedCarts { get; set; }
         public SimplifiedDbSet<DataManagerPermission, int> SimplifiedManagerPermissions { get; set; }
         public SimplifiedDbSet<DataPurchaseOption, int> SimplifiedPurchaseOptions { get; set; }
@@ -258,7 +255,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
                 "TrustServerCertificate = True; " +
                 "MultipleActiveResultSets = True";  // todo: check if need more security 
             
-            optionsBuilder.UseSqlServer(localVMConnectionString); 
+            optionsBuilder.UseSqlServer(localVMConnectionString);
+
+            optionsBuilder.UseLazyLoadingProxies();
         }
 
         public void Remove(object toRemove)
@@ -266,13 +265,27 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             base.Remove(toRemove);
         }
 
+        // // entity framork core configurations
+
         // setting (not defualt) primary keys
 
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<DataStoreMemberRoles>()
-        //        .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
-        //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // modelBuilder.Entity<DataMember>().HasOne(typeof(DataCart)).WithOne().IsRequired(false);
+            //IList<IEntityType> entities = this.Model.GetEntityTypes().ToList();
+            //foreach (IEntityType entity in entities)
+            //{
+            //    foreach (IProperty property in entity.)
+            //    {
+            //        if (property)
+            //        {
+            //            var b1 = modelBuilder.Entity(entity.ClrType)
+            //                .HasMany(property.Name).WithOne().IsRequired(false);
+            //        }
+            //    }
+            //}
+
+        }
 
         //private void DiscountsWithoutCascades(ModelBuilder modelBuilder)
         //{

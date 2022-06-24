@@ -1232,7 +1232,7 @@ namespace TestMarketBackend.Acceptance
                 // is before hour
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
-                    () => new ServiceBeforeHour(23),
+                    () => new ServiceBeforeHour(24),
                     new List<AddProductToCartArguments>()
                     {
                         // the shopping cart 
@@ -1268,7 +1268,7 @@ namespace TestMarketBackend.Acceptance
                 // product amount enough purchase before hour
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
-                    () => new ServiceBeforeHourProduct(23, iphoneProductId, 2),
+                    () => new ServiceBeforeHourProduct(24, iphoneProductId, 2),
                     new List<AddProductToCartArguments>()
                     {
                         // the shopping cart 

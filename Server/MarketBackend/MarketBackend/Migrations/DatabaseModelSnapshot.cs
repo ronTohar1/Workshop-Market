@@ -17,7 +17,7 @@ namespace MarketBackend.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -311,7 +311,7 @@ namespace MarketBackend.Migrations
 
                     b.HasIndex("DataBidId");
 
-                    b.ToTable("DataBidMemberId");
+                    b.ToTable("BidMemberIds");
                 });
 
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataManagerPermission", b =>
@@ -343,7 +343,7 @@ namespace MarketBackend.Migrations
                     b.Property<int?>("AppointmentsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DiscountManagerId")
+                    b.Property<int?>("DiscountManagerId")
                         .HasColumnType("int");
 
                     b.Property<int?>("FounderId")
@@ -356,7 +356,7 @@ namespace MarketBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PurchaseManagerId")
+                    b.Property<int?>("PurchaseManagerId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -978,9 +978,7 @@ namespace MarketBackend.Migrations
 
                     b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy.DataStoreDiscountPolicyManager", "DiscountManager")
                         .WithMany()
-                        .HasForeignKey("DiscountManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DiscountManagerId");
 
                     b.HasOne("MarketBackend.DataLayer.DataDTOs.Buyers.DataMember", "Founder")
                         .WithMany()
@@ -988,9 +986,7 @@ namespace MarketBackend.Migrations
 
                     b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.DataStorePurchasePolicyManager", "PurchaseManager")
                         .WithMany()
-                        .HasForeignKey("PurchaseManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PurchaseManagerId");
 
                     b.Navigation("Appointments");
 

@@ -118,6 +118,8 @@ namespace MarketBackend.BusinessLayer
             externalServicesController = null;
             purchasesManager = null;
             adminManager = null;
+
+            CloseMarketDataLayer();
         }
 
         private void InitLogger()
@@ -143,6 +145,11 @@ namespace MarketBackend.BusinessLayer
         internal static void RemoveAllDatabaseContent()
         {
             StoreDataManager.GetInstance().RemoveAllTables();
+        }
+
+        private static void CloseMarketDataLayer()
+        {
+            StoreDataManager.GetInstance().CloseMarketDataLayer();
         }
     }
 }

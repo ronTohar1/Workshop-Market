@@ -26,8 +26,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects.DbSetMocks
 
         public T? FindAsync(U id)
         {
-            T elementOfId = dbSet.FindAsync(id).Result;
-            return IncludeProperties().FirstOrDefault(element => element == elementOfId);
+            // T elementOfId = dbSet.FindAsync(id).Result;
+            return dbSet.FindAsync(id).Result;
         }
 
         public T? Remove(T toRemove)
@@ -50,30 +50,30 @@ namespace MarketBackend.DataLayer.DatabaseObjects.DbSetMocks
 
         public IList<T> ToList()
         {
-            return IncludeProperties().ToList();
+            return dbSet.ToList();
         }
 
-        private IQueryable<T> IncludeProperties()
-        {
-            var entity = db.Model.GetEntityTypes().FirstOrDefault(entity => entity.ClrType == typeof(T));
+        //private IQueryable<T> IncludeProperties()
+        //{
+        //    var entity = db.Model.GetEntityTypes().FirstOrDefault(entity => entity.ClrType == typeof(T));
 
-            IQueryable<T> q = dbSet;
+        //    IQueryable<T> q = dbSet;
 
-            IList<string> navigationPropertiesStrings = GetNavigationPropertiesStrings(entity, new List<IEntityType>() { entity });
-            return navigationPropertiesStrings.Aggregate(q, (c, s) => c.Include(s));
-        }
+        //    IList<string> navigationPropertiesStrings = GetNavigationPropertiesStrings(entity, new List<IEntityType>() { entity });
+        //    return navigationPropertiesStrings.Aggregate(q, (c, s) => c.Include(s));
+        //}
 
-        private IList<string> GetNavigationPropertiesStrings(IEntityType entity, IList<IEntityType> inNavigationStrings) // for cycles 
-        {
-            var navigationProperties = entity.GetNavigations().Where(property => !inNavigationStrings.Contains(property.TargetEntityType)).ToList();
+        //private IList<string> GetNavigationPropertiesStrings(IEntityType entity, IList<IEntityType> inNavigationStrings) // for cycles 
+        //{
+        //    var navigationProperties = entity.GetNavigations().Where(property => !inNavigationStrings.Contains(property.TargetEntityType)).ToList();
            
-            IList<string> firstNavigation = navigationProperties.Select(property => property.Name).ToList();
-            inNavigationStrings = inNavigationStrings.Concat(navigationProperties.Select(property => property.TargetEntityType)).ToList(); 
+        //    IList<string> firstNavigation = navigationProperties.Select(property => property.Name).ToList();
+        //    inNavigationStrings = inNavigationStrings.Concat(navigationProperties.Select(property => property.TargetEntityType)).ToList(); 
             
-            IList<string> secondOrMoreNavigations = navigationProperties.SelectMany(
-                property => GetNavigationPropertiesStrings(property.TargetEntityType, inNavigationStrings)
-                .Select(navigationString => property.Name + "." + navigationString)).ToList();
-            return firstNavigation.Concat(secondOrMoreNavigations).ToList(); 
-        }
+        //    IList<string> secondOrMoreNavigations = navigationProperties.SelectMany(
+        //        property => GetNavigationPropertiesStrings(property.TargetEntityType, inNavigationStrings)
+        //        .Select(navigationString => property.Name + "." + navigationString)).ToList();
+        //    return firstNavigation.Concat(secondOrMoreNavigations).ToList(); 
+        //}
     }
 }

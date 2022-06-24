@@ -37,6 +37,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public SimplifiedDbSet<DataStore, int> SimplifiedStores { get; set; }
         public SimplifiedDbSet<DataProduct, int> SimplifiedProducts { get; set; }
         public SimplifiedDbSet<DataBid, int> SimplifiedBids { get; set; }
+        public SimplifiedDbSet<DataBidMemberId, int> SimplifiedBidMemberIds { get; set; }
         public SimplifiedDbSet<DataCart, int> SimplifiedCarts { get; set; }
         public SimplifiedDbSet<DataManagerPermission, int> SimplifiedManagerPermissions { get; set; }
         public SimplifiedDbSet<DataPurchaseOption, int> SimplifiedPurchaseOptions { get; set; }
@@ -96,6 +97,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             SimplifiedStores = CreateSimplifiedDbSetClass<DataStore, int>();
             SimplifiedProducts = CreateSimplifiedDbSetClass<DataProduct, int>();
             SimplifiedBids = CreateSimplifiedDbSetClass<DataBid, int>();
+            SimplifiedBidMemberIds = CreateSimplifiedDbSetClass<DataBidMemberId, int>();
             SimplifiedCarts = CreateSimplifiedDbSetClass<DataCart, int>(); 
             SimplifiedManagerPermissions = CreateSimplifiedDbSetClass<DataManagerPermission, int>();
             SimplifiedPurchaseOptions = CreateSimplifiedDbSetClass<DataPurchaseOption, int>();
@@ -160,6 +162,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
                 SimplifiedProducts.Remove((DataProduct)toRemove);
             else if (toRemove.GetType() == typeof(DataBid))
                 SimplifiedBids.Remove((DataBid)toRemove);
+            else if (toRemove.GetType() == typeof(DataBidMemberId))
+                SimplifiedBidMemberIds.Remove((DataBidMemberId)toRemove);
             else if (toRemove.GetType() == typeof(DataCart))
                 SimplifiedCarts.Remove((DataCart)toRemove);
             else if (toRemove.GetType() == typeof(DataManagerPermission))
@@ -254,6 +258,11 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         {
             // not using database 
             return 0; 
+        }
+
+        public void Dispose()
+        {
+
         }
     }
 }

@@ -9,6 +9,6 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy
 {
     public class DataMaxExpression : DataDiscountExpression
     {
-        public IList<DataDiscountExpression> Discounts { get; set; }
+        public virtual IList<DataDiscountExpression?>? Discounts { get; set; }
     }
 }

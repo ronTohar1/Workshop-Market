@@ -119,9 +119,9 @@ namespace MarketBackend.DataLayer.DataManagers
             {
                 return function();
             }
-            catch (Exception) // todo: check if this is the exception that is needed to be catch here
+            catch (Exception exception) // todo: check if this is the exception that is needed to be catch here
             {
-                return function(); 
+                // return function(); 
                 throw new MarketException("Action could not be saved, try again later");
             }
         }
@@ -134,6 +134,11 @@ namespace MarketBackend.DataLayer.DataManagers
         public virtual void RemoveAllTables()
         {
             IDatabase.RemoveAllTables(IDatabase.GetInstance()); 
+        }
+
+        public virtual void CloseMarketDataLayer()
+        {
+            IDatabase.RemoveInstances();
         }
 
         protected int MaxOrDefualt<T>(IEnumerable<T> list, Func<T, int> getNumber, int defaultValue)

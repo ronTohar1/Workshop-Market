@@ -17,7 +17,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement
         public int ProdctId { get; set; }
         public int MemberId { get; set; }
         public double Bid { get; set; }
-        public IList<DataBidMemberId> Approving { get; set; }
+        public virtual IList<DataBidMemberId?>? Approving { get; set; }
         public bool CounterOffer { get; set; }
         public double Offer { get; set; }
     }

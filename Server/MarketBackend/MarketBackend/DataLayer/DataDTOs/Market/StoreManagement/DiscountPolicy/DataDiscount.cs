@@ -14,6 +14,6 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string Description { get; set; }
-        public DataExpression? DiscountExpression { get; set; }
+        public virtual DataExpression? DiscountExpression { get; set; }
     }
 }

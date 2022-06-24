@@ -19,6 +19,7 @@ using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.Re
 using MarketBackend.SystemSettings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -33,81 +34,76 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         private static IDatabase instance = null; 
 
-        public static IDatabase GetNewInstance()
+        public static Database GetNewInstance()
         {
-            return new Database(); 
-        }
+            Database db = new Database();
 
-        private static IDatabase newDatabaseInstance()
-        {
-            bool using_database = false;
-            if (using_database)
-                return new Database();
-            else
-                return new DatabaseMock(); 
+            return db; 
         }
 
         // needs to be private (or protected for testing), sometimes is public for adding migrations to the database 
         public Database() : base()
         {
-            SimplifiedMembers = DbSetToSimplifiedDbSet<DataMember, int>(this.Members);
-            SimplifiedStores = DbSetToSimplifiedDbSet<DataStore, int>(this.Stores);
-            SimplifiedProducts = DbSetToSimplifiedDbSet<DataProduct, int>(this.Products);
-            SimplifiedBids = DbSetToSimplifiedDbSet<DataBid, int>(this.Bids);
-            SimplifiedCarts = DbSetToSimplifiedDbSet<DataCart, int>(this.Carts);
-            SimplifiedManagerPermissions = DbSetToSimplifiedDbSet<DataManagerPermission, int>(this.ManagerPermissions);
-            SimplifiedPurchaseOptions = DbSetToSimplifiedDbSet<DataPurchaseOption, int>(this.PurchaseOptions);
-            SimplifiedStoreMemberRoles = DbSetToSimplifiedDbSet<DataStoreMemberRoles, int>(this.StoreMemberRoles);
-            SimplifiedProductReview = DbSetToSimplifiedDbSet<DataProductReview, int>(this.ProductReview);
-            SimplifiedAppointmentsNodes = DbSetToSimplifiedDbSet<DataAppointmentsNode, int>(this.AppointmentsNodes);
-            SimplifiedShoppingBags = DbSetToSimplifiedDbSet<DataShoppingBag, int>(this.ShoppingBags);
-            SimplifiedProductInBags = DbSetToSimplifiedDbSet<DataProductInBag, int>(this.ProductInBags);
-            SimplifiedNotifications = DbSetToSimplifiedDbSet<DataNotification, int>(this.Notifications);
-            SimplifiedPurchases = DbSetToSimplifiedDbSet<DataPurchase, int>(this.Purchases);
-            SimplifiedDateDiscounts = DbSetToSimplifiedDbSet<DataDateDiscount, int>(this.DateDiscounts);
-            SimplifiedOneProductDiscounts = DbSetToSimplifiedDbSet<DataOneProductDiscount, int>(this.OneProductDiscounts);
-            SimplifiedStoreDiscounts = DbSetToSimplifiedDbSet<DataStoreDiscount, int>(this.StoreDiscounts);
-            SimplifiedDiscountAndExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression, int>(this.DiscountAndExpressions);
-            SimplifiedDiscountOrExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression, int>(this.DiscountOrExpressions);
-            SimplifiedXorExpressions = DbSetToSimplifiedDbSet<DataXorExpression, int>(this.XorExpressions);
-            SimplifiedMaxExpressions = DbSetToSimplifiedDbSet<DataMaxExpression, int>(this.MaxExpressions);
-            SimplifiedBagValuePredicates = DbSetToSimplifiedDbSet<DataBagValuePredicate, int>(this.BagValuePredicates);
-            SimplifiedProductAmountPredicates = DbSetToSimplifiedDbSet<DataProductAmountPredicate, int>(this.ProductAmountPredicates);
-            SimplifiedConditionDiscounts = DbSetToSimplifiedDbSet<DataConditionDiscount, int>(this.ConditionDiscounts);
-            SimplifiedIfDiscounts = DbSetToSimplifiedDbSet<DataIfDiscount, int>(this.IfDiscounts);
-            SimplifiedLogicalExpressions = DbSetToSimplifiedDbSet<DataLogicalExpression, int>(this.LogicalExpressions);
-            SimplifiedConditionExpressions = DbSetToSimplifiedDbSet<DataConditionDiscount, int>(this.ConditionExpressions);
-            SimplifiedDiscountExpressions = DbSetToSimplifiedDbSet<DataDiscountExpression, int>(this.DiscountExpressions);
-            SimplifiedExpressions = DbSetToSimplifiedDbSet<DataExpression, int>(this.Expressions);
-            SimplifiedDiscountPredicateExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression, int>(this.DiscountPredicateExpressions);
-            SimplifiedDiscounts = DbSetToSimplifiedDbSet<DataDiscount, int>(this.Discounts);
-            SimplifiedPurchaseAndExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression, int>(this.PurchaseAndExpressions);
-            SimplifiedImpliesExpressions = DbSetToSimplifiedDbSet<DataImpliesExpression, int>(this.ImpliesExpressions);
-            SimplifiedPurchaseOrExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression, int>(this.PurchaseOrExpressions);
-            SimplifiedCheckProductLessPredicates = DbSetToSimplifiedDbSet<DataCheckProductLessPredicate, int>(this.CheckProductLessPredicates);
-            SimplifiedCheckProductMoreEqualsPredicates = DbSetToSimplifiedDbSet<DataCheckProductMoreEqualsPredicate, int>(this.CheckProductMoreEqualsPredicates);
-            SimplifiedPruchasePredicateExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression, int>(this.PruchasePredicateExpressions);
-            SimplifiedInterfacesPurchasePolicies = DbSetToSimplifiedDbSet<DataIPurchasePolicy, int>(this.InterfacesPurchasePolicies);
-            SimplifiedRestrictionExpressions = DbSetToSimplifiedDbSet<DataRestrictionExpression, int>(this.RestrictionExpressions);
-            SimplifiedDataAfterHourProductRestrictions = DbSetToSimplifiedDbSet<DataAfterHourProductRestriction, int>(this.DataAfterHourProductRestrictions);
-            SimplifiedAfterHourRestrictions = DbSetToSimplifiedDbSet<DataAfterHourRestriction, int>(this.AfterHourRestrictions);
-            SimplifiedAtLeastAmountRestrictions = DbSetToSimplifiedDbSet<DataAtLeastAmountRestriction, int>(this.AtLeastAmountRestrictions);
-            SimplifiedAtMostAmountRestrictions = DbSetToSimplifiedDbSet<DataAtMostAmountRestriction, int>(this.AtMostAmountRestrictions);
-            SimplifiedBeforeHourProductRestrictions = DbSetToSimplifiedDbSet<DataBeforeHourProductRestriction, int>(this.BeforeHourProductRestrictions);
-            SimplifiedBeforeHourRestrictions = DbSetToSimplifiedDbSet<DataBeforeHourRestriction, int>(this.BeforeHourRestrictions);
-            SimplifiedDateRestrictions = DbSetToSimplifiedDbSet<DataDateRestriction, int>(this.DateRestrictions);
-            SimplifiedPurchasePolicies = DbSetToSimplifiedDbSet<DataPurchasePolicy, int>(this.PurchasePolicies);
+            SimplifiedMembers = DbSetToSimplifiedDbSet<DataMember, int>(this.Members, dataObject => dataObject.Id);
+            SimplifiedStores = DbSetToSimplifiedDbSet<DataStore, int>(this.Stores, dataObject => dataObject.Id);
+            SimplifiedProducts = DbSetToSimplifiedDbSet<DataProduct, int>(this.Products, dataObject => dataObject.Id);
+            SimplifiedBids = DbSetToSimplifiedDbSet<DataBid, int>(this.Bids, dataObject => dataObject.Id);
+            SimplifiedBidMemberIds = DbSetToSimplifiedDbSet<DataBidMemberId, int>(this.BidMemberIds, dataObject => dataObject.Id);
+            SimplifiedCarts = DbSetToSimplifiedDbSet<DataCart, int>(this.Carts, dataObject => dataObject.Id);
+            SimplifiedManagerPermissions = DbSetToSimplifiedDbSet<DataManagerPermission, int>(this.ManagerPermissions, dataObject => dataObject.Id);
+            SimplifiedPurchaseOptions = DbSetToSimplifiedDbSet<DataPurchaseOption, int>(this.PurchaseOptions, dataObject => dataObject.Id);
+            SimplifiedStoreMemberRoles = DbSetToSimplifiedDbSet<DataStoreMemberRoles, int>(this.StoreMemberRoles, dataObject => dataObject.Id);
+            SimplifiedProductReview = DbSetToSimplifiedDbSet<DataProductReview, int>(this.ProductReview, dataObject => dataObject.Id);
+            SimplifiedAppointmentsNodes = DbSetToSimplifiedDbSet<DataAppointmentsNode, int>(this.AppointmentsNodes, dataObject => dataObject.Id);
+            SimplifiedShoppingBags = DbSetToSimplifiedDbSet<DataShoppingBag, int>(this.ShoppingBags, dataObject => dataObject.Id);
+            SimplifiedProductInBags = DbSetToSimplifiedDbSet<DataProductInBag, int>(this.ProductInBags, dataObject => dataObject.Id);
+            SimplifiedNotifications = DbSetToSimplifiedDbSet<DataNotification, int>(this.Notifications, dataObject => dataObject.Id);
+            SimplifiedPurchases = DbSetToSimplifiedDbSet<DataPurchase, int>(this.Purchases, dataObject => dataObject.Id);
+            SimplifiedDateDiscounts = DbSetToSimplifiedDbSet<DataDateDiscount, int>(this.DateDiscounts, dataObject => dataObject.Id);
+            SimplifiedOneProductDiscounts = DbSetToSimplifiedDbSet<DataOneProductDiscount, int>(this.OneProductDiscounts, dataObject => dataObject.Id);
+            SimplifiedStoreDiscounts = DbSetToSimplifiedDbSet<DataStoreDiscount, int>(this.StoreDiscounts, dataObject => dataObject.Id);
+            SimplifiedDiscountAndExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataAndExpression, int>(this.DiscountAndExpressions, dataObject => dataObject.Id);
+            SimplifiedDiscountOrExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountExpressions.LogicalExpressions.DataOrExpression, int>(this.DiscountOrExpressions, dataObject => dataObject.Id);
+            SimplifiedXorExpressions = DbSetToSimplifiedDbSet<DataXorExpression, int>(this.XorExpressions, dataObject => dataObject.Id);
+            SimplifiedMaxExpressions = DbSetToSimplifiedDbSet<DataMaxExpression, int>(this.MaxExpressions, dataObject => dataObject.Id);
+            SimplifiedBagValuePredicates = DbSetToSimplifiedDbSet<DataBagValuePredicate, int>(this.BagValuePredicates, dataObject => dataObject.Id);
+            SimplifiedProductAmountPredicates = DbSetToSimplifiedDbSet<DataProductAmountPredicate, int>(this.ProductAmountPredicates, dataObject => dataObject.Id);
+            SimplifiedConditionDiscounts = DbSetToSimplifiedDbSet<DataConditionDiscount, int>(this.ConditionDiscounts, dataObject => dataObject.Id);
+            SimplifiedIfDiscounts = DbSetToSimplifiedDbSet<DataIfDiscount, int>(this.IfDiscounts, dataObject => dataObject.Id);
+            SimplifiedLogicalExpressions = DbSetToSimplifiedDbSet<DataLogicalExpression, int>(this.LogicalExpressions, dataObject => dataObject.Id);
+            SimplifiedConditionExpressions = DbSetToSimplifiedDbSet<DataConditionDiscount, int>(this.ConditionExpressions, dataObject => dataObject.Id);
+            SimplifiedDiscountExpressions = DbSetToSimplifiedDbSet<DataDiscountExpression, int>(this.DiscountExpressions, dataObject => dataObject.Id);
+            SimplifiedExpressions = DbSetToSimplifiedDbSet<DataExpression, int>(this.Expressions, dataObject => dataObject.Id);
+            SimplifiedDiscountPredicateExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.DiscountPolicy.DiscountInterfaces.DataPredicateExpression, int>(this.DiscountPredicateExpressions, dataObject => dataObject.Id);
+            SimplifiedDiscounts = DbSetToSimplifiedDbSet<DataDiscount, int>(this.Discounts, dataObject => dataObject.Id);
+            SimplifiedPurchaseAndExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataAndExpression, int>(this.PurchaseAndExpressions, dataObject => dataObject.Id);
+            SimplifiedImpliesExpressions = DbSetToSimplifiedDbSet<DataImpliesExpression, int>(this.ImpliesExpressions, dataObject => dataObject.Id);
+            SimplifiedPurchaseOrExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.LogicalOperators.DataOrExpression, int>(this.PurchaseOrExpressions, dataObject => dataObject.Id);
+            SimplifiedCheckProductLessPredicates = DbSetToSimplifiedDbSet<DataCheckProductLessPredicate, int>(this.CheckProductLessPredicates, dataObject => dataObject.Id);
+            SimplifiedCheckProductMoreEqualsPredicates = DbSetToSimplifiedDbSet<DataCheckProductMoreEqualsPredicate, int>(this.CheckProductMoreEqualsPredicates, dataObject => dataObject.Id);
+            SimplifiedPruchasePredicateExpressions = DbSetToSimplifiedDbSet<DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces.DataPredicateExpression, int>(this.PruchasePredicateExpressions, dataObject => dataObject.Id);
+            SimplifiedInterfacesPurchasePolicies = DbSetToSimplifiedDbSet<DataIPurchasePolicy, int>(this.InterfacesPurchasePolicies, dataObject => dataObject.Id);
+            SimplifiedRestrictionExpressions = DbSetToSimplifiedDbSet<DataRestrictionExpression, int>(this.RestrictionExpressions, dataObject => dataObject.Id);
+            SimplifiedDataAfterHourProductRestrictions = DbSetToSimplifiedDbSet<DataAfterHourProductRestriction, int>(this.DataAfterHourProductRestrictions, dataObject => dataObject.Id);
+            SimplifiedAfterHourRestrictions = DbSetToSimplifiedDbSet<DataAfterHourRestriction, int>(this.AfterHourRestrictions, dataObject => dataObject.Id);
+            SimplifiedAtLeastAmountRestrictions = DbSetToSimplifiedDbSet<DataAtLeastAmountRestriction, int>(this.AtLeastAmountRestrictions, dataObject => dataObject.Id);
+            SimplifiedAtMostAmountRestrictions = DbSetToSimplifiedDbSet<DataAtMostAmountRestriction, int>(this.AtMostAmountRestrictions, dataObject => dataObject.Id);
+            SimplifiedBeforeHourProductRestrictions = DbSetToSimplifiedDbSet<DataBeforeHourProductRestriction, int>(this.BeforeHourProductRestrictions, dataObject => dataObject.Id);
+            SimplifiedBeforeHourRestrictions = DbSetToSimplifiedDbSet<DataBeforeHourRestriction, int>(this.BeforeHourRestrictions, dataObject => dataObject.Id);
+            SimplifiedDateRestrictions = DbSetToSimplifiedDbSet<DataDateRestriction, int>(this.DateRestrictions, dataObject => dataObject.Id);
+            SimplifiedPurchasePolicies = DbSetToSimplifiedDbSet<DataPurchasePolicy, int>(this.PurchasePolicies, dataObject => dataObject.Id);
         }
 
-        private static SimplifiedDatabaseDbSet<T, U> DbSetToSimplifiedDbSet<T, U>(DbSet<T> dbSet) where T : class
+        private SimplifiedDatabaseDbSet<T, U> DbSetToSimplifiedDbSet<T, U>(DbSet<T> dbSet, Func<T, U> getId) where T : class
         {
-            return new SimplifiedDatabaseDbSet<T, U>(dbSet);
+            return new SimplifiedDatabaseDbSet<T, U>(dbSet, this, getId);
         }
 
         public DbSet<DataMember> Members { get; set; }
         public DbSet<DataStore> Stores { get; set; }
         public DbSet<DataProduct> Products { get; set; }
         public DbSet<DataBid> Bids { get; set; }
+        public DbSet<DataBidMemberId> BidMemberIds { get; set; }
         public DbSet<DataCart> Carts { get; set; }
         public DbSet<DataManagerPermission> ManagerPermissions { get; set; }
         public DbSet<DataPurchaseOption> PurchaseOptions { get; set; }
@@ -165,6 +161,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public SimplifiedDbSet<DataStore, int> SimplifiedStores { get; set; }
         public SimplifiedDbSet<DataProduct, int> SimplifiedProducts { get; set; }
         public SimplifiedDbSet<DataBid, int> SimplifiedBids { get; set; }
+        public SimplifiedDbSet<DataBidMemberId, int> SimplifiedBidMemberIds { get; set; }
         public SimplifiedDbSet<DataCart, int> SimplifiedCarts { get; set; }
         public SimplifiedDbSet<DataManagerPermission, int> SimplifiedManagerPermissions { get; set; }
         public SimplifiedDbSet<DataPurchaseOption, int> SimplifiedPurchaseOptions { get; set; }
@@ -221,11 +218,26 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         public override int SaveChanges()
         {
-            int result = base.SaveChanges();
+            try
+            {
+                int result = base.SaveChanges();
+                return result;
+            }
+            catch (DbUpdateConcurrencyException exception)
+            {
+                Random random = new Random();
+                Thread.Sleep((int)random.NextInt64(1, 60));
+                foreach (EntityEntry entry in exception.Entries)
+                {
+                    entry.Reload();
+                }
+                return SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                throw exception; 
+            }
 
-            IDatabase.RemoveIDatabaseInstance();
-
-            return result;
         }
 
         // connection setup functions
@@ -243,7 +255,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
                 "TrustServerCertificate = True; " +
                 "MultipleActiveResultSets = True";  // todo: check if need more security 
             
-            optionsBuilder.UseSqlServer(localVMConnectionString); 
+            optionsBuilder.UseSqlServer(localVMConnectionString);
+
+            optionsBuilder.UseLazyLoadingProxies();
         }
 
         public void Remove(object toRemove)
@@ -251,13 +265,27 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             base.Remove(toRemove);
         }
 
+        // // entity framork core configurations
+
         // setting (not defualt) primary keys
 
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<DataStoreMemberRoles>()
-        //        .HasKey(storeMemberRoles => new { storeMemberRoles.MemberId, storeMemberRoles.StoreId }); 
-        //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // modelBuilder.Entity<DataMember>().HasOne(typeof(DataCart)).WithOne().IsRequired(false);
+            //IList<IEntityType> entities = this.Model.GetEntityTypes().ToList();
+            //foreach (IEntityType entity in entities)
+            //{
+            //    foreach (IProperty property in entity.)
+            //    {
+            //        if (property)
+            //        {
+            //            var b1 = modelBuilder.Entity(entity.ClrType)
+            //                .HasMany(property.Name).WithOne().IsRequired(false);
+            //        }
+            //    }
+            //}
+
+        }
 
         //private void DiscountsWithoutCascades(ModelBuilder modelBuilder)
         //{

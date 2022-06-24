@@ -9,7 +9,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DiscountPolicy
 {
     public abstract class DataLogicalExpression : DataPredicateExpression
     {
-        public DataPredicateExpression? First { get; set; }
-        public DataPredicateExpression? Second { get; set; }
+        public virtual DataPredicateExpression? First { get; set; }
+        public virtual DataPredicateExpression? Second { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolic
 {
     public class DataOrExpression : DataIPurchasePolicy
     {
-        public DataRestrictionExpression? FirstPred { get; set; }
-        public DataRestrictionExpression? SecondPred { get; set; }
+        public virtual DataRestrictionExpression? FirstPred { get; set; }
+        public virtual DataRestrictionExpression? SecondPred { get; set; }
     }
 }

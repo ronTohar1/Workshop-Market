@@ -5,7 +5,7 @@
 	"DatabasePort":"50488",
 	"DatabaseUsername":"amitZivan",
 	"DatabasePassword":"passMarket",
-	"ShouldUpdateDatabase":false,
+	"ShouldUpdateDatabase":true,
 	"ShouldRunInitFile":true,
 	"InitFilePath":"Scenarios/init.json",
 	"WebsocketServerPort":7890

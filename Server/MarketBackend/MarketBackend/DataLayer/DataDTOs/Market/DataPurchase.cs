@@ -15,7 +15,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Market
         public int Id { get; set; }
         public int BuyerId { get; set; } 
         [ForeignKey("DataStore")]
-        public DataStore? Store { get; set; }
+        public virtual DataStore? Store { get; set; }
         public DateTime PurchaseDate { get; set; }
         public double PurchasePrice { get; set; }
         public string PurchaseDescription { get; set; }

@@ -35,6 +35,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             if (!threadsToInstances.ContainsKey(threadId))
             {
                 threadsToInstances.Add(threadId, GetNewDatabaseInstance());
+                AddActionWhenThisThreadFinishes(() => RemoveIDatabaseInstance(threadId)); 
             }
             return threadsToInstances[threadId];
         }
@@ -49,9 +50,18 @@ namespace MarketBackend.DataLayer.DatabaseObjects
                 return DatabaseMock.GetNewInstance();
         }
 
-        public static void RemoveIDatabaseInstance()
+        private static void AddActionWhenThisThreadFinishes(Action action)
         {
-            int threadId = Thread.CurrentThread.ManagedThreadId;
+            Thread currentThread = Thread.CurrentThread;
+            new Thread(() =>
+            {
+                currentThread.Join();
+                action();
+            }).Start(); 
+        }
+
+        private static void RemoveIDatabaseInstance(int threadId)
+        {
             threadsToInstances.Remove(threadId); 
         }
 

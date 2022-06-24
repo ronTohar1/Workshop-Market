@@ -121,6 +121,7 @@ namespace MarketBackend.DataLayer.DataManagers
             }
             catch (Exception) // todo: check if this is the exception that is needed to be catch here
             {
+                return function(); 
                 throw new MarketException("Action could not be saved, try again later");
             }
         }

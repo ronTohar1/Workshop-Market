@@ -253,9 +253,6 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public int SaveChanges()
         {
             // not using database 
-
-            IDatabase.RemoveIDatabaseInstance();
-
             return 0; 
         }
     }

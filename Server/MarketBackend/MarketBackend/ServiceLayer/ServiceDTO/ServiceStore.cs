@@ -28,9 +28,9 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             Products = productsIds;
             IsOpen = store.isOpen;
             Founder = new ServiceMember(store.founder);
-            DiscountPolicies = store.discountManager.discounts.Values.Select(disc => new ServiceDiscountPolicy(disc.id, disc.description)).ToArray();
-            PurchasePolicies = store.purchaseManager.purchases.Values.Select(purch => new ServicePurchasePolicy(purch.id, purch.description)).ToArray();
-            Bids = store.bids.Values.Select(bid => new ServiceBid(bid.id, bid.storeId, bid.productId, bid.memberId, bid.bid, bid.aprovingIds, bid.counterOffer,bid.offer)).ToArray();
+            DiscountPolicies = store.discountManager.discounts.Values.Select(disc => new ServiceDiscountPolicy(disc.id, disc.description)).ToList();
+            PurchasePolicies = store.purchaseManager.purchases.Values.Select(purch => new ServicePurchasePolicy(purch.id, purch.description)).ToList();
+            Bids = store.bids.Values.Select(bid => new ServiceBid(bid.id, bid.storeId, bid.productId, bid.memberId, bid.bid, bid.aprovingIds, bid.counterOffer,bid.offer)).ToList();
            
         }
 

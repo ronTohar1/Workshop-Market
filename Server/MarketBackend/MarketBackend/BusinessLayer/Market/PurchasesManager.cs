@@ -187,25 +187,54 @@ public class PurchasesManager
         storesTotal.Add(storeId, bidPrice);
         double purchaseTotal = storesTotal.Values.Sum(x => x); // Sum prices of all products
 
-        int transactionId = externalServicesController.makePayment(paymentDetails);
+        // Trying to pay--------------------------------
+
+        int transactionId;
+        try
+        {
+            transactionId = externalServicesController.makePayment(paymentDetails);
+        }
+        catch (Exception e)
+        {
+            TryRollback(storesTransactions);
+            //throw new MarketException("Could not make payment");
+            throw new MarketException("Could not make payment\n" + e.Message);
+        }
         if (transactionId == -1)
         {
             TryRollback(storesTransactions);
             throw new MarketException("Could not make payment");
         }
-        if (externalServicesController.makeDelivery(supplyDetails) == -1)
+
+        // -----------------------------------------------
+
+        // Trying to deliver --------------------------------
+        int deliveryTransaction;
+        try
+        {
+            deliveryTransaction = externalServicesController.makeDelivery(supplyDetails);
+        }
+        catch (Exception e)
+        {
+            TryRollback(storesTransactions);
+            throw new MarketException("Could not send a delivery\n" + e.Message);
+        }
+
+        if (deliveryTransaction == -1)
         {
             externalServicesController.CancelPayment(transactionId);
             TryRollback(storesTransactions);
             throw new MarketException("Could not send a delivery");
         }
+        // -----------------------------------------------
 
         IDictionary<int, string> receipts = GetReceipt(storesTransactions, shoppingBags);
 
         ICollection<ShoppingBag> shoppingBagsInPurchase = new List<ShoppingBag>(shoppingBags);
-        UpdateBuyerAndStore(buyer, shoppingBags, storesTransactions);
+        UpdateBuyerAndStoreBID(buyer, shoppingBags, storesTransactions, bid.id);
         AddRecord(buyer, shoppingBagsInPurchase, storesTotal, receipts, new Action(() => {
             externalServicesController.CancelPayment(transactionId);
+            externalServicesController.CancelDelivery(transactionId);
             TryRollback(storesTransactions);
             throw new MarketException("Could not make the purchase, pls try again later!");
         })); //r S 8
@@ -337,6 +366,28 @@ public class PurchasesManager
                 //Remove from cart
                 buyer.Cart.RemoveProductFromCart(productInBag, buyer.Id, buyer is Member); //r S 8
             }
+            store.notifyAllStoreOwners($"The buyer with the id:{buyer.Id} has purchased at the store: {store.name}");
+        }
+    }
+
+    private void UpdateBuyerAndStoreBID(Buyer buyer, ICollection<ShoppingBag> shoppingBags, IDictionary<int, int> storesTransactions, int bidId)
+    {
+        foreach (ShoppingBag shoppingBag in shoppingBags)
+        {
+            int storeId = shoppingBag.StoreId;
+
+            Store store = storeController.GetStore(storeId);
+            store.CommitTransaction(storesTransactions[storeId]);
+
+            //foreach (var prod in shoppingBag.ProductsAmounts)
+            //{
+            //    ProductInBag productInBag = prod.Key;
+            //    int amount = prod.Value;
+
+            //    //Remove from cart
+            //    buyer.Cart.RemoveProductFromCart(productInBag, buyer.Id, buyer is Member); //r S 8
+            //}
+            store.RemoveBid(buyer.Id, bidId);
             store.notifyAllStoreOwners($"The buyer with the id:{buyer.Id} has purchased at the store: {store.name}");
         }
     }

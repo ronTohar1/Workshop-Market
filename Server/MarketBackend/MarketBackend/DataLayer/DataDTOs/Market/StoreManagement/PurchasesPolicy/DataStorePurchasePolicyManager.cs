@@ -9,6 +9,6 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolic
     public class DataStorePurchasePolicyManager
     {
         public int Id { get; set; }
-        public IList<DataPurchasePolicy> PurchasesPolicies { get; set; }
+        public virtual IList<DataPurchasePolicy?>? PurchasesPolicies { get; set; }
     }
 }

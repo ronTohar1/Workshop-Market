@@ -11,6 +11,6 @@ namespace MarketBackend.DataLayer.DataDTOs.Buyers.Carts
     public class DataCart
     {
         public int Id { get; set; }
-        public IList<DataShoppingBag> ShoppingBags { get; set; }
+        public virtual IList<DataShoppingBag?>? ShoppingBags { get; set; }
     }
 }

@@ -704,6 +704,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                             IList<DataStoreMemberRoles> rolesToRemove = dataStore.MembersPermissions.Where(dataRole => dataRole.MemberId == memberToRemoveId).ToList();
                             foreach (DataStoreMemberRoles roleToRemove in rolesToRemove)
                             {
+                                IList<DataManagerPermission> dataManagerPermissions = roleToRemove.ManagerPermissions;
+                                if (dataManagerPermissions != null) // null if the role is not manager 
+                                {
+                                    foreach (DataManagerPermission dataManagerPermission in dataManagerPermissions)
+                                    {
+                                        StoreMemberRolesDataManager.GetInstance().Remove(dataManagerPermission);
+                                    }
+                                }
                                 StoreMemberRolesDataManager.GetInstance().Remove(roleToRemove.Id);
                             }
 
@@ -1113,11 +1121,20 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             if (IsCoOwner(memberId) || IsManagerWithPermission(memberId, Permission.handlingBids))
             {
                 Member m = membersGetter.Invoke(bid.memberId);
-                string notification = $"The bid you placed for the product {products[bid.productId].name} was denied for the cost of {bid.bid}"; 
+                string notification = $"The bid you placed for the product {products[bid.productId].name} was denied for the cost of {bid.bid}";
 
+                BidDataManager bidDataManager = BidDataManager.GetInstance();
+                DataBid dataBid = bidDataManager.Find(bidId);
+                if (dataBid.Approving != null)
+                {
+                    foreach (DataBidMemberId dataApprovingMemebrId in dataBid.Approving)
+                    {
+                        bidDataManager.Remove(dataApprovingMemebrId);
+                    }
+                }
                 BidDataManager.GetInstance().Remove(bidId);
                 m.DataNotify(notification);
-                storeDataManager.Save(); 
+                storeDataManager.Save();
 
                 bids.Remove(bidId);
                 m.NotifyNoSave(notification);

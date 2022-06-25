@@ -17,13 +17,13 @@ namespace MarketBackend.DataLayer.DataDTOs.Buyers
         public int Id { get; set; }
         public string Username { get; set; }
         public int Password { get; set; }
-        public IList<DataNotification> PendingNotifications { get; set; }
+        public virtual IList<DataNotification?>? PendingNotifications { get; set; }
 
         public bool IsAdmin { get; set; }
-        
+
         // buyer data
 
-        public DataCart? Cart { get; set; }
-        public IList<DataPurchase> PurchaseHistory { get; set; }
+        public virtual DataCart? Cart { get; set; }
+        public virtual IList<DataPurchase?>? PurchaseHistory { get; set; }
     }
 }

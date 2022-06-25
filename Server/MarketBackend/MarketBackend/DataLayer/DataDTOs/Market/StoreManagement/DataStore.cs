@@ -18,16 +18,16 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement
         public int Id { get; set; }
 
         public string Name { get; set; }
-        public DataMember? Founder { get; set; }
+        public virtual DataMember? Founder { get; set; }
         public bool IsOpen { get; set; }
-        public IList<DataProduct> Products { get; set; }
-        public IList<DataPurchase> PurchaseHistory { get; set; }
-        public IList<DataStoreMemberRoles> MembersPermissions { get; set; }
-        public DataAppointmentsNode? Appointments { get; set; }
+        public virtual IList<DataProduct?>? Products { get; set; }
+        public virtual IList<DataPurchase?>? PurchaseHistory { get; set; }
+        public virtual IList<DataStoreMemberRoles?>? MembersPermissions { get; set; }
+        public virtual DataAppointmentsNode? Appointments { get; set; }
 
-        public DataStoreDiscountPolicyManager DiscountManager { get; set; }
-        public DataStorePurchasePolicyManager PurchaseManager { get; set; }
+        public virtual DataStoreDiscountPolicyManager? DiscountManager { get; set; }
+        public virtual DataStorePurchasePolicyManager? PurchaseManager { get; set; }
 
-        public IList<DataBid> Bids { get; set; }
+        public virtual IList<DataBid?>? Bids { get; set; }
     }
 }

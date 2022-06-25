@@ -9,7 +9,7 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolic
 {
     public class DataImpliesExpression : DataIPurchasePolicy
     {
-        public DataPredicateExpression? Condition { get; set; }
-        public DataPredicateExpression? Allowing { get; set; }
+        public virtual DataPredicateExpression? Condition { get; set; }
+        public virtual DataPredicateExpression? Allowing { get; set; }
     }
 }

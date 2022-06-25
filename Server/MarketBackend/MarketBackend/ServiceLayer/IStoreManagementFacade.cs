@@ -31,6 +31,8 @@ namespace MarketBackend.ServiceLayer
         Response<IList<Purchase>> GetPurchaseHistory(int userId, int storeId);
         Response<bool> MakeCoManager(int userId, int targetUserId, int storeId);
         Response<bool> MakeCoOwner(int userId, int targetUserId, int storeId);
+        Response<bool> DenyNewCoOwner(int userId, int targetUserId, int storeId);
+        Response<bool> MakeCounterOffer(int storeId, int memberId, int bidId, double offer);
         // Response<int> OpenStore(int userId, string storeName);
         Response<int> OpenNewStore(int userId, string storeName);
         Response<bool> RemoveCoOwner(int userId, int targetUserId, int storeId);
@@ -38,5 +40,6 @@ namespace MarketBackend.ServiceLayer
         Response<bool> RemovePurchasePolicy(int policyId, int storeId, int memberId);
         Response<double> GetStoreDailyProfit(int storeId, int memberId);
         Response<IList<ServiceBid>> GetAllMemberBids(int memberId);
+        Response<bool> MakeNewCoOwner(int userId, int targetUserId, int storeId);
     }
 }

@@ -32,7 +32,6 @@ namespace MarketBackend.ServiceLayer
         Response<bool> MakeCoManager(int userId, int targetUserId, int storeId);
         Response<bool> MakeCoOwner(int userId, int targetUserId, int storeId);
         Response<bool> DenyNewCoOwner(int userId, int targetUserId, int storeId);
-        Response<bool> MakeCounterOffer(int storeId, int memberId, int bidId, double offer);
         // Response<int> OpenStore(int userId, string storeName);
         Response<int> OpenNewStore(int userId, string storeName);
         Response<bool> RemoveCoOwner(int userId, int targetUserId, int storeId);

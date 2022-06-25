@@ -839,27 +839,27 @@ namespace MarketBackend.ServiceLayer
                 return new Response<double>("Sorry, an unexpected error occured. Please try again");
             }
         }
-        //public Response<IList<ServiceBid>> GetAllMemberBids(int memberId)
-        //{
-        //    try
-        //    {
-        //        IList<Bid> memberBids= storeController.GetAllMemberBids(memberId);
-       
-        //        logger.Info($"GetAllMemberBids was called with parameters: [memberId = {memberId}]");
-        //        return new Response<IList<ServiceBid>>(memberBids.Select(bid => new ServiceBid(bid.id, bid.storeId, bid.productId, bid.memberId, bid.bid, bid.aprovingIds, bid.counterOffer, bid.offer, storeController.GetStore(bid.storeId).SearchProductByProductId(bid.productId).name+" from: "+storeController.GetStore(bid.storeId).name)).ToList());
-        //    }
-        //    catch (MarketException mex)
-        //    {
-        //        logger.Error(mex, $"method: GetAllMemberBids, parameters: [memberId = {memberId}]");
-        //        return new Response<IList<ServiceBid>>(mex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.Error(ex, $"method: GetAllMemberBids, parameters: [memberId = {memberId}]");
-        //        return new Response<IList<ServiceBid>>("Sorry, an unexpected error occured. Please try again");
-        //    }
+        public Response<IList<ServiceBid>> GetAllMemberBids(int memberId)
+        {
+            try
+            {
+                IList<Bid> memberBids = storeController.GetAllMemberBids(memberId);
 
-        //}
+                logger.Info($"GetAllMemberBids was called with parameters: [memberId = {memberId}]");
+                return new Response<IList<ServiceBid>>(memberBids.Select(bid => new ServiceBid(bid.id, bid.storeId, bid.productId, bid.memberId, bid.bid, bid.aprovingIds, bid.counterOffer, bid.offer, storeController.GetStore(bid.storeId).SearchProductByProductId(bid.productId).name + " from: " + storeController.GetStore(bid.storeId).name)).ToList());
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetAllMemberBids, parameters: [memberId = {memberId}]");
+                return new Response<IList<ServiceBid>>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetAllMemberBids, parameters: [memberId = {memberId}]");
+                return new Response<IList<ServiceBid>>("Sorry, an unexpected error occured. Please try again");
+            }
+
+        }
 
         internal int GetStoresCount() =>
             storeController.GetOpenStores().Count();

@@ -30,6 +30,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         private const int timeoutMilis = 3000; // time for wating for the rw lock in the next line, after which it throws an exception
         private ReaderWriterLock rolesAndPermissionsLock;
 
+        // member ids of members to appoint to be a coOwner, to the memebrIds of the approving coOwners
+        // the first memberId in the list is of the one that voted first 
+        private IDictionary<int, IList<int>> coOwnersAppointmentsApproving; 
+
         private IDictionary<int, IDictionary<Product, int>> transactions;
         private ConcurrentDictionary<int, Mutex> productsMutex;
         private Mutex transactionIdMutex;
@@ -84,7 +88,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                   membersGetter,
                   new StoreDiscountPolicyManager(),
                   new StorePurchasePolicyManager(),
-                  new ConcurrentDictionary<int, Bid>())
+                  new ConcurrentDictionary<int, Bid>(), 
+                  new ConcurrentDictionary<int, IList<int>>())
         {
 
         }
@@ -93,7 +98,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             IDictionary<int, Product> products, IList<Purchase> purchaseHistory,
             IDictionary<int, IList<Permission>> managersPermissions, Func<int, Member> membersGetter,
             StoreDiscountPolicyManager discountManager, StorePurchasePolicyManager purchaseManager,
-            IDictionary<int, Bid> bids, IDictionary<Role, IList<int>> rolesInStore = null)
+            IDictionary<int, Bid> bids, IDictionary<int, IList<int>> coOwnersAppointmentsApproving, 
+            IDictionary<Role, IList<int>> rolesInStore = null)
         {
             this.id = id; 
             this.name = name;
@@ -107,6 +113,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             this.discountManager = discountManager;
             this.purchaseManager = purchaseManager;
             this.bids = bids;
+            this.coOwnersAppointmentsApproving = coOwnersAppointmentsApproving;
 
             if (rolesInStore == null)
                 initializeRolesInStore();
@@ -157,6 +164,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                         dataPermissions.ManagerPermissions.Select(dataPermission => (Permission)dataPermission.Permission).ToList());
                 }
             }
+            IDictionary<int, IList<int>> coOwnersAppointmentsApproving = new ConcurrentDictionary<int, IList<int>>();
+            foreach (DataStoreCoOwnerAppointmentApproving dataCoOwnerAppointmentApproving in dataStore.CoOwnerAppointmentApprovings)
+            {
+                if (!coOwnersAppointmentsApproving.ContainsKey(dataCoOwnerAppointmentApproving.newCoOwnerId))
+                {
+                    coOwnersAppointmentsApproving[dataCoOwnerAppointmentApproving.newCoOwnerId] = new SynchronizedCollection<int>();
+                }
+                IList<int> toAddTo = coOwnersAppointmentsApproving[dataCoOwnerAppointmentApproving.newCoOwnerId];
+                if (dataCoOwnerAppointmentApproving.AppointedFirst)
+                {
+                    toAddTo.Insert(0, dataCoOwnerAppointmentApproving.ApprovingMemberId);
+                }
+                else
+                {
+                    toAddTo.Add(dataCoOwnerAppointmentApproving.ApprovingMemberId);
+                }
+            }
 
             StoreDiscountPolicyManager discountManager = StoreDiscountPolicyManager.DataSDPMToSDPM(dataStore.DiscountManager);
 
@@ -189,8 +213,10 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 Appointments = appointmentsHierarchy.ToNewDataAppointmentsNode(),
                 DiscountManager = discountManager.SDPMToDSDPM(), 
                 PurchaseManager = purchaseManager.SPPMToDataDSPPM(), 
-                Bids = bids.Values.Select(bid => bid.ToNewDataBid()).ToList()
+                Bids = bids.Values.Select(bid => bid.ToNewDataBid()).ToList(), 
+                CoOwnerAppointmentApprovings = GetNewDataStoreCoOwnerAppointmentApprovings()
             };
+
             
             foreach(DataPurchase dataPurchase in result.PurchaseHistory)
             {
@@ -232,6 +258,28 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 }
             }
             return result; 
+        }
+
+        private IList<DataStoreCoOwnerAppointmentApproving> GetNewDataStoreCoOwnerAppointmentApprovings()
+        {
+            IList<DataStoreCoOwnerAppointmentApproving> dataCoOwnerAppointmentApprovings = new List<DataStoreCoOwnerAppointmentApproving>();
+
+            foreach (int newCoOwnerId in coOwnersAppointmentsApproving.Keys)
+            {
+                bool appointedFirst = true;
+                foreach (int approvingMemnerId in coOwnersAppointmentsApproving[newCoOwnerId])
+                {
+                    dataCoOwnerAppointmentApprovings.Add(new DataStoreCoOwnerAppointmentApproving()
+                    {
+                        newCoOwnerId = newCoOwnerId,
+                        ApprovingMemberId = approvingMemnerId,
+                        AppointedFirst = appointedFirst
+                    });
+                    if (appointedFirst)
+                        appointedFirst = false;
+                }
+            }
+            return dataCoOwnerAppointmentApprovings;
         }
 
         public bool CommitTransaction(int transactionId)
@@ -624,6 +672,83 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 // todo: check if okay to appoint manager to coOwner, according to  
                 // the requirements, the hierarchy (also notice it stays where it was),
                 // permissions etc. 
+                if (IsManager(newCoOwnerMemberId)) // removing from being a manager
+                {
+                    Hierarchy<int> managerInHierarchy = appointmentsHierarchy.FindHierarchy(newCoOwnerMemberId);
+                    int parentId = managerInHierarchy.parent.value;
+                    if (parentId != requestingMemberId)
+                    {
+                        throw new MarketException("The requesting member is not the one that appointed the member to a manager, so can not appoint it to be a coOwner");
+                        // todo: also add tests for when the appointing coOwner is not the one that appointed the member of newCoOwnerId to be a manager
+                    }
+
+                    storeDataManager.Update(id, store =>
+                    {
+                        DataStoreMemberRoles dataRole = store.MembersPermissions.First(dataPermission => dataPermission.MemberId == newCoOwnerMemberId);
+                        dataRole.ManagerPermissions = null;
+                        dataRole.Role = Role.Owner;
+                    });
+                    storeDataManager.Save();
+
+                    managersPermissions.Remove(newCoOwnerMemberId);
+                    rolesInStore[Role.Manager].Remove(newCoOwnerMemberId);
+                }
+                else
+                {
+                    appointmentsHierarchy.AddToHierarchy(requestingMemberId, newCoOwnerMemberId, () =>
+                    {
+                        DataStore dataStore = storeDataManager.Find(id);
+                        DataStoreMemberRoles dataRole = new DataStoreMemberRoles()
+                        {
+                            Role = Role.Owner,
+                            ManagerPermissions = null,
+                            Store = dataStore,
+                            MemberId = newCoOwnerMemberId
+                        };
+                        storeDataManager.Update(id, dataStore => { dataStore.MembersPermissions.Add(dataRole); });
+                        storeDataManager.Save();
+                    });
+                    // todo: add tests checking this field has been changed (and for what happens when newCoOwnerId is of a manager)
+                }
+                rolesInStore[Role.Owner].Add(newCoOwnerMemberId);
+            }
+            finally
+            {
+                if (rolesAndPermissionsLock.IsWriterLockHeld)
+                    rolesAndPermissionsLock.ReleaseWriterLock();
+            }
+            // todo: check that this mutex is synchronizing all these things okay
+        }
+
+        // cc 3
+        // r 4.4 version 4
+
+        // If it is the first vote for appointing the coOwner, a new appointment is created for voting and the requesting member is the parent of it
+        public void AddMakeCoOwnerVote(int requestingMemberId, int newCoOwnerMemberId)
+        {
+            --> // add unit tests 
+            --> // and saving the changes in the database
+            --> // when removing a coOwner remove its votes and the appointments where he voted first
+            try
+            {
+                rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
+                string permissionError = CheckAtLeastCoOwnerPermission(requestingMemberId);
+                if (permissionError != null)
+                {
+                    throw new MarketException("Could not appoint coOwner: " + permissionError);
+                }
+
+                if ()
+
+                if (IsCoOwner(newCoOwnerMemberId))
+                {
+                    throw new MarketException(StoreErrorMessage("The member is already a CoOwner"));
+                }
+                if (!IsMember(newCoOwnerMemberId))
+                {
+                    throw new MarketException("The requested new CoOwner is not a member");
+                }
+
                 if (IsManager(newCoOwnerMemberId)) // removing from being a manager
                 {
                     Hierarchy<int> managerInHierarchy = appointmentsHierarchy.FindHierarchy(newCoOwnerMemberId);

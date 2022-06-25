@@ -351,6 +351,30 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpPut("MakeNewCoOwner")]
+        public ActionResult<Response<bool>> MakeNewCoOwner([FromBody] RolesManagementRequest request)
+        {
+            Response<bool> response = storeManagementFacade.MakeNewCoOwner(
+                request.UserId, request.TargetUserId, request.StoreId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
+        [HttpPut("DenyNewCoOwner")]
+        public ActionResult<Response<bool>> DenyNewCoOwner([FromBody] RolesManagementRequest request)
+        {
+            Response<bool> response = storeManagementFacade.DenyNewCoOwner(
+                request.UserId, request.TargetUserId, request.StoreId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
 
     }
 }

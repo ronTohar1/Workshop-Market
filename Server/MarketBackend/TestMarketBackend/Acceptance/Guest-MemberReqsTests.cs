@@ -392,7 +392,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<ServiceStore> storeResponse = buyerFacade.GetStoreInfo(storeId);
             Assert.IsTrue(!storeResponse.IsErrorOccured());
-            IDictionary<int, ServiceBid> bidsBefore = storeResponse.Value.Bids;
+            IList<ServiceBid> bidsBefore = storeResponse.Value.Bids;
 
             Response<int> bidResponse = storeManagementFacade.AddBid(storeId, productId, memberId, bidPrice);
             Assert.IsTrue(!bidResponse.IsErrorOccured());
@@ -400,11 +400,10 @@ namespace TestMarketBackend.Acceptance
             // Checking that the bid actually got added to the store
             storeResponse = buyerFacade.GetStoreInfo(storeId);
             Assert.IsTrue(!storeResponse.IsErrorOccured());
-            IDictionary<int, ServiceBid> bidsAfter = storeResponse.Value.Bids;
+            IList<ServiceBid> bidsAfter = storeResponse.Value.Bids;
 
-            bidsBefore.Add(bidResponse.Value, new ServiceBid(storeId, productId, memberId, bidPrice));
-            Assert.AreEqual(bidsBefore.Keys, bidsAfter.Keys);
-            Assert.AreEqual(bidsBefore.Values, bidsAfter.Values);
+            bidsBefore.Add(new ServiceBid(storeId, productId, memberId, bidPrice));
+            Assert.AreEqual(bidsBefore, bidsAfter);
         }
 
         public static IEnumerable<TestCaseData> DataFailedBid
@@ -426,7 +425,7 @@ namespace TestMarketBackend.Acceptance
 
             Response<ServiceStore> storeResponse = buyerFacade.GetStoreInfo(storeId);
             Assert.IsTrue(!storeResponse.IsErrorOccured());
-            IDictionary<int, ServiceBid> bidsBefore = storeResponse.Value.Bids;
+            IList<ServiceBid> bidsBefore = storeResponse.Value.Bids;
 
             Response<int> bidResponse = storeManagementFacade.AddBid(storeId, productId, memberId, bidPrice);
             Assert.IsTrue(bidResponse.IsErrorOccured());
@@ -434,10 +433,9 @@ namespace TestMarketBackend.Acceptance
             // Checking that the bid actually got added to the store
             storeResponse = buyerFacade.GetStoreInfo(storeId);
             Assert.IsTrue(!storeResponse.IsErrorOccured());
-            IDictionary<int, ServiceBid> bidsAfter = storeResponse.Value.Bids;
+            IList<ServiceBid> bidsAfter = storeResponse.Value.Bids;
 
-            Assert.AreEqual(bidsBefore.Keys, bidsAfter.Keys);
-            Assert.AreEqual(bidsBefore.Values, bidsAfter.Values);
+            Assert.AreEqual(bidsBefore, bidsAfter);
         }
 
         /*

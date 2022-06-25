@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom"
 import HomeIcon from "@mui/icons-material/Home"
 import { pathAdmin, pathHome } from "../Paths"
 import LoadingCircle from "../Componentss/LoadingCircle"
+import ShowLogs from "../Componentss/AdminComponents/ShowLogs"
 import DailyVisitors from "../Componentss/AdminComponents/dailyVisitores"
 
 const backgroundImage =
@@ -119,6 +120,7 @@ export default function Admin() {
             {ShowLoggedInMembers()}
             {DisplayMemberAccount()}
             {RemoveAMember()}
+            {ShowLogs()}
             {DailyVisitors()}
           {/* <CardContent>
             

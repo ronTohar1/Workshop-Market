@@ -12,12 +12,12 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
-import Product from '../DTOs/Product';
-import Member from '../DTOs/Member';
+import Product from '../../DTOs/Product';
+import Member from '../../DTOs/Member';
 import { Container, Grid, InputLabel, TextField } from '@mui/material';
-import { serverAddProductReview, serverGetProductReview } from '../services/StoreService';
-import { fetchResponse } from "../services/GeneralService"
-import { getBuyerId } from '../services/SessionService';
+import { serverAddProductReview, serverGetProductReview } from '../../services/StoreService';
+import { fetchResponse } from "../../services/GeneralService"
+import { getBuyerId } from '../../services/SessionService';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 
 

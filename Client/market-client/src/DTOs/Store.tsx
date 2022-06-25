@@ -1,3 +1,4 @@
+import Bid from "./Bid";
 import DiscountPolicy from "./DiscountPolicy";
 import Member from "./Member";
 import Product from "./Product";
@@ -11,8 +12,8 @@ export default class Store {
   isOpen:boolean;
   purchasePolicies: PurchasePolicy[];
   discountPolicies: DiscountPolicy[];
-
-  constructor(Id: number, Name: string, Products: Product[],founder:Member,isOpen:boolean, purchasePolicies:PurchasePolicy[], discountPolicies:DiscountPolicy[]) {
+  bids: Bid[];
+  constructor(Id: number, Name: string, Products: Product[],founder:Member,isOpen:boolean, purchasePolicies:PurchasePolicy[], discountPolicies:DiscountPolicy[], bids:Bid[]) {
     this.id = Id;
     this.name = Name;
     this.products = Products;
@@ -20,5 +21,6 @@ export default class Store {
     this.founder = founder;
     this.purchasePolicies= purchasePolicies;
     this.discountPolicies = discountPolicies
+    this.bids =bids
   }
 }

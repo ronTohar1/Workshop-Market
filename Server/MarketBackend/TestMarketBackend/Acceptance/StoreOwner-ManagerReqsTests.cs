@@ -423,7 +423,7 @@ namespace TestMarketBackend.Acceptance
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Manager);
 
             Assert.IsTrue(!managers.IsErrorOccured());
-            Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id , member7Id}));
+            Assert.IsTrue(SameElements(managers.Value, new List<int>() { member4Id, member7Id }));
 
             Response<IList<int>> owners =
                 storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
@@ -569,11 +569,11 @@ namespace TestMarketBackend.Acceptance
                     ),
 
                     // expected price
-                    (100 - generalDiscount) / 100.0 * 
+                    (100 - generalDiscount) / 100.0 *
                     arguments.Aggregate(0.0, (price, argumentObject) =>
-                        price + 
-                            argumentObject.Amount() * 
-                            argumentObject.Price() * 
+                        price +
+                            argumentObject.Amount() *
+                            argumentObject.Price() *
                             (1 - argumentObject.Discount() / 100.0))
             );
         }
@@ -617,7 +617,7 @@ namespace TestMarketBackend.Acceptance
                     {
                         // the shopping cart and expected discounts 
                         GetIphoneArgument(2, 10)
-                    }, 
+                    },
                     "product discount"
                 );
 
@@ -629,7 +629,7 @@ namespace TestMarketBackend.Acceptance
                     {
                         // the shopping cart and expected discounts 
                         GetCalculatorArgument(2)
-                    }, 
+                    },
                     "product discount purchase other product"
                 );
 
@@ -643,7 +643,7 @@ namespace TestMarketBackend.Acceptance
                     {
                         // the shopping cart and expected discounts 
                         GetIphoneArgument(3, 10)
-                    }, 
+                    },
                     "store discount one product"
                 );
 
@@ -654,9 +654,9 @@ namespace TestMarketBackend.Acceptance
                     new List<TestAddDiscountProductArguments>()
                     {
                         // the shopping cart and expected discounts 
-                        GetIphoneArgument(1, 40), 
+                        GetIphoneArgument(1, 40),
                         GetCalculatorArgument(2, 40)
-                    }, 
+                    },
                     "store discount two pdocuts"
                 );
 
@@ -670,7 +670,7 @@ namespace TestMarketBackend.Acceptance
                     {
                         // the shopping cart and expected discounts 
                         GetIphoneArgument(1)
-                    }, 
+                    },
                     "date discount not in year"
                 );
 
@@ -682,7 +682,7 @@ namespace TestMarketBackend.Acceptance
                     {
                         // the shopping cart and expected discounts 
                         GetIphoneArgument(1, 40)
-                    }, 
+                    },
                     "date discount in year"
                 );
 
@@ -694,14 +694,14 @@ namespace TestMarketBackend.Acceptance
                 yield return AddDiscountTestCase(
                     // the discount
                     () => new ServiceConditionDiscount(
-                            new ServiceProductAmount(iphoneProductId, 2), 
+                            new ServiceProductAmount(iphoneProductId, 2),
                             new ServiceStoreDiscount(30)
                         ),
                     new List<TestAddDiscountProductArguments>()
                     {
                         // the shopping cart and expected discounts 
                         GetIphoneArgument(2, 30)
-                    }, 
+                    },
                     "if amount, amount enough"
                 );
 
@@ -716,7 +716,7 @@ namespace TestMarketBackend.Acceptance
                     {
                         // the shopping cart and expected discounts 
                         GetIphoneArgument(1)
-                    }, 
+                    },
                     "if amount, amount not enough"
                 );
 
@@ -730,7 +730,7 @@ namespace TestMarketBackend.Acceptance
                     new List<TestAddDiscountProductArguments>()
                     {
                         // the shopping cart and expected discounts 
-                        GetIphoneArgument(1), 
+                        GetIphoneArgument(1),
                         GetCalculatorArgument(1)
                     },
                     "if amount, amount not enough all products amount is enough"
@@ -748,7 +748,7 @@ namespace TestMarketBackend.Acceptance
                     new List<TestAddDiscountProductArguments>()
                     {
                         // the shopping cart and expected discounts 
-                        GetIphoneArgument(1, 30), 
+                        GetIphoneArgument(1, 30),
                         GetCalculatorArgument(1, 30)
                     },
                     "if bag cost, cost enough"
@@ -778,7 +778,7 @@ namespace TestMarketBackend.Acceptance
                     // the discount
                     () => new ServiceIf(
                             new ServiceProductAmount(iphoneProductId, 2),
-                            new ServiceStoreDiscount(30), 
+                            new ServiceStoreDiscount(30),
                             new ServiceProductDiscount(iphoneProductId, 30)
                         ),
                     new List<TestAddDiscountProductArguments>()
@@ -820,7 +820,7 @@ namespace TestMarketBackend.Acceptance
                             new MarketBackend.ServiceLayer.ServiceDTO.DiscountDTO.ServiceAnd(
                                 new ServiceProductAmount(iphoneProductId, 1),
                                 new ServiceProductAmount(calculatorProductId, 1)
-                            ), 
+                            ),
                             new ServiceProductDiscount(iphoneProductId, 30)
                         ),
                     new List<TestAddDiscountProductArguments>()
@@ -1017,7 +1017,7 @@ namespace TestMarketBackend.Acceptance
 
             ServicePurchase resultPurchase = purchase(this);
 
-            Assert.IsTrue(Math.Abs(expectedPrice - resultPurchase.purchasePrice) < 0.00001); 
+            Assert.IsTrue(Math.Abs(expectedPrice - resultPurchase.purchasePrice) < 0.00001);
         }
 
         // buying policies tests 
@@ -1122,7 +1122,7 @@ namespace TestMarketBackend.Acceptance
                 // restrictions tests 
 
                 // after hour
-                
+
                 // is after hour
                 yield return AddPurchasePolicyTestCase(
                     // the purchase policy
@@ -1131,7 +1131,7 @@ namespace TestMarketBackend.Acceptance
                     {
                         // the shopping cart 
                         new AddProductToCartArguments() {
-                            ProductId = () => iphoneProductId, 
+                            ProductId = () => iphoneProductId,
                             Amount = () => 2
                         }
                     },
@@ -1451,7 +1451,7 @@ namespace TestMarketBackend.Acceptance
                     () => new ServiceImplies(
                         new ServiceCheckProductMore(iphoneProductId, 2),
                         new ServiceCheckProductMore(iphoneProductId, 2)
-                        ), 
+                        ),
                     new List<AddProductToCartArguments>()
                     {
                         // the shopping cart 
@@ -1577,7 +1577,7 @@ namespace TestMarketBackend.Acceptance
                     () => new MarketBackend.ServiceLayer.ServiceDTO.PurchaseDTOs.ServicePurchaseAnd(
                         new ServiceAtlestAmount(iphoneProductId, 2),
                         new ServiceAtlestAmount(iphoneProductId, 2)
-                    ), 
+                    ),
                     new List<AddProductToCartArguments>()
                     {
                         // the shopping cart 
@@ -1832,10 +1832,170 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(!response.IsErrorOccured());
 
             Assert.AreEqual(response.Value, expectedProfit);
-            
+
         }
 
-        // todo: maybe add tests to cc 6.1 and cc 6.2 
+        //// new version of add new co owner
+        //// r.4.4
+        //[Test]
+        //public void SuccessfulStoreCoOwnerAppointment()
+        //{
+        //    // Co owners of this storeId are: storeOwnerId,  member3Id, member5Id, member6Id
+        //    Response<bool> response1 = storeManagementFacade.MakeNewCoOwner(storeOwnerId, member1Id, storeId);
+        //    Response<bool> response2 = storeManagementFacade.MakeNewCoOwner(member3Id, member1Id, storeId);
+        //    Response<bool> response3 = storeManagementFacade.MakeNewCoOwner(member5Id, member1Id, storeId);
+        //    Response<bool> response4 = storeManagementFacade.MakeNewCoOwner(member6Id, member1Id, storeId);
+        //    Assert.IsTrue(!response1.IsErrorOccured() && !response2.IsErrorOccured() && !response3.IsErrorOccured() && !response4.IsErrorOccured());
 
+        //    ReopenMarket();
+
+        //    Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Owner));
+        //}
+
+        //public static IEnumerable<TestCaseData> DataFailStoreOwnerAppoitmentNotAllStoreOwnersApproved
+        //{
+        //    get
+        //    {
+        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member5Id });
+        //        yield return new TestCaseData(() => new int[] { member3Id, member5Id, member6Id });
+        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member5Id, member6Id });
+        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member6Id });
+
+        //    }
+        //}
+
+
+        //// r.4.4
+        //[Test]
+        //[TestCaseSource("DataFailStoreOwnerAppoitmentNotAllStoreOwnersApproved")]
+        //public void FailedStoreOwnerAppointment(Func<int[]> ownersIds)
+        //{
+        //    Response<IList<int>> ownersBefore =
+        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+        //    // Appointing a store owner as a store owner, but 
+        //    foreach (int id in ownersIds())
+        //    {
+        //        Response<bool> response = storeManagementFacade.MakeNewCoOwner(id, member1Id, storeId);
+        //        Assert.IsTrue(!response.IsErrorOccured());
+        //    }
+
+        //    Response<IList<int>> ownersAfter =
+        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+        //    Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
+        //}
+
+        //// r 4.4
+        //// r S 5
+        //[Test]
+        //[TestCase(2)]
+        //[TestCase(10)]
+        //[TestCase(50)]
+        //public void ConcurrentStoreCoOwnerAppointment(int threadsNumber)
+        //{
+        //    // todo: maybe add more test cases on other things such as different members, different stores etc. 
+        //    Response<IList<int>> ownersBefore =
+        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+        //    // Appointing the same member by many threads 
+        //    foreach (int ownerId in new int[] { storeOwnerId, member3Id, member5Id, member6Id })
+        //    {
+        //        Func<Response<bool>>[] jobs =
+        //            Enumerable.Repeat(() => storeManagementFacade.MakeNewCoOwner(ownerId, member1Id, storeId), threadsNumber).ToArray();
+
+        //        Response<bool>[] responses = GetResponsesFromThreads(jobs);
+
+        //        Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+        //    }
+        //    ReopenMarket();
+
+        //    Response<IList<int>> ownersAfter =
+        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+        //    IList<int> expectedOwnersAfter = ownersBefore.Value;
+        //    expectedOwnersAfter.Add(member1Id);
+
+        //    Assert.IsTrue(SameElements(expectedOwnersAfter, ownersAfter.Value));
+        //}
+
+        //public static IEnumerable<TestCaseData> DataAllInStoreExcludeOne
+        //{
+        //    get
+        //    {
+        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member5Id }, () => member6Id);
+        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member6Id }, () => member5Id);
+        //    }
+        //}
+        //// r.4.4
+        //[Test]
+        //[TestCaseSource("DataAllInStoreExcludeOne")]
+        //public void SuccessfulStoreOwnerAppointmentWithStoreOwnersStateChanged(Func<int[]> ownersIds, Func<int> idToRemove)
+        //{
+        //    int memberIdToRemove = idToRemove();
+        //    Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, memberIdToRemove, storeId, Role.Owner));
+
+        //    Response<bool> response = storeManagementFacade.RemoveCoOwner(storeOwnerId, memberIdToRemove, storeId);
+        //    Assert.IsTrue(!response.IsErrorOccured());
+        //    foreach (int ownerId in ownersIds())
+        //    {
+        //        Response<bool> response1 = storeManagementFacade.MakeNewCoOwner(ownerId, member1Id, storeId);
+        //        Assert.IsTrue(!response1.IsErrorOccured());
+        //    }
+        //    ReopenMarket();
+
+        //    Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Owner));
+        //    Assert.IsFalse(MemberIsRoleInStore(storeOwnerId, memberIdToRemove, storeId, Role.Owner));
+
+        //}
+        //[Test]
+        //[TestCaseSource("DataAllInStoreExcludeOne")]
+        //public void FailStoreOwnerAppointmentOneStoreOwnerDeny(Func<int[]> ownersIds, Func<int> denierId)
+        //{
+        //    Response<IList<int>> ownersBefore =
+        //       storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+        //    // Appointing a store owner as a store owner, but 
+        //    foreach (int id in ownersIds())
+        //    {
+        //        Response<bool> response = storeManagementFacade.MakeNewCoOwner(id, member1Id, storeId);
+        //        Assert.IsTrue(!response.IsErrorOccured());
+        //    }
+        //    Response<bool> response1 = storeManagementFacade.DenyNewCoOwner(denierId(), member1Id, storeId);
+        //    Assert.IsTrue(!response1.IsErrorOccured());
+
+        //    Response<IList<int>> ownersAfter =
+        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+        //    Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
+        //}
+
+        //public static IEnumerable<TestCaseData> DataFailStoreOwnerDenyNoSuchAppoitment
+        //{
+        //    get
+        //    {
+        //        yield return new TestCaseData(() =>  storeOwnerId, ()=>member3Id);
+        //        yield return new TestCaseData(() => storeOwnerId, () => member1Id);
+        //        yield return new TestCaseData(() => member3Id, () => member1Id);
+
+        //    }
+        //}
+
+        //// r.4.4
+        //[Test]
+        //[TestCaseSource("DataFailStoreOwnerDenyNoSuchAppoitment")]
+        //public void FailStoreOwnerDenyNoSuchAppoitment(Func<int> denierId, Func<int> candidateId)
+        //{
+        //    Response<IList<int>> ownersBefore =
+        //       storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+        //    Response<bool> response = storeManagementFacade.DenyNewCoOwner(denierId(), candidateId(), storeId);
+        //    Assert.IsTrue(!response.IsErrorOccured());
+
+        //    Response<IList<int>> ownersAfter =
+        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+
+        //    Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
+        //}
     }
 }

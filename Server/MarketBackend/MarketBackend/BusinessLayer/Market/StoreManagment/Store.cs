@@ -709,9 +709,11 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             --> // add unit tests 
             --> // --- notice synchronization 
             --> // --- and saving the changes in the database 
-            --> // when removing a coOwner remove its votes and the appointments where he voted first
-            --> // notice when removing a coOwner or a member, and maybe more things 
-            --> // notice notifications, check if need to send notifications to members after doing the things 
+            --> // when removing a coOwner remove its votes and the appointments where he voted first (also from the database) 
+            --> // notice when removing a coOwner or a member (when a member, notice acquireing the roles' lock), and maybe more things 
+            --> // --- notice notifications, check if need to send notifications to members after doing the things 
+            --> // implement in the data layer (in IDatabase and its subclasses) 
+            --> // implement also deny bids (coOwner appointments) 
             try
             {
                 rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
@@ -891,32 +893,26 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 string notification = $"We regeret to inform you that you've lost your position at {this.name}";
 
                 IList<int> memberIdsToRemove = appointmentsHierarchy.GetHierarchyValueList(toRemoveCoOwnerMemberId);
+
+                IList<int> coOwnersMembersIdsToRemove = memberIdsToRemove.Where(memberId => IsCoOwner(memberId)).ToList();
+                IList<int> newCoOwnersMembersIds = rolesInStore[Role.Owner].Where(coOwnerMemberId => !coOwnersMembersIdsToRemove.Contains(coOwnerMemberId)).ToList();
+                int newNumberOfCoOwners = newCoOwnersMembersIds.Count;
+                IList<int> newCoOwnersMembersIdsVoteCompleted = coOwnersAppointmentsApproving.Where(pair => pair.Value.Intersect(newCoOwnersMembersIds).ToList().Count == newNumberOfCoOwners && newCoOwnersMembersIds.Contains(pair.Value[0])).Select(pair => pair.Key).ToList();
+
                 Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId, () =>
                 {
                     storeDataManager.Update(id, dataStore =>
                     {
-                        // remove roles in database
-                        // 
-                        foreach (int memberToRemoveId in memberIdsToRemove)
-                        {
-                            IList<DataStoreMemberRoles> rolesToRemove = dataStore.MembersPermissions.Where(dataRole => dataRole.MemberId == memberToRemoveId).ToList();
-                            foreach (DataStoreMemberRoles roleToRemove in rolesToRemove)
-                            {
-                                IList<DataManagerPermission> dataManagerPermissions = roleToRemove.ManagerPermissions;
-                                if (dataManagerPermissions != null) // null if the role is not manager 
-                                {
-                                    foreach (DataManagerPermission dataManagerPermission in dataManagerPermissions)
-                                    {
-                                        StoreMemberRolesDataManager.GetInstance().Remove(dataManagerPermission);
-                                    }
-                                }
-                                StoreMemberRolesDataManager.GetInstance().Remove(roleToRemove.Id);
-                            }
+                        RemoveCoOwnerDataRemoveRoles(dataStore, memberIdsToRemove);
 
-                            // notification in database 
+                        RemoveCoOwnerDataRemoveVotes(dataStore, memberIdsToRemove);
 
-                            membersGetter(memberToRemoveId).DataNotify(notification);
-                        }
+                        RemoveCoOwnerDataCompletedVotes();
+
+                        RemoveCoOwnerDataNotifications(memberIdsToRemove, notification);
+
+                        --> // add that if now all the coOwners approved the appointment so the newCoOwner will be appointed 
+
                     });
 
                     storeDataManager.Save(); 
@@ -930,6 +926,112 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                     rolesAndPermissionsLock.ReleaseWriterLock();
             }
         }
+
+        private void RemoveCoOwnerDataRemoveRoles(DataStore dataStore, IList<int> memberIdsToRemove)
+        {
+            foreach (int memberToRemoveId in memberIdsToRemove)
+            {
+                IList<DataStoreMemberRoles> rolesToRemove = dataStore.MembersPermissions.Where(dataRole => dataRole.MemberId == memberToRemoveId).ToList();
+                foreach (DataStoreMemberRoles roleToRemove in rolesToRemove)
+                {
+                    IList<DataManagerPermission> dataManagerPermissions = roleToRemove.ManagerPermissions;
+                    if (dataManagerPermissions != null) // null if the role is not manager 
+                    {
+                        foreach (DataManagerPermission dataManagerPermission in dataManagerPermissions)
+                        {
+                            StoreMemberRolesDataManager.GetInstance().Remove(dataManagerPermission);
+                        }
+                    }
+                    StoreMemberRolesDataManager.GetInstance().Remove(roleToRemove.Id);
+                }
+            }
+        }
+
+        private void RemoveCoOwnerDataNotifications(IList<int> memberIdsToRemove, string notification)
+        {
+            foreach (int memberToRemoveId in memberIdsToRemove)
+            {
+                membersGetter(memberToRemoveId).DataNotify(notification);
+            }
+        }
+
+        private void RemoveCoOwnerDataRemoveVotes(DataStore dataStore, IList<int> memberIdsToRemove)
+        {
+            foreach (int memberToRemoveId in memberIdsToRemove)
+            {
+                if (IsCoOwner(memberToRemoveId))
+                {
+                    // remove appointments where this coOwner voted first 
+
+                    foreach (int newCoOwnerMemberId in dataStore.CoOwnerAppointmentApprovings.Where(dataObject => dataObject.ApprovingMemberId == memberToRemoveId && dataObject.AppointedFirst).Select(dataObject => dataObject.newCoOwnerId))
+                    {
+                        dataStore.CoOwnerAppointmentApprovings = dataStore.CoOwnerAppointmentApprovings.Where(
+                            coOwnersAppointmentsApproving => coOwnersAppointmentsApproving.newCoOwnerId != newCoOwnerMemberId).ToList();
+                    }
+
+                    // remove the coOwner's votings from the other appointments 
+
+                    dataStore.CoOwnerAppointmentApprovings = dataStore.CoOwnerAppointmentApprovings.Where(
+                            coOwnersAppointmentsApproving => coOwnersAppointmentsApproving.ApprovingMemberId != memberToRemoveId).ToList();
+
+                }
+                else // if it is a manager
+                {
+                    if (coOwnersAppointmentsApproving.ContainsKey(memberToRemoveId))
+                    {
+                        dataStore.CoOwnerAppointmentApprovings = dataStore.CoOwnerAppointmentApprovings.Where(
+                            coOwnersAppointmentsApproving => coOwnersAppointmentsApproving.newCoOwnerId != memberToRemoveId).ToList();
+                    }
+                }
+            }
+        }
+
+        private void RemoveCoOwnerDataCompletedVotes(IList<int> newCoOwnersMembersIdsVoteCompleted, IList<int> memberIdsToRemove)
+        {
+            foreach(int newCoOwnerMemberId in newCoOwnersMembersIdsVoteCompleted)
+            {
+                
+            }
+
+
+            foreach (int newCoOwnerMemberIdVoteCompleted in newCoOwnersMembersIdsVoteCompleted)
+            {
+                if (IsManager(newCoOwnerMemberIdVoteCompleted)) // removing from being a manager
+                {
+                    if (!memberIdsToRemove.Contains(newCoOwnerMemberIdVoteCompleted)) // otherwise not appointing to coOwner, and removed if there are appointments' votes 
+                    {
+                        DataManagerToCoOwner(newCoOwnerMemberIdVoteCompleted);
+                        DataRemoveCoOwnerAppointmentVoting(newCoOwnerMemberIdVoteCompleted);
+                    }
+                }
+                else
+                {
+                    int appointingMemberId = 
+                    appointmentsHierarchy.AddToHierarchy(appointingMemberId, newCoOwnerMemberId, () =>
+                    {
+                        DataStore dataStore = storeDataManager.Find(id);
+                        DataStoreMemberRoles dataRole = new DataStoreMemberRoles()
+                        {
+                            Role = Role.Owner,
+                            ManagerPermissions = null,
+                            Store = dataStore,
+                            MemberId = newCoOwnerMemberId
+                        };
+                        storeDataManager.Update(id, dataStore => { dataStore.MembersPermissions.Add(dataRole); });
+
+                        if (moreDataActions != null)
+                            moreDataActions();
+
+                        storeDataManager.Save();
+                    });
+                    // todo: add tests checking this field has been changed (and for what happens when newCoOwnerId is of a manager)
+                    rolesInStore[Role.Owner].Add(newCoOwnerMemberId);
+                }
+                if (!isFirstVote)
+                    coOwnersAppointmentsApproving.Remove(newCoOwnerMemberId);
+            }
+        }
+
         private void RemovedByOwnerBranchUpdate(Hierarchy<int> removedBranch, string notification)
         {
             if (removedBranch == null)

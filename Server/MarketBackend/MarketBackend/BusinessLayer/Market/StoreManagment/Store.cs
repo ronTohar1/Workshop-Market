@@ -193,7 +193,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             }
 
             return new Store(dataStore.Id, dataStore.Name, founder, dataStore.IsOpen, appointmentsHierarchy, products, purchaseHistory,
-                managersPermissions, membersGetter, discountManager, purchaseManager, bids, rolesInStore);
+                managersPermissions, membersGetter, discountManager, purchaseManager, bids, coOwnersAppointmentsApproving, rolesInStore);
         }
 
         // todo: implement function after adding the add to store's fields functions 
@@ -706,14 +706,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // If it is the first vote for appointing the coOwner, a new appointment is created for voting and the requesting member is the parent of it
         public void AddMakeCoOwnerVote(int requestingMemberId, int newCoOwnerMemberId)
         {
-            --> // add unit tests 
-            --> // --- notice synchronization 
-            --> // --- and saving the changes in the database 
-            --> // when removing a coOwner remove its votes and the appointments where he voted first (also from the database) 
-            --> // notice when removing a coOwner or a member (when a member, notice acquireing the roles' lock), and maybe more things 
-            --> // --- notice notifications, check if need to send notifications to members after doing the things 
-            --> // implement in the data layer (in IDatabase and its subclasses) 
-            --> // implement also deny bids (coOwner appointments) 
+            // --> add unit tests 
+            // --> implement in the data layer (in IDatabase and its subclasses) 
             try
             {
                 rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
@@ -741,7 +735,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 {
                     AddVoteToCoOwnerAppointment(requestingMemberId, newCoOwnerMemberId, true);
                 }
-
+            }
             finally
             {
                 if (rolesAndPermissionsLock.IsWriterLockHeld)
@@ -870,6 +864,40 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 dataStore.CoOwnerAppointmentApprovings = dataStore.CoOwnerAppointmentApprovings.Where(
                     coOwnerAppointmentApproving => coOwnerAppointmentApproving.newCoOwnerId != newCoOwnerMemberId).ToList();
             });
+        }
+
+        public void DenyNewCoOwner(int requestingMemberId, int newCoOwnerMemberId)
+        {
+            try
+            {
+                rolesAndPermissionsLock.AcquireWriterLock(timeoutMilis);
+                string permissionError = CheckAtLeastCoOwnerPermission(requestingMemberId);
+                if (permissionError != null)
+                {
+                    throw new MarketException("Could not deny coOwner aappointment: " + permissionError);
+                }
+
+                if (!coOwnersAppointmentsApproving.ContainsKey(newCoOwnerMemberId))
+                {
+                    throw new MarketException("the buyer does not have coOwner appointment votes: " + permissionError);
+                }
+
+                DataRemoveCoOwnerAppointmentVoting(newCoOwnerMemberId);
+                storeDataManager.Save();
+
+                coOwnersAppointmentsApproving.Remove(newCoOwnerMemberId);
+            }
+            finally
+            {
+                if (rolesAndPermissionsLock.IsWriterLockHeld)
+                    rolesAndPermissionsLock.ReleaseWriterLock();
+            }
+        }
+
+        // r 4.4, r 6 d
+        public bool IsThereVotingForCoOwnerAppointment(int memberId)
+        {
+            return coOwnersAppointmentsApproving.ContainsKey(memberId);
         }
 
         // r 4.5

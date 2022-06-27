@@ -23,7 +23,6 @@ import { createRoot } from "react-dom/client"
 import "./index.css"
 import App from "./App"
 import { getBuyerId, initSession } from "./services/SessionService"
-import { serverLeave } from "./services/BuyersService"
 
 // initSession()
 // window.onunload = () => localStorage.clear()

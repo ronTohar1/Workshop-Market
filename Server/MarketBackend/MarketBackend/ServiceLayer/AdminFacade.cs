@@ -234,7 +234,15 @@ namespace MarketBackend.ServiceLayer
             {
                 string logs = adminManager.GetEventLogs(userId);
                 logger.Info($"GetEventLogs was called with parameters: [userId = {userId}]");
-                return new Response<string>(logs);
+                Response<string> output = new Response<string>(logs);
+                if (output.ErrorOccured)
+                {
+                    output.ErrorOccured = false;
+                    output.Value = output.ErrorMessage;
+                    output.ErrorMessage = "";
+                }
+                return output;
+
             }
             catch (MarketException mex)
             {
@@ -254,7 +262,14 @@ namespace MarketBackend.ServiceLayer
             {
                 string logs = adminManager.GetErrorLogs(userId);
                 logger.Info($"GetErrorLogs was called with parameters: [userId = {userId}]");
-                return new Response<string>(logs);
+                Response<string> output =  new Response<string>(logs);
+                if (output.ErrorOccured) {
+                    output.ErrorOccured = false;
+                    output.Value = output.ErrorMessage;
+                    output.ErrorMessage = "";
+                }
+                return output;
+                
             }
             catch (MarketException mex)
             {

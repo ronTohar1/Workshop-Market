@@ -71,7 +71,7 @@ const Transition = React.forwardRef(function Transition(
 export default function DailyVisitors() {
   const [open, setOpen] = React.useState<boolean>(false)
   const [chartData, setChartData] = React.useState<(string | number)[][]>(data)
-  const chartDataRef = React.useRef<(string | number)[][]>(data)
+  const chartDataRef = React.useRef(data)
   const updateChartData = (newData: (string | number)[][]) => {
     chartDataRef.current = newData
     setChartData(newData)
@@ -108,12 +108,31 @@ export default function DailyVisitors() {
     //TODO: get daily visitors and set it
   }, [])
 
+  //@ts-ignore
+  const CreateNewChartData = (roleIndex: number, newAmount: number) => {
+    const newStats = [
+      ["Visitor", "Amount"],
+      //@ts-ignore
+      ["Admins", chartDataRef.current[1][1]],
+      //@ts-ignore
+      ["Store Owners", chartDataRef.current[2][1]],
+      //@ts-ignore
+      ["Managers", chartDataRef.current[3][1]],
+      //@ts-ignore
+      ["Members", chartDataRef.current[4][1]],
+      //@ts-ignore
+      ["Guests", chartDataRef.current[5][1]],
+    ]
+    newStats[roleIndex][1] = newAmount
+    return newStats
+  }
+
   const addOrDecrease = (event: any) => {
-    alert("Entered")
-    // const msg: string = event.data
-    // const add: boolean = msg[0] === "+"
-    // const role: string = msg.slice(0)
-    // add ? addOneToRole(role) : DecOneOfRole(role)
+    // alert("Entered" + event.data)
+    const msg: string = event.data
+    const add: boolean = msg[0] === "+"
+    const role: string = msg.slice(0)
+    add ? addOneToRole(role) : DecOneOfRole(role)
   }
 
   React.useEffect(() => {
@@ -121,26 +140,35 @@ export default function DailyVisitors() {
     ws.addEventListener("message", addOrDecrease)
 
     return () => {
-      ws.removeEventListener("message",addOrDecrease)
+      ws.removeEventListener("message", addOrDecrease)
     }
-  },[])
+  }, [])
 
   const addOneToRole = (role: string) => {
     const index = convertRoleToIndex(role)
     const currChartData = chartDataRef.current
     // @ts-ignore
-    currChartData[index][1] = currChartData[index][1] + 1
+    const newAmount: number = currChartData[index][1] + 1
 
-    console.log("currChartData")
-    console.log(currChartData)
-    setChartData(currChartData)
+    alert("inc to "+newAmount)
+    // console.log("currChartData")
+    // console.log(currChartData)
+    const newChartData = CreateNewChartData(index, newAmount)
+    updateChartData(newChartData)
+    // chartDataRef.current = newChartData
+    // setChartData(newChartData)
   }
   const DecOneOfRole = (role: string) => {
     const index = convertRoleToIndex(role)
     const currChartData = chartDataRef.current
     // @ts-ignore
-    currChartData[index][1] = currChartData[index][1] - 1
-    setChartData(currChartData)
+    const newAmount: number = currChartData[index][1] - 1
+    alert("dec to "+newAmount)
+    const newChartData = CreateNewChartData(index, newAmount)
+    updateChartData(newChartData)
+
+    // chartDataRef.current = newChartData
+    // setChartData(newChartData)
   }
   const isThereInformation = () => {
     return (
@@ -162,7 +190,7 @@ export default function DailyVisitors() {
     console.log(responsePromise)
     fetchResponse(responsePromise)
       .then((dailyVisits) => {
-        updateChartData([
+        setChartData([
           ["Visitor", "Amount"],
           ["Admins", dailyVisits[0]],
           ["Store Owners", dailyVisits[1]],
@@ -328,9 +356,7 @@ export default function DailyVisitors() {
             <Button onClick={handleSearch}>search</Button>
           </Box>
         </DialogContent>
-        <Container
-          style={{ maxHeight: "100%", maxWidth: "100%", overflow: "auto" }}
-        >
+        <Box style={{ maxHeight: "100%", maxWidth: "100%", overflow: "auto" }}>
           <Chart
             chartType="PieChart"
             data={chartData}
@@ -344,7 +370,7 @@ export default function DailyVisitors() {
               No One Visited The Site
             </Typography>
           )}
-        </Container>
+        </Box>
       </Dialog>
       <Dialog open={openFailSnack}>
         {FailureSnackbar(failureProductMsg, openFailSnack, () =>

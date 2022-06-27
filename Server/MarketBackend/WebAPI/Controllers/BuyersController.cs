@@ -119,7 +119,7 @@ namespace WebAPI.Controllers
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
-            logsServer.WebSocketServices[logsPath].Sessions.Broadcast("+Guest");
+            logsServer.WebSocketServices[logsPath].Sessions.Broadcast($"+Guest");
 
             return Ok(response);
         }
@@ -303,7 +303,7 @@ namespace WebAPI.Controllers
                 return "Manager";
             }
 
-            return "Memebr";
+            return "Member";
         }
 
         [HttpPost("Logout")]

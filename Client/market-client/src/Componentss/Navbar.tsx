@@ -254,10 +254,11 @@ export default function Navbar() {
     } else {
       fetchResponse(serverLogout(getBuyerId()))
         .then((success: boolean) => {
-          alert("Good Bye " + getUsername())
 
           clearSession()
           initSession().then(() => navigate(pathHome))
+          alert("Good Bye " + getUsername())
+
         })
         .catch(alert)
     }

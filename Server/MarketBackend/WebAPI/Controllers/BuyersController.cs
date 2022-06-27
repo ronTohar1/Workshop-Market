@@ -256,7 +256,8 @@ namespace WebAPI.Controllers
             buyerIdToRelativeNotificationPath.Add(response.Value, relativeServicePath);
 
             logsServer.WebSocketServices[logsPath].Sessions.Broadcast("-Guest");
-            logsServer.WebSocketServices[logsPath].Sessions.Broadcast("+" + GetMembersRole(response.Value));
+            string role = GetMembersRole(response.Value);
+            logsServer.WebSocketServices[logsPath].Sessions.Broadcast("+" +role );
 
             return Ok(response);
         }
@@ -284,7 +285,7 @@ namespace WebAPI.Controllers
             }
 
             ICollection<int> stores = owner.Value.Keys;
-            if (stores.Contains(memberId))
+            if (stores.Count>0)
             {
                 return "Owner";
             }
@@ -298,7 +299,7 @@ namespace WebAPI.Controllers
             }
 
             stores = manager.Value.Keys;
-            if (stores.Contains(memberId))
+            if (stores.Count > 0)
             {
                 return "Manager";
             }

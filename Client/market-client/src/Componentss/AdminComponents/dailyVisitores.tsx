@@ -128,10 +128,9 @@ export default function DailyVisitors() {
   }
 
   const addOrDecrease = (event: any) => {
-    // alert("Entered" + event.data)
     const msg: string = event.data
     const add: boolean = msg[0] === "+"
-    const role: string = msg.slice(0)
+    const role: string = msg.slice(1)
     add ? addOneToRole(role) : DecOneOfRole(role)
   }
 
@@ -149,26 +148,17 @@ export default function DailyVisitors() {
     const currChartData = chartDataRef.current
     // @ts-ignore
     const newAmount: number = currChartData[index][1] + 1
-
-    alert("inc to "+newAmount)
-    // console.log("currChartData")
-    // console.log(currChartData)
+    console.log("adding ", newAmount, " into ", role, " idnex is ", index)
     const newChartData = CreateNewChartData(index, newAmount)
     updateChartData(newChartData)
-    // chartDataRef.current = newChartData
-    // setChartData(newChartData)
   }
   const DecOneOfRole = (role: string) => {
     const index = convertRoleToIndex(role)
     const currChartData = chartDataRef.current
     // @ts-ignore
     const newAmount: number = currChartData[index][1] - 1
-    alert("dec to "+newAmount)
     const newChartData = CreateNewChartData(index, newAmount)
     updateChartData(newChartData)
-
-    // chartDataRef.current = newChartData
-    // setChartData(newChartData)
   }
   const isThereInformation = () => {
     return (

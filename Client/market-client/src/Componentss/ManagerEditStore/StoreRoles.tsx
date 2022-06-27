@@ -10,6 +10,7 @@ import Store from "../../DTOs/Store"
 import {
   Roles,
   serverAddNewProduct,
+  serverApproveCoOwner,
   serverChangeProductAmountInInventory,
   serverGetMembersInRoles,
   serverGetPurchaseHistory,
@@ -156,11 +157,11 @@ export default function StoreRoles({
     setOpenAddCoOwnerDialog(true)
   }
   function addCoOwner(userId: number) {
-    fetchResponse(serverMakeCoOwner(getBuyerId(), store.id, userId))
+    fetchResponse(serverApproveCoOwner(getBuyerId(), store.id, userId))
       .then((success: boolean) => {
         handleChangedStore(store)
         setOpenAddCoOwnerDialog(false)
-        showSuccessSnack("Added user " + userId + " to the co-owners")
+        showSuccessSnack("Appointed user " + userId + " to the co-owners")
       })
       .catch(showFailureSnack)
   }

@@ -1924,7 +1924,7 @@ namespace TestMarketBackend.Acceptance
             get
             {
                 yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member5Id }, () => member6Id);
-                yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member6Id }, () => member5Id);
+                yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id }, () => member5Id);
             }
         }
         // r.4.4

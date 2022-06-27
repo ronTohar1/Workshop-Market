@@ -21,6 +21,8 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 
         public IList<ServiceBid> Bids { get; }
 
+        public IDictionary<int, IList<int>> coOwnersAppointmentsApproving;
+
         public ServiceStore(int id, Store store, IList<ServiceProduct> productsIds)
         {
             Id = id;
@@ -31,7 +33,9 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             DiscountPolicies = store.discountManager.discounts.Values.Select(disc => new ServiceDiscountPolicy(disc.id, disc.description)).ToList();
             PurchasePolicies = store.purchaseManager.purchases.Values.Select(purch => new ServicePurchasePolicy(purch.id, purch.description)).ToList();
             Bids = store.bids.Values.Select(bid => new ServiceBid(bid.id, bid.storeId, bid.productId, bid.memberId, bid.bid, bid.aprovingIds, bid.counterOffer,bid.offer)).ToList();
-           
+            coOwnersAppointmentsApproving = store.coOwnersAppointmentsApproving;
+
+
         }
 
         public override bool Equals(Object? other)

@@ -364,7 +364,7 @@ namespace WebAPI.Controllers
         [HttpPut("MakeNewCoOwner")]
         public ActionResult<Response<bool>> MakeNewCoOwner([FromBody] RolesManagementRequest request)
         {
-            Response<bool> response = storeManagementFacade.MakeNewCoOwner(
+            Response<bool> response = storeManagementFacade.ApproveCoOwner(
                 request.UserId, request.TargetUserId, request.StoreId);
 
             if (response.IsErrorOccured())

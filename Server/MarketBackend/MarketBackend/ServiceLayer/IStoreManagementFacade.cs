@@ -39,6 +39,6 @@ namespace MarketBackend.ServiceLayer
         Response<bool> RemovePurchasePolicy(int policyId, int storeId, int memberId);
         Response<double> GetStoreDailyProfit(int storeId, int memberId);
         Response<IList<ServiceBid>> GetAllMemberBids(int memberId);
-        Response<bool> MakeNewCoOwner(int userId, int targetUserId, int storeId);
+        Response<bool> ApproveCoOwner(int userId, int targetUserId, int storeId);
     }
 }

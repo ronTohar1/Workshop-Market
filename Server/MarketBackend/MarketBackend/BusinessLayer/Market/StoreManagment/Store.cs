@@ -32,7 +32,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         // member ids of members to appoint to be a coOwner, to the memebrIds of the approving coOwners
         // the first memberId in the list is of the one that voted first 
-        private IDictionary<int, IList<int>> coOwnersAppointmentsApproving; 
+        public IDictionary<int, IList<int>> coOwnersAppointmentsApproving; 
 
         private IDictionary<int, IDictionary<Product, int>> transactions;
         private ConcurrentDictionary<int, Mutex> productsMutex;

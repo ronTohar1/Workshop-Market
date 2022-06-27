@@ -1838,164 +1838,164 @@ namespace TestMarketBackend.Acceptance
         //// new version of add new co owner
         //// r.4.4
         //[Test]
-        //public void SuccessfulStoreCoOwnerAppointment()
-        //{
-        //    // Co owners of this storeId are: storeOwnerId,  member3Id, member5Id, member6Id
-        //    Response<bool> response1 = storeManagementFacade.MakeNewCoOwner(storeOwnerId, member1Id, storeId);
-        //    Response<bool> response2 = storeManagementFacade.MakeNewCoOwner(member3Id, member1Id, storeId);
-        //    Response<bool> response3 = storeManagementFacade.MakeNewCoOwner(member5Id, member1Id, storeId);
-        //    Response<bool> response4 = storeManagementFacade.MakeNewCoOwner(member6Id, member1Id, storeId);
-        //    Assert.IsTrue(!response1.IsErrorOccured() && !response2.IsErrorOccured() && !response3.IsErrorOccured() && !response4.IsErrorOccured());
+        public void SuccessfulStoreCoOwnerAppointment()
+        {
+            // Co owners of this storeId are: storeOwnerId,  member3Id, member5Id, member6Id
+            Response<bool> response1 = storeManagementFacade.ApproveCoOwner(storeOwnerId, member1Id, storeId);
+            Response<bool> response2 = storeManagementFacade.ApproveCoOwner(member3Id, member1Id, storeId);
+            Response<bool> response3 = storeManagementFacade.ApproveCoOwner(member5Id, member1Id, storeId);
+            Response<bool> response4 = storeManagementFacade.ApproveCoOwner(member6Id, member1Id, storeId);
+            Assert.IsTrue(!response1.IsErrorOccured() && !response2.IsErrorOccured() && !response3.IsErrorOccured() && !response4.IsErrorOccured());
 
-        //    ReopenMarket();
+            ReopenMarket();
 
-        //    Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Owner));
-        //}
+            Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Owner));
+        }
 
-        //public static IEnumerable<TestCaseData> DataFailStoreOwnerAppoitmentNotAllStoreOwnersApproved
-        //{
-        //    get
-        //    {
-        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member5Id });
-        //        yield return new TestCaseData(() => new int[] { member3Id, member5Id, member6Id });
-        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member5Id, member6Id });
-        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member6Id });
+        public static IEnumerable<TestCaseData> DataFailStoreOwnerAppoitmentNotAllStoreOwnersApproved
+        {
+            get
+            {
+                yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member5Id });
+                yield return new TestCaseData(() => new int[] { member3Id, member5Id, member6Id });
+                yield return new TestCaseData(() => new int[] { storeOwnerId, member5Id, member6Id });
+                yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member6Id });
 
-        //    }
-        //}
+            }
+        }
 
 
-        //// r.4.4
-        //[Test]
-        //[TestCaseSource("DataFailStoreOwnerAppoitmentNotAllStoreOwnersApproved")]
-        //public void FailedStoreOwnerAppointment(Func<int[]> ownersIds)
-        //{
-        //    Response<IList<int>> ownersBefore =
-        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+        // r.4.4
+        [Test]
+        [TestCaseSource("DataFailStoreOwnerAppoitmentNotAllStoreOwnersApproved")]
+        public void FailedStoreOwnerAppointment(Func<int[]> ownersIds)
+        {
+            Response<IList<int>> ownersBefore =
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-        //    // Appointing a store owner as a store owner, but 
-        //    foreach (int id in ownersIds())
-        //    {
-        //        Response<bool> response = storeManagementFacade.MakeNewCoOwner(id, member1Id, storeId);
-        //        Assert.IsTrue(!response.IsErrorOccured());
-        //    }
+            // Appointing a store owner as a store owner, but 
+            foreach (int id in ownersIds())
+            {
+                Response<bool> response = storeManagementFacade.ApproveCoOwner(id, member1Id, storeId);
+                Assert.IsTrue(!response.IsErrorOccured());
+            }
 
-        //    Response<IList<int>> ownersAfter =
-        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+            Response<IList<int>> ownersAfter =
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-        //    Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
-        //}
+            Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
+        }
 
-        //// r 4.4
-        //// r S 5
-        //[Test]
-        //[TestCase(2)]
-        //[TestCase(10)]
-        //[TestCase(50)]
-        //public void ConcurrentStoreCoOwnerAppointment(int threadsNumber)
-        //{
-        //    // todo: maybe add more test cases on other things such as different members, different stores etc. 
-        //    Response<IList<int>> ownersBefore =
-        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+        // r 4.4
+        // r S 5
+        [Test]
+        [TestCase(2)]
+        [TestCase(10)]
+        [TestCase(50)]
+        public void ConcurrentStoreCoOwnerAppointment(int threadsNumber)
+        {
+            // todo: maybe add more test cases on other things such as different members, different stores etc. 
+            Response<IList<int>> ownersBefore =
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-        //    // Appointing the same member by many threads 
-        //    foreach (int ownerId in new int[] { storeOwnerId, member3Id, member5Id, member6Id })
-        //    {
-        //        Func<Response<bool>>[] jobs =
-        //            Enumerable.Repeat(() => storeManagementFacade.MakeNewCoOwner(ownerId, member1Id, storeId), threadsNumber).ToArray();
+            // Appointing the same member by many threads 
+            foreach (int ownerId in new int[] { storeOwnerId, member3Id, member5Id, member6Id })
+            {
+                Func<Response<bool>>[] jobs =
+                    Enumerable.Repeat(() => storeManagementFacade.ApproveCoOwner(ownerId, member1Id, storeId), threadsNumber).ToArray();
 
-        //        Response<bool>[] responses = GetResponsesFromThreads(jobs);
+                Response<bool>[] responses = GetResponsesFromThreads(jobs);
 
-        //        Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
-        //    }
-        //    ReopenMarket();
+                Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
+            }
+            ReopenMarket();
 
-        //    Response<IList<int>> ownersAfter =
-        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+            Response<IList<int>> ownersAfter =
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-        //    IList<int> expectedOwnersAfter = ownersBefore.Value;
-        //    expectedOwnersAfter.Add(member1Id);
+            IList<int> expectedOwnersAfter = ownersBefore.Value;
+            expectedOwnersAfter.Add(member1Id);
 
-        //    Assert.IsTrue(SameElements(expectedOwnersAfter, ownersAfter.Value));
-        //}
+            Assert.IsTrue(SameElements(expectedOwnersAfter, ownersAfter.Value));
+        }
 
-        //public static IEnumerable<TestCaseData> DataAllInStoreExcludeOne
-        //{
-        //    get
-        //    {
-        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member5Id }, () => member6Id);
-        //        yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member6Id }, () => member5Id);
-        //    }
-        //}
-        //// r.4.4
-        //[Test]
-        //[TestCaseSource("DataAllInStoreExcludeOne")]
-        //public void SuccessfulStoreOwnerAppointmentWithStoreOwnersStateChanged(Func<int[]> ownersIds, Func<int> idToRemove)
-        //{
-        //    int memberIdToRemove = idToRemove();
-        //    Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, memberIdToRemove, storeId, Role.Owner));
+        public static IEnumerable<TestCaseData> DataAllInStoreExcludeOne
+        {
+            get
+            {
+                yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member5Id }, () => member6Id);
+                yield return new TestCaseData(() => new int[] { storeOwnerId, member3Id, member6Id }, () => member5Id);
+            }
+        }
+        // r.4.4
+        [Test]
+        [TestCaseSource("DataAllInStoreExcludeOne")]
+        public void SuccessfulStoreOwnerAppointmentWithStoreOwnersStateChanged(Func<int[]> ownersIds, Func<int> idToRemove)
+        {
+            int memberIdToRemove = idToRemove();
+            Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, memberIdToRemove, storeId, Role.Owner));
 
-        //    Response<bool> response = storeManagementFacade.RemoveCoOwner(storeOwnerId, memberIdToRemove, storeId);
-        //    Assert.IsTrue(!response.IsErrorOccured());
-        //    foreach (int ownerId in ownersIds())
-        //    {
-        //        Response<bool> response1 = storeManagementFacade.MakeNewCoOwner(ownerId, member1Id, storeId);
-        //        Assert.IsTrue(!response1.IsErrorOccured());
-        //    }
-        //    ReopenMarket();
+            Response<bool> response = storeManagementFacade.RemoveCoOwner(storeOwnerId, memberIdToRemove, storeId);
+            Assert.IsTrue(!response.IsErrorOccured());
+            foreach (int ownerId in ownersIds())
+            {
+                Response<bool> response1 = storeManagementFacade.ApproveCoOwner(ownerId, member1Id, storeId);
+                Assert.IsTrue(!response1.IsErrorOccured());
+            }
+            ReopenMarket();
 
-        //    Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Owner));
-        //    Assert.IsFalse(MemberIsRoleInStore(storeOwnerId, memberIdToRemove, storeId, Role.Owner));
+            Assert.IsTrue(MemberIsRoleInStore(storeOwnerId, member1Id, storeId, Role.Owner));
+            Assert.IsFalse(MemberIsRoleInStore(storeOwnerId, memberIdToRemove, storeId, Role.Owner));
 
-        //}
-        //[Test]
-        //[TestCaseSource("DataAllInStoreExcludeOne")]
-        //public void FailStoreOwnerAppointmentOneStoreOwnerDeny(Func<int[]> ownersIds, Func<int> denierId)
-        //{
-        //    Response<IList<int>> ownersBefore =
-        //       storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+        }
+        [Test]
+        [TestCaseSource("DataAllInStoreExcludeOne")]
+        public void FailStoreOwnerAppointmentOneStoreOwnerDeny(Func<int[]> ownersIds, Func<int> denierId)
+        {
+            Response<IList<int>> ownersBefore =
+               storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-        //    // Appointing a store owner as a store owner, but 
-        //    foreach (int id in ownersIds())
-        //    {
-        //        Response<bool> response = storeManagementFacade.MakeNewCoOwner(id, member1Id, storeId);
-        //        Assert.IsTrue(!response.IsErrorOccured());
-        //    }
-        //    Response<bool> response1 = storeManagementFacade.DenyNewCoOwner(denierId(), member1Id, storeId);
-        //    Assert.IsTrue(!response1.IsErrorOccured());
+            // Appointing a store owner as a store owner, but 
+            foreach (int id in ownersIds())
+            {
+                Response<bool> response = storeManagementFacade.ApproveCoOwner(id, member1Id, storeId);
+                Assert.IsTrue(!response.IsErrorOccured());
+            }
+            Response<bool> response1 = storeManagementFacade.DenyNewCoOwner(denierId(), member1Id, storeId);
+            Assert.IsTrue(!response1.IsErrorOccured());
 
-        //    Response<IList<int>> ownersAfter =
-        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+            Response<IList<int>> ownersAfter =
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-        //    Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
-        //}
+            Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
+        }
 
-        //public static IEnumerable<TestCaseData> DataFailStoreOwnerDenyNoSuchAppoitment
-        //{
-        //    get
-        //    {
-        //        yield return new TestCaseData(() =>  storeOwnerId, ()=>member3Id);
-        //        yield return new TestCaseData(() => storeOwnerId, () => member1Id);
-        //        yield return new TestCaseData(() => member3Id, () => member1Id);
+        public static IEnumerable<TestCaseData> DataFailStoreOwnerDenyNoSuchAppoitment
+        {
+            get
+            {
+                yield return new TestCaseData(() => storeOwnerId, () => member3Id);
+                yield return new TestCaseData(() => storeOwnerId, () => member1Id);
+                yield return new TestCaseData(() => member3Id, () => member1Id);
 
-        //    }
-        //}
+            }
+        }
 
-        //// r.4.4
-        //[Test]
-        //[TestCaseSource("DataFailStoreOwnerDenyNoSuchAppoitment")]
-        //public void FailStoreOwnerDenyNoSuchAppoitment(Func<int> denierId, Func<int> candidateId)
-        //{
-        //    Response<IList<int>> ownersBefore =
-        //       storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+        // r.4.4
+        [Test]
+        [TestCaseSource("DataFailStoreOwnerDenyNoSuchAppoitment")]
+        public void FailStoreOwnerDenyNoSuchAppoitment(Func<int> denierId, Func<int> candidateId)
+        {
+            Response<IList<int>> ownersBefore =
+               storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-        //    Response<bool> response = storeManagementFacade.DenyNewCoOwner(denierId(), candidateId(), storeId);
-        //    Assert.IsTrue(!response.IsErrorOccured());
+            Response<bool> response = storeManagementFacade.DenyNewCoOwner(denierId(), candidateId(), storeId);
+            Assert.IsTrue(response.IsErrorOccured());
 
-        //    Response<IList<int>> ownersAfter =
-        //        storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
+            Response<IList<int>> ownersAfter =
+                storeManagementFacade.GetMembersInRole(storeId, storeOwnerId, Role.Owner);
 
-        //    Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
-        //}
+            Assert.IsTrue(SameElements(ownersBefore.Value, ownersAfter.Value));
+        }
     }
 }

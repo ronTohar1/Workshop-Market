@@ -19,7 +19,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public IList<ServicePurchasePolicy> PurchasePolicies { get; set; }
         public IList<ServiceDiscountPolicy> DiscountPolicies { get; set; }
 
-        public IDictionary<int, ServiceBid> Bids { get; }
+        public IList<ServiceBid> Bids { get; }
 
         public ServiceStore(int id, Store store, IList<ServiceProduct> productsIds)
         {
@@ -28,15 +28,10 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             Products = productsIds;
             IsOpen = store.isOpen;
             Founder = new ServiceMember(store.founder);
-            DiscountPolicies = store.discountManager.discounts.Values.Select(disc => new ServiceDiscountPolicy(disc.id, disc.description)).ToArray();
-            PurchasePolicies = store.purchaseManager.purchases.Values.Select(purch => new ServicePurchasePolicy(purch.id, purch.description)).ToArray();
-            Bids = new Dictionary<int, ServiceBid>();
-            foreach (KeyValuePair<int, Bid> keyValuePair in store.bids)
-            {
-                Bid bid = keyValuePair.Value;
-                Bids.Add(keyValuePair.Key, new ServiceBid
-                    (bid.storeId, bid.productId, bid.memberId, bid.bid, bid.aprovingIds, bid.counterOffer));
-            }
+            DiscountPolicies = store.discountManager.discounts.Values.Select(disc => new ServiceDiscountPolicy(disc.id, disc.description)).ToList();
+            PurchasePolicies = store.purchaseManager.purchases.Values.Select(purch => new ServicePurchasePolicy(purch.id, purch.description)).ToList();
+            Bids = store.bids.Values.Select(bid => new ServiceBid(bid.id, bid.storeId, bid.productId, bid.memberId, bid.bid, bid.aprovingIds, bid.counterOffer,bid.offer)).ToList();
+           
         }
 
         public override bool Equals(Object? other)

@@ -138,6 +138,43 @@ export async function serverGetDailyProfitOfAllStores(
   const response = jsonResponse.json();
   return response;
 }
+export async function serverGetEventLogs(
+  adminId: number
+): Promise<ClientResponse<string>> {
+  const uri = serverPort + "/api/Admin/GetEventLogs";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "userId": 0\n}',
+    body: JSON.stringify({
+        'userId': adminId
+    })
+});
+  const response = jsonResponse.json();
+  return response;
+}
+
+export async function serverGetErrorLogs(
+  adminId: number
+): Promise<ClientResponse<string>> {
+  const uri = serverPort + "/api/Admin/GetErrorLogs";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "userId": 0\n}',
+    body: JSON.stringify({
+        'userId': adminId
+    })
+});
+  const response = jsonResponse.json();
+  return response;
+}
 export async function serverGetDailyVisitores(
   memberId: number,
   fromDay:number,

@@ -70,10 +70,12 @@ It will be more comefortable to run the client from Visual Studio Code, but it's
   - [npm 8.6.0](https://nodejs.org/en/download/) or higher
 
 - Open a new terminal at [market-client](Client/market-client) directory
-- Type "npm-install" or "npm i" and click enter. This will install all the dependencies for the project
+- Type "npm-install" or "npm i" and click enter. This will install all the dependencies for the project.
 - Now type "npm start" and press enter.
  A browser window should open with the url: <http://localhost:3000/>
  (though it's possible that the port 3000 is already in use, in which case the terminal/CMD will ask you if it's ok to choose another port, but that doesn't really matter).
+  - If npm cannot find [react-google-charts](https://www.react-google-charts.com/) package than try to: "npm install --save react-google-charts" and runnig with "npm start" again.
+
 - That's it! the client is running and kicking.
 
 **Notes:**

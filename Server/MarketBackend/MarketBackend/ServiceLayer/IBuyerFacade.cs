@@ -4,6 +4,8 @@ namespace MarketBackend.ServiceLayer
 {
     public interface IBuyerFacade
     {
+        Response<bool> PurchaseBid(int storeId, int bidId, int memberId, ServicePaymentDetails paymentDetails, ServiceSupplyDetails supplyDetails);
+
         Response<bool> AddProdcutToCart(int userId, int storeId, int productId, int amount);
         Response<bool> AddProductReview(int memberId, int storeId, int productId, string review);
         Response<bool> changeProductAmountInCart(int userId, int storeId, int productId, int amount);

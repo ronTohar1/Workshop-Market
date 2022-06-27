@@ -8,6 +8,7 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
 {
     public class ServiceBid
     {
+        public int Id { get; set; }
         public int storeId { get; set; }
         public int productId { get; set; }
         public int memberId { get; set; }
@@ -15,18 +16,23 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public IList<int> approvingIds { get; }
 
         public bool counterOffer { get; set; }
+        public double Offer { get; set; }
 
-        public ServiceBid(int storeId, int productId, int memberId, double bid, IList<int> approvingIds, bool counterOffer)
+        public string description { get; set; }
+        public ServiceBid(int bidId, int storeId, int productId, int memberId, double bid, IList<int> approvingIds, bool counterOffer, double offer, string description="")
         {
+            this.Id = bidId;
             this.storeId = storeId;
             this.productId = productId;
             this.memberId = memberId;
             this.bid = bid;
             this.approvingIds = approvingIds;
             this.counterOffer = counterOffer;
+            Offer = offer;
+            this.description = description;
         }
 
-        public ServiceBid(int storeId, int productId, int memberId, double bid)
+        public ServiceBid(int storeId, int productId, int memberId, double bid, string description = "")
         {
             this.storeId = storeId;
             this.productId = productId;
@@ -34,6 +40,8 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
             this.bid = bid;
             approvingIds = new List<int>();
             counterOffer = false;
+            this.description = description;
+
         }
 
         public override bool Equals(object? other)
@@ -42,9 +50,9 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
                 return false;
             ServiceBid otherBid = (ServiceBid)other;
             bool approvingIdsEqual = true;
-            for(int i = 0; i < approvingIds.Count; i++)
+            for (int i = 0; i < approvingIds.Count; i++)
             {
-                if(approvingIds[i] != otherBid.approvingIds[i])
+                if (approvingIds[i] != otherBid.approvingIds[i])
                     approvingIdsEqual = false;
             }
             return storeId == otherBid.storeId

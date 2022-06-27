@@ -9,7 +9,7 @@
         {
             StoreId = storeId;
             MemberId = memberId;
-            BidId = memberId;
+            BidId = bidId;
         }
     }
 }

@@ -84,7 +84,7 @@ export default function DailyVisitors() {
       toSelectedDay,
       toSelectedMonth,
       toSelectedYear
-    );
+    )
     console.log(responsePromise);
     fetchResponse(responsePromise)
       .then((dailyVisits) => {
@@ -98,7 +98,7 @@ export default function DailyVisitors() {
           ])
       })
       .catch((e) => {
-        alert(e);
+        showFailureSnack(e);
         setOpen(false);
       });
   };

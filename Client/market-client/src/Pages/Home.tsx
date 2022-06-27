@@ -10,7 +10,8 @@ import ButtonGroup from "@mui/material/ButtonGroup"
 import Box from "@mui/material/Box"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { pathLogin, pathRegister, pathSearch } from "../Paths"
-import { getIsGuest } from "../services/SessionService"
+import { getBuyerId, getIsGuest } from "../services/SessionService"
+import { serverLeave } from "../services/BuyersService"
 
 const cards = [1, 2, 3]
 
@@ -73,6 +74,7 @@ const theme = createTheme({
 })
 
 export default function Home() {
+  
   return (
     <ThemeProvider theme={theme} >
     {/* {!getIsGuest() && <Navbar/> } */}

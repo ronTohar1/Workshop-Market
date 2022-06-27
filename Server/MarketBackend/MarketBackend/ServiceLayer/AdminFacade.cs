@@ -275,7 +275,21 @@ namespace MarketBackend.ServiceLayer
             // number_of_simple_members(not manager or store owner), number_of_guests]
 
             // ** Imporatant ** check that memberId is admin, fromDate<=toDate, and that fromDate<=currentDate
-            throw new NotImplementedException();
+            try
+            {
+                logger.Info($"GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = { toDate}]");
+                return new Response<int[]>("Not Implemented Yet");
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = {toDate}]");
+                return new Response<int[]>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = {toDate}]");
+                return new Response<int[]>("Sorry, an unexpected error occured. Please try again");
+            }
         }
     }
 }

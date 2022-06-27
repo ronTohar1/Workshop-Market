@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         public ActionResult<Response<IReadOnlyCollection<ServicePurchase>>> GetBuyerPurchaseHistory
             ([FromBody] AdminRequest request)
         {
-            Response<IReadOnlyCollection<ServicePurchase>> response = 
+            Response<IReadOnlyCollection<ServicePurchase>> response =
                 adminFacade.GetBuyerPurchaseHistory(request.UserId, request.TargetId);
 
             if (response.IsErrorOccured())
@@ -114,10 +114,20 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
-		[HttpPost("GetDailyVisitorsCut")]
+        [HttpPost("GetDailyVisitorsCut")]
         public ActionResult<Response<int[]>> GetDailyVisitores([FromBody] GetDailyVisitoresRequestAdmin request)
         {
-            Response<int[]> response = adminFacade.GetDailyVisitores(request.MemberId,new DateTime(request.FromYear, request.FromMonth, request.FromDay), new DateTime(request.ToYear, request.ToMonth, request.ToDay));
+            DateTime fromDate, toDate;
+            try
+            {
+                fromDate = new DateTime(request.FromYear, request.FromMonth, request.FromDay);
+                toDate = new DateTime(request.ToYear, request.ToMonth, request.ToDay);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new Response<int[]>(e.Message));
+            }
+            Response<int[]> response = adminFacade.GetDailyVisitores(request.MemberId, fromDate, toDate);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);

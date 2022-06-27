@@ -372,6 +372,33 @@ namespace MarketBackend.Migrations
                     b.ToTable("Stores");
                 });
 
+            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreCoOwnerAppointmentApproving", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("AppointedFirst")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ApprovingMemberId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DataStoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("newCoOwnerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DataStoreId");
+
+                    b.ToTable("CoOwnerAppointmentApproving");
+                });
+
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", b =>
                 {
                     b.Property<int>("Id")
@@ -997,6 +1024,13 @@ namespace MarketBackend.Migrations
                     b.Navigation("PurchaseManager");
                 });
 
+            modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreCoOwnerAppointmentApproving", b =>
+                {
+                    b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", null)
+                        .WithMany("CoOwnerAppointmentApprovings")
+                        .HasForeignKey("DataStoreId");
+                });
+
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStoreMemberRoles", b =>
                 {
                     b.HasOne("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", "Store")
@@ -1172,6 +1206,8 @@ namespace MarketBackend.Migrations
             modelBuilder.Entity("MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.DataStore", b =>
                 {
                     b.Navigation("Bids");
+
+                    b.Navigation("CoOwnerAppointmentApprovings");
 
                     b.Navigation("MembersPermissions");
 

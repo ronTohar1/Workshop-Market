@@ -95,6 +95,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         public abstract SimplifiedDbSet<DataNotification, int> SimplifiedNotifications { get; set; }
         public abstract SimplifiedDbSet<DataPurchase, int> SimplifiedPurchases { get; set; }
+        public abstract SimplifiedDbSet<DataStoreCoOwnerAppointmentApproving, int> SimplifiedStoreCoOwnerAppointmentApproving { get; set; }
+
 
         // discounts hierarchies
 
@@ -155,9 +157,9 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             db.SimplifiedProductInBags.RemoveRange(db.SimplifiedProductInBags.ToList());
             db.SimplifiedNotifications.RemoveRange(db.SimplifiedNotifications.ToList());
             db.SimplifiedPurchases.RemoveRange(db.SimplifiedPurchases.ToList());
+            db.SimplifiedStoreCoOwnerAppointmentApproving.RemoveRange(db.SimplifiedStoreCoOwnerAppointmentApproving.ToList());
             db.SimplifiedDateDiscounts.RemoveRange(db.SimplifiedDateDiscounts.ToList());
             db.SimplifiedOneProductDiscounts.RemoveRange(db.SimplifiedOneProductDiscounts.ToList());
-            db.SimplifiedNotifications.RemoveRange(db.SimplifiedNotifications.ToList());
             db.SimplifiedStoreDiscounts.RemoveRange(db.SimplifiedStoreDiscounts.ToList());
             db.SimplifiedDiscountOrExpressions.RemoveRange(db.SimplifiedDiscountOrExpressions.ToList());
             db.SimplifiedDiscountAndExpressions.RemoveRange(db.SimplifiedDiscountAndExpressions.ToList());

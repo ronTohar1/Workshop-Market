@@ -29,5 +29,6 @@ namespace MarketBackend.DataLayer.DataDTOs.Market.StoreManagement
         public virtual DataStorePurchasePolicyManager? PurchaseManager { get; set; }
 
         public virtual IList<DataBid?>? Bids { get; set; }
+        public virtual IList<DataStoreCoOwnerAppointmentApproving?>? CoOwnerAppointmentApprovings { get; set; }
     }
 }

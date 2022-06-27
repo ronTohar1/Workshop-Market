@@ -865,21 +865,50 @@ namespace MarketBackend.ServiceLayer
             storeController.GetOpenStores().Count();
 
 
-        public Response<bool> MakeNewCoOwner(int userId, int targetUserId, int storeId)
+        public Response<bool> ApproveCoOwner(int userId, int targetUserId, int storeId)
         {
-            // this function should add userId approval to the Appoiment agreement of targetUserId if there is such, 
-            // and should create an Appoiment agreement if there isn't one (also to notify the store owner about that).
-            // need to check: - that targetUserId is a member, userId is at least owner at the store with id=storeId
-            //                - if all the store owner approved 
-            throw new NotImplementedException();
+            try
+            {
+                Store s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.AddMakeCoOwnerVote(userId, targetUserId);
+                logger.Info($"ApproveCoOwner was called with parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: ApproveCoOwner, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: ApproveCoOwner, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
         }
 
         public Response<bool> DenyNewCoOwner(int userId, int targetUserId, int storeId)
         {
-            // this function should add , 
-            // and should create an Appoiment agreement if there isn't one .
-            // need to check: that targetUserId is a member, userId is at least owner at the store with id=storeId
-            throw new NotImplementedException();
+            try
+            {
+                Store s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                s.DenyNewCoOwner(userId, targetUserId);
+                logger.Info($"DenyNewCoOwner was called with parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: DenyNewCoOwner, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: DenyNewCoOwner, parameters: [userId = {userId}, targetUserId = {targetUserId}, storeId = {storeId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
         }
     }
 }

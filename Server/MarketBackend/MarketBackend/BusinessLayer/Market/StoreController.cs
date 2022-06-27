@@ -256,7 +256,8 @@ public class StoreController
 		return false;
 	}
 	private bool PlaysRoleAtStore(Store store, int memeberId)
-		=> store.IsManager(memeberId) || store.IsCoOwner(memeberId) || store.IsFounder(memeberId);
+		=> store.IsManager(memeberId) || store.IsCoOwner(memeberId) || store.IsFounder(memeberId)
+			|| store.IsThereVotingForCoOwnerAppointment(memeberId);
 
 
 	//for tests

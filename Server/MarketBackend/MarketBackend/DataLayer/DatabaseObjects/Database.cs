@@ -59,6 +59,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             SimplifiedProductInBags = DbSetToSimplifiedDbSet<DataProductInBag, int>(this.ProductInBags, dataObject => dataObject.Id);
             SimplifiedNotifications = DbSetToSimplifiedDbSet<DataNotification, int>(this.Notifications, dataObject => dataObject.Id);
             SimplifiedPurchases = DbSetToSimplifiedDbSet<DataPurchase, int>(this.Purchases, dataObject => dataObject.Id);
+            SimplifiedStoreCoOwnerAppointmentApproving = DbSetToSimplifiedDbSet<DataStoreCoOwnerAppointmentApproving, int>(this.CoOwnerAppointmentApproving, dataObject => dataObject.Id);
             SimplifiedDateDiscounts = DbSetToSimplifiedDbSet<DataDateDiscount, int>(this.DateDiscounts, dataObject => dataObject.Id);
             SimplifiedOneProductDiscounts = DbSetToSimplifiedDbSet<DataOneProductDiscount, int>(this.OneProductDiscounts, dataObject => dataObject.Id);
             SimplifiedStoreDiscounts = DbSetToSimplifiedDbSet<DataStoreDiscount, int>(this.StoreDiscounts, dataObject => dataObject.Id);
@@ -92,6 +93,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             SimplifiedBeforeHourRestrictions = DbSetToSimplifiedDbSet<DataBeforeHourRestriction, int>(this.BeforeHourRestrictions, dataObject => dataObject.Id);
             SimplifiedDateRestrictions = DbSetToSimplifiedDbSet<DataDateRestriction, int>(this.DateRestrictions, dataObject => dataObject.Id);
             SimplifiedPurchasePolicies = DbSetToSimplifiedDbSet<DataPurchasePolicy, int>(this.PurchasePolicies, dataObject => dataObject.Id);
+            
         }
 
         private SimplifiedDatabaseDbSet<T, U> DbSetToSimplifiedDbSet<T, U>(DbSet<T> dbSet, Func<T, U> getId) where T : class
@@ -115,6 +117,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         public DbSet<DataNotification> Notifications { get; set; }
         public DbSet<DataPurchase> Purchases { get; set; }
+        public DbSet<DataStoreCoOwnerAppointmentApproving> CoOwnerAppointmentApproving { get; set; }
 
         // discounts hierarchies
 
@@ -173,6 +176,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
 
         public SimplifiedDbSet<DataNotification, int> SimplifiedNotifications { get; set; }
         public SimplifiedDbSet<DataPurchase, int> SimplifiedPurchases { get; set; }
+        public SimplifiedDbSet<DataStoreCoOwnerAppointmentApproving, int> SimplifiedStoreCoOwnerAppointmentApproving { get; set; }
+
 
         // discounts hierarchies
 

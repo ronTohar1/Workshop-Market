@@ -18,7 +18,9 @@ namespace MyApp // Note: actual namespace depends on the project name.
         {
             var appConfig = AppConfigs.GetInstance();
             WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), appConfig.WebsocketServerPort);
+            WebSocketServer logsServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 4560);
             notificationServer.Start();
+            logsServer.Start();
             Console.WriteLine($"WS server started on ws://127.0.0.1:{appConfig.WebsocketServerPort}");
 
             SystemOperator so = new();
@@ -58,6 +60,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
             builder.Services.AddSingleton<IStoreManagementFacade>(_ => so.GetStoreManagementFacade().Value);
             builder.Services.AddSingleton<IAdminFacade>(_ => so.GetAdminFacade().Value);
             builder.Services.AddSingleton(_ => notificationServer);
+            builder.Services.AddSingleton(_ => logsServer);
 
             builder.Services.AddCors(options =>
             {

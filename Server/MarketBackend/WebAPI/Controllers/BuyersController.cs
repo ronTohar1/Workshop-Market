@@ -1,9 +1,8 @@
 ﻿using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
-using Microsoft.AspNetCore.Http;
+using MarketBackend.SystemSettings;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Requests;
-using WebSocketSharp;
 using WebSocketSharp.Server;
 
 namespace WebAPI.Controllers
@@ -13,7 +12,9 @@ namespace WebAPI.Controllers
     public class BuyersController : Controller
     {
         private readonly IBuyerFacade buyerFacade;
+        private readonly IAdminFacade adminFacade;
         private WebSocketServer notificationServer;
+        private WebSocketServer logsServer;
         private static IDictionary<int, string> buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
         private static IDictionary<string, IList<string>> buyerUnsentMessages = new Dictionary<string, IList<string>>();
         private class NotificationsService : WebSocketBehavior
@@ -21,13 +22,18 @@ namespace WebAPI.Controllers
 
         }
 
-        public BuyersController(IBuyerFacade buyerFacade, WebSocketServer notificationServer)
+        private class logsService : WebSocketBehavior
         {
-            Console.WriteLine("new user?");
+
+        }
+
+        public BuyersController(IBuyerFacade buyerFacade, IAdminFacade adminFacade, WebSocketServer notificationServer, WebSocketServer logsServer)
+        {
             this.buyerFacade = buyerFacade;
-            //buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
-            //buyerUnsentMessages = new Dictionary<string, IList<string>>();
+            this.adminFacade = adminFacade;
             this.notificationServer = notificationServer;
+            this.logsServer = logsServer;
+            logsServer.AddWebSocketService<logsService>("logs");
         }
 
         [HttpPost("GetBuyerCart")]
@@ -179,6 +185,19 @@ namespace WebAPI.Controllers
             buyerUnsentMessages[username] = messages;
         }
 
+        [HttpPost("GetLogs")]
+        public ActionResult<Response<IList<string>>> GetLogs ([FromBody] UserRequest request)
+        {
+            int id = request.UserId;
+            if (buyerUnsentMessages.ContainsKey(username))
+            {
+                IList<string> msgsCopy = buyerUnsentMessages[username].Select(e => e).ToList();
+                var actionResult = Ok(new Response<IList<string>>(msgsCopy));
+                buyerUnsentMessages[username].Clear();
+                return actionResult;
+            }
+            return Ok(new Response<IList<string>>(new List<string>()));
+        }
 
         [HttpPost("Login")]
         public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
@@ -227,6 +246,12 @@ namespace WebAPI.Controllers
             }
 
             buyerIdToRelativeNotificationPath.Add(response.Value, relativeServicePath);
+
+            // Sending to the admin who just logged in
+            Response<ServiceMember> memberResponse = adminFacade.GetMemberInfo(response.Value);
+            logsServer.WebSocketServices["logs"].Sessions.Broadcast(ad);
+
+
             return Ok(response);
         }
 

@@ -4,18 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.SystemSettings;
 
 namespace MarketBackend.BusinessLayer.System.ExternalServices
 {
     // this class will hold the outside payment system when we will have it
     // for now its default to returning true to allow the system to operate normally
     public class ExternalPaymentSystem : ExternalCommunicator, IExternalPaymentSystem
-    {        
+    {
+
+        private AppConfigs appConfig = AppConfigs.GetInstance();
+
         public ExternalPaymentSystem(HttpClient httpClient) : base(httpClient) { }
 
         // will contact the external service to make the payment, for now deafult
         public async virtual Task<int> Pay(PaymentDetails paymentDetails)
         {
+            if (!appConfig.ExternalServicesActive)
+                return -1;
+
             if (!handshake())
                 return -1;
 
@@ -37,6 +44,9 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
 
         public async virtual Task<int> CancelPay(int transactionId)
         {
+            if (!appConfig.ExternalServicesActive)
+                return -1;
+
             if (!handshake())
                 return -1;
 

@@ -20,7 +20,7 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
         // will contact the external service for the delivery, for now default
         public async virtual Task<int> Supply(SupplyDetails supplyDetails)
         {
-            if (!appConfig.ExternalSystemsActive)
+            if (!appConfig.ExternalServicesActive)
                 return -1;
 
             if (!handshake())
@@ -43,7 +43,7 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
 
         public async Task<int> CancelSupply(int transactionId)
         {
-            if (!appConfig.ExternalSystemsActive)
+            if (!appConfig.ExternalServicesActive)
                 return -1;
 
             if (!handshake())

@@ -21,7 +21,6 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
         public async virtual Task<int> Pay(PaymentDetails paymentDetails)
         {
             if (!appConfig.ExternalServicesActive)
-            {
                 if (appConfig.ExternalServicesFailWhenNotActive)
                     return -1;
                 return new Random().Next();

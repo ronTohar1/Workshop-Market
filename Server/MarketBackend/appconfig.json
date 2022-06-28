@@ -7,6 +7,8 @@
 	"DatabasePassword":"passMarket",
 	"ShouldUpdateDatabase":false,
 	"ShouldRunInitFile":true,
-	"InitFilePath":"Scenarios/initLoadTest.json",
-	"WebsocketServerPort":7890
+	"InitFilePath":"Scenarios/init.json",
+	"WebsocketServerPort": 7890,
+	"ExternalServicesActive": false,
+	"ExternalServicesFailWhenNotActive": false 
 }

@@ -63,6 +63,9 @@ namespace MarketBackend.BusinessLayer
                 purchasesManager = new(storeController, buyersController, externalServicesController);
 
                 adminManager = AdminManager.LoadAdminManager(storeController, buyersController, membersController);
+                guestsController.OnEnter(adminManager.OnGuestEnter);
+                membersController.OnLogin(adminManager.OnMemberLogin);
+
                 MarketOpen = true;
                 MarketOpenerAdminId = adminId;
             }
@@ -90,6 +93,9 @@ namespace MarketBackend.BusinessLayer
                 purchasesManager = new(storeController, buyersController, externalServicesController);
 
                 adminManager = new(storeController, buyersController, membersController);
+                guestsController.OnEnter(adminManager.OnGuestEnter);
+                membersController.OnLogin(adminManager.OnMemberLogin);
+
                 adminManager.AddAdmin(adminId);
                 MarketOpen = true;
                 MarketOpenerAdminId = adminId;

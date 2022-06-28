@@ -24,6 +24,8 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         private ReaderWriterLock loggedInLock;
         private const int lockTime = 2000;
 
+        private Action<int> onLogin; // gets the memberId of the member that logged in 
+
         public bool LoggedIn
         {
             get
@@ -42,7 +44,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
         }
 
 
-        public Member(string username, string password, Security security)
+        public Member(string username, string password, Security security, Action<int> onLogin)
         {
             //Init locks first
             this.mutex = new Mutex();
@@ -54,11 +56,13 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             this.password = security.HashPassword(password);
             this._loggedIn = false;
             this.pendingNotifications = new SynchronizedCollection<string>();
+
+            this.onLogin = onLogin;
         }
 
         private Member(int id, string username, int password, Cart cart, 
             Security security, IList<string> pendingNotifications,
-            IList<Purchase> purchaseHistory) : base(id, cart, purchaseHistory)
+            IList<Purchase> purchaseHistory, Action<int> onLogin) : base(id, cart, purchaseHistory)
         {
             //Init locks first
             this.mutex = new Mutex();
@@ -70,10 +74,12 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
             this.password = password;
             this._loggedIn = false;
             this.pendingNotifications = pendingNotifications;
+
+            this.onLogin = onLogin;
         }
 
         // r S 8
-        public static Member DataMemberToMember(DataMember dataMember, Security security)
+        public static Member DataMemberToMember(DataMember dataMember, Security security, Action<int> onLogin = null)
         {
             Cart cart = Cart.DataCartToCart(dataMember.Cart);
 
@@ -86,7 +92,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
                 .Select(dataPurchase => Purchase.DataPurchaseToPurchase(dataPurchase)));
 
             return new Member(dataMember.Id, dataMember.Username, dataMember.Password,
-                cart, security, pendingNotifications, purchaseHistory);
+                cart, security, pendingNotifications, purchaseHistory, onLogin);
         }
 
         public bool Login(string password, Func<string[], bool> notifyFunc)
@@ -101,8 +107,14 @@ namespace MarketBackend.BusinessLayer.Buyers.Members
                     LoggedIn = true;
                     SendPending();
                 }
+                onLogin(Id); // does not throw an exception 
                 return LoggedIn;
             }
+        }
+
+        public void OnLogin(Action<int> onLogin)
+        {
+            this.onLogin = onLogin;
         }
 
         public bool CheckPassword(string password)

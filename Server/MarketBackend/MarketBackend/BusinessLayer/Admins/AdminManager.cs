@@ -13,6 +13,7 @@ using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.DataLayer.DataManagers;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using SystemLog;
 
 namespace MarketBackend.BusinessLayer.Admins
 {
@@ -237,7 +238,7 @@ namespace MarketBackend.BusinessLayer.Admins
             }
             catch (Exception exception)
             {
-                // logger.Error(exception, $"Business layer, on updating daily statistics: " + updateDescription);
+                SystemLogger.getLogger().Error(exception, $"Business layer, on updating daily statistics: " + updateDescription);
             }
             finally
             {

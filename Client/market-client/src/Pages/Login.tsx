@@ -12,12 +12,15 @@ import Grid from "@mui/material/Grid"
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
-import { serverGetPendingMessages, serverLogin } from "../services/BuyersService"
+import {
+  serverGetPendingMessages,
+  serverLogin,
+} from "../services/BuyersService"
 import { useNavigate } from "react-router-dom"
 import { pathAdmin, pathHome } from "../Paths"
 import * as sessionService from "../services/SessionService"
 import HomeIcon from "@mui/icons-material/Home"
-import { fetchResponse } from '../services/GeneralService'
+import { fetchResponse } from "../services/GeneralService"
 import { noteConn, setUpConnection } from "../services/NotificationsService"
 import { addEventListener, alertFunc, initWebSocket } from "../App"
 import { serverIsAdmin } from "../services/AdminService"
@@ -68,36 +71,35 @@ export default function Login() {
     const username = data.get("username")?.toString()
     const password = data.get("password")?.toString()
     const result = serverLogin(username, password)
-    if (username === undefined) // Not going to happen but
-    {
+    if (username === undefined) {
+      // Not going to happen but
       alert("Please enter username")
-      return;
-    }
-    else {
+      return
+    } else {
       console.log("checking login")
-      fetchResponse(result).then((memberId: number) => {
+      fetchResponse(result)
+        .then((memberId: number) => {
+          console.log("started login")
+          const address = `ws://127.0.0.1:4560/${username}-notifications`
+          initWebSocket(address)
+          alert("Logged in successfully!")
 
-        console.log("started login")
-        const address = "ws://127.0.0.1:7890/${username}-notifications"
-        initWebSocket(address)
-        alert("Logged in successfully!")
+          //Session setup
+          sessionService.setIsGuest(false)
+          sessionService.setBuyerId(memberId)
+          sessionService.setUsername(username)
 
-        //Session setup
-        sessionService.setIsGuest(false)
-        sessionService.setBuyerId(memberId)
-        sessionService.setUsername(username)
+          console.log("messages")
 
-        console.log("messages")
-
-        return memberId
-      })
+          return memberId
+        })
         .then((memberId: number) => fetchResponse(serverIsAdmin(memberId))) // Check is admin
-        .then((isAdmin: boolean) => sessionService.setIsAdmin(isAdmin))     // Set is admin
+        .then((isAdmin: boolean) => sessionService.setIsAdmin(isAdmin)) // Set is admin
 
         // uncomment for updates in login
         // .then(() => fetchResponse(serverGetPendingMessages(username)))      // Get pending notifications
         // .then((messages: string[]) => messages.forEach(alertFunc))          // Alert pending notifications
-        .then(() => navigate(pathHome))                                     // Navigate back to home page
+        .then(() => navigate(pathHome)) // Navigate back to home page
         .catch((e) => {
           alert(e)
         })

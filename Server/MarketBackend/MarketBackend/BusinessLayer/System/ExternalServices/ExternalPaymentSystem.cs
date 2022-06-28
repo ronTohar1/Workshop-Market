@@ -21,7 +21,10 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
         public async virtual Task<int> Pay(PaymentDetails paymentDetails)
         {
             if (!appConfig.ExternalServicesActive)
-                return -1;
+                if (appConfig.ExternalServicesFailWhenNotActive)
+                    return -1;
+                return new Random().Next();
+            }
 
             if (!handshake())
                 return -1;
@@ -45,7 +48,11 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
         public async virtual Task<int> CancelPay(int transactionId)
         {
             if (!appConfig.ExternalServicesActive)
-                return -1;
+            {
+                if (appConfig.ExternalServicesFailWhenNotActive)
+                    return -1;
+                return 0;
+            }
 
             if (!handshake())
                 return -1;

@@ -45,7 +45,29 @@ export default function ShowLogs() {
     const [open, setOpen] = React.useState<boolean>(false);
     const [window, setWindow] = React.useState<number>(1);
     const [logs, setLogs] = React.useState<string>('');
-    
+
+    const setLogsError = ()=>{
+      const buyerId = getBuyerId()
+      fetchResponse(serverGetErrorLogs(buyerId))
+        .then((log) => {
+          setLogs(log)
+        })
+        .catch((e) => {
+          setLogs(e)
+        })
+  }
+
+  const setLogsEvent = ()=>{
+      const buyerId = getBuyerId()
+      fetchResponse(serverGetEventLogs(buyerId))
+        .then((log) => {
+          setLogs(log)
+        })
+        .catch((e) => {
+          setLogs(e)
+        })
+  }
+
     const handleClickOpen = () => {
       setOpen(true);
       setLogsEvent()
@@ -56,28 +78,6 @@ export default function ShowLogs() {
       navigate(pathAdmin);
     };
     
-    const setLogsError = ()=>{
-        const buyerId = getBuyerId()
-        fetchResponse(serverGetErrorLogs(buyerId))
-          .then((log) => {
-            setLogs(log)
-          })
-          .catch((e) => {
-            setLogs(e)
-          })
-    }
-
-    const setLogsEvent = ()=>{
-        const buyerId = getBuyerId()
-        fetchResponse(serverGetEventLogs(buyerId))
-          .then((log) => {
-            setLogs(log)
-          })
-          .catch((e) => {
-            setLogs(e)
-          })
-    }
-  
     return (
       <div>
         <Box textAlign='center'>
@@ -123,8 +123,8 @@ export default function ShowLogs() {
                 setLogsError();
         }}
         >
-        <BottomNavigationAction label="Error" value={1}/>
-        <BottomNavigationAction label="Events"  value={2}/>
+        <BottomNavigationAction label="Events" value={1}/>
+        <BottomNavigationAction label="Error"  value={2}/>
         </BottomNavigation>
         <DialogContent>
         <Container style={{ minHeight: '32vw', maxHeight: '32vw', width:'100%',overflow: 'auto' }} >

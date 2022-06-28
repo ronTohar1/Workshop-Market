@@ -1,4 +1,5 @@
-﻿using MarketBackend.ServiceLayer;
+﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using MarketBackend.SystemSettings;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +14,10 @@ namespace WebAPI.Controllers
     {
         private readonly IBuyerFacade buyerFacade;
         private readonly IAdminFacade adminFacade;
+        private readonly IStoreManagementFacade storeManagementFacade;
         private WebSocketServer notificationServer;
         private WebSocketServer logsServer;
+        private static int adminId = -1;
         private static IDictionary<int, string> buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
         private static IDictionary<string, IList<string>> buyerUnsentMessages = new Dictionary<string, IList<string>>();
         private class NotificationsService : WebSocketBehavior
@@ -27,10 +30,11 @@ namespace WebAPI.Controllers
 
         }
 
-        public BuyersController(IBuyerFacade buyerFacade, IAdminFacade adminFacade, WebSocketServer notificationServer, WebSocketServer logsServer)
+        public BuyersController(IBuyerFacade buyerFacade, IAdminFacade adminFacade, IStoreManagementFacade storeManagementFacade, WebSocketServer notificationServer, WebSocketServer logsServer)
         {
             this.buyerFacade = buyerFacade;
             this.adminFacade = adminFacade;
+            this.storeManagementFacade = storeManagementFacade;
             this.notificationServer = notificationServer;
             this.logsServer = logsServer;
             logsServer.AddWebSocketService<logsService>("logs");
@@ -113,6 +117,8 @@ namespace WebAPI.Controllers
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
+            logsServer.WebSocketServices["logs"].Sessions.Broadcast("+Guest");
+
             return Ok(response);
         }
 
@@ -123,6 +129,8 @@ namespace WebAPI.Controllers
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
+
+            logsServer.WebSocketServices["logs"].Sessions.Broadcast("-Guest");
 
             return Ok(response);
         }
@@ -185,18 +193,16 @@ namespace WebAPI.Controllers
             buyerUnsentMessages[username] = messages;
         }
 
-        [HttpPost("GetLogs")]
-        public ActionResult<Response<IList<string>>> GetLogs ([FromBody] UserRequest request)
+        [HttpPost("AdminIdentify")]
+        public ActionResult<Response<bool>> AdminIdentify([FromBody] UserRequest request)
         {
-            int id = request.UserId;
-            if (buyerUnsentMessages.ContainsKey(username))
+            adminId = request.UserId;
+            Response<bool> isAdmin = adminFacade.IsAdmin(adminId);
+            if (isAdmin.IsErrorOccured())
             {
-                IList<string> msgsCopy = buyerUnsentMessages[username].Select(e => e).ToList();
-                var actionResult = Ok(new Response<IList<string>>(msgsCopy));
-                buyerUnsentMessages[username].Clear();
-                return actionResult;
+                return BadRequest(isAdmin);
             }
-            return Ok(new Response<IList<string>>(new List<string>()));
+            return Ok(isAdmin);
         }
 
         [HttpPost("Login")]
@@ -247,12 +253,54 @@ namespace WebAPI.Controllers
 
             buyerIdToRelativeNotificationPath.Add(response.Value, relativeServicePath);
 
-            // Sending to the admin who just logged in
-            Response<ServiceMember> memberResponse = adminFacade.GetMemberInfo(response.Value);
-            logsServer.WebSocketServices["logs"].Sessions.Broadcast(ad);
-
+            logsServer.WebSocketServices["logs"].Sessions.Broadcast("+" + GetMembersRole(response.Value));
 
             return Ok(response);
+        }
+
+        private string GetMembersRole(int memberId)
+        {
+            Response<bool> isAdmin = adminFacade.IsAdmin(memberId);
+
+            if (isAdmin.IsErrorOccured())
+            {
+                return "";
+            }
+
+            if (isAdmin.Value)
+            {
+                return "Admin";
+            }
+
+            Response<IDictionary<int, IList<ServiceProduct>>> owner =
+            buyerFacade.ProductsSearch(null, null, null, null, null, null, new ServiceMemberInRole(memberId, Role.Owner), false);
+
+            if (owner.IsErrorOccured())
+            {
+                return string.Empty;
+            }
+
+            ICollection<int> stores = owner.Value.Keys;
+            if (stores.Contains(memberId))
+            {
+                return "Owner";
+            }
+
+            Response<IDictionary<int, IList<ServiceProduct>>> manager =
+            buyerFacade.ProductsSearch(null, null, null, null, null, null, new ServiceMemberInRole(memberId, Role.Manager), false);
+
+            if (manager.IsErrorOccured())
+            {
+                return string.Empty;
+            }
+
+            stores = manager.Value.Keys;
+            if (stores.Contains(memberId))
+            {
+                return "Manager";
+            }
+
+            return "Memebr";
         }
 
         [HttpPost("Logout")]
@@ -269,6 +317,9 @@ namespace WebAPI.Controllers
                 notificationServer.RemoveWebSocketService(buyerIdToRelativeNotificationPath[request.UserId]);
                 buyerIdToRelativeNotificationPath.Remove(request.UserId);
             }
+
+            logsServer.WebSocketServices["logs"].Sessions.Broadcast("-" + GetMembersRole(request.UserId));
+
             return Ok(response);
         }
 

@@ -11,10 +11,14 @@ namespace MarketBackend.BusinessLayer.Buyers.Guests
     {
         private IDictionary<int, Buyer> buyers;
 
+        private Action onEnter; 
+
         internal IDictionary<int, Buyer> Buyers { get { return buyers; } }
 
-        public GuestsController() => 
+        public GuestsController()
+        {
             buyers = new ConcurrentDictionary<int, Buyer>();
+        }
 
         public Buyer? GetBuyer(int buyerId)
         {
@@ -26,7 +30,13 @@ namespace MarketBackend.BusinessLayer.Buyers.Guests
         {
             Buyer buyer = new();
             buyers[buyer.Id] = buyer;
+            onEnter(); // does not throw an exception 
             return buyer.Id;
+        }
+
+        public void OnEnter(Action onEnter)
+        {
+            this.onEnter = onEnter;
         }
 
         public void Leave(int id) =>

@@ -60,6 +60,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             SimplifiedNotifications = DbSetToSimplifiedDbSet<DataNotification, int>(this.Notifications, dataObject => dataObject.Id);
             SimplifiedPurchases = DbSetToSimplifiedDbSet<DataPurchase, int>(this.Purchases, dataObject => dataObject.Id);
             SimplifiedStoreCoOwnerAppointmentApproving = DbSetToSimplifiedDbSet<DataStoreCoOwnerAppointmentApproving, int>(this.CoOwnerAppointmentApproving, dataObject => dataObject.Id);
+            SimplifiedDailyMarketStatistics = DbSetToSimplifiedDbSet<DataDailyMarketStatistics, int>(this.DailyMarketStatistics, dataObject => dataObject.Id);
             SimplifiedDateDiscounts = DbSetToSimplifiedDbSet<DataDateDiscount, int>(this.DateDiscounts, dataObject => dataObject.Id);
             SimplifiedOneProductDiscounts = DbSetToSimplifiedDbSet<DataOneProductDiscount, int>(this.OneProductDiscounts, dataObject => dataObject.Id);
             SimplifiedStoreDiscounts = DbSetToSimplifiedDbSet<DataStoreDiscount, int>(this.StoreDiscounts, dataObject => dataObject.Id);
@@ -118,6 +119,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public DbSet<DataNotification> Notifications { get; set; }
         public DbSet<DataPurchase> Purchases { get; set; }
         public DbSet<DataStoreCoOwnerAppointmentApproving> CoOwnerAppointmentApproving { get; set; }
+        public DbSet<DataDailyMarketStatistics> DailyMarketStatistics { get; set; }
 
         // discounts hierarchies
 
@@ -177,6 +179,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public SimplifiedDbSet<DataNotification, int> SimplifiedNotifications { get; set; }
         public SimplifiedDbSet<DataPurchase, int> SimplifiedPurchases { get; set; }
         public SimplifiedDbSet<DataStoreCoOwnerAppointmentApproving, int> SimplifiedStoreCoOwnerAppointmentApproving { get; set; }
+        public SimplifiedDbSet<DataDailyMarketStatistics, int> SimplifiedDailyMarketStatistics { get; set; }
 
 
         // discounts hierarchies

@@ -55,6 +55,8 @@ namespace MarketBackend.SystemSettings
             ShouldUpdateDatabase = Parse<bool>("ShouldUpdateDatabase");
             InitFilePath = Parse<string>("InitFilePath");
             WebsocketServerPort = Parse<int>("WebsocketServerPort");
+            ExternalSystemsActive = Parse<bool>("ExternalSystemsActive");
+
         }
         #endregion
 
@@ -69,6 +71,7 @@ namespace MarketBackend.SystemSettings
         public bool ShouldRunInitFile { get; private set; }
         public string InitFilePath { get; private set; }
         public int WebsocketServerPort { get; private set; }
+        public bool ExternalSystemsActive { get; private set; }
         #endregion
     }
 }

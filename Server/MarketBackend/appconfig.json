@@ -8,5 +8,6 @@
 	"ShouldUpdateDatabase":false,
 	"ShouldRunInitFile":true,
 	"InitFilePath":"Scenarios/init.json",
-	"WebsocketServerPort":7890
+	"WebsocketServerPort": 7890,
+	"ExternalServicesActive": true
 }

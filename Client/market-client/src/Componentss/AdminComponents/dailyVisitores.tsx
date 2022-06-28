@@ -196,7 +196,8 @@ export default function DailyVisitors() {
       const msg: string = event.data
       const add: boolean = msg[0] === "+"
       const role: string = msg.slice(1)
-      add ? addOneToRole(role) : DecOneOfRole(role)
+      if (add) addOneToRole(role)
+      // add ? addOneToRole(role) : DecOneOfRole(role)
     }
   }
 

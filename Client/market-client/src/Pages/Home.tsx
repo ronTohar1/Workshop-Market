@@ -10,13 +10,12 @@ import ButtonGroup from "@mui/material/ButtonGroup"
 import Box from "@mui/material/Box"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { pathLogin, pathRegister, pathSearch } from "../Paths"
-import { getIsGuest } from "../services/SessionService"
+import { getBuyerId, getIsGuest } from "../services/SessionService"
 
 const cards = [1, 2, 3]
 
 const backgroundImage =
   "https://images.unsplash.com/photo-1471193945509-9ad0617afabf"
-
 
 const createButton = (name: string, path: string) => {
   return (
@@ -74,21 +73,21 @@ const theme = createTheme({
 
 export default function Home() {
   return (
-    <ThemeProvider theme={theme} >
-    {/* {!getIsGuest() && <Navbar/> } */}
-      
+    <ThemeProvider theme={theme}>
+      {/* {!getIsGuest() && <Navbar/> } */}
+
       <main>
-      <ProductHeroLayout
+        <ProductHeroLayout
           sxBackground={{
             backgroundImage: `url(${backgroundImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             height: "100vh",
             outerHeight: "150vh",
-          }}>
-        
-        {/* Increase the network loading priority of the background image. */}
-        {/* <img
+          }}
+        >
+          {/* Increase the network loading priority of the background image. */}
+          {/* <img
           style={{ display: "none" }}
           src={backgroundImage}
           alt="increase priority"
@@ -96,36 +95,36 @@ export default function Home() {
           <img
             style={{ display: "none" }}
             src={backgroundImage}
-            alt='increase priority'
+            alt="increase priority"
           />
-        <Typography color="primary" align="center" variant="h2">
-          Buy smart and cheap
-        </Typography>
-        <Typography
-          color="inherit"
-          align="center"
-          variant="h5"
-          sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}
-        >
-          Enjoy a variety of products, and mostly the suffering of 6 naive
-          students
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ButtonGroup
-            orientation="vertical"
-            aria-label="vertical contained button group"
-            variant="text"
+          <Typography color="primary" align="center" variant="h2">
+            Buy smart and cheap
+          </Typography>
+          <Typography
+            color="inherit"
+            align="center"
+            variant="h5"
+            sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}
           >
-            {buttons}
-          </ButtonGroup>
-        </Box>
+            Enjoy a variety of products, and mostly the suffering of 6 naive
+            students
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ButtonGroup
+              orientation="vertical"
+              aria-label="vertical contained button group"
+              variant="text"
+            >
+              {buttons}
+            </ButtonGroup>
+          </Box>
         </ProductHeroLayout>
       </main>
     </ThemeProvider>

@@ -32,7 +32,23 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 
         // member ids of members to appoint to be a coOwner, to the memebrIds of the approving coOwners
         // the first memberId in the list is of the one that voted first 
-        public IDictionary<int, IList<int>> coOwnersAppointmentsApproving; 
+        private IDictionary<int, IList<int>> coOwnersAppointmentsApproving;
+        public IDictionary<int, IList<int>> getCoOwnersAppointmentsApproving()
+        {
+            try
+            {
+                rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
+
+                //TODO: COPY maybe
+                return coOwnersAppointmentsApproving;
+
+            }
+            finally
+            {
+                if (rolesAndPermissionsLock.IsReaderLockHeld)
+                    rolesAndPermissionsLock.ReleaseReaderLock();
+            }
+        }
 
         private IDictionary<int, IDictionary<Product, int>> transactions;
         private ConcurrentDictionary<int, Mutex> productsMutex;
@@ -897,7 +913,18 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // r 4.4, r 6 d
         public bool IsThereVotingForCoOwnerAppointment(int memberId)
         {
-            return coOwnersAppointmentsApproving.ContainsKey(memberId);
+            try
+            {
+                rolesAndPermissionsLock.AcquireReaderLock(timeoutMilis);
+
+                return coOwnersAppointmentsApproving.ContainsKey(memberId);
+
+            }
+            finally
+            {
+                if (rolesAndPermissionsLock.IsReaderLockHeld)
+                    rolesAndPermissionsLock.ReleaseReaderLock();
+            }
         }
 
         // r 4.5

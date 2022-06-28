@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 
 import "./index.css"
 import Register from "./Pages/Register"
@@ -7,7 +7,12 @@ import Login from "./Pages/Login"
 import SearchPage from "./Pages/Search"
 import StorePage from "./Pages/StorePage"
 import CartPage from "./Pages/Cart"
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom"
 import * as Paths from "./Paths"
 import { QueryParamProvider } from "use-query-params"
 import StoreManagerPage from "./Pages/StoreManager"
@@ -20,11 +25,11 @@ import Store from "./DTOs/Store"
 import Member from "./DTOs/Member"
 import { createTheme, ThemeProvider } from "@mui/material"
 import MainPolicy from "./Componentss/PurchasePolicy/MainPolicy"
-import { initSession, storage } from "./services/SessionService"
+import { getBuyerId, initSession, storage } from "./services/SessionService"
 import ProductReview from "./Componentss/CartComponents/ProductReview"
 import BidsPage from "./Pages/Bids"
 import PurchaseBidCheckout from "./Pages/PurchaseBidCheckout"
-
+import { serverLeave } from "./services/BuyersService"
 
 const theme = createTheme({
   typography: {
@@ -47,10 +52,9 @@ const f = () => {
   const x = storage.getItem("address")
 
   if (x != null) {
-
     const newWs = new WebSocket(x)
-    addEventListener(newWs, 'message', function (event: any) {
-      alertFunc("Message from server:\n" + event.data);
+    addEventListener(newWs, "message", function (event: any) {
+      alertFunc("Message from server:\n" + event.data)
     })
 
     // addEventListener(newWs, 'open', function (event: any) {
@@ -66,35 +70,27 @@ const f = () => {
   return null
 }
 const conn: { ws: WebSocket | null } = { ws: f() }
-export function alertFunc(m: string) { alert(m) }
+export function alertFunc(m: string) {
+  alert(m)
+}
 export function initWebSocket(address: string) {
   storage.setItem("address", address)
   conn.ws = f()
 }
-export function addEventListener(ws: WebSocket, listenTo: string, funcToExec: any) {
-  ws.addEventListener(listenTo, function (event) { funcToExec(event) })
+export function addEventListener(
+  ws: WebSocket,
+  listenTo: string,
+  funcToExec: any
+) {
+  ws.addEventListener(listenTo, function (event) {
+    funcToExec(event)
+  })
 }
-
-
 
 const App = () => {
   // window.onunload = () => clearSession()
-
   initSession()
-  useEffect(() => {
-    const handleTabClose = (event: any) => {
-      event.preventDefault()
-
-      console.log("beforeunload event triggered")
-    }
-
-    window.addEventListener("beforeunload", handleTabClose)
-
-    return () => {
-      window.removeEventListener("beforeunload", handleTabClose)
-    }
-  }, [])
-
+  
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -108,8 +104,11 @@ const App = () => {
             <Route path={Paths.pathSearch} element={<SearchPage />} />
             <Route path={Paths.pathDiscount} element={<MainDiscount />} />
             <Route path={Paths.pathPolicy} element={<MainPolicy />} />
-            <Route path={Paths.pathBids} element={<BidsPage/>} />
-             <Route path={Paths.pathPurchaseBid} element={<PurchaseBidCheckout/>} />
+            <Route path={Paths.pathBids} element={<BidsPage />} />
+            <Route
+              path={Paths.pathPurchaseBid}
+              element={<PurchaseBidCheckout />}
+            />
             {/* <Route path={Paths.pathProductReview} element={<ProductReview product={new Product(0,"apple",0,"apple",0,"apple",0)}/>} /> */}
 
             {/* <Route
@@ -121,10 +120,7 @@ const App = () => {
               element={<StoreManagerPage />}
             />
             <Route path={Paths.pathAdmin} element={<Admin />} />
-            <Route
-              path={Paths.pathCheckout}
-              element={<Checkout />}
-            />
+            <Route path={Paths.pathCheckout} element={<Checkout />} />
           </Routes>
         </QueryParamProvider>
       </Router>

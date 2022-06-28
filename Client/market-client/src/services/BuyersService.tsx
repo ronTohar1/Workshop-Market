@@ -13,6 +13,30 @@ export async function serverEnter(): Promise<ClientResponse<number>> {
   return jsonResponse.json()
 }
 
+
+export async function serverLeave(
+  userId: number
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Buyers/Leave"
+  const jsonResponse = await fetch(uri, {
+    method: "POST",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "http",
+    },
+    body: JSON.stringify({
+      userId: userId,
+    }),
+  })
+
+  const response = jsonResponse.json()
+  return response
+}
+
+
+
+
 export async function serverLogin(
   name: string | undefined | null,
   password: string | undefined | null

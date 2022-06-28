@@ -17,6 +17,7 @@ const notificationsArr = "notifications"
 
 export async function initSession() {
   if (storage.getItem(isInitOccured) === null) {
+    storage.setItem(isInitOccured,"true")
     fetchResponse(serverEnter())
       .then((guestId: number) => {
         initFields(guestId)

@@ -58,6 +58,7 @@ import StorePurchases from "./StorePurchases"
 import StorePurchasePolicies from "./StorePurchasePolicies"
 import StoreDiscountPolicies from "./StoreDiscountPolicies"
 import StoreBids from "./StoreBids"
+import StoreCoOwnerAppointment from "./StoreCoOwnerAppointment"
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -128,6 +129,7 @@ export function StoreTabs({
           <Tab label="Purchase Policies" id="3" />
           <Tab label="Discount Policies" id="4" />
           <Tab label="Bids" id="5" />
+          <Tab label="Appointments" id="6" />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -162,6 +164,12 @@ export function StoreTabs({
       </TabPanel>
       <TabPanel value={value} index={5}>
       <StoreBids
+          store={store}
+          handleChangedStore={handleChangedStore}
+        />
+      </TabPanel>
+      <TabPanel value={value} index={6}>
+      <StoreCoOwnerAppointment
           store={store}
           handleChangedStore={handleChangedStore}
         />

@@ -48,8 +48,8 @@ const theme = createTheme({
 })
 
 export default function Admin() {
-   const navigate = useNavigate()
-   const [dailyProfit, setDailyProfit] = React.useState(0)
+  const navigate = useNavigate()
+  const [dailyProfit, setDailyProfit] = React.useState(0)
   // React.useEffect(() => {
   //   alert(getBuyerId())
   //   setNoReason(false)
@@ -74,9 +74,9 @@ export default function Admin() {
           backgroundPosition: "center",
           height: "100vh",
           outerHeight: "150vh",
-        }}>
+        }}
+      >
         <div style={{ display: "flex", justifyContent: "center" }}>
-          
           <Stack>
             {/* Increase the network loading priority of the background image. */}
             <div style={{ display: "flex", justifyContent: "center" }}>
@@ -86,7 +86,7 @@ export default function Admin() {
                   // onClick={() => navigate(pathHome)}
                   href={pathHome}
                   color="success"
-                   sx={{ position: "absolute", top: "0px", right: "0px" }}
+                  sx={{ position: "absolute", top: "0px", right: "0px" }}
                   endIcon={<HomeIcon />}
                 >
                   Home
@@ -108,21 +108,21 @@ export default function Admin() {
               </Stack>
             </div>
             <Typography
-                  color="inherit"
-                  align="center"
-                  variant="h5"
-                  sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}
-                >
-                 {`Greetings dear admin, the market daily profit so far is ${dailyProfit} ₪`}
-                </Typography>
+              color="inherit"
+              align="center"
+              variant="h5"
+              sx={{ mb: 4, mt: { sx: 4, sm: 2 } }}
+            >
+              {`Greetings dear admin, the market daily profit so far is ${dailyProfit} ₪`}
+            </Typography>
             {BuyerPurchaseHistoryForm()}
             {StorePurchaseHistoryForm()}
             {ShowLoggedInMembers()}
             {DisplayMemberAccount()}
             {RemoveAMember()}
             {ShowLogs()}
-            {DailyVisitors()}
-          {/* <CardContent>
+            <DailyVisitors />
+            {/* <CardContent>
             
           </CardContent> */}
             {/* <BuyerPurchaseHistoryForm />

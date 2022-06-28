@@ -108,34 +108,6 @@ export default function StorePageOfManager({
     setFailureProductMsg(msg)
   }
 
-  // const [storeId] = useQueryParam("id", NumberParam)
-
-  // const verifyIsManagerOrOwner = (store: Store) => {
-  //   fetchResponse(
-  //     serverGetMembersInRoles(getBuyerId(), store.id, Roles.Manager)
-  //   )
-  //     .then((managerIds: number[]) => {
-  //       fetchResponse(
-  //         serverGetMembersInRoles(getBuyerId(), store.id, Roles.Owner)
-  //       ).then((ownersIds: number[]) => {
-  //         const buyerId = getBuyerId()
-  //         if (!(managerIds.includes(buyerId) || ownersIds.includes(buyerId))) {
-  //           alert("You dont have permission to watch this page!!!!")
-  //           navigate(pathHome)
-  //         }
-  //         setHasPermission(true) //Has permission to watch page
-  //       })
-  //     })
-  //     .catch((e) => {
-  //       alert(e)
-  //       navigate(pathHome)
-  //     })
-  // }
-
-  // React.useEffect(() => {
-  //   verifyIsManagerOrOwner(store) // Verifying this is user is allowed to watch the page
-  // }, [store])
-
   React.useEffect(()=>{
     setRows(store.products)
   },[store.products])

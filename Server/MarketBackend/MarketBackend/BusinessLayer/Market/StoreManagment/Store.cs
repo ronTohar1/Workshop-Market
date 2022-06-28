@@ -900,6 +900,22 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             return coOwnersAppointmentsApproving.ContainsKey(memberId);
         }
 
+        private void CheckBidsAfterRemoveCoOwner()
+        {
+            foreach (int i in bids.Keys)
+            {
+                Bid bid = bids[i];
+                string notification = $"The bid you placed for the product {products[bid.productId].name} was approved for the cost of {bid.bid}";
+                if (!bid.counterOffer && CheckAllApproved(bid)) // no waiting on counter offer and all approved after removal of coOwner
+                {
+                    Member m = membersGetter.Invoke(bid.memberId);
+                    m.DataNotify(notification);
+                    storeDataManager.Save();
+                    m.Notify(notification);
+                }
+            }
+        }
+
         // r 4.5
         public void RemoveCoOwner(int requestingMemberId, int toRemoveCoOwnerMemberId)
         {
@@ -952,6 +968,8 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 RemoveCoOwnerRemoveVotesNoSave(memberIdsToRemove);
 
                 RemoveCoOwnerCompletedVotesNoSave(newCoOwnersMembersIdsVoteCompletedRequestingVotedFirst, newCoOwnersMembersIdsVoteCompletedOtherVotedFirst, requestingMemberId);
+
+                CheckBidsAfterRemoveCoOwner();
             }
             finally
             {

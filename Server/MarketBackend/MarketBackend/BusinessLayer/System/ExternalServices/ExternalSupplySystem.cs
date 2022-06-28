@@ -1,4 +1,5 @@
 ﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.SystemSettings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,21 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
     // for now its default to returning true to allow the system to operate normally
     public class ExternalSupplySystem : ExternalCommunicator, IExternalSupplySystem
     {
+
+        private AppConfigs appConfig = AppConfigs.GetInstance();
+
         public ExternalSupplySystem(HttpClient httpClient) : base(httpClient) { }
 
         // will contact the external service for the delivery, for now default
         public async virtual Task<int> Supply(SupplyDetails supplyDetails)
         {
+            if (!appConfig.ExternalServicesActive)
+            {
+                if (appConfig.ExternalServicesFailWhenNotActive)
+                    return -1;
+                return new Random().Next();
+            }
+
             if (!handshake())
                 return -1;
 
@@ -36,6 +47,13 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
 
         public async Task<int> CancelSupply(int transactionId)
         {
+            if (!appConfig.ExternalServicesActive)
+            {
+                if (appConfig.ExternalServicesFailWhenNotActive)
+                    return -1;
+                return 0;
+            }
+
             if (!handshake())
                 return -1;
 

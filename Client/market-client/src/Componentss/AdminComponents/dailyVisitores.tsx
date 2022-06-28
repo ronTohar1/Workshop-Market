@@ -168,7 +168,6 @@ export default function DailyVisitors() {
         )
           ignore = false
 
-    alert("ignore is " + ignore)
     ignoreWSref.current = ignore
     setIgnoreWS(ignore)
   }
@@ -206,7 +205,6 @@ export default function DailyVisitors() {
     const currChartData = chartDataRef.current
     // @ts-ignore
     const newAmount: number = currChartData[index][1] + 1
-    console.log("adding ", newAmount, " into ", role, " idnex is ", index)
     const newChartData = CreateNewChartData(index, newAmount)
     updateChartData(newChartData)
   }

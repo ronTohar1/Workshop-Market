@@ -78,7 +78,7 @@ export default function Login() {
       fetchResponse(result).then((memberId: number) => {
 
         console.log("started login")
-        const address = `ws://127.0.0.1:7890/${username}-notifications`
+        const address = "ws://127.0.0.1:7890/${username}-notifications"
         initWebSocket(address)
         alert("Logged in successfully!")
 

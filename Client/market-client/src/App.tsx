@@ -50,7 +50,7 @@ const theme = createTheme({
 
 const f = () => {
   const x = storage.getItem("address")
-
+  
   if (x != null) {
     const newWs = new WebSocket(x)
     addEventListener(newWs, "message", function (event: any) {

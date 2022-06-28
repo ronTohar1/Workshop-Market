@@ -2,7 +2,7 @@
 import Store from "../DTOs/Store";
 import Member from "../DTOs/Member";
 import Product from "../DTOs/Product";
-import  {groupByStore } from "../services/ProductsService";
+import { groupByStore } from "../services/ProductsService";
 import { serverPort } from "../Utils";
 import ClientResponse from "../services/Response";
 import List from "@mui/material/List";
@@ -10,6 +10,7 @@ import Purchase from "../DTOs/Purchase";
 import Discount from "../DTOs/DiscountDTOs/Discount";
 import PurchasePolicy from "../DTOs/PurchaseDTOs/PurchasePolicy";
 import Permission from "../DTOs/Permission";
+import Bid from "../DTOs/Bid";
 
 
 const stores = [
@@ -355,68 +356,68 @@ export async function serverCloseStore(
 
 export async function serverAddDiscountPolicy(
   userId: number,
-  store: Store, 
-  discount:Discount
+  store: Store,
+  discount: Discount
 ): Promise<ClientResponse<number>> {
   const uri = serverPort + "/api/Stores/AddDiscountPolicy";
   const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     // body: '{\n  "userId": 0,\n  "storeId": 0,\n  "expression": {},\n  "description": "string"\n}',
     body: JSON.stringify({
-        'userId': userId,
-        'storeId': store.id,
-        'expression': JSON.stringify(discount),
-        'description': discount.toString(store)
+      'userId': userId,
+      'storeId': store.id,
+      'expression': JSON.stringify(discount),
+      'description': discount.toString(store)
     })
-});
+  });
   return jsonResponse.json();
 }
 export async function serverAddPurchasePolicy(
   userId: number,
-  store: Store, 
-  purchase:PurchasePolicy
+  store: Store,
+  purchase: PurchasePolicy
 ): Promise<ClientResponse<number>> {
   const uri = serverPort + "/api/Stores/AddPurchasePolicy";
   const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     // body: '{\n  "userId": 0,\n  "storeId": 0,\n  "expression": {},\n  "description": "string"\n}',
-     body: JSON.stringify({
-        'userId': userId,
-        'storeId': store.id,
-        'expression': JSON.stringify(purchase),
-        'description': purchase.toString()
+    body: JSON.stringify({
+      'userId': userId,
+      'storeId': store.id,
+      'expression': JSON.stringify(purchase),
+      'description': purchase.toString()
     })
-});
+  });
   return jsonResponse.json();
 }
 
 
 export async function serverRemovePurchasePolicy(
   userId: number,
-  storeId: number, 
-  policyId:number,
+  storeId: number,
+  policyId: number,
 ): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Stores/RemovePurchasePolicy";
   const jsonResponse = await fetch(uri, {
     method: 'DELETE',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
-     body: JSON.stringify({
-        userId: userId,
-        storeId: storeId,
-        policyId: policyId,
+    body: JSON.stringify({
+      userId: userId,
+      storeId: storeId,
+      policyId: policyId,
     })
-});
+  });
 
   const response = jsonResponse.json();
   return response
@@ -425,22 +426,22 @@ export async function serverRemovePurchasePolicy(
 
 export async function serverRemoveDiscountPolicy(
   userId: number,
-  storeId: number, 
-  policyId:number,
+  storeId: number,
+  policyId: number,
 ): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Stores/RemoveDiscountPolicy";
   const jsonResponse = await fetch(uri, {
     method: 'DELETE',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
-     body: JSON.stringify({
-        userId: userId,
-        storeId: storeId,
-        policyId: policyId,
+    body: JSON.stringify({
+      userId: userId,
+      storeId: storeId,
+      policyId: policyId,
     })
-});
+  });
 
   const response = jsonResponse.json();
   return response
@@ -448,63 +449,258 @@ export async function serverRemoveDiscountPolicy(
 
 export async function serverAddProductReview(
   storeId: number,
-  memberId: number, 
-  productId:number,
-  review:string
+  memberId: number,
+  productId: number,
+  review: string
 ): Promise<ClientResponse<boolean>> {
   const uri = serverPort + "/api/Stores/AddProductReview";
   const jsonResponse = await fetch('https://localhost:7242/api/Stores/AddProductReview', {
     method: 'POST',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     // body: '{\n  "storeId": 0,\n  "memberId": 0,\n  "productId": 0,\n  "review": "string"\n}',
     body: JSON.stringify({
-        'storeId': storeId,
-        'memberId': memberId,
-        'productId': productId,
-        'review': review
+      'storeId': storeId,
+      'memberId': memberId,
+      'productId': productId,
+      'review': review
     })
-});
+  });
   return jsonResponse.json();
 }
 
 export async function serverGetProductReview(
-  storeId: number, 
+  storeId: number,
   productId: number
 ): Promise<ClientResponse<Map<string, string[]>>> {
   const uri = serverPort + "/api/Stores/GetProductReviews";
   const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     // body: '{\n  "storeId": 0,\n  "productId": 0\n}',
     body: JSON.stringify({
-        'storeId': storeId,
-        'productId': productId
+      'storeId': storeId,
+      'productId': productId
     })
-});
+  });
   return jsonResponse.json();
 }
 
 export async function serverGetDailyStoreProfit(
-  storeId: number, 
+  storeId: number,
   memberId: number
 ): Promise<ClientResponse<number>> {
   const uri = serverPort + "/api/Stores/GetDailyProfit";
   const jsonResponse = await fetch(uri, {
     method: 'POST',
     headers: {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json'
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
     },
     // body: '{\n  "storeId": 0,\n  "memberId": 0\n}',
     body: JSON.stringify({
-        'storeId': storeId,
-        'memberId': memberId
+      'storeId': storeId,
+      'memberId': memberId
+    })
+  });
+  return jsonResponse.json();
+}
+
+
+// Bids _________________________________________
+export async function serverAddBid(
+  storeId: number,
+  productId: number,
+  memberId: number,
+  bidPrice: number,
+): Promise<ClientResponse<number>> {
+  const uri = serverPort + "/api/Stores/AddBid";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      storeId: storeId,
+      productId: productId,
+      memberId: memberId,
+      bidPrice: bidPrice,
+    })
+  });
+  return jsonResponse.json();
+}
+
+
+export async function serverApproveBid(
+  storeId: number,
+  memberId: number,
+  bidId: number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/ApproveBid";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      storeId: storeId,
+      memberId: memberId,
+      bidId: bidId,
+    })
+  });
+  return jsonResponse.json();
+}
+
+export async function serverDenyBid(
+  storeId: number,
+  memberId: number,
+  bidId: number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/DenyBid";
+  const jsonResponse = await fetch(uri, {
+    method: 'Put',
+    headers: {
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      storeId: storeId,
+      memberId: memberId,
+      bidId: bidId,
+    })
+  });
+  return jsonResponse.json();
+}
+
+export async function serverRemoveBid(
+  storeId: number,
+  memberId: number,
+  bidId: number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/RemoveBid";
+  const jsonResponse = await fetch(uri, {
+    method: 'Delete',
+    headers: {
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      storeId: storeId,
+      memberId: memberId,
+      bidId: bidId,
+    })
+  });
+  return jsonResponse.json();
+}
+
+export async function serverApproveCounterOffer(
+  storeId: number,
+  memberId: number,
+  bidId: number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/ApproveCounterOffer";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      storeId: storeId,
+      memberId: memberId,
+      bidId: bidId,
+    })
+  });
+  return jsonResponse.json();
+}
+
+
+export async function serverDenyCounterOffer(
+  storeId: number,
+  memberId: number,
+  bidId: number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/DenyCounterOffer";
+  const jsonResponse = await fetch(uri, {
+    method: 'Put',
+    headers: {
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      storeId: storeId,
+      memberId: memberId,
+      bidId: bidId,
+    })
+  });
+  return jsonResponse.json();
+}
+
+
+export async function serverMakeCounterOffer(
+  storeId: number,
+  memberId: number,
+  bidId: number,
+  offer: number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/MakeCounterOffer";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      storeId: storeId,
+      memberId: memberId,
+      bidId: bidId,
+      offer: offer
+    })
+  });
+  return jsonResponse.json();
+}
+
+export async function serverGetApproveForBid(
+  storeId: number,
+  memberId: number,
+  bidId: number,
+): Promise<ClientResponse<number[]>> {
+  const uri = serverPort + "/api/Stores/GetApproveForBid";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+      'accept': 'text/plain',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      storeId: storeId,
+      memberId: memberId,
+      bidId: bidId,
+    })
+  });
+  return jsonResponse.json();
+}
+
+export async function serverGetAllMemberBids(
+  memberId: number,
+): Promise<ClientResponse<Bid[]>> {
+  const uri = serverPort + "/api/Stores/GetAllMemberBids";
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "userId": 0\n}',
+    body: JSON.stringify({
+        'userId': memberId
     })
 });
   return jsonResponse.json();

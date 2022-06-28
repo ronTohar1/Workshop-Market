@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Market;
 using MarketBackend.DataLayer.DataManagers;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
 
 namespace MarketBackend.BusinessLayer.Buyers.Members;
 
@@ -45,7 +46,7 @@ public class MembersController : IBuyersController
         return GetMember(buyerId);
     }
 
-
+    //r S 8
     /*  Registers a new member to the controller.
     *   First, validates the username and password.
     *   Second, checks the username is unique.
@@ -89,12 +90,17 @@ public class MembersController : IBuyersController
         return null;
     }
 
+    //r S 8
     public void RemoveMember(int memberId) {
         lock (mutex)
         {
             if (!members.Keys.Contains(memberId))
                 throw new MarketException($"Failed to remove, there isn't such member with id: {memberId}");
+            members[memberId].RemoveCartFromDB(MemberDataManager.GetInstance().Find(memberId));
+            MemberDataManager.GetInstance().Remove(memberId);
+            MemberDataManager.GetInstance().Save();
             members.Remove(memberId);
+
         }
     }
     public IDictionary<int, Member> GetLoggedInMembers()
@@ -102,7 +108,7 @@ public class MembersController : IBuyersController
     
     private Member createNewMember(string username,string password)
     {
-        return new Member(username,password,new Security());
+        return new Member(username, password, new Security());
     }
 
     private bool IsUsernameExists(string username)
@@ -113,8 +119,12 @@ public class MembersController : IBuyersController
         return false;
     }
 
+    //r S 8
     private bool AddMember(Member member)
     {
+        DataMember dataMemebr = member.MemberToDataMember();
+        MemberDataManager.GetInstance().Add(dataMemebr);
+        MemberDataManager.GetInstance().Save();
         return this.members.TryAdd(member.Id, member);
     }
 

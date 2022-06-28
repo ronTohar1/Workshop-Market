@@ -8,6 +8,7 @@ using Moq;
 
 using MarketBackend.BusinessLayer;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
+using System.Threading;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -18,7 +19,9 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         
         [SetUp]
         public void Setup1() {
-            hierarchy = new Hierarchy<string>(node1);
+            DataManagersMock.InitMockDataManagers(); 
+
+            hierarchy = new Hierarchy<string>(node1, (dataHierarchy, value) => { }); // the action here is not used because the dataManagers are mocked in the unit tests 
         }
 
         // AddToHierarchy tests
@@ -27,7 +30,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCase("Amit")]
         public void AddToHierarchyFromFirstLevelSuccess(String node) {
             int sizeBefore = hierarchy.children.Count;
-            hierarchy.AddToHierarchy(node1, node);
+            hierarchy.AddToHierarchy(node1, node, new Action(() => Thread.Sleep(0)));
             int sizeAfter = hierarchy.children.Count;
             List<String> childrenValueSet = hierarchy.children.Select(h => h.value).ToList();
          
@@ -35,8 +38,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         }
 
         private void BuildFirstLevel() {
-            hierarchy.AddToHierarchy(node1, "Idan");
-            hierarchy.AddToHierarchy(node1, "Nir");
+            hierarchy.AddToHierarchy(node1, "Idan", new Action(() => Thread.Sleep(0)));
+            hierarchy.AddToHierarchy(node1, "Nir", new Action(() => Thread.Sleep(0)));
         }
 
         [Test]
@@ -46,7 +49,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             BuildFirstLevel();
             int sizeBefore = hierarchy.children.Count;
-            Assert.Throws<MarketException>(()=>hierarchy.AddToHierarchy(node1, node));
+            Assert.Throws<MarketException>(()=>hierarchy.AddToHierarchy(node1, node, new Action(() => Thread.Sleep(0))));
             int sizeAfter = hierarchy.children.Count;
             Assert.IsTrue(sizeAfter == sizeBefore);
         }
@@ -59,7 +62,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             BuildFirstLevel();
             Hierarchy<String> adderH = hierarchy.FindHierarchy(adder);
             int sizeBefore = adderH.children.Count;
-            hierarchy.AddToHierarchy(adder, nodeToAdd);
+            hierarchy.AddToHierarchy(adder, nodeToAdd, new Action(() => Thread.Sleep(0)));
             int sizeAfter = adderH.children.Count;
             List<String> childrenValueSet = adderH.children.Select(h => h.value).ToList();
 
@@ -72,7 +75,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void AddToHierarchyFromSecondLevelFail1(String adder, String nodeToAdd)
         {
             BuildFirstLevel();
-            Assert.Throws<MarketException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
+            Assert.Throws<MarketException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd, new Action(() => Thread.Sleep(0))));
         }
         
         [Test]//Cyclic check
@@ -83,7 +86,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             BuildFirstLevel();
             Hierarchy<String> adderH = hierarchy.FindHierarchy(adder);
             int sizeBefore = adderH.children.Count;
-            Assert.Throws<MarketException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd));
+            Assert.Throws<MarketException>(() => hierarchy.AddToHierarchy(adder, nodeToAdd, new Action(() => Thread.Sleep(0))));
             int sizeAfter = adderH.children.Count;
 
             Assert.IsTrue(sizeAfter == sizeBefore);
@@ -116,10 +119,10 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         // RemoveFromHierarchy tests
         private void BuildAidHierarchy()
         {
-            hierarchy.AddToHierarchy(node1, "Idan");
-            hierarchy.AddToHierarchy(node1, "Nir");
-            hierarchy.AddToHierarchy("Nir", "Roi");
-            hierarchy.AddToHierarchy("Roi", "Ron");
+            hierarchy.AddToHierarchy(node1, "Idan", new Action(() => Thread.Sleep(0)));
+            hierarchy.AddToHierarchy(node1, "Nir", new Action(() => Thread.Sleep(0)));
+            hierarchy.AddToHierarchy("Nir", "Roi", new Action(() => Thread.Sleep(0)));
+            hierarchy.AddToHierarchy("Roi", "Ron", new Action(() => Thread.Sleep(0)));
         }
         
         [Test]
@@ -130,7 +133,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         {
             BuildAidHierarchy();
             Assert.IsNotNull(hierarchy.FindHierarchy(nodeToRemove));
-            hierarchy.RemoveFromHierarchy(remover, nodeToRemove);
+            hierarchy.RemoveFromHierarchy(remover, nodeToRemove, new Action(() => Thread.Sleep(0)));
             Assert.IsNull(hierarchy.FindHierarchy(nodeToRemove));
         }
 
@@ -142,7 +145,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             BuildAidHierarchy();
             Assert.IsNotNull(hierarchy.FindHierarchy(nodeToRemove));
             Assert.IsNotNull(hierarchy.FindHierarchy(inNodeToRemoveHierarchy));
-            hierarchy.RemoveFromHierarchy(remover, nodeToRemove);
+            hierarchy.RemoveFromHierarchy(remover, nodeToRemove, new Action(() => Thread.Sleep(0)));
             Assert.IsNull(hierarchy.FindHierarchy(nodeToRemove));
             Assert.IsNull(hierarchy.FindHierarchy(inNodeToRemoveHierarchy));
         }
@@ -154,7 +157,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void RemoveFromHierarchyFail(String remover, String nodeToRemove)
         {
             BuildAidHierarchy();
-            Assert.Throws<MarketException>(() => hierarchy.RemoveFromHierarchy(remover, nodeToRemove));
+            Assert.Throws<MarketException>(() => hierarchy.RemoveFromHierarchy(remover, nodeToRemove, new Action(() => Thread.Sleep(0))));
         }
     }
 }

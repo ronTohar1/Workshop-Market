@@ -9,7 +9,7 @@ export async function fetchResponse<T>(responsePromise: Promise<ClientResponse<T
     return serverResponse.value
   }
   catch (e) {
-    return Promise.reject("Sorry, an unexpected error occured")
+    return Promise.reject("An error occured trying to send your request")
   }
 }
 

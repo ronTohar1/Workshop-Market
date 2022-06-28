@@ -7,6 +7,6 @@ namespace MarketBackend.DataLayer.DataDTOs
     public class DataPurchaseOption
     {
         public int Id { get; set; }
-        public PurchaseOption PurchaseOption { get; set; }
+        public virtual PurchaseOption PurchaseOption { get; set; }
     }
 }

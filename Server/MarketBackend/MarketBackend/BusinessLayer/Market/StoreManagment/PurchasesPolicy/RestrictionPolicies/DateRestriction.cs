@@ -1,5 +1,6 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.RestrictionPolicies;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,22 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Rest
             bool cond2 = (month == -1) || (month == now.Month);
             bool cond3 = (day == -1) || (day == now.Day);
             return !(cond1 && cond2 && cond3);
+        }
+
+        public DataIPurchasePolicy IPurchasePolicyToDataIPurchasePolicy()
+        {
+            return new DataDateRestriction()
+            {
+                Year = year,
+                Month = month,
+                Day = day
+            };
+        }
+
+        public void RemoveFromDB(DataIPurchasePolicy dpp)
+        {
+            DataDateRestriction ddr = (DataDateRestriction)dpp;
+            //TODO myself
         }
     }
 }

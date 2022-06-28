@@ -1,6 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using System.Collections.Concurrent;
+using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.DataLayer.DataManagers;
 using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 
@@ -18,7 +19,7 @@ public class StoreController
 	private Mutex openStoresMutex; 
 	private Mutex closedStoresMutex;
 
-	private StoreDataManager storeDataManager;  
+	private StoreDataManager storeDataManager;
 
 	// creates a new StoreController without stores yet
 	public StoreController(MembersController membersController) : 
@@ -38,35 +39,7 @@ public class StoreController
 		this.openStoresMutex = new Mutex();
 		this.closedStoresMutex = new Mutex();
 
-		storeDataManager = StoreDataManager.GetInstance();
-	}
-
-	// r S 8
-	public static StoreController LoadStoreController(MembersController membersController)
-    {
-        // trying to load data 
-
-        StoreDataManager storeDataManager = StoreDataManager.GetInstance();
-
-		IList<DataStore> dataOpenStores = storeDataManager.Find(store => store.IsOpen);
-		IList<DataStore> dataClosedStores = storeDataManager.Find(store => !store.IsOpen);
-
-		Func<int, Member> membersGetter = memberId => membersController.GetMember(memberId);
-
-		IDictionary<int, Store> openStores = DataStoresListToStoresDisctionary(dataOpenStores, membersGetter);
-		IDictionary<int, Store> closedStores = DataStoresListToStoresDisctionary(dataClosedStores, membersGetter);
-
-		return new StoreController(membersController, openStores, closedStores);
-	}
-
-	private static IDictionary<int, Store> DataStoresListToStoresDisctionary(IList<DataStore> dataStores, Func<int, Member> membersGetter)
-    {
-		IDictionary<int, Store> storesDictionary = new ConcurrentDictionary<int, Store>();
-		foreach (DataStore dataStore in dataStores)
-		{
-			storesDictionary.Add(dataStore.Id, Store.DataStoreToStore(dataStore, membersGetter));
-		}
-		return storesDictionary; 
+		this.storeDataManager = StoreDataManager.GetInstance();  
 	}
 
 
@@ -113,7 +86,7 @@ public class StoreController
 	// r 3.2
 	// opens a new store and returns its id
 	public int OpenNewStore(int memberId, string storeName)
-    {
+	{
 		Member storeFounder = membersController.GetMember(memberId);
 		if (storeFounder == null)
 			throw new MarketException("The member id: " + memberId + " does not exists in the system");
@@ -124,13 +97,19 @@ public class StoreController
 		openStoresMutex.WaitOne();
 
 		string errorDescription = CanAddOpenStore(storeName);
-		if (errorDescription != null){
+		if (errorDescription != null) {
 			openStoresMutex.ReleaseMutex();
-			throw new MarketException(errorDescription); 
-        }
+			throw new MarketException(errorDescription);
+		}
 
-		int newStoreId = GenerateStoreId(); 
-		openStores.Add(newStoreId, new Store(storeName, storeFounder, (memberId) => membersController.GetMember(memberId)));
+		Store newStore = new Store(storeName, storeFounder, (memberId) => membersController.GetMember(memberId));
+		DataStore dataStore = newStore.ToNewDataStore(); 
+		storeDataManager.Add(dataStore);
+
+		storeDataManager.Save();
+
+		int newStoreId = dataStore.Id; 
+		openStores.Add(newStoreId, newStore);
 
 		openStoresMutex.ReleaseMutex(); 
 
@@ -139,8 +118,40 @@ public class StoreController
 		// todo: try again the synchronization here, maybe need to synchronize that the member exists, when 
     }
 
-	// returns null if can or an error message if not
-	private string CanAddOpenStore(string storeName)
+
+	// r S 8
+	public static StoreController LoadStoreController(MembersController membersController)
+	{
+		// trying to load data 
+
+		StoreDataManager storeDataManager = StoreDataManager.GetInstance();
+
+		IList<DataStore> dataOpenStores = storeDataManager.Find(store => store.IsOpen);
+		IList<DataStore> dataClosedStores = storeDataManager.Find(store => !store.IsOpen);
+
+		Func<int, Member> membersGetter = memberId => membersController.GetMember(memberId);
+
+		IDictionary<int, Store> openStores = DataStoresListToStoresDisctionary(dataOpenStores, membersGetter);
+		IDictionary<int, Store> closedStores = DataStoresListToStoresDisctionary(dataClosedStores, membersGetter);
+
+		return new StoreController(membersController, openStores, closedStores);
+	}
+
+	private static IDictionary<int, Store> DataStoresListToStoresDisctionary(IList<DataStore> dataStores, Func<int, Member> membersGetter)
+	{
+		IDictionary<int, Store> storesDictionary = new ConcurrentDictionary<int, Store>();
+		foreach (DataStore dataStore in dataStores)
+		{
+			storesDictionary.Add(dataStore.Id, Store.DataStoreToStore(dataStore, membersGetter));
+		}
+		return storesDictionary;
+	}
+
+
+
+
+		// returns null if can or an error message if not
+		private string CanAddOpenStore(string storeName)
 	{
 		if (StoreExists(storeName)){
 			return "A store with the name: " + storeName + " already exists"; 
@@ -177,7 +188,7 @@ public class StoreController
 
 		try // catching and throwing to release the mutexes
 		{
-			store.CloseStore(memberId); // the store checks permission so it needs to be at least a member
+			store.CloseStore(memberId, storeId); // the store checks permission so it needs to be at least a member
 		}
 		catch (Exception exception)
         {
@@ -245,7 +256,9 @@ public class StoreController
 		return false;
 	}
 	private bool PlaysRoleAtStore(Store store, int memeberId)
-		=> store.IsManager(memeberId) || store.IsCoOwner(memeberId) || store.IsFounder(memeberId);
+		=> store.IsManager(memeberId) || store.IsCoOwner(memeberId) || store.IsFounder(memeberId)
+			|| store.IsThereVotingForCoOwnerAppointment(memeberId);
+
 
 	//for tests
     public StoreController()
@@ -257,4 +270,12 @@ public class StoreController
     {
 		return openStores;
     }
+
+    public IList<Bid> GetAllMemberBids(int memberId)
+    {
+		IList<Bid> bids = new List<Bid>();
+		foreach (Store openStore in openStores.Values)
+			bids = bids.Concat(openStore.bids.Values.Where(bid => bid.memberId == memberId).ToList()).ToList();
+		return bids;
+	}
 }

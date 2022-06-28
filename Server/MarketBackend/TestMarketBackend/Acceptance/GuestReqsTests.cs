@@ -36,8 +36,14 @@ namespace TestMarketBackend.Acceptance
             Response<int> idResponse = buyerFacade.Enter();
 
             Response<int> response = buyerFacade.Register(userName, password);
-
             Assert.IsTrue(!response.IsErrorOccured());
+
+            ReopenMarket();
+
+            response = buyerFacade.Login(userName, password, _ => false);
+            Assert.IsTrue(!response.IsErrorOccured());
+            var resLogout = buyerFacade.Logout(response.Value);
+            Assert.IsTrue(!resLogout.IsErrorOccured());
         }
 
         // r.1.3
@@ -74,6 +80,31 @@ namespace TestMarketBackend.Acceptance
 
             Assert.IsTrue(response.IsErrorOccured());
         }
+
+        // r.1.3
+        [Test]
+        [TestCase("ValidName", "ValidPass123")]
+        public void DuplicateGuestRegistrationWithReopen(string userName, string password)
+        {
+            // first guest enters and registers
+            Response<int> guest1 = buyerFacade.Enter();
+
+            Response<int> response = buyerFacade.Register(userName, password);
+
+            Assert.IsTrue(!response.IsErrorOccured());
+
+            buyerFacade.Leave(guest1.Value);
+
+            ReopenMarket();
+            // second guest enters and registers with the same details
+
+            buyerFacade.Enter();
+
+            response = buyerFacade.Register(userName, password);
+
+            Assert.IsTrue(response.IsErrorOccured());
+        }
+
 
         [Test]
         [TestCase("userName", "password", 2)]

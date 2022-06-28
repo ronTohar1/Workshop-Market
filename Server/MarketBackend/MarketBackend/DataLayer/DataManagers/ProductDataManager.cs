@@ -23,35 +23,13 @@ namespace MarketBackend.DataLayer.DataManagementObjects
         }
 
         // protected for testing
-        protected ProductDataManager()
+        protected ProductDataManager() : base(db => db.SimplifiedProducts)
         {
         }
 
-        protected override void AddThrows(DataProduct toAdd)
+        public virtual int GetNextId()
         {
-            db.AddAsync(toAdd); 
+            return this.MaxOrDefualt(GetElements().ToList(), dataObject => dataObject.Id, 0) + 1;
         }
-
-        protected override DataProduct FindThrows(int id)
-        {
-            DataProduct? dp = db.FindAsync<DataProduct>(id).Result;
-            if (dp == null)
-                throw new Exception("cannot be found in the database");
-            return dp;
-        }
-
-        protected override IList<DataProduct> FindThrows(Predicate<DataProduct> predicate)
-        {
-            return db.Products.Where(entity => predicate.Invoke(entity)).ToList();
-        }
-
-        protected override DataProduct RemoveThrows(DataProduct toRemove)
-        {
-            DataProduct? dp = db.Remove(toRemove).Entity;
-            if (dp == null)
-                throw new Exception("cannot be found in the database");
-            return dp;
-        }
-
     }
 }

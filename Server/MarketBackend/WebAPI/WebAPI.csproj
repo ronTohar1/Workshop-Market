@@ -15,6 +15,13 @@
   <ItemGroup>
     <ProjectReference Include="..\MarketBackend\MarketBackend.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AppConfig.settings">
+      <LastGenOutput>AppConfig.Designer.cs</LastGenOutput>
+      <Generator>SettingsSingleFileGenerator</Generator>
+    </None>
+  </ItemGroup>
 	
 
 </Project>

@@ -26,34 +26,13 @@ namespace MarketBackend.DataLayer.DataManagers
         }
 
         // protected for testing
-        protected HierarchyDataManager()
+        protected HierarchyDataManager() : base(db => db.SimplifiedAppointmentsNodes)
         {
         }
 
-        protected override void AddThrows(DataAppointmentsNode toAdd)
+        public virtual int GetNextId()
         {
-            db.AddAsync(toAdd);
-        }
-
-        protected override DataAppointmentsNode FindThrows(int id)
-        {
-            DataAppointmentsNode? data = db.FindAsync<DataAppointmentsNode>(id).Result;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
-        }
-
-        protected override IList<DataAppointmentsNode> FindThrows(Predicate<DataAppointmentsNode> predicate)
-        {
-            return db.AppointmentsNodes.Where(entity => predicate.Invoke(entity)).ToList();
-        }
-
-        protected override DataAppointmentsNode RemoveThrows(DataAppointmentsNode toRemove)
-        {
-            DataAppointmentsNode? data = db.Remove(toRemove).Entity;
-            if (data == null)
-                throw new Exception("cannot be found in the database");
-            return data;
+            return this.MaxOrDefualt(GetElements().ToList(), dataObject => dataObject.Id, 0) + 1;
         }
     }
 }

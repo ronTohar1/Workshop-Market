@@ -15,6 +15,12 @@ using System.Collections.Concurrent;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy;
 using System.Net.Http;
 using MarketBackend.ServiceLayer.ServiceDTO;
+using MarketBackend.DataLayer.DataManagers.DataManagersInherentsForTesting;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
+using System.Threading;
 
 namespace TestMarketBackend.BusinessLayer.Market
 {
@@ -65,13 +71,19 @@ namespace TestMarketBackend.BusinessLayer.Market
 
 
         // ------- Setup helping functions -------------------------------------
+        [SetUp]
+        public void DataManagersSetup()
+        {
+            // database mocks
+            DataManagersMock.InitMockDataManagers(); 
+        }
 
         private Cart MockCart()
         {
             Mock<Cart> cartMock = new Mock<Cart>();
 
             cartMock.Setup(cart =>
-                    cart.AddProductToCart(It.IsAny<ProductInBag>(), It.IsAny<int>())).
+                    cart.AddProductToCart(It.IsAny<ProductInBag>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>())).
                         Callback(() => { addedToCart = true; });
             cartMock.Setup(cart =>
                     cart.RemoveProductFromCart(It.IsAny<ProductInBag>())).
@@ -235,9 +247,9 @@ namespace TestMarketBackend.BusinessLayer.Market
             PassedValuesInitialization();
             FullPurchasesManagerSetup();
             if (isUserError)
-                Assert.Throws<MarketException>(() => purchasesManager.RemoveProductFromCart(buyerId, storeId, productId, amount));
+                Assert.Throws<MarketException>(() => purchasesManager.RemoveProductFromCartt(buyerId, storeId, productId, amount));
             else
-                Assert.Throws<ArgumentException>(() => purchasesManager.RemoveProductFromCart(buyerId, storeId, productId, amount));
+                Assert.Throws<ArgumentException>(() => purchasesManager.RemoveProductFromCartt(buyerId, storeId, productId, amount));
         }
 
         [Test]
@@ -247,7 +259,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         {
             PassedValuesInitialization();
             FullPurchasesManagerSetup();
-            purchasesManager.RemoveProductFromCart(buyerId, storeId, productId, amount);
+            purchasesManager.RemoveProductFromCartt(buyerId, storeId, productId, amount);
 
             Assert.IsTrue(removedFromCart); // cart is mocked to change this
         }
@@ -262,7 +274,12 @@ namespace TestMarketBackend.BusinessLayer.Market
             cartMock.Setup(cart =>
                     cart.RemoveProductFromCart(It.Is<ProductInBag>(p => p != null && productsId.Contains(p.ProductId)))).
                         Callback<ProductInBag>((p) => removeFromStoreFromCart[p.ProductId] = true);
-            
+            cartMock.Setup(cart =>
+                   cart.RemoveProductFromCart(It.Is<ProductInBag>(p => p != null && productsId.Contains(p.ProductId)), It.IsAny<int>(), It.IsAny<bool>())).
+                      Callback<ProductInBag, int, bool>((p, i, m) => removeFromStoreFromCart[p.ProductId] = true);
+
+
+
             Dictionary<ProductInBag, int> productInBag = new Dictionary<ProductInBag, int>();
             
             foreach (int index in productsId) {
@@ -323,8 +340,8 @@ namespace TestMarketBackend.BusinessLayer.Market
                 else
                     productMock.Setup(product => product.amountInInventory).Returns(amount1);
                 productMock.Setup(product => product.id).Returns(idx);
-                productMock.Setup(product => product.AddToInventory(It.IsAny<int>())).Callback(()=>counter--);
-                productMock.Setup(product => product.RemoveFromInventory(It.IsAny<int>())).Callback(() => counter++);
+                productMock.Setup(product => product.AddToInventory(It.IsAny<int>(),It.IsAny<Action>())).Callback(()=>counter--);
+                productMock.Setup(product => product.RemoveFromInventory(It.IsAny<int>(), It.IsAny<Action>())).Callback(() => counter++);
                 
                 idsToProducts[idx] = productMock.Object;
             }

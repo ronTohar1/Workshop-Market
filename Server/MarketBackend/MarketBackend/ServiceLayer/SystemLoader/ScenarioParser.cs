@@ -88,12 +88,6 @@ namespace MarketBackend.ServiceLayer
                     return JsonConvert.DeserializeObject<RemoveDiscountPolicyUseCase>(usecaseJson)!;
                 case "AddBid":
                     return JsonConvert.DeserializeObject<AddBidUseCase>(usecaseJson)!;
-
-                // special use cases
-                case "MakeIntRef":
-                    return JsonConvert.DeserializeObject<MakeRefUseCase<int>>(usecaseJson)!;
-                case "FillDb":
-                    return JsonConvert.DeserializeObject<FillDbUseCase>(usecaseJson)!;
             }
             throw new Exception("Unable to parse init file properly, unknown tag");
         }

@@ -292,8 +292,8 @@ namespace MarketBackend.ServiceLayer
             // ** Imporatant ** check that memberId is admin, fromDate<=toDate, and that fromDate<=currentDate
             try
             {
-                logger.Info($"GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = { toDate}]");
-                return new Response<int[]>("Not Implemented Yet");
+                logger.Info($"GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = {toDate}]");
+                return new Response<int[]>(new int[5] { 0, 0, 3, 0, 0 });
             }
             catch (MarketException mex)
             {

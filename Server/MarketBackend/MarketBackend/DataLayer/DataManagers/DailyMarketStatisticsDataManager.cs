@@ -71,65 +71,65 @@ namespace MarketBackend.DataLayer.DataManagers
             return toAdd.Id; 
         }
 
-        public void AddAdminLogin()
-        {
-            UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
-            {
-                dailyMarketStatistics.NumberOfAdminsLogin += 1;
-            });
-        }
+        //public void AddAdminLogin()
+        //{
+        //    UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
+        //    {
+        //        dailyMarketStatistics.NumberOfAdminsLogin += 1;
+        //    });
+        //}
 
-        public void AddCoOwnerLogin()
-        {
-            UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
-            {
-                dailyMarketStatistics.NumberOfCoOwnersLogin += 1;
-            });
-        }
+        //public void AddCoOwnerLogin()
+        //{
+        //    UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
+        //    {
+        //        dailyMarketStatistics.NumberOfCoOwnersLogin += 1;
+        //    });
+        //}
 
-        public void AddManagerLogin()
-        {
-            UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
-            {
-                dailyMarketStatistics.NumberOfManagersLogin += 1;
-            });
-        }
+        //public void AddManagerLogin()
+        //{
+        //    UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
+        //    {
+        //        dailyMarketStatistics.NumberOfManagersLogin += 1;
+        //    });
+        //}
 
-        public void AddMemberLogin()
-        {
-            UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
-            {
-                dailyMarketStatistics.NumberOfMembersLogin += 1;
-            });
-        }
+        //public void AddMemberLogin()
+        //{
+        //    UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
+        //    {
+        //        dailyMarketStatistics.NumberOfMembersLogin += 1;
+        //    });
+        //}
 
-        public void AddGuestLogin()
-        {
-            UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
-            {
-                dailyMarketStatistics.NumberOfGuestsLogin += 1;
-            });
-        }
+        //public void AddGuestLogin()
+        //{
+        //    UpdateCurrentDailyMarketStatistics(dailyMarketStatistics =>
+        //    {
+        //        dailyMarketStatistics.NumberOfGuestsLogin += 1;
+        //    });
+        //}
 
-        public void UpdateCurrentDailyMarketStatistics(Action<DataDailyMarketStatistics> action)
-        {
-            DataDailyMarketStatistics dailyMarketStatistics = GetCurrentDailyMarketStatistics();
+        //public void UpdateCurrentDailyMarketStatistics(Action<DataDailyMarketStatistics> action)
+        //{
+        //    DataDailyMarketStatistics dailyMarketStatistics = GetCurrentDailyMarketStatistics();
 
-            statisticsMutex.WaitOne();
-            try
-            {
-                action(dailyMarketStatistics);
-            }
-            finally
-            {
-                statisticsMutex.ReleaseMutex();
-            }
-        }
+        //    statisticsMutex.WaitOne();
+        //    try
+        //    {
+        //        action(dailyMarketStatistics);
+        //    }
+        //    finally
+        //    {
+        //        statisticsMutex.ReleaseMutex();
+        //    }
+        //}
 
-        public IList<DataDailyMarketStatistics> GetBetweenDates(DateOnly from, DateOnly to)
-        {
-            return this.Find(dailyMarketStatistics => 
-                from.CompareTo(dailyMarketStatistics.date) <= 0 && dailyMarketStatistics.date.CompareTo(to) <= 0);
-        }
+        //public IList<DataDailyMarketStatistics> GetBetweenDates(DateOnly from, DateOnly to)
+        //{
+        //    return this.Find(dailyMarketStatistics => 
+        //        from.CompareTo(dailyMarketStatistics.date) <= 0 && dailyMarketStatistics.date.CompareTo(to) <= 0);
+        //}
     }
 }

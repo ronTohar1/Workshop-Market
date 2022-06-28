@@ -12,6 +12,7 @@ using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.DataLayer.DataManagers;
 using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 
 namespace MarketBackend.BusinessLayer.Admins
 {
@@ -21,20 +22,32 @@ namespace MarketBackend.BusinessLayer.Admins
         private StoreController storeController;
         private BuyersController buyersController;
         private MembersController membersController;
-        
+
+        private IDictionary<int, DataDailyMarketStatistics> marketStatistics; // id to daily market statistics 
+        private ReaderWriterLock marketStatisticsLock;
+        private const int timeoutMilis = 3000; // time for wating for the rw lock, after which it throws an exception
+
+
+        private DailyMarketStatisticsDataManager dailyMarketStatisticsDataManager;
 
         public AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController) 
-            : this(storeController, buyersController, membersController, new SynchronizedCollection<int>())
+            : this(storeController, buyersController, membersController, new SynchronizedCollection<int>(), new ConcurrentDictionary<int, DataDailyMarketStatistics>())
         {
 
         }
 
-        private AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController, ICollection<int> admins)
+        private AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController, ICollection<int> admins, IDictionary<int, DataDailyMarketStatistics> marketStatistics)
         {
             this.admins = admins;
             this.storeController = storeController;
             this.buyersController = buyersController;
             this.membersController = membersController;
+
+            this.marketStatistics = marketStatistics;
+
+            dailyMarketStatisticsDataManager = DailyMarketStatisticsDataManager.GetInstance();
+
+            marketStatisticsLock = new ReaderWriterLock();
         }
 
         // r S 8
@@ -50,7 +63,14 @@ namespace MarketBackend.BusinessLayer.Admins
                 adminsIds.Add(dataAdmin.Id);
             }
 
-            return new AdminManager(storeController, buyersController, membersController, adminsIds); 
+            IList<DataDailyMarketStatistics> dataMarketStatistics = DailyMarketStatisticsDataManager.GetInstance().Find(dataDailyMarketStatistics => true);
+            IDictionary<int, DataDailyMarketStatistics> marketStatistics = new ConcurrentDictionary<int, DataDailyMarketStatistics>();
+            foreach (DataDailyMarketStatistics dailyMarketStatistics in dataMarketStatistics)
+            {
+                marketStatistics.Add(dailyMarketStatistics.Id, dailyMarketStatistics);
+            }
+
+            return new AdminManager(storeController, buyersController, membersController, adminsIds, marketStatistics); 
         }
 
         // to use before uplodaing all the system 
@@ -174,6 +194,100 @@ namespace MarketBackend.BusinessLayer.Admins
             VerifyAdmin(userId);
             string path = Path.Combine(Directory.GetCurrentDirectory(), @"..\MarketBackend\", @"SystemLog\error_logs.txt");
             return File.ReadAllText(path);
+        }
+
+        public void OnMemberLogin(int memberId)
+        {
+            UppdateDailyMarketStatistics(dailyMarketStatistics =>
+            {
+                if (admins.Contains(memberId))
+                    dailyMarketStatistics.NumberOfAdminsLogin += 1;
+                else if (HasRoleInMarket(memberId, Role.Owner))
+                    dailyMarketStatistics.NumberOfCoOwnersLogin += 1;
+                else if (HasRoleInMarket(memberId, Role.Manager))
+                    dailyMarketStatistics.NumberOfManagersLogin += 1;
+                else
+                    dailyMarketStatistics.NumberOfMembersLogin += 1;
+            }, "On member login, id: " + memberId);
+        }
+
+        public void OnGuestEnter()
+        {
+            UppdateDailyMarketStatistics(dailyMarketStatistics =>
+            {
+                dailyMarketStatistics.NumberOfGuestsLogin += 1;
+            }, "On guest enter");
+        }
+
+        private void UppdateDailyMarketStatistics(Action<DataDailyMarketStatistics> action, string updateDescription)
+        {
+            marketStatisticsLock.AcquireWriterLock(timeoutMilis);
+            try
+            {
+                DataDailyMarketStatistics currentDailyMarketStatistics = dailyMarketStatisticsDataManager.GetCurrentDailyMarketStatistics();
+
+                action(currentDailyMarketStatistics);
+
+                dailyMarketStatisticsDataManager.Save();
+
+                if (marketStatistics.ContainsKey(currentDailyMarketStatistics.Id))
+                    marketStatistics[currentDailyMarketStatistics.Id] = currentDailyMarketStatistics;
+                else
+                    marketStatistics.Add(currentDailyMarketStatistics.Id, currentDailyMarketStatistics);
+            }
+            catch (Exception exception)
+            {
+                // logger.Error(exception, $"Business layer, on updating daily statistics: " + updateDescription);
+            }
+            finally
+            {
+                marketStatisticsLock.ReleaseWriterLock();
+            }
+        }
+
+        private bool HasRoleInMarket(int memberId, Role role)
+        {
+            ProductsSearchFilter filter = new ProductsSearchFilter();
+            filter.FilterStoreOfMemberInRole(memberId, role);
+            return storeController.SearchOpenStores(filter).Count > 0; 
+        }
+
+        private IList<DataDailyMarketStatistics> GetDataDailyMarketStatisticsBetweenDates(DateOnly from, DateOnly to)
+        {
+            marketStatisticsLock.AcquireReaderLock(timeoutMilis);
+            try 
+            {
+                return marketStatistics.Values.Where(dailyMarketStatistics =>
+                    from.CompareTo(dailyMarketStatistics.date) <= 0 && dailyMarketStatistics.date.CompareTo(to) <= 0).ToList();
+            }
+            finally 
+            {
+                marketStatisticsLock.ReleaseReaderLock();
+            }
+        }
+
+        // [number_of_admin_visits, number_of_storeOwners_visitors, number_of_managers_without_any_stores_visits,
+        // number_of_simple_members(not manager or store owner), number_of_guests]
+        public int[] GetMarketStatisticsBetweenDates(int adminId, DateOnly from, DateOnly to)
+        {
+            VerifyAdmin(adminId);
+
+            if (to < from)
+                throw new MarketException("the second date needs to be at least the first date, not before it");
+
+            int[] loginsCounts = new int[5];
+
+            IList<DataDailyMarketStatistics> dailyMarketStatisticsBtweenDates = GetDataDailyMarketStatisticsBetweenDates(from, to);
+            foreach (DataDailyMarketStatistics dailyMarketStatistics in dailyMarketStatisticsBtweenDates)
+            {
+                loginsCounts[0] += dailyMarketStatistics.NumberOfAdminsLogin;
+                loginsCounts[1] += dailyMarketStatistics.NumberOfCoOwnersLogin;
+                loginsCounts[2] += dailyMarketStatistics.NumberOfManagersLogin;
+                loginsCounts[3] += dailyMarketStatistics.NumberOfMembersLogin;
+                loginsCounts[4] += dailyMarketStatistics.NumberOfGuestsLogin;
+            }
+
+            return loginsCounts;
         }
     }
 }

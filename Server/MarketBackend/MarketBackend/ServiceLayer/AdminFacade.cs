@@ -293,7 +293,7 @@ namespace MarketBackend.ServiceLayer
             try
             {
                 logger.Info($"GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = {toDate}]");
-                return new Response<int[]>(new int[5] { 0, 0, 3, 0, 0 });
+                return new Response<int[]>(adminManager.GetMarketStatisticsBetweenDates(memberId, DateOnly.FromDateTime( fromDate), DateOnly.FromDateTime(toDate)));
             }
             catch (MarketException mex)
             {

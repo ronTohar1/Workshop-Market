@@ -19,6 +19,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
         {
             var appConfig = AppConfigs.GetInstance();
             WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), appConfig.WebsocketServerPort);
+            
             WebSocketServer logsServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 4560);
             logsServer.AddWebSocketService<logsService>("/logs");
             notificationServer.Start();

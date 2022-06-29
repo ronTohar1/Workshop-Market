@@ -14,3 +14,5 @@ export const makeSetStateFromEvent = (setState: any) => {
 };
 
 export const zip  = <T, Z>(arr: T[], arr2: Z[]): [T, Z][] => arr.map((a, i) => [a, arr2[i]])
+export const notificationsPort = 4560
+export const logsPort = 4560

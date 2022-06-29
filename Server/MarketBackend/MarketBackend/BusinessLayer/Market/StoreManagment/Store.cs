@@ -805,7 +805,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
         // after permission check 
         private void AddVoteToCoOwnerAppointment(int requestingMemberId, int newCoOwnerMemberId, bool isFirstVote)
         {
-            if (isFirstVote && IsManager(requestingMemberId))
+            if (isFirstVote && IsManager(newCoOwnerMemberId))
             {
                 Hierarchy<int> managerInHierarchy = appointmentsHierarchy.FindHierarchy(newCoOwnerMemberId);
                 int parentId = managerInHierarchy.parent.value;

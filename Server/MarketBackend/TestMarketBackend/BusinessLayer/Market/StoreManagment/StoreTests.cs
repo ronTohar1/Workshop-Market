@@ -35,12 +35,13 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         // the comments in the following lines are relevant after running SetupStoreFull()
         private const int coOwnerId1 = 1;
         private const int coOwnerId2 = 2;
+        private const int coOwnerId3 = 14;
         private const int managerId1 = 3; // all permissions
         private const int managerId2 = 4; // defualt permissions 
         private const int memberId1 = 5;
         private const int memberId2 = 6;
         private const int memberId3 = 7;
-        private int[] membersIds = { coOwnerId1, coOwnerId2, managerId1, managerId2, memberId1, memberId2, memberId3 };
+        private int[] membersIds = { coOwnerId1, coOwnerId2, coOwnerId3, managerId1, managerId2, memberId1, memberId2, memberId3 };
         private const int notAMemberId1 = 11;
         private const int notAMemberId2 = 12;
         private const int notAMemberId3 = 13;
@@ -193,6 +194,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
             SetupMemberToCoOwner(coOwnerId1);
             SetupMemberToCoOwner(coOwnerId2);
+            SetupMemberToCoOwner(coOwnerId3);
+
 
             SetupMemberToManager(managerId1);
             SetupMemberToManager(managerId2);
@@ -332,7 +335,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCase(managerId1, memberId1)]
         [TestCase(coOwnerId1, notAMemberId1)]
         [TestCase(coOwnerId1, coOwnerId2)]
-        public void TestAddMakeCoOwnerVotePermissionError(int requestingMemberId, int toAppointMemberId)
+        public void TestAddMakeCoOwnerVoteFailed(int requestingMemberId, int toAppointMemberId)
         {
             SetupStoreFull();
 
@@ -343,26 +346,116 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         [Test]
         [TestCase(coOwnerId1, memberId1)]
-        public void TestAddMakeCoOwnerVoteCoOwnerAlreadyVoted(int requestingMemberId, int toAppointMemberId)
+        public void TestAddMakeCoOwnerVoteCoOwnerAlreadyVotedFailed(int requestingMemberId, int toAppointMemberId)
         {
             SetupStoreFull();
 
             store.AddMakeCoOwnerVote(requestingMemberId, toAppointMemberId);
+            CheckThereIsVoteWithTheseCoOwners(toAppointMemberId, new List<int> { requestingMemberId });
 
             Assert.Throws<MarketException>(() => store.AddMakeCoOwnerVote(requestingMemberId, toAppointMemberId));
         }
 
         // first vote, more need to vote
 
-        // first vote and that is the only coOwner - check hierarchy
-
         // second vote, more need to vote
 
+        [Test]
+        [TestCase(coOwnerId1, coOwnerId2, memberId1)]
+        public void TestAddMakeCoOwnerVoteOthersNeedToVoteSuccessful(int requestingMemberId1, int requestingMemberId2, int toAppointMemberId)
+        {
+            SetupStoreFull();
+
+            Assert.IsTrue(!store.IsThereVotingForCoOwnerAppointment(toAppointMemberId));
+
+            store.AddMakeCoOwnerVote(requestingMemberId1, toAppointMemberId);
+
+            CheckThereIsVoteWithTheseCoOwners(toAppointMemberId, new List<int>() { requestingMemberId1 });
+
+            store.AddMakeCoOwnerVote(requestingMemberId2, toAppointMemberId);
+
+            CheckThereIsVoteWithTheseCoOwners(toAppointMemberId, new List<int>() { requestingMemberId1, requestingMemberId2 });
+        }
+
+        private void CheckThereIsVoteWithTheseCoOwners(int toAppointMemberId, IList<int> coOwnersThatVoted)
+        {
+            Assert.IsTrue(store.IsThereVotingForCoOwnerAppointment(toAppointMemberId));
+            Assert.IsTrue(!store.IsCoOwner(toAppointMemberId));
+            Assert.IsTrue(SameElements(store.getCoOwnersAppointmentsApproving()[toAppointMemberId], coOwnersThatVoted));
+        }
+
+        // first vote and that is the only coOwner - check hierarchy
         // second vote, and these two are the only coOwners - - check hierarchy 
 
-        // second vote, these two are the only coOwners, appoints a manager that is appointed by the one that voted first
+        [Test]
+        [TestCase(new int[] { founderMemberId }, memberId1)]
+        [TestCase(new int[] { founderMemberId, coOwnerId1 }, memberId1)]
+        public void TestAddMakeCoOwnerVoteCompletedVotesSuccessful(int[] coOwnersMemberIds, int toAppointMemberId)
+        {
+            SetupStoreNoRoles();
+
+            foreach (int coOwnerMemberId in coOwnersMemberIds)
+            {
+                if (!store.IsFounder(coOwnerMemberId))
+                    SetupMemberToCoOwner(coOwnerMemberId); 
+            }
+
+            Assert.IsTrue(!store.IsThereVotingForCoOwnerAppointment(toAppointMemberId));
+            Assert.IsTrue(!store.IsCoOwner(toAppointMemberId));
+
+            foreach (int coOwnerMemberId in coOwnersMemberIds)
+            {
+                store.AddMakeCoOwnerVote(coOwnerMemberId, toAppointMemberId);
+            }
+
+            Assert.IsTrue(!store.IsThereVotingForCoOwnerAppointment(toAppointMemberId));
+            Assert.IsTrue(store.IsCoOwner(toAppointMemberId));
+            Assert.IsTrue(store.appointmentsHierarchy.FindHierarchy(coOwnersMemberIds[0]).children.Select(childHierarchy => childHierarchy.value).Contains(toAppointMemberId));
+        }
+
         // second vote, these two are the only coOwners, appoints a manager that is not appointed by the one that voted first 
 
+        [Test]
+        public void TestAddMakeCoOwnerVoteAppointingManagerSoThatTheOneThatAppointedItVotesSecondCompletedVotesFailed()
+        {
+            SetupStoreNoRoles();
+
+            SetupMemberToCoOwner(coOwnerId1);
+            SetupMemberToManager(managerId1); // appointed by founder 
+
+            int toAppointMemberId = managerId1;
+
+            Assert.IsTrue(!store.IsThereVotingForCoOwnerAppointment(toAppointMemberId));
+            Assert.IsTrue(!store.IsCoOwner(toAppointMemberId));
+
+            Assert.Throws<MarketException>(() => store.AddMakeCoOwnerVote(coOwnerId1, toAppointMemberId));
+
+            Assert.IsTrue(!store.IsThereVotingForCoOwnerAppointment(toAppointMemberId));
+            Assert.IsTrue(!store.IsCoOwner(toAppointMemberId));
+        }
+
+        // second vote, these two are the only coOwners, appoints a manager that is appointed by the one that voted first
+
+        [Test]
+        public void TestAddMakeCoOwnerVoteAppointingManagerSoThatTheOneThatAppointedItVotesFirstCompletedVotesSuccessful()
+        {
+            SetupStoreNoRoles();
+
+            SetupMemberToCoOwner(coOwnerId1);
+            SetupMemberToManager(managerId1); // appointed by founder 
+
+            int toAppointMemberId = managerId1;
+
+            Assert.IsTrue(!store.IsThereVotingForCoOwnerAppointment(toAppointMemberId));
+            Assert.IsTrue(!store.IsCoOwner(toAppointMemberId));
+
+            store.AddMakeCoOwnerVote(founderMemberId, toAppointMemberId);
+            store.AddMakeCoOwnerVote(coOwnerId1, toAppointMemberId);
+
+            Assert.IsTrue(!store.IsThereVotingForCoOwnerAppointment(toAppointMemberId));
+            Assert.IsTrue(store.IsCoOwner(toAppointMemberId));
+            Assert.IsTrue(store.appointmentsHierarchy.FindHierarchy(founderMemberId).children.Select(childHierarchy => childHierarchy.value).Contains(toAppointMemberId));
+        }
 
 
 
@@ -1130,7 +1223,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         [Test]
         [TestCase(coOwnerId1, Role.Manager, new int[] { managerId1, managerId2 })]
-        [TestCase(managerId1, Role.Owner, new int[] { coOwnerId1, coOwnerId2, founderMemberId })]
+        [TestCase(managerId1, Role.Owner, new int[] { coOwnerId1, coOwnerId2, coOwnerId3, founderMemberId })]
         [TestCase(founderMemberId, Role.Manager, new int[] { managerId1, managerId2 })]
         public void TestGetMembersInRoleShouldPass(int requestingMemberId, Role role, int[] expectedMembersIds)
         {
@@ -1144,7 +1237,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
         [Test]
         [TestCase(Role.Manager, new int[] { managerId1, managerId2 })]
-        [TestCase(Role.Owner, new int[] { coOwnerId1, coOwnerId2, founderMemberId })]
+        [TestCase(Role.Owner, new int[] { coOwnerId1, coOwnerId2, coOwnerId3, founderMemberId })]
         [TestCase(Role.Manager, new int[] { managerId1, managerId2 })]
         public void TestGetMembersInRoleNoPermissionsCheckShouldPass(Role role, int[] expectedMembersIds)
         {
@@ -1270,7 +1363,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             store.notifyAllStoreOwners(notifications);
             foreach (int memberId in wasNotified.Keys)
             {
-                if (memberId == coOwnerId1 || memberId == coOwnerId2 || memberId == founder.Id)
+                if (memberId == coOwnerId1 || memberId == coOwnerId2 || memberId == coOwnerId3 || memberId == founder.Id)
                     Assert.True(wasNotified[memberId]);
                 else
                     Assert.False(wasNotified[memberId]);
@@ -1300,7 +1393,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             store.CloseStore(founder.Id, storeId);
             foreach (int memberId in wasNotified.Keys)
             {
-                if (memberId == managerId1 || memberId == managerId2 || memberId == coOwnerId1 || memberId == coOwnerId2 || memberId == founder.Id)
+                if (memberId == managerId1 || memberId == managerId2 || memberId == coOwnerId1 || memberId == coOwnerId2 || memberId == coOwnerId3 || memberId == founder.Id)
                     Assert.True(wasNotified[memberId]);
                 else
                     Assert.False(wasNotified[memberId]);

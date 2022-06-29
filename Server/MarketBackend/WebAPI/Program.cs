@@ -25,7 +25,18 @@ namespace MyApp // Note: actual namespace depends on the project name.
             logsServer.Start();
             Console.WriteLine($"WS server started on ws://127.0.0.1:{appConfig.WebsocketServerPort}");
 
-            SystemOperator so = new();
+            SystemOperator so;
+            if (appConfig.ShouldRunInitFile)
+                so = new();
+            else
+            {
+                Console.WriteLine("Please enter Admin Username:");
+                string username = Console.ReadLine()!;
+                Console.WriteLine("Please enter Admin Password:");
+                string password = Console.ReadLine()!;
+                so = new(username, password, appConfig.ShouldUpdateDatabase);
+            }
+
             if (!so.MarketOpen)
             {
                 Console.WriteLine("Unable to open market successfully. Goodbye...");

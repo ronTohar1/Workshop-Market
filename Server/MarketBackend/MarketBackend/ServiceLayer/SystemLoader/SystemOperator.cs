@@ -13,7 +13,7 @@ namespace MarketBackend.ServiceLayer
     {
 
         public bool MarketOpen { get; private set; }
-        public int MarketOpenerAdminId { get => bso.MarketOpenerAdminId;  }
+        public int MarketOpenerAdminId { get => bso.MarketOpenerAdminId; }
         private BusiessSystemOperator bso;
         private AdminFacade adminFacade;
         private BuyerFacade buyerFacade;
@@ -36,7 +36,7 @@ namespace MarketBackend.ServiceLayer
         }
 
 
-        public SystemOperator(string username, string password, bool loadDatabase=true)
+        public SystemOperator(string username, string password, bool loadDatabase = true)
         {
             MarketOpen = false;
             bso = new BusiessSystemOperator(username, password, loadDatabase); // will initialize the controllers if it's the first boot;
@@ -44,19 +44,19 @@ namespace MarketBackend.ServiceLayer
             buyerFacade = null;
             externalSystemFacade = null;
             storeManagementFacade = null;
-            Response<int> response = OpenMarket(username, password);
+            Response<int> response = OpenMarket(username, password, loadDatabase);
             if (response.IsErrorOccured())
                 throw new Exception(response.ErrorMessage);
         }
 
-        public Response<int> OpenMarket(string username, string password, bool loadDatabase=true)
+        public Response<int> OpenMarket(string username, string password, bool loadDatabase = true)
         {
             try
             {
                 if (MarketOpen)
                 {
                     bso.logger.Error("Market is already open", $"method: OpenMarket, parameters: [username = {username}, can not reveal password]");
-                    return new("Market is already open.");     
+                    return new("Market is already open.");
                 }
                 if (!bso.MarketOpen)
                 {
@@ -83,7 +83,7 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<bool> CloseMarket(bool clearDatabase=false)
+        public Response<bool> CloseMarket(bool clearDatabase = false)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace MarketBackend.ServiceLayer
 
         internal static void RemoveAllDatabaseContent()
         {
-            BusiessSystemOperator.RemoveAllDatabaseContent(); 
+            BusiessSystemOperator.RemoveAllDatabaseContent();
         }
     }
 }

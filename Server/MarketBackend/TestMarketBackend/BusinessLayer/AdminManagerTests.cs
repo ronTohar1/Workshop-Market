@@ -16,19 +16,26 @@ namespace TestMarketBackend.BusinessLayer
 {
     internal class AdminManagerTests
     {
-        int adminId;
+        private const int adminId = 1;
         AdminManager adminManager;
 
         // profit checks
         double v1;
         double v2;
 
+        int guest1Id = 2;
+        int guest2Id = 3;
+        int member1Id = 4; 
+        int member2Id = 5;
+        int manager1Id = 6;
+        int manager2Id = 7;
+        int coOwner1Id = 8;
+        int coOwner2Id = 9;
+
         [SetUp]
         public void SetupAdmin()
         {
             DataManagersMock.InitMockDataManagers(); 
-
-            adminId = 1;
 
             v1 = 10;
             v2 = 20;
@@ -50,9 +57,30 @@ namespace TestMarketBackend.BusinessLayer
             Mock<Member> m = new Mock<Member>();
             mc.Setup(x => x.GetMember(It.IsAny<int>())).Returns(m.Object);
 
-            adminManager = new AdminManager(ms.Object, It.IsAny<BuyersController>(), mc.Object);
-            adminManager.AddAdmin(adminId);
+            Mock<AdminManager> adminManagerMock = new Mock<AdminManager>(ms.Object, It.IsAny<BuyersController>(), mc.Object);
 
+            SetupRoles(adminManagerMock);
+
+            adminManager = adminManagerMock.Object;
+            adminManager.AddAdmin(adminId);
+        }
+
+        private void MockRole(Mock<AdminManager> adminManagerMock, int memberOfRoleId, Role role)
+        {
+            adminManagerMock.Setup(adminManager =>
+               adminManager.HasRoleInMarket(It.Is<int>(memberId => memberId == memberOfRoleId), It.Is<Role>(argumentRole => argumentRole == role))).
+                   Returns(true);
+        }
+
+        private void SetupRoles(Mock<AdminManager> adminManagerMock)
+        {
+            adminManagerMock.Setup(adminManager =>
+               adminManager.HasRoleInMarket(It.IsAny<int>(), It.IsAny<Role>())).
+                   Returns(false);
+            MockRole(adminManagerMock, coOwner1Id, Role.Owner);
+            MockRole(adminManagerMock, coOwner2Id, Role.Owner);
+            MockRole(adminManagerMock, manager1Id, Role.Manager);
+            MockRole(adminManagerMock, manager2Id, Role.Manager); 
         }
 
         [Test]
@@ -65,6 +93,56 @@ namespace TestMarketBackend.BusinessLayer
         public void TestGetSystemProfitInValidAdmin()
         {
             Assert.Throws<MarketException>(() => adminManager.GetSystemDailyProfit(adminId + 1));
+        }
+
+        [Test]
+        [TestCase(adminId + 1)]
+        public void TestGetMarketStatisticsBetweenDatesNoPermissionFailed(int reqestingMemberId)
+        {
+            Assert.Throws<MarketException>(() => adminManager.GetMarketStatisticsBetweenDates(reqestingMemberId, DateOnly.FromDateTime(DateTime.Now.AddDays(-2).Date), DateOnly.FromDateTime(DateTime.Now.AddDays(1))));
+        }
+
+        [Test]
+        public void TestGetMarketStatisticsBetweenDatesFromIsAfterToFailed()
+        {
+            Assert.Throws<MarketException>(() => adminManager.GetMarketStatisticsBetweenDates(adminId, DateOnly.FromDateTime(DateTime.Now.AddDays(2).Date), DateOnly.FromDateTime(DateTime.Now.AddDays(-1))));
+        }
+
+        [Test]
+        public void TestGetMarketStatisticsBetweenDatesSuccessful()
+        {
+            adminManager.OnGuestEnter();
+            adminManager.OnGuestEnter();
+            adminManager.OnGuestEnter();
+            adminManager.OnMemberLogin(member1Id);
+            adminManager.OnMemberLogin(manager1Id);
+            adminManager.OnMemberLogin(coOwner1Id);
+            adminManager.OnMemberLogin(coOwner2Id);
+            adminManager.OnMemberLogin(adminId);
+
+            int[] expectedMarektStatistics = new int[]
+            {
+                1,  // admins 
+                2, // coOwners
+                1, // managers
+                1, // members
+                3 // guests
+            };
+
+            int[] marketStatistics = adminManager.GetMarketStatisticsBetweenDates(adminId, DateOnly.FromDateTime(DateTime.Now.AddDays(-2).Date), DateOnly.FromDateTime(DateTime.Now.AddDays(1)));
+
+            CheckAreExpectedMarketStatistics(expectedMarektStatistics, marketStatistics);
+        }
+
+        private void CheckAreExpectedMarketStatistics(int[] expectedMarketStatistics, int[] marketStatistics)
+        {
+            Assert.IsTrue(marketStatistics != null);
+            Assert.AreEqual(expectedMarketStatistics.Length, marketStatistics.Length);
+
+            for (int i = 0; i < expectedMarketStatistics.Length; i++)
+            {
+                Assert.AreEqual(expectedMarketStatistics[i], marketStatistics[i]);
+            }
         }
     }
 }

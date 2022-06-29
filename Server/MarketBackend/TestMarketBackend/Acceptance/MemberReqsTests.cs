@@ -198,5 +198,45 @@ namespace TestMarketBackend.Acceptance
             // checking the new notifications with the the notifications that were before:
             Assert.IsTrue(notificationArrived); 
         }
+
+
+        public static IEnumerable<TestCaseData> DataBID
+        {
+            get
+            {
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), new Func<int>(() => iphoneProductId), new Func<int>(() => member5Id ), new Func<int>(() => member1Id));
+            }
+        }
+
+
+        [Test]
+        [TestCaseSource("DataBID")]
+        public void SuccessfulNotidicationsNotLoggedIn(Func<int> storeOwner, Func<int> storeId, Func<int> productToBid, Func<int> coOwner, Func<int> bidderId )
+        {
+            // logging out so we can use the same data as in the SuccessfulNotidicationsLoggedIn tests 
+            Response<int> response = storeManagementFacade.AddBid(storeId(),productToBid(),bidderId(),10);
+            Assert.IsTrue(!response.IsErrorOccured());
+
+            // getting notifications before
+            IList<string> notificationsBefore = member1Notifications.ToList();
+            Response<bool> approved = storeManagementFacade.ApproveBid(storeId(), storeOwner(), response.Value);
+            Assert.IsFalse(approved.IsErrorOccured());
+            Assert.IsTrue(approved.Value);
+
+            Response<bool> removed1 = storeManagementFacade.RemoveCoOwner(storeOwner(),member6Id, storeId());
+            Response<bool> removed = storeManagementFacade.RemoveCoOwner(storeOwner(), coOwner(), storeId());
+
+            Assert.IsFalse(removed.IsErrorOccured());
+            Assert.IsTrue(removed.Value);
+            // first checking that there is not a notification when not logged in 
+            IList<string> notificationsAfter = member1Notifications.ToList();
+            Assert.IsFalse(SameElements(notificationsBefore, notificationsAfter));
+
+            //// second checking there is a notification after loggin in
+            //bool notificationArrived = false;
+            //buyerFacade.Login(userName5, password5, notification => { notificationArrived = true; return true; });
+            //// checking the new notifications with the the notifications that were before:
+            //Assert.IsTrue(notificationArrived);
+        }
     }
 }

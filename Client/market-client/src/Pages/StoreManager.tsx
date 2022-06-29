@@ -275,6 +275,10 @@ export default function StoreManagerPage() {
     fetchStoresManagedBy(getBuyerId()).then((managedStores: Store[]) => {
       setStores(managedStores)
     })
+    .catch((e )=>{
+      
+      alert(e.message)
+    })
   }, [])
 
   const handleChangedStore = (changedStore: Store) => {

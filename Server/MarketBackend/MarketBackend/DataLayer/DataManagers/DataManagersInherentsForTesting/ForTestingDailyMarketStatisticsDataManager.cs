@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MarketBackend.DataLayer.DataManagers.DataManagersInherentsForTesting
 {
-    internal class ForTestingDailyMarketStatisticsDataManager : DailyMarketStatisticsDataManager
+    public class ForTestingDailyMarketStatisticsDataManager : DailyMarketStatisticsDataManager
     {
-        ForTestingDailyMarketStatisticsDataManager() : base() { }
+        public ForTestingDailyMarketStatisticsDataManager() : base() { }
     }
 }

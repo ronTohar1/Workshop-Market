@@ -7,6 +7,11 @@ using Moq;
 using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer;
+using MarketBackend.DataLayer.DataManagers.DataManagersInherentsForTesting;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 
 namespace TestMarketBackend.BusinessLayer.Buyers.Members
 {
@@ -33,7 +38,7 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Members
             //mock.Setup(s => s.HashPassword(It.IsAny<string>())).Returns((string x) => x.GetHashCode());
             Security security = mock.Object;
             //Console.WriteLine(security.HashPassword("hello"));
-            return new Member(username, password, security);
+            return new Member(username, password, security, memberId => { });
 
         }
         private Func<string[], bool> CreateNotificationSender(bool notificationSucceeded) 
@@ -46,6 +51,8 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Members
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers();
+
             member1 = SetUpMember(username1, password1);
             member2 = SetUpMember(username2, password2);
             failNotify = CreateNotificationSender(false);

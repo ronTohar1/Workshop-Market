@@ -33,6 +33,12 @@ namespace TestMarketBackend.BusinessLayer.Market
 
         // ------- Setup helping functions -------------------------------------
 
+        [SetUp]
+        public void MockDataLayer()
+        {
+            DataManagersMock.InitMockDataManagers();
+        }
+
         private void membersConrtollerMemberExistsSetup(int[] exsitingMembersIds)
         {
             membersControllerMock = new Mock<MembersController>();
@@ -41,7 +47,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             foreach (int existingMemberId in exsitingMembersIds)
             {
                 // should return a mock member for call with a right id
-                memberMock = new Mock<Member>("user123", "12345678", securityMock.Object) { CallBase = true }; // todo: is this okay
+                memberMock = new Mock<Member>("user123", "12345678", securityMock.Object, (int memberId) => { }) { CallBase = true }; // todo: is this okay
                 memberMock.Setup(member=>member.Id).Returns(existingMemberId);
                 member = memberMock.Object;
                 membersControllerMock.Setup(membersController =>
@@ -303,14 +309,16 @@ namespace TestMarketBackend.BusinessLayer.Market
         [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "store", new string[] { })]
         [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "st123", new string[] { })]
         [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "re1", new string[] { })]
-        public void TestSerachProductsInOpenStoresNoProduts(string[] openStoresNames, string[] closedStoreNames, string nameInSearch, string[] expectedStoreNames)
+        [TestCase(new string[] { }, new string[] { }, "store", new string[] { }, false)]
+        [TestCase(new string[] { "store1", "store2" }, new string[] { "store3" }, "re1", new string[] { "store1" }, false)]
+        public void TestSerachProductsInOpenStoresNoProduts(string[] openStoresNames, string[] closedStoreNames, string nameInSearch, string[] expectedStoreNames, bool storesWithProductsThatPassedFilter = true)
         {
             StoreControllerWithStoresSetup(openStoresNames, closedStoreNames); // also sets up so that member1 exists in the system
 
             ProductsSearchFilter filter = new ProductsSearchFilter();
             filter.FilterStoreName(nameInSearch);
 
-            IDictionary<int, IList<Product>> result = storeController.SearchProductsInOpenStores(filter);
+            IDictionary<int, IList<Product>> result = storeController.SearchProductsInOpenStores(filter, storesWithProductsThatPassedFilter);
 
             IList<string> resultStoresNames = result.Keys.Select(id => storeController.GetStore(id).GetName()).ToList();
         

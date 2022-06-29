@@ -74,8 +74,9 @@ namespace MarketBackend.ServiceLayer
                 if (failMsg != null)
                     return new Response<bool>(failMsg);
 
+                Buyer? b = buyersController.GetBuyer(userId);
                 // Can add product to cart
-                c.AddProductToCart(new ProductInBag(productId, storeId), amount);
+                c.AddProductToCart(new ProductInBag(productId, storeId), amount, userId, b is Member);
                 logger.Info($"AddProdcutToCart was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(true);
             }
@@ -99,7 +100,8 @@ namespace MarketBackend.ServiceLayer
                 Cart? c = buyersController.GetCart(userId);
                 if (c == null)
                     return new Response<bool>($"No cart with user id {userId}");
-                c.RemoveProductFromCart(new ProductInBag(productId, storeId));
+                Buyer? b = buyersController.GetBuyer(storeId);
+                c.RemoveProductFromCart(new ProductInBag(productId, storeId), userId, b is Member);
                 logger.Info($"RemoveProductFromCart was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}]");
                 return new Response<bool>(true);
             }
@@ -120,10 +122,10 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                Cart? c = buyersController.GetCart(userId);
-                if (c == null)
+                Buyer? b = buyersController.GetBuyer(userId);
+                if (b == null)
                     return new Response<bool>($"No cart with user id {userId}");
-                c.ChangeProductAmount(new ProductInBag(productId, storeId), amount);
+                b.ChangeProductAmount(new ProductInBag(productId, storeId), amount, userId);
                 logger.Info($"changeProductAmountInCart was called with parameters [userId = {userId}, storeId = {storeId}, productId = {productId}, amount = {amount}]");
                 return new Response<bool>(true);
             }
@@ -140,11 +142,13 @@ namespace MarketBackend.ServiceLayer
         }
 
         //TODO
-        public Response<ServicePurchase> PurchaseCartContent(int userId)
+        public Response<ServicePurchase> PurchaseCartContent(int userId, ServicePaymentDetails paymentDetails, ServiceSupplyDetails supplyDetails)
         {
             try
             {
-                Purchase purchase = purchasesManager.PurchaseCartContent(userId);
+                Purchase purchase = purchasesManager.PurchaseCartContent(userId,
+                    new PaymentDetails(paymentDetails.CardNumber, paymentDetails.Month, paymentDetails.Year, paymentDetails.Holder, paymentDetails.Ccv, paymentDetails.Id), 
+                    new SupplyDetails(supplyDetails.Name, supplyDetails.Address, supplyDetails.City, supplyDetails.Country, supplyDetails.Zip));
                 ServicePurchase canBuy = new ServicePurchase(purchase.purchaseDate, purchase.purchasePrice, purchase.purchaseDescription);
                 logger.Info($"PurchaseCartContent was called with parameters [userId = {userId}]");
                 return new Response<ServicePurchase>(canBuy);
@@ -230,9 +234,14 @@ namespace MarketBackend.ServiceLayer
         {
             // try and catch is in calling functions 
 
-            IList<int> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => product.id).ToList();
+            IList<ServiceProduct> productsIds = store.SearchProducts(new ProductsSearchFilter()).Select(product => CreateServiceProduct(product, storeId, store.name)).ToList();
 
-            return new ServiceStore(storeId, store.GetName(), productsIds);
+            return new ServiceStore(storeId, store, productsIds);
+        }
+
+        private ServiceProduct CreateServiceProduct(Product product, int storeId, string storeName)
+        {
+            return new ServiceProduct(product, storeId, storeName);
         }
 
         //done
@@ -262,21 +271,24 @@ namespace MarketBackend.ServiceLayer
         private IDictionary<int, IList<ServiceProduct>> mapToServiceMap(IDictionary<int, IList<Product>> map)
         {
             IDictionary<int, IList<ServiceProduct>> result = new Dictionary<int, IList<ServiceProduct>>();
-            foreach (int key in map.Keys)
+            foreach (int storeId in map.Keys)
             {
-                IList<Product> products = map[key];
+                IList<Product> products = map[storeId];
                 IList<ServiceProduct> l = new List<ServiceProduct>();
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    throw new Exception("Store cannot be found !");
                 foreach (Product product in products)
                 {
-                    l.Add(new ServiceProduct(product));
+                    l.Add(CreateServiceProduct(product,storeId,s.name));
                 }
-                result[key] = l;
+                result[storeId] = l;
             }
             return result;
         }
 
         //done
-        public Response<IDictionary<int, IList<ServiceProduct>>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null)
+        public Response<IDictionary<int, IList<ServiceProduct>>> ProductsSearch(string? storeName = null, string? productName = null, string? category = null, string? keyword = null, int? productId = null, IList<int> productIds = null, ServiceMemberInRole memberInRole = null, bool storesWithProductsThatPassedFilter = true)
         {
             try
             {
@@ -289,18 +301,24 @@ namespace MarketBackend.ServiceLayer
                     filter.FilterProductCategory(category);
                 if (keyword != null)
                     filter.FilterProductKeyword(keyword);
-                IDictionary<int, IList<Product>> prods = storeController.SearchProductsInOpenStores(filter);
-                logger.Info($"ProductsSearch was called with parameters [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}]");
+                if (productId != null)
+                    filter.FilterProductId((int)productId); // right after check that is not null
+                if (productIds != null)
+                    filter.FilterProductIds(productIds);
+                if (memberInRole != null)
+                    filter.FilterStoreOfMemberInRole(memberInRole.MemberId, memberInRole.RoleInStore);
+                IDictionary<int, IList<Product>> prods = storeController.SearchProductsInOpenStores(filter, storesWithProductsThatPassedFilter); 
+                logger.Info($"ProductsSearch was called with parameters [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}, is memberInRole null ? = {memberInRole == null}, storesWithProductsThatPassedFilter: {storesWithProductsThatPassedFilter}]");
                 return new Response<IDictionary<int, IList<ServiceProduct>>>(mapToServiceMap(prods));
             }
             catch (MarketException mex)
             {
-                logger.Error(mex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}]");
+                logger.Error(mex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}, is memberInRole null ? = {memberInRole == null}, storesWithProductsThatPassedFilter: {storesWithProductsThatPassedFilter}]");
                 return new Response<IDictionary<int, IList<ServiceProduct>>>(mex.Message);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}]");
+                logger.Error(ex, $"method: ProductsSearch, parameters: [storeName = {storeName}, productName = {productName}, category = {category}, keyword = {keyword}, productId = {productId}, is productIds null ? = {productIds == null}, is memberInRole null ? = {memberInRole == null}, storesWithProductsThatPassedFilter: {storesWithProductsThatPassedFilter}]");
                 return new Response<IDictionary<int, IList<ServiceProduct>>>("Sorry, an unexpected error occured. Please try again");
             }
         }
@@ -462,6 +480,32 @@ namespace MarketBackend.ServiceLayer
             {
                 logger.Error(ex, $"method: GetPurchasePolicyDescriptions, parameters: [storeId = {storeId}]");
                 return new Response<IDictionary<int, string>>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+        public Response<bool> PurchaseBid(int storeId, int bidId, int memberId, ServicePaymentDetails paymentDetails, ServiceSupplyDetails supplyDetails)
+        {
+            try
+            {
+                Store? s = storeController.GetStore(storeId);
+                if (s == null)
+                    return new Response<bool>($"There isn't a store with an id {storeId}");
+                Bid bid = s.GetBid(bidId);
+                purchasesManager.PurchaseBid(bid, memberId, 
+                    new PaymentDetails(paymentDetails.CardNumber, paymentDetails.Month, paymentDetails.Year, paymentDetails.Holder, paymentDetails.Ccv, paymentDetails.Id),
+                    new SupplyDetails(supplyDetails.Name, supplyDetails.Address, supplyDetails.City, supplyDetails.Country, supplyDetails.Zip));
+                logger.Info($"PurchaseBid was called with parameters: [storeId = {storeId}, bidId = {bidId}, memberId = {memberId}]");
+                return new Response<bool>(true);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: PurchaseBid, parameters: [storeId = {storeId}, bidId = {bidId}, memberId = {memberId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: PurchaseBid, parameters: [storeId = {storeId}, bidId = {bidId}, memberId = {memberId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
             }
         }
     }

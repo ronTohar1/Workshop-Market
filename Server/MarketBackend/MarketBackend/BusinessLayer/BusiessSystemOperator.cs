@@ -1,9 +1,3 @@
-using MarketBackend.ServiceLayer.ServiceDTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Admins;
 using MarketBackend.BusinessLayer.Market;
 using MarketBackend.BusinessLayer.Buyers.Members;
@@ -12,12 +6,16 @@ using MarketBackend.BusinessLayer.Buyers;
 using SystemLog;
 using NLog;
 using MarketBackend.BusinessLayer.System.ExternalServices;
+using MarketBackend.DataLayer.DataManagers;
+
 namespace MarketBackend.BusinessLayer
 {
     public class BusiessSystemOperator
     {
 
-        public bool marketOpen { get; private set;}
+        public bool MarketOpen { get; private set;}
+        public int MarketOpenerAdminId { get; private set; }
+
         public MembersController membersController{ get; private set;}
         public GuestsController guestsController{ get; private set;}
         public StoreController storeController{ get; private set;}
@@ -27,48 +25,107 @@ namespace MarketBackend.BusinessLayer
         public AdminManager adminManager{ get; private set;}
         public Logger logger{ get; private set;}
 
-        private const string errorMsg = "Cannot give any facade when market is closed!";
-
-
-        public BusiessSystemOperator()
+        public BusiessSystemOperator(string username, string password, bool loadDatabase=true)
         {
-            marketOpen = false;
+            MarketOpenerAdminId = -1;
+            if (loadDatabase)
+                OpenMarketWithDatabase(username, password);
+            else
+                OpenMarket(username, password);
         }
 
-        public int OpenMarket(string username, string password)
+        public void OpenMarketWithDatabase(string username, string password)
         {
-
-            if (adminManager != null && !VerifyAdmin(username, password))// if adminManager isn't initialized, it's the first boot of the system 
+            if (adminManager != null && !VerifyAdmin(username, password))   // if adminManager isn't initialized, it's the first boot of the system 
                 throw new MarketException($"User with username: {username} does not have permission to open the market!");
-            if (marketOpen)
-                throw new MarketException("the market is allready opened");
-            if (adminManager == null)//meaning first 
+            if (MarketOpen)
+                throw new MarketException("the market is already opened");
+            if (adminManager == null)   //meaning first 
             {
                 InitLogger();
-                this.membersController = new();
-                int adminId = membersController.Register(username, password);
+
+                membersController = MembersController.LoadMembersController();
+                Member member = membersController.GetMember(username);
+                if (member == null || !member.CheckPassword(password))
+                    throw new MarketException("At least one of the details you entered is not correct"); 
+                
+                int adminId = member.Id; 
+                if (!AdminManager.ContainsAdmin(adminId))
+                    throw new MarketException("Not an admin, only an admin is allowed to open the market");
+
                 //Init controllers
-                this.guestsController = new();
-                this.storeController = new(membersController);
-                this.buyersController = new(new List<IBuyersController> { guestsController, membersController });
-                this.externalServicesController = new(new ExternalPaymentSystem(), new ExternalSupplySystem());
+                guestsController = new();
+                storeController = StoreController.LoadStoreController(membersController);
+                buyersController = new(new List<IBuyersController> { guestsController, membersController });
+                HttpClient httpClient = new HttpClient();
+                externalServicesController = new(new ExternalPaymentSystem(httpClient), new ExternalSupplySystem(httpClient));
 
-                this.purchasesManager = new(storeController, buyersController, externalServicesController);
+                purchasesManager = new(storeController, buyersController, externalServicesController);
 
-                this.adminManager = new(storeController, buyersController, membersController);
-                this.adminManager.AddAdmin(adminId);
-                marketOpen = true;
-                return adminId;
+                adminManager = AdminManager.LoadAdminManager(storeController, buyersController, membersController);
+                guestsController.OnEnter(adminManager.OnGuestEnter);
+                membersController.OnLogin(adminManager.OnMemberLogin);
+
+                MarketOpen = true;
+                MarketOpenerAdminId = adminId;
             }
-            marketOpen = true;
-            return -1;
+            MarketOpen = true;
         }
 
-        public void CloseMarket()
+        public void OpenMarket(string username, string password)
         {
-            if (!marketOpen)
+            if (adminManager != null && !VerifyAdmin(username, password))   // if adminManager isn't initialized, it's the first boot of the system 
+                throw new MarketException($"User with username: {username} does not have permission to open the market!");
+            if (MarketOpen)
+                throw new MarketException("the market is already opened");
+            if (adminManager == null)   //meaning first 
+            {
+                InitLogger();
+                membersController = new();
+                int adminId = membersController.Register(username, password);
+                //Init controllers
+                guestsController = new();
+                storeController = new(membersController);
+                buyersController = new(new List<IBuyersController> { guestsController, membersController });
+                HttpClient httpClient = new HttpClient();
+                externalServicesController = new(new ExternalPaymentSystem(httpClient), new ExternalSupplySystem(httpClient));
+
+                purchasesManager = new(storeController, buyersController, externalServicesController);
+
+                adminManager = new(storeController, buyersController, membersController);
+                guestsController.OnEnter(adminManager.OnGuestEnter);
+                membersController.OnLogin(adminManager.OnMemberLogin);
+
+                adminManager.AddAdmin(adminId);
+                MarketOpen = true;
+                MarketOpenerAdminId = adminId;
+            }
+            MarketOpen = true;
+        }
+
+        public void CloseMarket(bool clearDatabase=false)
+        {
+            if (!MarketOpen)
                  throw new MarketException("Market already closed!");
-            marketOpen = false;
+            MarketOpen = false;
+            MarketOpenerAdminId = -1;
+
+            if (clearDatabase)
+            {
+                throw new NotImplementedException(); //TODO: clear database
+            }
+
+            // getting rid of the business controllers
+            membersController = null;
+            guestsController = null;
+            storeController = null;
+            buyersController = null;
+            adminManager = null;
+            externalServicesController = null;
+            purchasesManager = null;
+            adminManager = null;
+
+            CloseMarketDataLayer();
         }
 
         private void InitLogger()
@@ -85,10 +142,20 @@ namespace MarketBackend.BusinessLayer
                     return false;
                 return adminManager.ContainAdmin(member.Id);
             }
-            catch (Exception exception) { 
+            catch (Exception)
+            { 
                 return false;
             }
         }
 
+        internal static void RemoveAllDatabaseContent()
+        {
+            StoreDataManager.GetInstance().RemoveAllTables();
+        }
+
+        private static void CloseMarketDataLayer()
+        {
+            StoreDataManager.GetInstance().CloseMarketDataLayer();
+        }
     }
 }

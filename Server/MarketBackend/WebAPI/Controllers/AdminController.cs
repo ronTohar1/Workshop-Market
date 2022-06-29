@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         public ActionResult<Response<IReadOnlyCollection<ServicePurchase>>> GetBuyerPurchaseHistory
             ([FromBody] AdminRequest request)
         {
-            Response<IReadOnlyCollection<ServicePurchase>> response = 
+            Response<IReadOnlyCollection<ServicePurchase>> response =
                 adminFacade.GetBuyerPurchaseHistory(request.UserId, request.TargetId);
 
             if (response.IsErrorOccured())
@@ -52,9 +52,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("LoggedInUsers")]
-        public ActionResult<Response<bool>> GetLoggedInMembers([FromBody] UserRequest request)
+        public ActionResult<Response<IList<ServiceMember>>> GetLoggedInMembers([FromBody] UserRequest request)
         {
-            Response<IList<int>> response = adminFacade.GetLoggedInMembers(request.UserId);
+            Response<IList<ServiceMember>> response = adminFacade.GetLoggedInMembers(request.UserId);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
@@ -63,7 +63,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("MemberInfo")]
-        public ActionResult<Response<bool>> GetMemberInfo([FromBody] AdminRequest request)
+        public ActionResult<Response<ServiceMember>> GetMemberInfo([FromBody] AdminRequest request)
         {
             Response<ServiceMember> response = adminFacade.GetMemberInfo(request.UserId, request.TargetId);
 
@@ -73,5 +73,66 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpPost("IsAdmin")]
+        public ActionResult<Response<bool>> IsAdmin([FromBody] UserRequest request)
+        {
+            Response<bool> response = adminFacade.IsAdmin(request.UserId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
+        [HttpPost("GetSystemDailyProfit")]
+        public ActionResult<Response<double>> GetSystemDailyProfit([FromBody] GetStoreDailyProfitRequestAdmin request)
+        {
+            Response<double> response = adminFacade.GetSystemDailyProfit(request.MemberId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPost("GetEventLogs")]
+        public ActionResult<Response<string>> GetEventLogs([FromBody] UserRequest request)
+        {
+            Response<string> response = adminFacade.GetEventLogs(request.UserId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPost("GetErrorLogs")]
+        public ActionResult<Response<string>> GetErrorLogs([FromBody] UserRequest request)
+        {
+            Response<string> response = adminFacade.GetErrorLogs(request.UserId);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+        [HttpPost("GetDailyVisitorsCut")]
+        public ActionResult<Response<int[]>> GetDailyVisitores([FromBody] GetDailyVisitoresRequestAdmin request)
+        {
+            DateTime fromDate, toDate;
+            try
+            {
+                fromDate = new DateTime(request.FromYear, request.FromMonth, request.FromDay);
+                toDate = new DateTime(request.ToYear, request.ToMonth, request.ToDay);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new Response<int[]>(e.Message));
+            }
+            Response<int[]> response = adminFacade.GetDailyVisitores(request.MemberId, fromDate, toDate);
+
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
     }
 }

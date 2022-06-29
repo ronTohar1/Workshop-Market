@@ -10,6 +10,11 @@ namespace TestMarketBackend.Acceptance
 {
     internal class Guest_MemberReqsTests : AcceptanceTests
     {
+        //[SetUp]
+        //public void DataManagerSetup()
+        //{
+
+        //} 
 
         // r.1.2
         [Test]
@@ -92,11 +97,6 @@ namespace TestMarketBackend.Acceptance
 
 
         // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
-        // WE ARE ALLOWING NULL -> WHEN NULL WE SEARCH WITHOUT FILTER!
         // r.2.2
         //[Test]
         //[TestCase("aaaaa", null, null, "iphone")]
@@ -121,9 +121,9 @@ namespace TestMarketBackend.Acceptance
             // Verify that the product has been successfuly added to the cart
             ServiceShoppingBag shoppingBag = cart.ShoppingBags[storeId];
 
-            foreach(ServiceProductInBag p in shoppingBag.ProductsAmounts.Keys)
+            foreach(int pid in shoppingBag.ProductsAmounts.Keys)
             {
-                if (p.ProductId == productId && p.StoreId == storeId && shoppingBag.ProductsAmounts[p] == amount)
+                if (pid == productId && shoppingBag.ProductsAmounts[pid] == amount)
                     return true;
             }
             return false;
@@ -145,8 +145,9 @@ namespace TestMarketBackend.Acceptance
         public void SuccessfulProductKeeping(Func<int> userId, Func<int> storeId, Func<int> productId, int amount)
         {
             Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
-
             Assert.IsTrue(!response.IsErrorOccured());
+
+            // ReopenMarket();
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(userId());
 
@@ -171,16 +172,14 @@ namespace TestMarketBackend.Acceptance
         public void FailedProductKeeping(Func<int> userId, Func<int> storeId, Func<int> productId, int amount)
         {
             Response<ServiceCart> cartResponseBefore = buyerFacade.GetCart(userId());
-
             Response<bool> response = buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
-
             Assert.IsTrue(response.IsErrorOccured());
 
-            Response<ServiceCart> cartResponseAfter = buyerFacade.GetCart(userId());
+            // ReopenMarket();
 
+            Response<ServiceCart> cartResponseAfter = buyerFacade.GetCart(userId());
             ServiceCart cartBefore = cartResponseBefore.Value;
             ServiceCart cartAfter = cartResponseAfter.Value;
-
             Assert.IsTrue(cartBefore.Equals(cartAfter));
         }
 
@@ -226,6 +225,9 @@ namespace TestMarketBackend.Acceptance
 
             Response<bool> removeResponse = buyerFacade.RemoveProductFromCart(userId(), storeId(), productId());
 
+            // is also on guests so not running the next line
+            // ReopenMarket(); 
+
             cartResponse = buyerFacade.GetCart(userId());
             Assert.IsFalse(cartResponse.IsErrorOccured());
             ServiceCart cartAfter = cartResponse.Value;
@@ -252,6 +254,8 @@ namespace TestMarketBackend.Acceptance
             buyerFacade.AddProdcutToCart(userId(), storeId(), productId(), amount);
 
             buyerFacade.changeProductAmountInCart(userId(), storeId(), productId(), amount / 2);
+
+            // ReopenMarket();
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(userId());
             ServiceCart cart = cartResponse.Value;
@@ -291,7 +295,7 @@ namespace TestMarketBackend.Acceptance
         {
             SetUpShoppingCarts();
             
-            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
 
             Response<ServiceCart> cartResponse = buyerFacade.GetCart(member3Id);
             ServiceCart cart = cartResponse.Value;
@@ -306,7 +310,7 @@ namespace TestMarketBackend.Acceptance
         {
             IList<string> notificationsBefore = member2Notifications.ToList(); 
 
-            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id);
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
             Assert.IsTrue(response.IsErrorOccured());
 
             // member2 is logged in, checking that there wasn't a notification
@@ -320,11 +324,11 @@ namespace TestMarketBackend.Acceptance
             // A user purchases all iphones in the store
             buyerFacade.AddProdcutToCart(member2Id, storeId, iphoneProductId, iphoneProductAmount);
             buyerFacade.AddProdcutToCart(member3Id, storeId, iphoneProductId, iphoneProductAmount);
-            Response<ServicePurchase> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id);
+            Response<ServicePurchase> firstUserResponse = buyerFacade.PurchaseCartContent(member2Id, paymentDetails, supplyDetails);
             Assert.True(!firstUserResponse.IsErrorOccured());
 
             IList<string> notificationsBefore = member3Notifications.ToList();
-            Response<ServicePurchase> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id);
+            Response<ServicePurchase> secondUserResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
 
             Assert.IsTrue(secondUserResponse.IsErrorOccured() );
 
@@ -367,6 +371,71 @@ namespace TestMarketBackend.Acceptance
             ServiceCart cartAfter = response.Value;
 
             Assert.AreEqual(cartBefore, cartAfter); 
+        }
+
+        public static IEnumerable<TestCaseData> DataSucessfulBid
+        {
+            get
+            {
+                yield return new TestCaseData(() => storeId, ()=> iphoneProductId, () => member3Id, 4100);
+                yield return new TestCaseData(() => store2Id, ()=> galaxyProductId, () => member4Id, 4900);
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataSucessfulBid")]
+        public void SucessfulBid(Func<int> getStoreId, Func<int> getProductId, Func<int> getMemberId, double bidPrice)
+        {
+            int storeId = getStoreId();
+            int productId = getProductId();
+            int memberId = getMemberId();
+
+            Response<ServiceStore> storeResponse = buyerFacade.GetStoreInfo(storeId);
+            Assert.IsTrue(!storeResponse.IsErrorOccured());
+            IList<ServiceBid> bidsBefore = storeResponse.Value.Bids;
+
+            Response<int> bidResponse = storeManagementFacade.AddBid(storeId, productId, memberId, bidPrice);
+            Assert.IsTrue(!bidResponse.IsErrorOccured());
+
+            // Checking that the bid actually got added to the store
+            storeResponse = buyerFacade.GetStoreInfo(storeId);
+            Assert.IsTrue(!storeResponse.IsErrorOccured());
+            IList<ServiceBid> bidsAfter = storeResponse.Value.Bids;
+
+            bidsBefore.Add(new ServiceBid(storeId, productId, memberId, bidPrice));
+            Assert.AreEqual(bidsBefore, bidsAfter);
+        }
+
+        public static IEnumerable<TestCaseData> DataFailedBid
+        {
+            get
+            {
+                yield return new TestCaseData(() => storeId, () => -1, () => member3Id, 4100);
+                yield return new TestCaseData(() => store2Id, () => galaxyProductId, () => member4Id, -1);
+            }
+        }
+
+        [Test]
+        [TestCaseSource("DataFailedBid")]
+        public void FailedBid(Func<int> getStoreId, Func<int> getProductId, Func<int> getMemberId, double bidPrice)
+        {
+            int storeId = getStoreId();
+            int productId = getProductId();
+            int memberId = getMemberId();
+
+            Response<ServiceStore> storeResponse = buyerFacade.GetStoreInfo(storeId);
+            Assert.IsTrue(!storeResponse.IsErrorOccured());
+            IList<ServiceBid> bidsBefore = storeResponse.Value.Bids;
+
+            Response<int> bidResponse = storeManagementFacade.AddBid(storeId, productId, memberId, bidPrice);
+            Assert.IsTrue(bidResponse.IsErrorOccured());
+
+            // Checking that the bid actually got added to the store
+            storeResponse = buyerFacade.GetStoreInfo(storeId);
+            Assert.IsTrue(!storeResponse.IsErrorOccured());
+            IList<ServiceBid> bidsAfter = storeResponse.Value.Bids;
+
+            Assert.AreEqual(bidsBefore, bidsAfter);
         }
 
         /*

@@ -15,9 +15,9 @@ namespace MarketBackend.ServiceLayer.ServiceDTO
         public bool LoggedIn { get;  }
         
         // need to change that when adding fields to member
-        public ServiceMember(int memberId, Member m)
+        public ServiceMember(Member m)
         {
-            Id = memberId;
+            Id = m.Id;
             UserName = m.Username;
             LoggedIn = m.LoggedIn;
         }

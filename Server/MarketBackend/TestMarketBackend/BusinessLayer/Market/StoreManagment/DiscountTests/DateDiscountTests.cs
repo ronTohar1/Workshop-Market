@@ -24,6 +24,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.DiscountTests
         [SetUp]
         public void setDates()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             DateTime date = DateTime.Now;
 
             discount1 = 20;

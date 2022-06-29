@@ -1,59 +1,54 @@
-import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { serverRegister } from "../services/BuyersService";
-import { useNavigate } from "react-router-dom";
-import { pathLogin } from "../Paths";
+import * as React from "react"
+import Avatar from "@mui/material/Avatar"
+import Button from "@mui/material/Button"
+import CssBaseline from "@mui/material/CssBaseline"
+import TextField from "@mui/material/TextField"
+import FormControlLabel from "@mui/material/FormControlLabel"
+import Checkbox from "@mui/material/Checkbox"
+import Link from "@mui/material/Link"
+import Paper from "@mui/material/Paper"
+import Grid from "@mui/material/Grid"
+import Box from "@mui/material/Box"
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import Typography from "@mui/material/Typography"
+import Container from "@mui/material/Container"
+import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { serverRegister } from "../services/BuyersService"
+import { useNavigate } from "react-router-dom"
+import { pathHome, pathLogin } from "../Paths"
+import HomeIcon from "@mui/icons-material/Home"
 
-const theme = createTheme();
+const theme = createTheme()
 const backgroundImages = [
   "https://images.unsplash.com/photo-1595853035070-59a39fe84de3",
-];
+]
 
 const randBackgroundImage = () =>
-  backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
-
-
+  backgroundImages[Math.floor(Math.random() * backgroundImages.length)]
 
 export default function Register() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
     const username = data.get("username")?.toString()
     const password = data.get("password")?.toString()
-    try{
-      const serverResponse =  await serverRegister(username,password)
-      // alert("Error occured? " + serverResponse.errorOccured);
-      // alert("Error is: " + serverResponse.errorMessage);
-      if (serverResponse.errorOccured)
-        alert(serverResponse.errorMessage)
-      else{
+    try {
+      const serverResponse = await serverRegister(username, password)
+      if (serverResponse.errorOccured) alert(serverResponse.errorMessage)
+      else {
         alert(`${username} Registered sucessfully!`)
         navigate(pathLogin)
       }
-    }
-    catch(e){
+    } catch (e) {
       alert("Error occured! Whoops")
     }
-  };
+  }
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container component='main' sx={{ height: "100vh" }}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
@@ -62,51 +57,65 @@ export default function Register() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-            }}>
+            }}
+          >
             <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component='h1' variant='h5'>
+            <Typography component="h1" variant="h5">
               Register
             </Typography>
             <Box
-              component='form'
+              component="form"
               noValidate
               onSubmit={handleSubmit}
-              sx={{ mt: 3 }}>
+              sx={{ mt: 3 }}
+            >
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
                     required
                     fullWidth
-                    id='username'
-                    label='Username'
-                    name='username'
-                    autoComplete='username'
+                    id="username"
+                    label="Username"
+                    name="username"
+                    autoComplete="username"
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     required
                     fullWidth
-                    name='password'
-                    label='Password'
-                    type='password'
-                    id='password'
-                    autoComplete='new-password'
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="new-password"
                   />
                 </Grid>
               </Grid>
               <Button
-                type='submit'
+                type="submit"
                 fullWidth
-                variant='contained'
-                sx={{ mt: 3, mb: 2, bgcolor: 'secondary.main'}}>
+                variant="contained"
+                sx={{ mt: 3, mb: 2, bgcolor: "secondary.main" }}
+              >
                 Register
               </Button>
-              <Grid container justifyContent='flex-end'>
+              <Grid container justifyContent="flex-end">
+                <Grid item xs>
+                  <Button
+                    variant="contained"
+                    href={pathHome}
+                    color="secondary"
+                    // sx={{ position: "absolute", top: "0px", right: "0px" }}
+                    endIcon={<HomeIcon />}
+                  >
+                    Home
+                  </Button>
+                </Grid>
                 <Grid item>
-                  <Link href='/login' variant='body2'>
+                  <Link href="/login" variant="body2">
                     Already have an account? Sign in
                   </Link>
                 </Grid>
@@ -132,5 +141,5 @@ export default function Register() {
         />
       </Grid>
     </ThemeProvider>
-  );
+  )
 }

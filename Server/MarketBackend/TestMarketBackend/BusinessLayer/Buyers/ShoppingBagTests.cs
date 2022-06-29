@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Moq;
 using MarketBackend.BusinessLayer.Market.StoreManagment;
 using MarketBackend.BusinessLayer.Buyers;
+using MarketBackend.BusinessLayer;
 
 namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 {
@@ -24,6 +25,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [SetUp]
         public void Setup()
         {
+            DataManagersMock.InitMockDataManagers();
             var products = new Dictionary<ProductInBag, int>();
             products.Add(pInBag_1, 1);
             products.Add(pInBag_2, 2);
@@ -38,14 +40,13 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             {
                 yield return new TestCaseData(pInBag_1, 5, 6);
                 yield return new TestCaseData(pInBag_2, 1, 3);
-                yield return new TestCaseData(pInBag_2, 0, 2);
             }
         }
         [Test]
         [TestCaseSource("Data_TestAddProductToBag_Pass")]
         public void TestAddProductToBag_Pass(ProductInBag product, int amount, int expectedAmount)
         {
-            Assert.DoesNotThrow(() => bag.AddProductToBag(product, amount));
+            Assert.DoesNotThrow(() => bag.AddProductToBag(product, amount, 0, false, null, null));
             Assert.True(bag.ProductsAmounts.ContainsKey(product));
             Assert.AreEqual(bag.ProductsAmounts[product], expectedAmount);  
         }
@@ -57,13 +58,14 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             {
                 yield return new TestCaseData(pInBag_1, -1);
                 yield return new TestCaseData(null, 1);
+                yield return new TestCaseData(pInBag_2, 0);
             }
         }
         [Test]
         [TestCaseSource("Data_TestAddProductToBag_Fail")]
         public void TestAddProductToBag_Fail(ProductInBag product, int amount)
         {
-            Assert.Catch<ArgumentException>(() => bag.AddProductToBag(product, amount));
+            Assert.Catch<Exception>(() => bag.AddProductToBag(product, amount, 0, false, null, null));
         }
 
 
@@ -80,12 +82,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCaseSource("Data_ChangeProductAmount_Pass")]
         public void TestChangeProductAmount_Pass(ProductInBag product, int amount)
         {
-            bag.ChangeProductAmount(product, amount);
+            bag.ChangeProductAmount(product, amount, null);
 
             Assert.AreEqual(bag.ProductsAmounts[product], amount);
         }
 
-        public static IEnumerable<TestCaseData> Data_ChangeProductAmount_ToZero_Pass
+        public static IEnumerable<TestCaseData> Data_ChangeProductAmount_ToZero
         {
             get
             {
@@ -93,12 +95,10 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             }
         }
         [Test]
-        [TestCaseSource("Data_ChangeProductAmount_ToZero_Pass")]
-        public void TestChangeProductAmount_ToZero_Pass(ProductInBag product)
+        [TestCaseSource("Data_ChangeProductAmount_ToZero")]
+        public void TestChangeProductAmount_ToZeros(ProductInBag product)
         {
-            bag.ChangeProductAmount(product, 0);
-
-            Assert.IsFalse(bag.ProductsAmounts.ContainsKey(product));
+            Assert.Throws<MarketException>(() => bag.ChangeProductAmount(product, 0, null));
         }
 
 
@@ -115,7 +115,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCaseSource("Data_ChangeProductAmount_Fail")]
         public void TestChangeProductAmount_Fail(ProductInBag product, int amount)
         {
-            Assert.Catch<ArgumentException>(() => bag.ChangeProductAmount(product, amount));
+            Assert.Catch<Exception>(() => bag.ChangeProductAmount(product, amount, null));
         }
 
 
@@ -134,7 +134,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         public void TestChangeProductAmount_Pass(ProductInBag product)
         {
             Assert.IsTrue(bag.ProductsAmounts.ContainsKey(product));
-            bag.RemoveProduct(product);
+            bag.RemoveProduct(product, 0, false);
             Assert.IsFalse(bag.ProductsAmounts.ContainsKey(product));
         }
 
@@ -149,7 +149,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         [TestCaseSource("Data_RemoveProduct_Fail")]
         public void TestChangeProductAmount_Fail(ProductInBag product)
         {
-            Assert.Throws<ArgumentException>(() => bag.RemoveProduct(product));
+            Assert.Throws<ArgumentException>(() => bag.RemoveProduct(product, 0, false));
         }
 
 

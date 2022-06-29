@@ -31,6 +31,46 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(response.IsErrorOccured());
         }
 
+        public static IEnumerable<TestCaseData> DataFailedIsAdmin
+        {
+            get
+            {
+                yield return new TestCaseData(new Func<int>(() => member1Id));
+                yield return new TestCaseData(new Func<int>(() => member2Id));
+            }
+        }
+
+        // r 6.4
+        [Test]
+        [TestCaseSource("DataFailedIsAdmin")]
+        public void FailedIsAdmin(Func<int> adminId)
+        {
+            Response<bool> response = adminFacade.IsAdmin(adminId());
+
+            Assert.IsTrue(!response.IsErrorOccured());
+            Assert.IsFalse(response.Value);
+        }
+
+        public static IEnumerable<TestCaseData> DataSuccessIsAdmin
+        {
+            get
+            {
+                yield return new TestCaseData(new Func<int>(() => adminId));
+            }
+        }
+
+        // r 6.4
+        [Test]
+        [TestCaseSource("DataSuccessIsAdmin")]
+        public void SuccessIsAdmin(Func<int> adminId)
+        {
+            Response<bool> response = adminFacade.IsAdmin(adminId());
+
+            Assert.IsTrue(!response.IsErrorOccured());
+            Assert.IsTrue(response.Value);
+        }
+
+
         // r 6.4
         [Test]
         public void SuccessfulGetStorePurchaseHistory()
@@ -45,8 +85,10 @@ namespace TestMarketBackend.Acceptance
             // now check that after purchase that it is returned
 
             SetUpShoppingCarts();
-            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id);
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
             Assert.IsTrue(!purchaseResponse.IsErrorOccured());
+
+            ReopenMarket();
 
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.IsErrorOccured());
@@ -91,8 +133,10 @@ namespace TestMarketBackend.Acceptance
             // now check that after purchase that it is returned
 
             SetUpShoppingCarts();
-            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id);
-            Assert.IsTrue(!purchaseResponse.IsErrorOccured()); 
+            Response<ServicePurchase> purchaseResponse = buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
+            Assert.IsTrue(!purchaseResponse.IsErrorOccured());
+
+            ReopenMarket();
 
             response = adminFacade.GetStorePurchaseHistory(adminId, storeId);
             Assert.IsTrue(!response.IsErrorOccured());
@@ -313,8 +357,9 @@ namespace TestMarketBackend.Acceptance
             bool memberExsited = memberExistsResponse.Value;
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
-
             Assert.IsTrue(response.IsErrorOccured());
+
+            ReopenMarket();
 
             // checking that member still exists if existed before
             memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
@@ -330,8 +375,9 @@ namespace TestMarketBackend.Acceptance
             int memberToRemoveId = member1Id; 
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId, memberToRemoveId);
-
             Assert.IsTrue(!response.IsErrorOccured());
+
+            ReopenMarket();
 
             // checking that member does not exist
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
@@ -359,11 +405,13 @@ namespace TestMarketBackend.Acceptance
         [TestCaseSource("DataSuccessfulRemoveIfWithNoRolesHasRoles")]
         public void SuccessfulRemoveIfWithNoRolesHasRoles(Func<int> requestingId, Func<int> memberToRemoveId)
         {
-            IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemoveId());
+            int memberToRemove = memberToRemoveId();
+            IDictionary<int, Role> rolesInStoresBefore = GetRolesInStores(memberToRemove);
 
             Response<bool> response = adminFacade.RemoveMemberIfHasNoRoles(requestingId(), memberToRemoveId());
-
-            Assert.IsTrue(!response.IsErrorOccured());
+            Assert.IsTrue(response.IsErrorOccured());
+            
+            ReopenMarket();
 
             // checking that member still exists
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId());
@@ -400,6 +448,8 @@ namespace TestMarketBackend.Acceptance
 
             Assert.IsTrue(Exactly1ResponseIsSuccessful(responses));
 
+            ReopenMarket();
+
             // checking that member does not exist
             Response<bool> memberExistsResponse = adminFacade.MemberExists(memberToRemoveId);
             Assert.IsTrue(!memberExistsResponse.IsErrorOccured());
@@ -422,7 +472,7 @@ namespace TestMarketBackend.Acceptance
         [TestCaseSource("DataFailedGetLoggedInMembers")]
         public void FailedGetLoggedInMembers(Func<int> requestingId)
         {
-            Response<IList<int>> response = adminFacade.GetLoggedInMembers(requestingId()); 
+            Response<IList<ServiceMember>> response = adminFacade.GetLoggedInMembers(requestingId()); 
             
             Assert.IsTrue(response.IsErrorOccured());
         }
@@ -433,10 +483,10 @@ namespace TestMarketBackend.Acceptance
         {
             List<int> loggedInMembers = new List<int> { member2Id, member3Id, member5Id };
 
-            Response<IList<int>> response = adminFacade.GetLoggedInMembers(adminId);
+            Response<IList<ServiceMember>> response = adminFacade.GetLoggedInMembers(adminId);
             Assert.IsTrue(!response.IsErrorOccured());
 
-            Assert.IsTrue(SameElements(loggedInMembers, response.Value));
+            Assert.IsTrue(SameElements(loggedInMembers, response.Value.Select(mem=>mem.Id).ToList()));
         }
 
         public static IEnumerable<TestCaseData> DataFailedGetMemberInfo
@@ -483,6 +533,57 @@ namespace TestMarketBackend.Acceptance
             Assert.IsTrue(!response.IsErrorOccured());
 
             Assert.AreEqual(expectedMember(), response.Value); 
+        }
+
+        public static IEnumerable<TestCaseData> DataFailedGetDailyCut
+        {
+            get
+            {
+                // requesting is not an admin
+                yield return new TestCaseData(() => -1, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 23));
+                yield return new TestCaseData(() => guest1Id, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 23));
+                yield return new TestCaseData(() => member1Id, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 23));
+                yield return new TestCaseData(() => member2Id, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 23));
+                // from date > to date
+                yield return new TestCaseData(() => adminId, () => new DateTime(2022, 7, 23), () => new DateTime(2022, 6, 23));
+                // yield return new TestCaseData(() => adminId, () => new DateTime(2022, 6, 23), () => new DateTime(2021, 6, 23));
+                yield return new TestCaseData(() => adminId, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 22));
+                // from date > current date
+                yield return new TestCaseData(() => adminId, () => DateTime.Today.AddDays(2), () => DateTime.Today.AddDays(1));
+                yield return new TestCaseData(() => adminId, () => DateTime.Today.AddMonths(2), () => DateTime.Today.AddMonths(1));
+            }
+        }
+
+        // r 5.6
+        [Test]
+        [TestCaseSource("DataFailedGetDailyCut")]
+        public void FailedGetDailyCut(Func<int> requestingId, Func<DateTime> fromDate, Func<DateTime> toDate)
+        {
+            Response<int[]> response = adminFacade.GetDailyVisitores(requestingId(), fromDate(), toDate());
+
+            Assert.IsTrue(response.IsErrorOccured());
+        }
+
+        public static IEnumerable<TestCaseData> DataSuccessGetDailyCut
+        {
+            get
+            {
+                yield return new TestCaseData(() => adminId, () => DateTime.Today, () => DateTime.Today);
+                yield return new TestCaseData(() => adminId, () => DateTime.Today.AddDays(-1), () => DateTime.Today);
+            }
+        }
+
+        // r 5.6
+        [Test]
+        [TestCaseSource("DataSuccessGetDailyCut")]
+        public void SuccessGetDailyCut(Func<int> requestingId, Func<DateTime> fromDate, Func<DateTime> toDate)
+        {
+            Response<int[]> response = adminFacade.GetDailyVisitores(requestingId(), fromDate(), toDate());
+
+            Assert.IsTrue(!response.IsErrorOccured() && response.Value.Length==5);
+
+            Assert.IsTrue(response.Value[4]>=4 && response.Value[3] >= 3); // in the set up of the acceptance testing there are at least 7 guests
+                                                                           //from which only 3 login
         }
     }
 }

@@ -12,6 +12,12 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
 {
     internal class BeforeHourTests
     {
+        [SetUp]
+        public void MockDataLayer()
+        {
+            DataManagersMock.InitMockDataManagers();
+        }
+
         [Test]
         public void TestBeforeHour()
         {
@@ -19,7 +25,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
 
             BeforeHourRestriction res = new BeforeHourRestriction(hour);
 
-            Assert.IsTrue(!res.IsSatisfied(It.IsAny<ShoppingBag>()));
+            Assert.IsTrue(res.IsSatisfied(It.IsAny<ShoppingBag>()));
 
             res.hour = hour - 1;
             Assert.IsTrue(res.IsSatisfied(It.IsAny<ShoppingBag>()));

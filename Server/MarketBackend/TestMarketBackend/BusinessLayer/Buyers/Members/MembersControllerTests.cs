@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 using MarketBackend.BusinessLayer.Buyers.Members;
 using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer;
+using MarketBackend.DataLayer.DataManagers.DataManagersInherentsForTesting;
+using MarketBackend.DataLayer.DataDTOs.Buyers.Carts;
+using MarketBackend.DataLayer.DataManagers;
+using MarketBackend.DataLayer.DataDTOs.Buyers;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement;
 
 namespace TestMarketBackend.BusinessLayer.Buyers.Members
 {
@@ -22,6 +27,7 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Members
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers();
             membersController = new MembersController();
         }
 

@@ -1,8 +1,10 @@
-﻿using MarketBackend.ServiceLayer;
+﻿using MarketBackend.BusinessLayer.Market.StoreManagment;
+using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
-using Microsoft.AspNetCore.Http;
+using MarketBackend.SystemSettings;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Requests;
+using WebSocketSharp.Server;
 
 namespace WebAPI.Controllers
 {
@@ -11,10 +13,34 @@ namespace WebAPI.Controllers
     public class BuyersController : Controller
     {
         private readonly IBuyerFacade buyerFacade;
+        private readonly IAdminFacade adminFacade;
+        private readonly IStoreManagementFacade storeManagementFacade;
+        private WebSocketServer notificationServer;
+        private WebSocketServer logsServer;
+        private string logsPath = "/logs";
+        private static int adminId = -1;
+        private static IDictionary<int, string> buyerIdToRelativeNotificationPath = new Dictionary<int, string>();
+        private static IDictionary<string, IList<string>> buyerUnsentMessages = new Dictionary<string, IList<string>>();
+        private class NotificationsService : WebSocketBehavior
+        {
+            
+        }
 
-        public BuyersController(IBuyerFacade buyerFacade) => this.buyerFacade = buyerFacade;
+        public class logsService : WebSocketBehavior
+        {
 
-        [HttpPost]
+        }
+
+        public BuyersController(IBuyerFacade buyerFacade, IAdminFacade adminFacade, IStoreManagementFacade storeManagementFacade, WebSocketServer notificationServer, WebSocketServer logsServer)
+        {
+            this.buyerFacade = buyerFacade;
+            this.adminFacade = adminFacade;
+            this.storeManagementFacade = storeManagementFacade;
+            this.notificationServer = notificationServer;
+            this.logsServer = logsServer;
+        }
+
+        [HttpPost("GetBuyerCart")]
         public ActionResult<Response<ServiceCart>> GetCart([FromBody] UserRequest request)
         {
             Response<ServiceCart> response = buyerFacade.GetCart(request.UserId);
@@ -59,10 +85,24 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PurchaseCart")]
-        public ActionResult<Response<bool>> PurchaseCartContent([FromBody] UserRequest request)
+        public ActionResult<Response<ServicePurchase>> PurchaseCartContent([FromBody] PurchaseRequest request)
         {
-            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(request.UserId);
+            ServicePaymentDetails paymentDetails = new ServicePaymentDetails(request.CardNumber, request.Month, request.Year, request.Holder, request.Ccv, request.Id);
+            ServiceSupplyDetails supplyDetails = new ServiceSupplyDetails(request.ReceiverName, request.Address, request.City, request.Country, request.Zip);
+            Response<ServicePurchase> response = buyerFacade.PurchaseCartContent(request.UserId, paymentDetails, supplyDetails);
 
+            if (response.IsErrorOccured())
+                return BadRequest(response);
+
+            return Ok(response);
+        }
+
+        [HttpPost("PurchaseBid")]
+        public ActionResult<Response<bool>> PurchaseBid([FromBody] PurchaseBidRequest request)
+        {
+            ServicePaymentDetails paymentDetails = new ServicePaymentDetails(request.CardNumber, request.Month, request.Year, request.Holder, request.Ccv, request.Id);
+            ServiceSupplyDetails supplyDetails = new ServiceSupplyDetails(request.ReceiverName, request.Address, request.City, request.Country, request.Zip);
+            Response<bool> response = buyerFacade.PurchaseBid(request.StoreId, request.BidId, request.UserId, paymentDetails, supplyDetails);
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
@@ -77,6 +117,8 @@ namespace WebAPI.Controllers
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
+            logsServer.WebSocketServices[logsPath].Sessions.Broadcast($"+Guest");
+
             return Ok(response);
         }
 
@@ -88,17 +130,19 @@ namespace WebAPI.Controllers
             if (response.IsErrorOccured())
                 return BadRequest(response);
 
+            logsServer.WebSocketServices[logsPath].Sessions.Broadcast("-Guest");
+
             return Ok(response);
         }
 
         [HttpPost("StoreInfo")]
-        public ActionResult<Response<bool>> GetStoreInfo([FromBody] StoreRequest request)
+        public ActionResult<Response<ServiceStore>> GetStoreInfo([FromBody] StoreRequest request)
         {
             Response<ServiceStore> response;
-            if (request.StoreId > 0)
-                response = buyerFacade.GetStoreInfo(request.StoreId);
-            else
-                response = buyerFacade.GetStoreInfo(request.StoreName);
+            //if (request.StoreId > 0)
+            response = buyerFacade.GetStoreInfo(request.StoreId);
+            //else if (request.StoreName != null)
+            //response = buyerFacade.GetStoreInfo(request.StoreName);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
@@ -106,11 +150,12 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+
         [HttpPost("SerachProducts")]
-        public ActionResult<Response<bool>> ProductsSearch([FromBody] SearchProductsRequest request)
+        public ActionResult<Response<IDictionary<int, IList<ServiceProduct>>>> ProductsSearch([FromBody] SearchProductsRequest request)
         {
             Response<IDictionary<int, IList<ServiceProduct>>> response =
-                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword);
+                buyerFacade.ProductsSearch(request.StoreName, request.ProductName, request.Category, request.Keyword, request.ProductId, request.ProductIds, request.memberInRole, request.storesWithProductsThatPassedFilter);
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
@@ -129,17 +174,135 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpPost("GetUnsentMessages")]
+        public ActionResult<Response<IList<string>>> GetUnsentMessage([FromBody] UsernameRequest request)
+        {
+            string username = request.Username;
+            if (buyerUnsentMessages.ContainsKey(username))
+            {
+                IList<string> msgsCopy = buyerUnsentMessages[username].Select(e => e).ToList();
+                var actionResult = Ok(new Response<IList<string>>(msgsCopy));
+                buyerUnsentMessages[username].Clear();
+                return actionResult;
+            }
+            return Ok(new Response<IList<string>>(new List<string>()));
+        }
+
+        private void AddUnsentMessage(string username, IList<string> messages)
+        {
+            buyerUnsentMessages[username] = messages;
+        }
+
+        [HttpPost("AdminIdentify")]
+        public ActionResult<Response<bool>> AdminIdentify([FromBody] UserRequest request)
+        {
+            adminId = request.UserId;
+            Response<bool> isAdmin = adminFacade.IsAdmin(adminId);
+            if (isAdmin.IsErrorOccured())
+            {
+                return BadRequest(isAdmin);
+            }
+            return Ok(isAdmin);
+        }
+
         [HttpPost("Login")]
         public ActionResult<Response<int>> Login([FromBody] AuthenticationRequestWithPort request)
         {
+            string relativeServicePath = "/" + request.UserName + "-notifications";
+            try
+            {
+                if (notificationServer.WebSocketServices[relativeServicePath] == null)
+                    notificationServer.AddWebSocketService<NotificationsService>(relativeServicePath);
+            }
+            catch (ArgumentException ex)
+            {
+                return new Response<int>("Sorry, but it seems that we cant connect you");
+            } // in case the client tries to login again
 
-            Response<int> response  = buyerFacade.Login(request.UserName, request.Password,
-                (msgs) => { return false; });
+            Func<string[], bool> notifier = (msgs) =>
+            {
+                string username = request.UserName;
+
+                // Try send, if not - add to unsent messages
+                if (notificationServer.WebSocketServices[relativeServicePath] == null || notificationServer.WebSocketServices[relativeServicePath].Sessions.Count < 1)
+                {
+                    IList<string> unsentMsgs = new List<string>();
+                    if (buyerUnsentMessages.ContainsKey(username))
+                        unsentMsgs = buyerUnsentMessages[username];
+
+                    // Adding new unsent messages
+                    foreach (string msg in msgs)
+                        unsentMsgs.Add(msg);
+
+                    //this.buyerUnsentMessages[username] = unsentMsgs;
+                    AddUnsentMessage(username, unsentMsgs);
+                    return true; // So msgs delete on member msgs queue
+                }
+
+                foreach (string msg in msgs)
+                    notificationServer.WebSocketServices[relativeServicePath].Sessions.Broadcast(msg);
+                return true;
+            };
+            Response<int> response = buyerFacade.Login(request.UserName, request.Password, notifier);
 
             if (response.IsErrorOccured())
+            {
+                notificationServer.RemoveWebSocketService(relativeServicePath);
                 return BadRequest(response);
+            }
+
+            buyerIdToRelativeNotificationPath.Add(response.Value, relativeServicePath);
+
+            logsServer.WebSocketServices[logsPath].Sessions.Broadcast("-Guest");
+            string role = GetMembersRole(response.Value);
+            logsServer.WebSocketServices[logsPath].Sessions.Broadcast("+" + role);
 
             return Ok(response);
+        }
+
+        private string GetMembersRole(int memberId)
+        {
+            Response<bool> isAdmin = adminFacade.IsAdmin(memberId);
+
+            if (isAdmin.IsErrorOccured())
+            {
+                return "";
+            }
+
+            if (isAdmin.Value)
+            {
+                return "Admin";
+            }
+
+            Response<IDictionary<int, IList<ServiceProduct>>> owner =
+            buyerFacade.ProductsSearch(null, null, null, null, null, null, new ServiceMemberInRole(memberId, Role.Owner), false);
+
+            if (owner.IsErrorOccured())
+            {
+                return string.Empty;
+            }
+
+            ICollection<int> stores = owner.Value.Keys;
+            if (stores.Count > 0)
+            {
+                return "Owner";
+            }
+
+            Response<IDictionary<int, IList<ServiceProduct>>> manager =
+            buyerFacade.ProductsSearch(null, null, null, null, null, null, new ServiceMemberInRole(memberId, Role.Manager), false);
+
+            if (manager.IsErrorOccured())
+            {
+                return string.Empty;
+            }
+
+            stores = manager.Value.Keys;
+            if (stores.Count > 0)
+            {
+                return "Manager";
+            }
+
+            return "Member";
         }
 
         [HttpPost("Logout")]
@@ -149,6 +312,15 @@ namespace WebAPI.Controllers
 
             if (response.IsErrorOccured())
                 return BadRequest(response);
+
+            // Clearing the connection
+            if (buyerIdToRelativeNotificationPath.ContainsKey(request.UserId))
+            {
+                notificationServer.RemoveWebSocketService(buyerIdToRelativeNotificationPath[request.UserId]);
+                buyerIdToRelativeNotificationPath.Remove(request.UserId);
+            }
+
+            logsServer.WebSocketServices[logsPath].Sessions.Broadcast("-" + GetMembersRole(request.UserId));
 
             return Ok(response);
         }

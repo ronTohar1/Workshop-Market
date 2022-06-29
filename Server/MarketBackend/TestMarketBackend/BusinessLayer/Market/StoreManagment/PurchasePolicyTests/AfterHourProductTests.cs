@@ -25,6 +25,8 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
         [SetUp]
         public void SetUp()
         {
+            DataManagersMock.InitMockDataManagers(); 
+
             storeId = 1;
             pid1 = 1;
             pid2 = 2;
@@ -50,7 +52,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment.PurchasePolicyTe
             int hour = DateTime.Now.Hour;
             AfterHourProductRestriction res = new AfterHourProductRestriction(hour, pid1, amount1);
 
-            Assert.IsTrue(res.IsSatisfied(sbag.Object));
+            Assert.IsTrue(!res.IsSatisfied(sbag.Object));
 
             res.hour += 1;
 

@@ -3,9 +3,13 @@ using System;
 using NLog;
 using SystemLog;
 using WebAPI.Controllers;
+using MarketBackend;
 using MarketBackend.ServiceLayer;
 using MarketBackend.ServiceLayer.ServiceDTO;
 using WebAPI;
+using WebSocketSharp.Server;
+using MarketBackend.SystemSettings;
+using static WebAPI.Controllers.BuyersController;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
@@ -13,7 +17,32 @@ namespace MyApp // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            SystemOperator so = new SystemOperator();
+            var appConfig = AppConfigs.GetInstance();
+            WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), appConfig.WebsocketServerPort);
+            
+            WebSocketServer logsServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 4560);
+            logsServer.AddWebSocketService<logsService>("/logs");
+            notificationServer.Start();
+            logsServer.Start();
+            Console.WriteLine($"WS server started on ws://127.0.0.1:{appConfig.WebsocketServerPort}");
+
+            SystemOperator so;
+            if (appConfig.ShouldRunInitFile)
+                so = new();
+            else
+            {
+                Console.WriteLine("Please enter Admin Username:");
+                string username = Console.ReadLine()!;
+                Console.WriteLine("Please enter Admin Password:");
+                string password = Console.ReadLine()!;
+                so = new(username, password, appConfig.ShouldUpdateDatabase);
+            }
+
+            if (!so.MarketOpen)
+            {
+                Console.WriteLine("Unable to open market successfully. Goodbye...");
+                return;
+            }
 
             //while (!so.MarketOpen)
             //{
@@ -27,10 +56,9 @@ namespace MyApp // Note: actual namespace depends on the project name.
             //}
             //Console.WriteLine("Market opened successfully!");
 
-            Response<int> openResponse = so.OpenMarket("admin", "admin"); // For easier testing
 
-            SetUpExample setup = new SetUpExample(so);
-            setup.SetUp();
+            //SetUpExample setup = new SetUpExample(so);
+            //setup.SetUp();
 
             var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +73,8 @@ namespace MyApp // Note: actual namespace depends on the project name.
             builder.Services.AddSingleton<IBuyerFacade>(_ => so.GetBuyerFacade().Value);
             builder.Services.AddSingleton<IStoreManagementFacade>(_ => so.GetStoreManagementFacade().Value);
             builder.Services.AddSingleton<IAdminFacade>(_ => so.GetAdminFacade().Value);
+            builder.Services.AddSingleton(_ => notificationServer);
+            builder.Services.AddSingleton(_ => logsServer);
 
             builder.Services.AddCors(options =>
             {

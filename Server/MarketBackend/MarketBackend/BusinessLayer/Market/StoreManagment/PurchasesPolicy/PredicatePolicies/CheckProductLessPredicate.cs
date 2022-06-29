@@ -1,5 +1,7 @@
 ﻿using MarketBackend.BusinessLayer.Buyers;
 using MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.PurchaseInterfaces;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PredicatePolicies;
+using MarketBackend.DataLayer.DataDTOs.Market.StoreManagement.PurchasesPolicy.PurchasesInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,15 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Pred
             this.amount = amount;
         }
 
+        public static CheckProductLessPredicate DataCheckProductLessPredicateToCheckProductLessPredicate(DataCheckProductLessPredicate dataCheckProductLessPredicate)
+        {
+            // CheckProductLessPredicate or CheckProductMoreEqualsPredicate
+
+            if (dataCheckProductLessPredicate is DataCheckProductMoreEqualsPredicate)
+                return CheckProductMoreEqualsPredicate.DataCheckProductMoreEqualsPredicateToCheckProductMoreEqualsPredicate((DataCheckProductMoreEqualsPredicate)dataCheckProductLessPredicate);
+            return new CheckProductLessPredicate(dataCheckProductLessPredicate.ProductId, dataCheckProductLessPredicate.Amount); 
+        }
+
         //return true if the bag has less product than the amount
         public virtual bool IsSatisfied(ShoppingBag bag)
         {
@@ -28,6 +39,21 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment.PurchasesPolicy.Pred
                     return bag.ProductsAmounts[productInBag] < amount;
             }
             return true;
+        }
+
+        public virtual DataPredicateExpression PredicateExpressionToDataPredicateExpression()
+        {
+            return new DataCheckProductLessPredicate()
+            {
+                ProductId = this.productId,
+                Amount = this.amount
+            };
+        }
+
+        public virtual void RemoveFromDB(DataPredicateExpression dpe)
+        {
+            DataCheckProductLessPredicate dcplp = (DataCheckProductLessPredicate)dpe;
+            //TODO myself
         }
     }
 }

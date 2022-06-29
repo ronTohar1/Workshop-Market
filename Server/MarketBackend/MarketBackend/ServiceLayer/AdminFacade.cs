@@ -144,23 +144,44 @@ namespace MarketBackend.ServiceLayer
             }
         }
 
-        public Response<IList<int>> GetLoggedInMembers(int requestingId)
+        public Response<bool> IsAdmin(int adminId)
         {
             try
             {
-                IList<int> res = adminManager.GetLoggedInMembers(requestingId);
+                bool res = adminManager.ContainAdmin(adminId);
+                logger.Info($"IsAdmin was called with id = {adminId}");
+                return new Response<bool>(res);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: IsAdmin ,parameters [adminId = {adminId}]");
+                return new Response<bool>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: IsAdmin ,parameters [adminId = {adminId}]");
+                return new Response<bool>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+        public Response<IList<ServiceMember>> GetLoggedInMembers(int requestingId)
+        {
+            try
+            {
+                IDictionary<int, Member> members = adminManager.GetLoggedInMembers(requestingId);
+                IList<ServiceMember> res = members.Keys.Select(key => new ServiceMember(members[key])).ToList();
                 logger.Info($"GetLoggedInMembers was called with parameters [requestingId = {requestingId}]");
-                return new Response<IList<int>>(res);
+                return new Response<IList<ServiceMember>>(res);
             }
             catch (MarketException mex)
             {
                 logger.Error(mex, $"method: GetLoggedInMembers, parameters: [requestingId = {requestingId}]");
-                return new Response<IList<int>>(mex.Message);
+                return new Response<IList<ServiceMember>>(mex.Message);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"method: GetLoggedInMembers, parameters: [requestingId = {requestingId}]");
-                return new Response<IList<int>>("Sorry, an unexpected error occured. Please try again");
+                return new Response<IList<ServiceMember>>("Sorry, an unexpected error occured. Please try again");
             }
         }
 
@@ -172,7 +193,7 @@ namespace MarketBackend.ServiceLayer
                 if (member == null)
                     return new Response<ServiceMember>($"There isn't such a member with id {memberId}");
                 logger.Info($"GetLoggedInMembers was called with parameters [requestingId = {requestingId}, memberId = {memberId}]");
-                return new Response<ServiceMember>(new ServiceMember(memberId,member));
+                return new Response<ServiceMember>(new ServiceMember(member));
             }
             catch (MarketException mex)
             {
@@ -183,6 +204,112 @@ namespace MarketBackend.ServiceLayer
             {
                 logger.Error(ex, $"method: GetLoggedInMembers, parameters: [requestingId = {requestingId}, memberId = {memberId}]");
                 return new Response<ServiceMember>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+        public Response<double> GetSystemDailyProfit(int memberId)
+        {
+            try
+            {
+                double total = adminManager.GetSystemDailyProfit(memberId);
+                logger.Info($"GetSystemDailyProfit was called with parameters: [memberId = {memberId}]");
+                return new Response<double>(total);
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetSystemDailyProfit, parameters: [memberId = {memberId}]");
+                return new Response<double>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetSystemDailyProfit, parameters: [memberId = {memberId}]");
+                return new Response<double>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+
+        public Response<string> GetEventLogs(int userId)
+        {
+            try
+            {
+                string logs = adminManager.GetEventLogs(userId);
+                logger.Info($"GetEventLogs was called with parameters: [userId = {userId}]");
+                Response<string> output = new Response<string>(logs);
+                if (output.ErrorOccured)
+                {
+                    output.ErrorOccured = false;
+                    output.Value = output.ErrorMessage;
+                    output.ErrorMessage = "";
+                }
+                return output;
+
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetEventLogs, parameters: [userId = {userId}]");
+                return new Response<string>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetEventLogs, parameters: [userId = {userId}]");
+                return new Response<string>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+
+        public Response<string> GetErrorLogs(int userId)
+        {
+            try
+            {
+                string logs = adminManager.GetErrorLogs(userId);
+                logger.Info($"GetErrorLogs was called with parameters: [userId = {userId}]");
+                Response<string> output = new Response<string>(logs);
+                if (output.ErrorOccured)
+                {
+                    output.ErrorOccured = false;
+                    output.Value = output.ErrorMessage;
+                    output.ErrorMessage = "";
+                }
+                return output;
+
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetErrorLogs, parameters: [userId = {userId}]");
+                return new Response<string>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"method: GetErrorLogs, parameters: [userId = {userId}]");
+                return new Response<string>("Sorry, an unexpected error occured. Please try again");
+            }
+        }
+        public Response<int[]> GetDailyVisitores(int memberId, DateTime fromDate, DateTime toDate)
+        {
+            // this function should return the daily cut of visitores in a given interval of dates
+            // the output is an array of size 5 of all the given entries of visitores as follows:
+            // [number_of_admin_visits, number_of_storeOwners_visitors, number_of_managers_without_any_stores_visits,
+            // number_of_simple_members(not manager or store owner), number_of_guests]
+
+            // ** Imporatant ** check that memberId is admin, fromDate<=toDate, and that fromDate<=currentDate
+            try
+            {
+                logger.Info($"GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = {toDate}]");
+                //DateOnly fromOnly = DateOnly.FromDateTime(fromDate);
+                //DateOnly toOnly = DateOnly.FromDateTime(toDate);
+                DateOnly fromOnly = new DateOnly(fromDate.Year, fromDate.Month, fromDate.Day);
+                DateOnly toOnly = new DateOnly(toDate.Year, toDate.Month, toDate.Day);
+
+                return new Response<int[]>(adminManager.GetMarketStatisticsBetweenDates(memberId, fromOnly, toOnly));
+            }
+            catch (MarketException mex)
+            {
+                logger.Error(mex, $"method: GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = {toDate}]");
+                return new Response<int[]>(mex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = {toDate}]");
+                return new Response<int[]>("Sorry, an unexpected error occured. Please try again");
             }
         }
     }

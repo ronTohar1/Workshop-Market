@@ -1,22 +1,75 @@
-import Product from "../DTOs/Product";
-import Response from "./Response";
+import Cart from "../DTOs/Cart"
+import CheckoutDTO from "../DTOs/CheckoutDTO"
+import CheckoutDTOBid from "../DTOs/CheckoutDTOBid"
+import Product from "../DTOs/Product"
+import Purchase from "../DTOs/Purchase"
+import { serverPort } from "../Utils"
+import ClientResponse from "./Response"
 
-export const serverPort = "https://localhost:7242";
+export async function serverEnter(): Promise<ClientResponse<number>> {
+  const uri = serverPort + "/api/Buyers/Enter"
+  const jsonResponse = await fetch(uri)
 
-export async function serverEnter(
-): Promise<Response<number>> {
-  const uri = serverPort + "/api/Buyers/Enter";
-  const jsonResponse = await fetch(uri);
-
-  return jsonResponse.json();
+  return jsonResponse.json()
 }
+
+
+export async function serverLeave(
+  userId: number
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Buyers/Leave"
+  const jsonResponse = await fetch(uri, {
+    method: "POST",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "http",
+    },
+    body: JSON.stringify({
+      userId: userId,
+    }),
+  })
+
+  const response = jsonResponse.json()
+  return response
+}
+
+
+
 
 export async function serverLogin(
   name: string | undefined | null,
   password: string | undefined | null
-): Promise<Response<number>> {
-  if (name == undefined || password == undefined) return Promise.reject();
-  const uri = serverPort + "/api/Buyers/Login";
+): Promise<ClientResponse<number>> {
+  if (name == undefined || password == undefined) return Promise.reject()
+  const uri = serverPort + "/api/Buyers/Login"
+  try {
+    const jsonResponse = await fetch(uri, {
+      method: "POST",
+      headers: {
+        accept: "text/plain",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "http",
+      },
+      // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+      body: JSON.stringify({
+        userName: name,
+        password: password,
+        port: window.location.port,
+      }),
+    })
+
+    const response = jsonResponse.json()
+    return response
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}
+
+export async function serverGetPendingMessages(
+  username: string
+): Promise<ClientResponse<string[]>> {
+  const uri = serverPort + "/api/Buyers/GetUnsentMessages"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -26,21 +79,20 @@ export async function serverLogin(
     },
     // body: '{\n  "userName": "string",\n  "password": "string"\n}',
     body: JSON.stringify({
-      userName: name,
-      password: password,
-      port: window.location.port,
+      userName: username,
     }),
-  });
+  })
 
   const response = jsonResponse.json()
-  return response;
+  return response
 }
+
 
 //.then(response=>Promise.resolve(response.json().then((data)=>data)))
 
-export async function logout(userId: number): Promise<any> {
-  const uri = serverPort + "/api/Buyers/Logout";
-  return await fetch(uri, {
+export async function serverLogout(userId: number): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Buyers/Logout"
+  return (await fetch(uri, {
     method: "POST",
     headers: {
       accept: "text/plain",
@@ -50,14 +102,14 @@ export async function logout(userId: number): Promise<any> {
     body: JSON.stringify({
       userId: userId,
     }),
-  });
+  })).json()
 }
 
 export async function serverRegister(
   name: string | undefined,
   password: string | undefined
-): Promise<Response<number>> {
-  const uri = serverPort + "/api/Buyers/Register";
+): Promise<ClientResponse<number>> {
+  const uri = serverPort + "/api/Buyers/Register"
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
@@ -69,21 +121,21 @@ export async function serverRegister(
       userName: name,
       password: password,
     }),
-  });
+  })
 
-  const response = jsonResponse.json();
-  console.log(response);
-  return response;
+  const response = jsonResponse.json()
+  console.log(response)
+  return response
 }
 
-export async function addToCart(
+export async function serverAddToCart(
   userId: number,
   productId: number,
   storeId: number,
   amount: number
-): Promise<any> {
-  const uri = serverPort + "/api/Buyers/AddProduct";
-  return await fetch(uri, {
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Buyers/AddProduct"
+  const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
       accept: "text/plain",
@@ -96,16 +148,17 @@ export async function addToCart(
       storeId: storeId,
       amount: amount,
     }),
-  });
+  })
+  return jsonResponse.json()
 }
 
-export async function removeFromCart(
+export async function serverRemoveFromCart(
   userId: number,
   productId: number,
   storeId: number
-): Promise<any> {
-  const uri = serverPort + "/api/Buyers/RemoveProduct";
-  return await fetch(uri, {
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Buyers/RemoveProduct"
+  const jsonResponse = await fetch(uri, {
     method: "DELETE",
     headers: {
       accept: "text/plain",
@@ -117,17 +170,19 @@ export async function removeFromCart(
       productId: productId,
       storeId: storeId,
     }),
-  });
+  })
+
+  return jsonResponse.json()
 }
 
-export async function changeProductAmount(
+export async function serverChangeProductAmountInCart(
   userId: number,
   productId: number,
   storeId: number,
   amount: number
-): Promise<any> {
-  const uri = serverPort + "/api/Buyers/ChangeProductAmount";
-  return await fetch(uri, {
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Buyers/ChangeProductAmount"
+  const jsonResponse = await fetch(uri, {
     method: "PUT",
     headers: {
       accept: "text/plain",
@@ -140,35 +195,70 @@ export async function changeProductAmount(
       storeId: storeId,
       amount: amount,
     }),
-  });
+  })
+  return jsonResponse.json()
 }
 
-export async function purchaseCart(userId: number): Promise<any> {
-  const uri = serverPort + "/api/Buyers/PurchaseCart";
-  return await fetch(uri, {
+export async function serverPurchaseCart(
+  userId: number,
+  checkout: CheckoutDTO
+): Promise<ClientResponse<Purchase>> {
+  const uri = serverPort + "/api/Buyers/PurchaseCart"
+  const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {
       accept: "text/plain",
       "Content-Type": "application/json",
     },
-    // body: '{\n  "userId": 0\n}',
+    // body: '{\n  "userId": 0,\n  "cardNumber": "string",\n  "month": "string",\n  "year": "string",\n  "holder": "string",\n  "ccv": "string",\n  "id": "string",\n  "receiverName": "string",\n  "address": "string",\n  "city": "string",\n  "country": "string",\n  "zip": "string"\n}',
+    body: JSON.stringify({
+      userId: userId,
+      cardNumber: checkout.cardNumber,
+      month: checkout.month,
+      year: checkout.year,
+      holder: checkout.nameOnCard,
+      ccv: checkout.ccv,
+      id: checkout.id,
+      receiverName: checkout.firstName + " " + checkout.lastName,
+      address: checkout.address,
+      city: checkout.city,
+      country: checkout.country,
+      zip: checkout.zip,
+    }),
+  })
+  return jsonResponse.json()
+}
+
+export async function serverGetCart(
+  userId: number
+): Promise<ClientResponse<Cart>> {
+  const uri = serverPort + "/api/Buyers/GetBuyerCart"
+
+  const jsonResponse = await fetch(uri, {
+    method: "POST",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       userId: userId,
     }),
-  });
+  })
+  const response = jsonResponse.json()
+  return response
 }
 
 export async function enterBuyerFacade(): Promise<any> {
-  const uri = serverPort + "/api/Buyers/PurchaseCart";
+  const uri = serverPort + "/api/Buyers/PurchaseCart"
   return await fetch(uri, {
     headers: {
       accept: "text/plain",
     },
-  });
+  })
 }
 
 export async function leaveBuyerFacade(userId: number): Promise<any> {
-  const uri = serverPort + "/api/Buyers/Leave";
+  const uri = serverPort + "/api/Buyers/Leave"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -179,14 +269,14 @@ export async function leaveBuyerFacade(userId: number): Promise<any> {
     body: JSON.stringify({
       userId: 0,
     }),
-  });
+  })
 }
 
 export async function storeInfo(
   storeId: number,
   storeName: string
 ): Promise<any> {
-  const uri = serverPort + "/api/Buyers/StoreInfo";
+  const uri = serverPort + "/api/Buyers/StoreInfo"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -198,7 +288,7 @@ export async function storeInfo(
       storeId: storeId,
       storeName: storeName,
     }),
-  });
+  })
 }
 
 export async function productsSearch(
@@ -207,7 +297,7 @@ export async function productsSearch(
   category: string,
   keyword: string
 ): Promise<any> {
-  const uri = serverPort + "/api/Buyers/SerachProducts";
+  const uri = serverPort + "/api/Buyers/SerachProducts"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -221,7 +311,7 @@ export async function productsSearch(
       category: category,
       keyword: keyword,
     }),
-  });
+  })
 }
 
 export async function reviewProduct(
@@ -230,7 +320,7 @@ export async function reviewProduct(
   productId: number,
   review: string
 ): Promise<any> {
-  const uri = serverPort + "/api/Buyers/ReviewProduct";
+  const uri = serverPort + "/api/Buyers/ReviewProduct"
   return await fetch(uri, {
     method: "POST",
     headers: {
@@ -244,5 +334,44 @@ export async function reviewProduct(
       productId: productId,
       review: review,
     }),
-  });
+  })
 }
+
+export async function serverPurchaseBid(
+  memberId: number,
+  checkout: CheckoutDTOBid
+
+): Promise<ClientResponse<Purchase>> {
+  const uri = serverPort + "/api/Buyers/PurchaseBid"
+  const jsonResponse = await fetch(uri, {
+    method: 'POST',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "userId": 0,\n  "cardNumber": "string",\n  "month": "string",\n  "year": "string",\n  "holder": "string",\n  "ccv": "string",\n  "id": "string",\n  "receiverName": "string",\n  "address": "string",\n  "city": "string",\n  "country": "string",\n  "zip": "string",\n  "storeId": 0,\n  "bidId": 0\n}',
+    body: JSON.stringify({
+        'userId': memberId,
+        'cardNumber': checkout.cardNumber,
+        'month': checkout.month,
+        'year': checkout.year,
+        'holder': checkout.nameOnCard,
+        'ccv': checkout.ccv,
+        'id': checkout.id,
+        'receiverName': checkout.firstName + " " + checkout.lastName,
+        'address': checkout.address,
+        'city': checkout.city,
+        'country': checkout.country,
+        'zip': checkout.zip,
+        'storeId': checkout.bid?.storeId,
+        'bidId': checkout.bid?.id
+    })
+});
+  return jsonResponse.json()
+}
+
+
+// body: JSON.stringify({
+//   storeId: storeId,
+//   bidId: bidId,
+//   userId: userId,

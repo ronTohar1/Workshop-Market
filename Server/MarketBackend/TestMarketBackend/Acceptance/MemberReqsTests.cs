@@ -23,7 +23,7 @@ namespace TestMarketBackend.Acceptance
         [Test]
         public void SuccessfulStoreCreation()
         {
-            Response<int> response = storeManagementFacade.OpenStore(member3Id, "VeryNewStoreName");
+            Response<int> response = storeManagementFacade.OpenNewStore(member3Id, "VeryNewStoreName");
 
             Assert.IsTrue(!response.IsErrorOccured());
         }
@@ -41,7 +41,7 @@ namespace TestMarketBackend.Acceptance
             for(int i = 0; i < threadsNumber; i++)
             {
                 int temp = i;
-                jobs[i] = () => { return storeManagementFacade.OpenStore(ids[temp], storeName); };
+                jobs[i] = () => { return storeManagementFacade.OpenNewStore(ids[temp], storeName); };
             }
 
             Response<int>[] responses = GetResponsesFromThreads(jobs);
@@ -54,7 +54,7 @@ namespace TestMarketBackend.Acceptance
         [TestCase("")]
         public void FailedCreationOfStoreWithInvalidDetails(string storeName)
         {
-            Response<int> response = storeManagementFacade.OpenStore(member3Id, storeName);
+            Response<int> response = storeManagementFacade.OpenNewStore(member3Id, storeName);
 
             Assert.IsTrue(response.IsErrorOccured());
         }
@@ -63,7 +63,7 @@ namespace TestMarketBackend.Acceptance
         [Test]
         public void FailedCreationOfStoreThatAlreadyExists()
         {
-            Response<int> response = storeManagementFacade.OpenStore(member3Id, storeName);
+            Response<int> response = storeManagementFacade.OpenNewStore(member3Id, storeName);
 
             Assert.IsTrue(response.IsErrorOccured());
         }
@@ -73,9 +73,14 @@ namespace TestMarketBackend.Acceptance
         [TestCase("The quality is great. Shipment was very quick. Would recommend.")]
         public void SuccessfulProductReview(string review)
         {
-            Response<bool> response = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
+            int reviewsAmount = storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value.Count();
 
+            Response<bool> response = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
             Assert.IsTrue(!response.IsErrorOccured());
+
+            ReopenMarket();
+
+            Assert.AreEqual(reviewsAmount + 1, storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value.Count());
         }
 
         // r.3.3
@@ -94,11 +99,22 @@ namespace TestMarketBackend.Acceptance
         [TestCase("The quality is great. Shipment was very quick. Would recommend.")]
         public void SuccessDoubleProductReview(string review)
         {
+            IDictionary<string, IList<string>> reviewsByUsernames = storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value;
+            int reviewsAmount;
+            if (!reviewsByUsernames.ContainsKey(userName3))
+                reviewsAmount = 0;
+            else
+                reviewsAmount = reviewsByUsernames[userName3].Count(); 
+
             Response<bool> firstResponse = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
             Response<bool> secondResponse = buyerFacade.AddProductReview(member3Id, storeId, iphoneProductId, review);
 
             Assert.IsTrue(!firstResponse.IsErrorOccured() && !secondResponse.IsErrorOccured());
+
+            ReopenMarket();
+
+            Assert.AreEqual(reviewsAmount + 2, storeManagementFacade.GetProductReviews(storeId, iphoneProductId).Value[userName3].Count());
         }
 
         // testing member notifications 
@@ -113,7 +129,7 @@ namespace TestMarketBackend.Acceptance
                 yield return new TestCaseData((MemberReqsTests testsObject) =>
                 {
                     testsObject.SetUpShoppingCarts();
-                    Response<ServicePurchase> response = testsObject.buyerFacade.PurchaseCartContent(member3Id);
+                    Response<ServicePurchase> response = testsObject.buyerFacade.PurchaseCartContent(member3Id, paymentDetails, supplyDetails);
                     Assert.IsTrue(!response.IsErrorOccured());
                 });
                 // shop of the store owner is closed 
@@ -181,6 +197,51 @@ namespace TestMarketBackend.Acceptance
             buyerFacade.Login(userName5, password5, notification => { notificationArrived = true; return true; });
             // checking the new notifications with the the notifications that were before:
             Assert.IsTrue(notificationArrived); 
+        }
+
+
+        public static IEnumerable<TestCaseData> DataBID
+        {
+            get
+            {
+                yield return new TestCaseData(new Func<int>(() => storeOwnerId), new Func<int>(() => storeId), new Func<int>(() => iphoneProductId), new Func<int>(() => member5Id ), new Func<int>(() => member3Id));
+            }
+        }
+
+
+        [Test]
+        [TestCaseSource("DataBID")]
+        public void SuccessfulyBidRemovedCO_OWNER(Func<int> storeOwner, Func<int> storeId, Func<int> productToBid, Func<int> coOwner, Func<int> bidderId )
+        {
+            // logging out so we can use the same data as in the SuccessfulNotidicationsLoggedIn tests 
+            Response<int> response = storeManagementFacade.AddBid(storeId(),productToBid(),bidderId(),10);
+            Assert.IsTrue(!response.IsErrorOccured());
+
+            // getting notifications before
+            IList<string> notificationsBefore = member3Notifications.ToList();
+            Response<bool> approved = storeManagementFacade.ApproveBid(storeId(), storeOwner(), response.Value);
+            Assert.IsFalse(approved.IsErrorOccured());
+            Assert.IsTrue(approved.Value);
+
+            //Response<bool> removed1 = storeManagementFacade.RemoveCoOwner(storeOwner(), member6Id, storeId());
+            //Assert.IsFalse(removed1.IsErrorOccured());
+            //Assert.IsTrue(removed1.Value);
+            Response<bool> removed2 = storeManagementFacade.RemoveCoOwner(storeOwner(), member3Id, storeId());
+            Assert.IsFalse(removed2.IsErrorOccured());
+            Assert.IsTrue(removed2.Value);
+            Response<bool> removed = storeManagementFacade.RemoveCoOwner(storeOwner(), coOwner(), storeId());
+
+            Assert.IsFalse(removed.IsErrorOccured());
+            Assert.IsTrue(removed.Value);
+            // first checking that there is not a notification when not logged in 
+            IList<string> notificationsAfter = member3Notifications.ToList();
+            Assert.IsFalse(SameElements(notificationsBefore, notificationsAfter));
+
+            //// second checking there is a notification after loggin in
+            //bool notificationArrived = false;
+            //buyerFacade.Login(userName5, password5, notification => { notificationArrived = true; return true; });
+            //// checking the new notifications with the the notifications that were before:
+            //Assert.IsTrue(notificationArrived);
         }
     }
 }

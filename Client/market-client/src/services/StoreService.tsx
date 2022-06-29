@@ -2,9 +2,16 @@
 import Store from "../DTOs/Store";
 import Member from "../DTOs/Member";
 import Product from "../DTOs/Product";
+<<<<<<< Updated upstream
 import { groupByStore } from "../services/ProductsService";
 import { serverPort } from "../Utils";
 import ClientResponse from "../services/Response";
+=======
+<<<<<<< Updated upstream
+import { dummyProducts, groupByStore } from "../services/ProductsService";
+import {serverPort} from "../services/BuyersService";
+import Response from "../services/Response";
+>>>>>>> Stashed changes
 import List from "@mui/material/List";
 import Purchase from "../DTOs/Purchase";
 import Discount from "../DTOs/DiscountDTOs/Discount";
@@ -14,13 +21,41 @@ import Bid from "../DTOs/Bid";
 
 
 const stores = [
+<<<<<<< Updated upstream
   // new Store(0, "Ronto's", [], new Member(0, "ron", true), true),
   // new Store(1, "Mithcell's", [], new Member(0, "ron", true), true),
 ]
+=======
+  new Store(0, "Ronto's", groupByStore(dummyProducts)[0]),
+  new Store(1, "Mithcell's", groupByStore(dummyProducts)[1]),
+];
+export const dummyStore1 = stores[0];
+export const dummyStore2 = stores[1];
+
+export const getStore = (id: number) => {
+  const store = stores.find((store) => store.id === id);
+  if (store === undefined) throw new Error("Store not found");
+  return store;
+};
+
+export function groupStoresProducts(stores: Store[]): Product[][] {
+  return stores.map((store: Store) => store.products);
+=======
+import { groupByStore } from "../services/ProductsService";
+import { serverPort } from "../Utils";
+import ClientResponse from "../services/Response";
+import List from "@mui/material/List";
+import Purchase from "../DTOs/Purchase";
+
+const stores = [new Store(0, "Ronto's", []), new Store(1, "Mithcell's", [])];
+export const dummyStore1 = stores[0];
+export const dummyStore2 = stores[1];
+>>>>>>> Stashed changes
 
 export enum Roles {
   Manager,
   Owner,
+<<<<<<< Updated upstream
 }
 
 export const serverGetStore = async (
@@ -28,6 +63,62 @@ export const serverGetStore = async (
 ): Promise<ClientResponse<Store>> => {
   if (id === undefined || id === null || id < 0) return Promise.reject()
   const uri = serverPort + "/api/Buyers/StoreInfo"
+=======
+>>>>>>> Stashed changes
+}
+// export async function serverLogin(
+//   name: string | undefined | null,
+//   password: string | undefined| null
+// ): Promise<Response<number>> {
+//   if (name == undefined || password == undefined) return Promise.reject();
+//   const uri = serverPort + "/api/Buyers/Login";
+//   const jsonResponse = await fetch(uri, {
+//     method: "POST",
+//     headers: {
+//       accept: "text/plain",
+//       "Content-Type": "application/json",
+//       "Access-Control-Allow-Origin": "http",
+//     },
+//     // body: '{\n  "userName": "string",\n  "password": "string"\n}',
+//     body: JSON.stringify({
+//       userName: name,
+//       password: password,
+//       port: window.location.port,
+//     }),
+//   });
+
+<<<<<<< Updated upstream
+//   return jsonResponse.json();
+// }
+export async function addNewProduct(userId: number, product: Product): Promise<Response<number>> {
+  const uri = serverPort+'/api/Stores/AddNewProduct';
+=======
+export const serverGetStore = async (
+  id: number | null | undefined
+): Promise<ClientResponse<Store>> => {
+  if (id === undefined || id === null || id < 0) return Promise.reject();
+  const uri = serverPort + "/api/Buyers/StoreInfo";
+  const jsonResponse = await fetch(uri, {
+    method: "POST",
+    headers: {
+      accept: "text/plain",
+      "Content-Type": "application/json",
+    },
+    // body: '{\n  "userId": 0,\n  "storeId": 0,\n  "productName": "string",\n  "price": 0,\n  "category": "string"\n}',
+    body: JSON.stringify({
+      storeId: id,
+    }),
+  });
+  return jsonResponse.json();
+};
+
+export async function addNewProduct(
+  userId: number,
+  product: Product
+): Promise<ClientResponse<number>> {
+  const uri = serverPort + "/api/Stores/AddNewProduct";
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   const jsonResponse = await fetch(uri, {
     method: "POST",
     headers: {

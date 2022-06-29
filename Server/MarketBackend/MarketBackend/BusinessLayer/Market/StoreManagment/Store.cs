@@ -927,6 +927,24 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             }
         }
 
+        private IList<int> CheckBidsAfterRemoveCoOwner(IList<int> owners)
+        {
+            IList<int> bidsToNotify = new List<int>();
+            foreach (int i in bids.Keys)
+            {
+                Bid bid = bids[i];
+                string notification = $"The bid you placed for the product {products[bid.productId].name} was approved for the cost of {bid.bid}";
+                if (!bid.counterOffer && CheckAllApprovedGivenCoOwners(bid, owners)) // no waiting on counter offer and all approved after removal of coOwner
+                {
+                    Member m = membersGetter.Invoke(bid.memberId);
+                    m.DataNotify(notification);
+                    storeDataManager.Save();
+                    bidsToNotify.Add(i);
+                }
+            }
+            return bidsToNotify;
+        }
+
         // r 4.5
         public void RemoveCoOwner(int requestingMemberId, int toRemoveCoOwnerMemberId)
         {
@@ -956,6 +974,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 IList<int> newCoOwnersMembersIdsVoteCompletedRequestingVotedFirst = newCoOwnersMembersIdsVoteCompleted.Where(memberId => coOwnersAppointmentsApproving[memberId][0] == requestingMemberId).ToList(); 
                 IList<int> newCoOwnersMembersIdsVoteCompletedOtherVotedFirst = newCoOwnersMembersIdsVoteCompleted.Where(memberId => coOwnersAppointmentsApproving[memberId][0] != requestingMemberId).ToList();
 
+                IList<int> bidsToNotify = new List<int>();
                 Hierarchy<int> removedBrance = appointmentsHierarchy.RemoveFromHierarchy(requestingMemberId, toRemoveCoOwnerMemberId, () =>
                 {
                     storeDataManager.Update(id, dataStore =>
@@ -969,7 +988,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                         RemoveCoOwnerDataNotifications(memberIdsToRemove, notification);
 
                     });
-
+                    bidsToNotify = CheckBidsAfterRemoveCoOwner(newCoOwnersMembersIds);
                     storeDataManager.Save(); 
 
                 });
@@ -979,6 +998,14 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
                 RemoveCoOwnerRemoveVotesNoSave(memberIdsToRemove);
 
                 RemoveCoOwnerCompletedVotesNoSave(newCoOwnersMembersIdsVoteCompletedRequestingVotedFirst, newCoOwnersMembersIdsVoteCompletedOtherVotedFirst, requestingMemberId);
+
+                foreach (int i in bidsToNotify)
+                {
+                    Bid bid = bids[i];
+                    string noti = $"The bid you placed for the product {products[bid.productId].name} was approved for the cost of {bid.bid}";
+                    Member m = membersGetter.Invoke(bid.memberId);
+                    m.Notify(notification);
+                }
             }
             finally
             {
@@ -1450,6 +1477,32 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
             approvebidLock.ReleaseMutex();
             return true;
         }
+
+        public bool CheckAllApprovedGivenCoOwners(Bid bid, IList<int> owners)
+        {
+            approvebidLock.WaitOne();
+            IList<int> approved = bid.aprovingIds;
+
+            foreach (int i in owners)
+                if (!approved.Contains(i))
+                {
+                    approvebidLock.ReleaseMutex();
+                    return false;
+                }
+
+            IList<int> managers = GetMembersInRoleNoPermissionsCheck(Role.Manager);
+            foreach (int i in managers)
+            {
+                if (IsManagerWithPermission(i, Permission.handlingBids) && !approved.Contains(i))
+                {
+                    approvebidLock.ReleaseMutex();
+                    return false;
+                }
+            }
+            approvebidLock.ReleaseMutex();
+            return true;
+        }
+
         // bid actions owners and managers can do
         public void ApproveBid(int memberId, int bidId)
         {

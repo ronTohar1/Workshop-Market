@@ -20,6 +20,7 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
         // will contact the external service to make the payment, for now deafult
         public async virtual Task<int> Pay(PaymentDetails paymentDetails)
         {
+
             if (!appConfig.ExternalServicesActive)
             {
                 if (appConfig.ExternalServicesFailWhenNotActive)

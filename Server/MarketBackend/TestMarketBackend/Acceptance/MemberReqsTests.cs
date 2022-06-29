@@ -223,9 +223,9 @@ namespace TestMarketBackend.Acceptance
             Assert.IsFalse(approved.IsErrorOccured());
             Assert.IsTrue(approved.Value);
 
-            Response<bool> removed1 = storeManagementFacade.RemoveCoOwner(storeOwner(), member6Id, storeId());
-            Assert.IsFalse(removed1.IsErrorOccured());
-            Assert.IsTrue(removed1.Value);
+            //Response<bool> removed1 = storeManagementFacade.RemoveCoOwner(storeOwner(), member6Id, storeId());
+            //Assert.IsFalse(removed1.IsErrorOccured());
+            //Assert.IsTrue(removed1.Value);
             Response<bool> removed2 = storeManagementFacade.RemoveCoOwner(storeOwner(), member3Id, storeId());
             Assert.IsFalse(removed2.IsErrorOccured());
             Assert.IsTrue(removed2.Value);

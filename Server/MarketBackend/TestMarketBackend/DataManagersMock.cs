@@ -33,7 +33,8 @@ namespace TestMarketBackend
             Mock<ForTestingHierarchyDataManager> hierarchy = new Mock<ForTestingHierarchyDataManager>();
             Mock<ForTestingManagerPermissionDataManager> managerPermission = new Mock<ForTestingManagerPermissionDataManager>();
             Mock<ForTestingStoreMemberRolesDataManager> storeMemberRoles = new Mock<ForTestingStoreMemberRolesDataManager>();
-            
+            Mock<ForTestingDailyMarketStatisticsDataManager> dailyMarketStatistics = new Mock<ForTestingDailyMarketStatisticsDataManager>();
+
             // Products + misc
             Mock<ForTestingProductDataManager> product = new Mock<ForTestingProductDataManager>();
             Mock<ForTestingProductReviewDataManager> productReview = new Mock<ForTestingProductReviewDataManager>();
@@ -119,7 +120,15 @@ namespace TestMarketBackend
             hierarchy.Setup(x => x.Find(It.IsAny<int>())).Returns(new DataAppointmentsNode());
             hierarchy.Setup(x => x.Save());
             HierarchyDataManager.ForTestingSetInstance(hierarchy.Object);
-
+            
+            // Manager permission
+            managerPermission.Setup(x => x.Add(It.IsAny<DataManagerPermission>()));
+            managerPermission.Setup(x => x.Remove(It.IsAny<int>()));
+            managerPermission.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataManagerPermission>>()));
+            managerPermission.Setup(x => x.Find(It.IsAny<int>())).Returns(new DataManagerPermission());
+            managerPermission.Setup(x => x.Save());
+            ManagerPermissionDataManager.ForTestingSetInstance(managerPermission.Object);
+            
             // Store member roles
             storeMemberRoles.Setup(x => x.Add(It.IsAny<DataStoreMemberRoles>()));
             storeMemberRoles.Setup(x => x.Remove(It.IsAny<int>()));
@@ -128,13 +137,13 @@ namespace TestMarketBackend
             storeMemberRoles.Setup(x => x.Save());
             StoreMemberRolesDataManager.ForTestingSetInstance(storeMemberRoles.Object);
 
-            // Manager permission
-            managerPermission.Setup(x => x.Add(It.IsAny<DataManagerPermission>()));
-            managerPermission.Setup(x => x.Remove(It.IsAny<int>()));
-            managerPermission.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataManagerPermission>>()));
-            managerPermission.Setup(x => x.Find(It.IsAny<int>())).Returns(new DataManagerPermission());
-            managerPermission.Setup(x => x.Save());
-            ManagerPermissionDataManager.ForTestingSetInstance(managerPermission.Object);
+            // Daily market statistics
+            dailyMarketStatistics.Setup(x => x.Add(It.IsAny<DataDailyMarketStatistics>()));
+            dailyMarketStatistics.Setup(x => x.Remove(It.IsAny<int>()));
+            dailyMarketStatistics.Setup(x => x.Update(It.IsAny<int>(), It.IsAny<Action<DataDailyMarketStatistics>>()));
+            dailyMarketStatistics.Setup(x => x.Find(It.IsAny<int>())).Returns(new DataDailyMarketStatistics());
+            dailyMarketStatistics.Setup(x => x.Save());
+            DailyMarketStatisticsDataManager.ForTestingSetInstance(dailyMarketStatistics.Object);
 
             // Product
             product.Setup(x => x.Add(It.IsAny<DataProduct>()));

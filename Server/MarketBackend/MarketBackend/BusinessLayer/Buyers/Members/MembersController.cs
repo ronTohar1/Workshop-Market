@@ -16,6 +16,8 @@ public class MembersController : IBuyersController
     private readonly IDictionary<int, Member> members;
     private Mutex mutex;
 
+    private Action<int> onLogin;
+
     public MembersController() : this(new ConcurrentDictionary<int, Member>())
     {
     }
@@ -106,9 +108,18 @@ public class MembersController : IBuyersController
     public IDictionary<int, Member> GetLoggedInMembers()
        => members.Where(member =>member.Value.LoggedIn).ToDictionary(mem =>mem.Key,mem=>mem.Value);
     
+    public void OnLogin(Action<int> onLogin)
+    {
+        this.onLogin = onLogin;
+        foreach (Member member in members.Values)
+        {
+            member.OnLogin(onLogin);
+        }
+    }
+
     private Member createNewMember(string username,string password)
     {
-        return new Member(username, password, new Security());
+        return new Member(username, password, new Security(), onLogin);
     }
 
     private bool IsUsernameExists(string username)

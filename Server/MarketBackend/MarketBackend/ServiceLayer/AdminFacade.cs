@@ -168,7 +168,7 @@ namespace MarketBackend.ServiceLayer
         {
             try
             {
-                IDictionary<int, Member> members =  adminManager.GetLoggedInMembers(requestingId);
+                IDictionary<int, Member> members = adminManager.GetLoggedInMembers(requestingId);
                 IList<ServiceMember> res = members.Keys.Select(key => new ServiceMember(members[key])).ToList();
                 logger.Info($"GetLoggedInMembers was called with parameters [requestingId = {requestingId}]");
                 return new Response<IList<ServiceMember>>(res);
@@ -262,14 +262,15 @@ namespace MarketBackend.ServiceLayer
             {
                 string logs = adminManager.GetErrorLogs(userId);
                 logger.Info($"GetErrorLogs was called with parameters: [userId = {userId}]");
-                Response<string> output =  new Response<string>(logs);
-                if (output.ErrorOccured) {
+                Response<string> output = new Response<string>(logs);
+                if (output.ErrorOccured)
+                {
                     output.ErrorOccured = false;
                     output.Value = output.ErrorMessage;
                     output.ErrorMessage = "";
                 }
                 return output;
-                
+
             }
             catch (MarketException mex)
             {
@@ -292,8 +293,13 @@ namespace MarketBackend.ServiceLayer
             // ** Imporatant ** check that memberId is admin, fromDate<=toDate, and that fromDate<=currentDate
             try
             {
-                logger.Info($"GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = { toDate}]");
-                return new Response<int[]>("Not Implemented Yet");
+                logger.Info($"GetDailyVisitores was called with parameters: [memberId = {memberId}, fromDate = {fromDate}, toDate = {toDate}]");
+                //DateOnly fromOnly = DateOnly.FromDateTime(fromDate);
+                //DateOnly toOnly = DateOnly.FromDateTime(toDate);
+                DateOnly fromOnly = new DateOnly(fromDate.Year, fromDate.Month, fromDate.Day);
+                DateOnly toOnly = new DateOnly(toDate.Year, toDate.Month, toDate.Day);
+
+                return new Response<int[]>(adminManager.GetMarketStatisticsBetweenDates(memberId, fromOnly, toOnly));
             }
             catch (MarketException mex)
             {

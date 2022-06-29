@@ -121,7 +121,6 @@ export default function Admin() {
             {DisplayMemberAccount()}
             {RemoveAMember()}
             {ShowLogs()}
-            {/* {DailyVisitors()} */}
             <DailyVisitors />
             {/* <CardContent>
             

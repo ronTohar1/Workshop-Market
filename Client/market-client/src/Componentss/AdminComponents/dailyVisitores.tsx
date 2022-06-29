@@ -30,14 +30,6 @@ import Chart from "react-google-charts"
 import { TransitionProps } from "@mui/material/transitions"
 import CloseIcon from "@mui/icons-material/Close"
 
-export const data = [
-  ["Visitor", "Amount"],
-  ["Admins", 1],
-  ["Store Owners", 0],
-  ["Managers", 3],
-  ["Members", 0],
-  ["Guests", 0],
-]
 enum RolesData {
   Admin = 1,
   Owner = 2,
@@ -70,12 +62,14 @@ const Transition = React.forwardRef(function Transition(
 
 export default function DailyVisitors() {
   const [open, setOpen] = React.useState<boolean>(false)
-  const [chartData, setChartData] = React.useState<(string | number)[][]>(data)
-  const chartDataRef = React.useRef(data)
+  const [chartData, setChartData] = React.useState<(string | number)[][]>([])
+  const chartDataRef = React.useRef<(string | number)[][]>([])
   const updateChartData = (newData: (string | number)[][]) => {
     chartDataRef.current = newData
     setChartData(newData)
   }
+  const [ignoreWS, setIgnoreWS] = React.useState<boolean>(false)
+  const ignoreWSref = React.useRef<boolean>(false)
 
   //------------------------------
   const [openFailSnack, setOpenFailSnack] = React.useState<boolean>(false)
@@ -105,8 +99,78 @@ export default function DailyVisitors() {
   //------------------------------
 
   React.useEffect(() => {
-    //TODO: get daily visitors and set it
+    const buyerId = getBuyerId()
+
+    const responsePromise = serverGetDailyVisitores(
+      buyerId,
+      fromSelectedDay,
+      fromSelectedMonth,
+      fromSelectedYear,
+      toSelectedDay,
+      toSelectedMonth,
+      toSelectedYear
+    )
+    fetchResponse(responsePromise)
+      .then((dailyVisits) => {
+        // checkIfIgnoreWebsocket() - No need to ignore for sure because its today's date
+
+        updateChartData([
+          ["Visitor", "Amount"],
+          ["Admins", dailyVisits[0]],
+          ["Store Owners", dailyVisits[1]],
+          ["Managers", dailyVisits[2]],
+          ["Members", dailyVisits[3]],
+          ["Guests", dailyVisits[4]],
+        ])
+      })
+      .catch((e) => {
+        showFailureSnack(e)
+        setOpen(false)
+      })
   }, [])
+
+  React.useEffect(() => {
+    const ws = new WebSocket("ws://127.0.0.1:4560/logs")
+
+    if (!ignoreWSref.current) ws.addEventListener("message", addOrDecrease)
+
+    return () => {
+      ws.removeEventListener("message", addOrDecrease)
+    }
+  }, [])
+
+  const checkIfIgnoreWebsocket = () => {
+    const today = new Date()
+    let ignore = true
+    console.log(fromSelectedYear)
+    console.log(fromSelectedMonth)
+    console.log(fromSelectedDay)
+    console.log("------------------")
+    console.log(toSelectedYear)
+    console.log(toSelectedMonth)
+    console.log(toSelectedDay)
+    console.log("------------------")
+
+    console.log(today.getFullYear())
+    console.log(today.getMonth())
+    console.log(today.getDate())
+    if (
+      fromSelectedYear <= today.getFullYear() &&
+      today.getFullYear() <= toSelectedYear
+    )
+      if (
+        fromSelectedMonth <= today.getMonth() + 1 &&
+        today.getMonth() + 1 <= toSelectedMonth
+      )
+        if (
+          fromSelectedDay <= today.getDate() &&
+          today.getDate() <= toSelectedDay
+        )
+          ignore = false
+
+    ignoreWSref.current = ignore
+    setIgnoreWS(ignore)
+  }
 
   //@ts-ignore
   const CreateNewChartData = (roleIndex: number, newAmount: number) => {
@@ -128,27 +192,19 @@ export default function DailyVisitors() {
   }
 
   const addOrDecrease = (event: any) => {
-    const msg: string = event.data
-    const add: boolean = msg[0] === "+"
-    const role: string = msg.slice(1)
-    add ? addOneToRole(role) : DecOneOfRole(role)
-  }
-
-  React.useEffect(() => {
-    const ws = new WebSocket("ws://127.0.0.1:4560/logs")
-    ws.addEventListener("message", addOrDecrease)
-
-    return () => {
-      ws.removeEventListener("message", addOrDecrease)
+    if (!ignoreWSref.current) {
+      const msg: string = event.data
+      const add: boolean = msg[0] === "+"
+      const role: string = msg.slice(1)
+      add ? addOneToRole(role) : DecOneOfRole(role)
     }
-  }, [])
+  }
 
   const addOneToRole = (role: string) => {
     const index = convertRoleToIndex(role)
     const currChartData = chartDataRef.current
     // @ts-ignore
     const newAmount: number = currChartData[index][1] + 1
-    console.log("adding ", newAmount, " into ", role, " idnex is ", index)
     const newChartData = CreateNewChartData(index, newAmount)
     updateChartData(newChartData)
   }
@@ -177,15 +233,16 @@ export default function DailyVisitors() {
       toSelectedMonth,
       toSelectedYear
     )
-    console.log(responsePromise)
     fetchResponse(responsePromise)
       .then((dailyVisits) => {
-        setChartData([
+        checkIfIgnoreWebsocket()
+
+        updateChartData([
           ["Visitor", "Amount"],
           ["Admins", dailyVisits[0]],
           ["Store Owners", dailyVisits[1]],
-          ["Managers(without any stores)", dailyVisits[2]],
-          ["Members(not managers or store owners)", dailyVisits[3]],
+          ["Managers", dailyVisits[2]],
+          ["Members", dailyVisits[3]],
           ["Guests", dailyVisits[4]],
         ])
       })

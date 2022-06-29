@@ -39,14 +39,17 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"
 import CounterOfferForm from "../Forms/CounterOfferForm"
 
 interface AppointmentRow {
-  id: number;
+  id: number
   approvingIds: number[]
 }
 
-function convertToAppointmentRow(userId:number, approvingIds: number[]): AppointmentRow {
+function convertToAppointmentRow(
+  userId: number,
+  approvingIds: number[]
+): AppointmentRow {
   return {
     id: userId,
-    approvingIds: approvingIds
+    approvingIds: approvingIds,
   }
 }
 
@@ -97,25 +100,32 @@ export default function StoreCoOwnerAppointment({
   }
 
   React.useEffect(() => {
-
     const buyerId = getBuyerId()
-    const appointmentsMap : any = store.coOwnersAppointmentsApproving
-    const appointees = Object.keys(appointmentsMap).map((apointeeId:string) => Number(apointeeId))
-    const appointersArray : number[][] = appointees.map((appointeeId:number)=> appointmentsMap[appointeeId])
+    const appointmentsMap: any = store.coOwnersAppointmentsApproving
+    const appointees = Object.keys(appointmentsMap).map((apointeeId: string) =>
+      Number(apointeeId)
+    )
+    const appointersArray: number[][] = appointees.map(
+      (appointeeId: number) => appointmentsMap[appointeeId]
+    )
     const didntVoteTo: number[] = appointees.reduce(
-        (didntVoteTo: number[],appointee:number,index:number)=>
-        {
-            if(appointersArray[index].includes(buyerId)) // means I approved already
-                return didntVoteTo
-            return didntVoteTo.concat(appointee)
-        }
-        ,[])
-    console.log("didntVoteTo")
-    console.log(didntVoteTo)
+      (didntVoteTo: number[], appointee: number, index: number) => {
+        if (appointersArray[index].includes(buyerId))
+          // means I approved already
+          return didntVoteTo.concat(appointee)
+        // return didntVoteTo - this option if we dont want to show all the appointed owners we voted to
+        return didntVoteTo.concat(appointee)
+      },
+      []
+    )
     //@
-    const appointmentsRows : AppointmentRow[] = didntVoteTo.map((didntVoteUserId) => convertToAppointmentRow(didntVoteUserId, appointersArray[appointees.indexOf(didntVoteUserId)]))
-    console.log("appointmentsRows")
-    console.log(appointmentsRows)
+    const appointmentsRows: AppointmentRow[] = didntVoteTo.map(
+      (didntVoteUserId) =>
+        convertToAppointmentRow(
+          didntVoteUserId,
+          appointersArray[appointees.indexOf(didntVoteUserId)]
+        )
+    )
     setRows(appointmentsRows)
 
     setChosenIds([])
@@ -123,7 +133,7 @@ export default function StoreCoOwnerAppointment({
   }, [store])
 
   const handleApproveCoOwner = (targetUserId: number) => {
-    fetchResponse(serverApproveCoOwner( getBuyerId(),store.id, targetUserId))
+    fetchResponse(serverApproveCoOwner(getBuyerId(), store.id, targetUserId))
       .then((success) => {
         showSuccessSnack("Co-Owner Approved")
         handleChangedStore(store)
@@ -132,7 +142,7 @@ export default function StoreCoOwnerAppointment({
   }
 
   const handleDenyCoOwner = (targetUserId: number) => {
-    fetchResponse(serverDenyCoOwner(getBuyerId(), store.id,  targetUserId))
+    fetchResponse(serverDenyCoOwner(getBuyerId(), store.id, targetUserId))
       .then((success) => {
         showSuccessSnack("Co-Owner Appointment Denyed")
         handleChangedStore(store)
@@ -140,7 +150,6 @@ export default function StoreCoOwnerAppointment({
       .catch(showFailureSnack)
   }
 
-  
   const columns: GridColDef[] = [
     {
       field: fields.id,
@@ -150,20 +159,20 @@ export default function StoreCoOwnerAppointment({
       align: "left",
       headerAlign: "left",
     },
-    
+
     {
       field: fields.approvingIds,
       headerName: "Approve Co-Owner",
-    //   type: "number",
+      //   type: "number",
       flex: 1,
       align: "left",
       headerAlign: "left",
       renderCell: (params: GridRenderCellParams<AppointmentRow>) => {
         const approved = params.row.approvingIds.includes(getBuyerId())
-        
+
         return approved ? (
           <CheckCircleOutlineIcon />
-         ) : (
+        ) : (
           <strong>
             <Button
               sx={{ mr: 1 }}
@@ -177,8 +186,7 @@ export default function StoreCoOwnerAppointment({
               onClick={() => handleDenyCoOwner(params.row.id)}
               startIcon={<ThumbDownIcon />}
               color="error"
-            >
-            </Button>
+            ></Button>
           </strong>
         )
       },
@@ -222,7 +230,6 @@ export default function StoreCoOwnerAppointment({
                 // Selection:
                 onSelectionModelChange={handleSelectionChanged}
               />
-             
             </div>
           </div>
         </div>

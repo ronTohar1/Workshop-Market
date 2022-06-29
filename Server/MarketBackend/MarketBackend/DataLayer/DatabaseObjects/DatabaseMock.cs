@@ -50,6 +50,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
         public SimplifiedDbSet<DataNotification, int> SimplifiedNotifications { get; set; }
         public SimplifiedDbSet<DataPurchase, int> SimplifiedPurchases { get; set; }
         public SimplifiedDbSet<DataStoreCoOwnerAppointmentApproving, int> SimplifiedStoreCoOwnerAppointmentApproving { get; set; }
+        public SimplifiedDbSet<DataDailyMarketStatistics, int> SimplifiedDailyMarketStatistics { get; set; }
 
 
         // discounts hierarchies
@@ -111,6 +112,7 @@ namespace MarketBackend.DataLayer.DatabaseObjects
             SimplifiedNotifications = CreateSimplifiedDbSetClass<DataNotification, int>();
             SimplifiedPurchases = CreateSimplifiedDbSetClass<DataPurchase, int>();
             SimplifiedStoreCoOwnerAppointmentApproving = CreateSimplifiedDbSetClass<DataStoreCoOwnerAppointmentApproving, int>();
+            SimplifiedDailyMarketStatistics = CreateSimplifiedDbSetClass<DataDailyMarketStatistics, int>();
             SimplifiedDateDiscounts = CreateSimplifiedDbSetClass<DataDateDiscount, int>();
             SimplifiedOneProductDiscounts = CreateSimplifiedDbSetClass<DataOneProductDiscount, int>();
             SimplifiedStoreDiscounts = CreateSimplifiedDbSetClass<DataStoreDiscount, int>();
@@ -189,6 +191,8 @@ namespace MarketBackend.DataLayer.DatabaseObjects
                 SimplifiedPurchases.Remove((DataPurchase)toRemove);
             else if (toRemove.GetType() == typeof(DataStoreCoOwnerAppointmentApproving))
                 SimplifiedStoreCoOwnerAppointmentApproving.Remove((DataStoreCoOwnerAppointmentApproving)toRemove);
+            else if (toRemove.GetType() == typeof(DataDailyMarketStatistics))
+                SimplifiedDailyMarketStatistics.Remove((DataDailyMarketStatistics)toRemove);
             else if (toRemove.GetType() == typeof(DataDateDiscount))
                 SimplifiedDateDiscounts.Remove((DataDateDiscount)toRemove);
             else if (toRemove.GetType() == typeof(DataOneProductDiscount))

@@ -299,7 +299,7 @@ namespace WebAPI.Controllers
             }
 
             stores = manager.Value.Keys;
-            if (stores.Count > 0)
+            if (stores.Count>0)
             {
                 return "Manager";
             }

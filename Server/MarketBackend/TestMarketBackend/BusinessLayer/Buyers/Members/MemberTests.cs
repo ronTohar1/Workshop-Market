@@ -38,7 +38,7 @@ namespace TestMarketBackend.BusinessLayer.Buyers.Members
             //mock.Setup(s => s.HashPassword(It.IsAny<string>())).Returns((string x) => x.GetHashCode());
             Security security = mock.Object;
             //Console.WriteLine(security.HashPassword("hello"));
-            return new Member(username, password, security);
+            return new Member(username, password, security, memberId => { });
 
         }
         private Func<string[], bool> CreateNotificationSender(bool notificationSucceeded) 

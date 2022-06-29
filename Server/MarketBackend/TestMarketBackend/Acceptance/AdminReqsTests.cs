@@ -535,55 +535,55 @@ namespace TestMarketBackend.Acceptance
             Assert.AreEqual(expectedMember(), response.Value); 
         }
 
-        //public static IEnumerable<TestCaseData> DataFailedGetDailyCut
-        //{
-        //    get
-        //    {
-        //        // requesting is not an admin
-        //        yield return new TestCaseData(() => -1, () => new DateTime(2022, 23,6), () => new DateTime(2022, 23, 6));
-        //        yield return new TestCaseData(() => guest1Id, () => new DateTime(2022, 23, 6), () => new DateTime(2022, 23, 6));
-        //        yield return new TestCaseData(() => member1Id, () => new DateTime(2022, 23, 6), () => new DateTime(2022, 23, 6));
-        //        yield return new TestCaseData(() => member2Id, () => new DateTime(2022, 23, 6), () => new DateTime(2022, 23, 6));
-        //        // from date > to date
-        //        yield return new TestCaseData(() => adminId, () => new DateTime(2022, 23, 7), () => new DateTime(2022, 23, 6));
-        //        yield return new TestCaseData(() => adminId, () => new DateTime(2022, 23, 6), () => new DateTime(2021, 23, 6));
-        //        yield return new TestCaseData(() => adminId, () => new DateTime(2022, 23, 6), () => new DateTime(2022, 22, 6));
-        //        // from date > current date
-        //        yield return new TestCaseData(() => adminId, () => DateTime.Today.AddDays(1), () => DateTime.Today.AddDays(2));
-        //        yield return new TestCaseData(() => adminId, () => DateTime.Today.AddMonths(1), () => DateTime.Today.AddMonths(2));
-        //    }
-        //}
+        public static IEnumerable<TestCaseData> DataFailedGetDailyCut
+        {
+            get
+            {
+                // requesting is not an admin
+                yield return new TestCaseData(() => -1, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 23));
+                yield return new TestCaseData(() => guest1Id, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 23));
+                yield return new TestCaseData(() => member1Id, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 23));
+                yield return new TestCaseData(() => member2Id, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 23));
+                // from date > to date
+                yield return new TestCaseData(() => adminId, () => new DateTime(2022, 7, 23), () => new DateTime(2022, 6, 23));
+                // yield return new TestCaseData(() => adminId, () => new DateTime(2022, 6, 23), () => new DateTime(2021, 6, 23));
+                yield return new TestCaseData(() => adminId, () => new DateTime(2022, 6, 23), () => new DateTime(2022, 6, 22));
+                // from date > current date
+                yield return new TestCaseData(() => adminId, () => DateTime.Today.AddDays(2), () => DateTime.Today.AddDays(1));
+                yield return new TestCaseData(() => adminId, () => DateTime.Today.AddMonths(2), () => DateTime.Today.AddMonths(1));
+            }
+        }
 
-        //// r 5.6
-        //[Test]
-        //[TestCaseSource("DataFailedGetDailyCut")]
-        //public void FailedGetDailyCut(Func<int> requestingId, Func<DateTime> fromDate, Func<DateTime> toDate)
-        //{
-        //    Response<int[]> response = adminFacade.GetDailyVisitores(requestingId(), fromDate(), toDate());
+        // r 5.6
+        [Test]
+        [TestCaseSource("DataFailedGetDailyCut")]
+        public void FailedGetDailyCut(Func<int> requestingId, Func<DateTime> fromDate, Func<DateTime> toDate)
+        {
+            Response<int[]> response = adminFacade.GetDailyVisitores(requestingId(), fromDate(), toDate());
 
-        //    Assert.IsTrue(response.IsErrorOccured());
-        //}
+            Assert.IsTrue(response.IsErrorOccured());
+        }
 
-        //public static IEnumerable<TestCaseData> DataSuccessGetDailyCut
-        //{
-        //    get
-        //    {
-        //        yield return new TestCaseData(() => adminId, () => DateTime.Today, () => DateTime.Today);
-        //        yield return new TestCaseData(() => adminId, () => DateTime.Today.AddDays(-1), () => DateTime.Today);
-        //    }
-        //}
+        public static IEnumerable<TestCaseData> DataSuccessGetDailyCut
+        {
+            get
+            {
+                yield return new TestCaseData(() => adminId, () => DateTime.Today, () => DateTime.Today);
+                yield return new TestCaseData(() => adminId, () => DateTime.Today.AddDays(-1), () => DateTime.Today);
+            }
+        }
 
-        //// r 5.6
-        //[Test]
-        //[TestCaseSource("DataSuccessGetDailyCut")]
-        //public void SuccessGetDailyCut(Func<int> requestingId, Func<DateTime> fromDate, Func<DateTime> toDate)
-        //{
-        //    Response<int[]> response = adminFacade.GetDailyVisitores(requestingId(), fromDate(), toDate());
+        // r 5.6
+        [Test]
+        [TestCaseSource("DataSuccessGetDailyCut")]
+        public void SuccessGetDailyCut(Func<int> requestingId, Func<DateTime> fromDate, Func<DateTime> toDate)
+        {
+            Response<int[]> response = adminFacade.GetDailyVisitores(requestingId(), fromDate(), toDate());
 
-        //    Assert.IsTrue(!response.IsErrorOccured() && response.Value.Length==5);
+            Assert.IsTrue(!response.IsErrorOccured() && response.Value.Length==5);
 
-        //    Assert.IsTrue(response.Value[4]>=4 && response.Value[3] >= 3); // in the set up of the acceptance testing there are at least 7 guests
-        //                                                                   //from which only 3 login
-        //}
+            Assert.IsTrue(response.Value[4]>=4 && response.Value[3] >= 3); // in the set up of the acceptance testing there are at least 7 guests
+                                                                           //from which only 3 login
+        }
     }
 }

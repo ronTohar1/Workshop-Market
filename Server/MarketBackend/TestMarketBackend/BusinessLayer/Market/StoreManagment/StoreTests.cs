@@ -323,10 +323,15 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         // reqesting is a member
         // reqesting is a manager
 
+        // toAppoint is not a member
+        // toAppoint is a coOwner
+
         [Test]
         [TestCase(notAMemberId1, memberId1)]
         [TestCase(memberId2, memberId1)]
         [TestCase(managerId1, memberId1)]
+        [TestCase(coOwnerId1, notAMemberId1)]
+        [TestCase(coOwnerId1, coOwnerId2)]
         public void TestAddMakeCoOwnerVotePermissionError(int requestingMemberId, int toAppointMemberId)
         {
             SetupStoreFull();
@@ -346,10 +351,6 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
 
             Assert.Throws<MarketException>(() => store.AddMakeCoOwnerVote(requestingMemberId, toAppointMemberId));
         }
-
-        // toAppoint is a guest
-        // toAppoint is a coOwner
-
 
         // first vote, more need to vote
 

@@ -37,7 +37,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         private Mock<Store> MakeStoreWithMockFields(string name = storeDefualtName)
         {
             Mock<Security> securityMock = new Mock<Security>();
-            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object);
+            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object, (int memberId) => { });
             Member founder = founderMock.Object; 
 
             return new Mock<Store>(name, founder, (int id) => (Member)null);

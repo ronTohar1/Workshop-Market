@@ -111,7 +111,7 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
         private Member setupMcokedMember(int memberId)
         {
             Mock<Security> securityMock = new Mock<Security>();
-            Mock<Member> memberMock = new Mock<Member>("user123", "12345678", securityMock.Object); // todo: make sure these arguments to the constructor are okay
+            Mock<Member> memberMock = new Mock<Member>("user123", "12345678", securityMock.Object, (int memberId) => { }); // todo: make sure these arguments to the constructor are okay
 
             memberMock.Setup(member =>
                 member.Id).
@@ -316,6 +316,54 @@ namespace TestMarketBackend.BusinessLayer.Market.StoreManagment
             store.MakeCoOwner(requestingMemberId, newCoOwnerMemberId);
             Assert.IsTrue(store.IsCoOwner(newCoOwnerMemberId));
         }
+
+        // ------- AddMakeCoOwnerVote() ----------------------------------------
+
+        // reqesting is not a member
+        // reqesting is a member
+        // reqesting is a manager
+
+        [Test]
+        [TestCase(notAMemberId1, memberId1)]
+        [TestCase(memberId2, memberId1)]
+        [TestCase(managerId1, memberId1)]
+        public void TestAddMakeCoOwnerVotePermissionError(int requestingMemberId, int toAppointMemberId)
+        {
+            SetupStoreFull();
+
+            Assert.Throws<MarketException>(() => store.AddMakeCoOwnerVote(requestingMemberId, toAppointMemberId));
+        }
+
+        // requesting already voted 
+
+        [Test]
+        [TestCase(coOwnerId1, memberId1)]
+        public void TestAddMakeCoOwnerVoteCoOwnerAlreadyVoted(int requestingMemberId, int toAppointMemberId)
+        {
+            SetupStoreFull();
+
+            store.AddMakeCoOwnerVote(requestingMemberId, toAppointMemberId);
+
+            Assert.Throws<MarketException>(() => store.AddMakeCoOwnerVote(requestingMemberId, toAppointMemberId));
+        }
+
+        // toAppoint is a guest
+        // toAppoint is a coOwner
+
+
+        // first vote, more need to vote
+
+        // first vote and that is the only coOwner - check hierarchy
+
+        // second vote, more need to vote
+
+        // second vote, and these two are the only coOwners - - check hierarchy 
+
+        // second vote, these two are the only coOwners, appoints a manager that is appointed by the one that voted first
+        // second vote, these two are the only coOwners, appoints a manager that is not appointed by the one that voted first 
+
+
+
 
         // ------- MakeManager() ----------------------------------------
 

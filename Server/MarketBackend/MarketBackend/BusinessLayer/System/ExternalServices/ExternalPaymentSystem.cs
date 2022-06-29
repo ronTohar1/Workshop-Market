@@ -23,27 +23,27 @@ namespace MarketBackend.BusinessLayer.System.ExternalServices
             if (!appConfig.ExternalServicesActive)
                 if (appConfig.ExternalServicesFailWhenNotActive)
                     return -1;
-                return new Random().Next();
-            }
-
-            if (!handshake())
-                return -1;
-
-            IDictionary<string, string> payContent = new Dictionary<string, string>()
-            {
-                {"action_type", "pay" },
-                {"card_number", paymentDetails.CardNumber },
-                {"month", paymentDetails.Month },
-                {"year", paymentDetails.Year },
-                {"holder", paymentDetails.Holder },
-                {"ccv", paymentDetails.Ccv },
-                {"id", paymentDetails.Id },
-            };
-
-            string response = await post(payContent).Result.Content.ReadAsStringAsync();
-
-            return int.Parse(response);
+            return new Random().Next();
         }
+
+        //    if (!handshake())
+        //        return -1;
+
+        //    IDictionary<string, string> payContent = new Dictionary<string, string>()
+        //    {
+        //        {"action_type", "pay" },
+        //        {"card_number", paymentDetails.CardNumber },
+        //        {"month", paymentDetails.Month },
+        //        {"year", paymentDetails.Year },
+        //        {"holder", paymentDetails.Holder },
+        //        {"ccv", paymentDetails.Ccv },
+        //        {"id", paymentDetails.Id },
+        //    };
+
+        //string response = await post(payContent).Result.Content.ReadAsStringAsync();
+
+        //    return int.Parse(response);
+    // }
 
         public async virtual Task<int> CancelPay(int transactionId)
         {

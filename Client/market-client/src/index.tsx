@@ -18,20 +18,22 @@
 // import StorePageOfManager from "./Pages/StorePageOfManager"
 // import { LocalSeeOutlined } from "@mui/icons-material"
 
-import React from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import { initSession } from "./services/SessionService";
+import React, { useEffect } from "react"
+import { createRoot } from "react-dom/client"
+import "./index.css"
+import App from "./App"
+import { getBuyerId, initSession } from "./services/SessionService"
 
 // initSession()
 // window.onunload = () => localStorage.clear()
- initSession()
+initSession()
 
-const container = document.getElementById("root");
+
+
+const container = document.getElementById("root")
 //@ts-ignore
-const root = createRoot(container); // createRoot(container!) if you use TypeScript
-root.render(<App />);
+const root = createRoot(container) // createRoot(container!) if you use TypeScript
+root.render(<App />)
 
 // const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 // root.render(

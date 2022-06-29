@@ -12,8 +12,10 @@ import {
   Roles,
   serverAddNewProduct,
   serverApproveBid,
+  serverApproveCoOwner,
   serverChangeProductAmountInInventory,
   serverDenyBid,
+  serverDenyCoOwner,
   serverGetMembersInRoles,
   serverGetPurchaseHistory,
   serverGetStore,
@@ -36,38 +38,27 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp"
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"
 import CounterOfferForm from "../Forms/CounterOfferForm"
 
-interface BidRow {
+interface AppointmentRow {
   id: number
-  storeId: number
-  productId: number
-  memberId: number
-  bid: number
   approvingIds: number[]
-  counterOffer: boolean
-  productName: string
 }
 
-function convertToBidRow(bid: Bid, store: Store): BidRow {
+function convertToAppointmentRow(
+  userId: number,
+  approvingIds: number[]
+): AppointmentRow {
   return {
-    id: bid.id,
-    storeId: bid.storeId,
-    productId: bid.productId,
-    memberId: bid.memberId,
-    bid: bid.bid,
-    approvingIds: bid.approvingIds,
-    counterOffer: bid.counterOffer,
-    productName: store.products.filter((p) => p.id === bid.productId)[0].name,
+    id: userId,
+    approvingIds: approvingIds,
   }
 }
 
 const fields = {
   id: "id",
-  name: "productName",
-  bid: "bid",
-  counterOffer: "counterOffer",
+  approvingIds: "approvingIds",
 }
 
-export default function StoreBids({
+export default function StoreCoOwnerAppointment({
   store,
   handleChangedStore,
 }: {
@@ -78,7 +69,7 @@ export default function StoreBids({
 
   const navigate = useNavigate()
   const [pageSize, setPageSize] = React.useState<number>(initSize)
-  const [rows, setRows] = React.useState<BidRow[]>([])
+  const [rows, setRows] = React.useState<AppointmentRow[]>([])
   const [selectionModel, setSelectionModel] = React.useState<number[]>([])
   const [chosenIds, setChosenIds] = React.useState<number[]>([])
   const [isDisabled, setIsDisabled] = React.useState<boolean>(true)
@@ -102,113 +93,109 @@ export default function StoreBids({
   const handleSelectionChanged = (newSelection: any) => {
     const chosenIds: number[] = newSelection //.map((id:number)=>rows[id].id)
     setSelectionModel(newSelection)
-    const bid: BidRow = rows.filter((r) => r.id == chosenIds[0])[0]
-    if (chosenIds.length > 0 && !bid.counterOffer) setIsDisabled(false)
-    else setIsDisabled(true)
+    // const bid: AppointmentRow = rows.filter((r) => r.id == chosenIds[0])[0]
+    // if (chosenIds.length > 0 && !bid.counterOffer) setIsDisabled(false)
+    // else setIsDisabled(true)
     setChosenIds(chosenIds)
   }
 
   React.useEffect(() => {
-    setRows(store.bids.map((b) => convertToBidRow(b, store)))
+    const buyerId = getBuyerId()
+    const appointmentsMap: any = store.coOwnersAppointmentsApproving
+    const appointees = Object.keys(appointmentsMap).map((apointeeId: string) =>
+      Number(apointeeId)
+    )
+    const appointersArray: number[][] = appointees.map(
+      (appointeeId: number) => appointmentsMap[appointeeId]
+    )
+    const didntVoteTo: number[] = appointees.reduce(
+      (didntVoteTo: number[], appointee: number, index: number) => {
+        if (appointersArray[index].includes(buyerId))
+          // means I approved already
+          return didntVoteTo.concat(appointee)
+        // return didntVoteTo - this option if we dont want to show all the appointed owners we voted to
+        return didntVoteTo.concat(appointee)
+      },
+      []
+    )
+    //@
+    const appointmentsRows: AppointmentRow[] = didntVoteTo.map(
+      (didntVoteUserId) =>
+        convertToAppointmentRow(
+          didntVoteUserId,
+          appointersArray[appointees.indexOf(didntVoteUserId)]
+        )
+    )
+    setRows(appointmentsRows)
+
     setChosenIds([])
     setIsDisabled(true)
   }, [store])
 
-  const handleApproveBid = (bidId: number) => {
-    fetchResponse(serverApproveBid(store.id, getBuyerId(), bidId))
+  const handleApproveCoOwner = (targetUserId: number) => {
+    fetchResponse(serverApproveCoOwner(getBuyerId(), store.id, targetUserId))
       .then((success) => {
-        showSuccessSnack("Bid Approved")
+        showSuccessSnack("Co-Owner Approved")
         handleChangedStore(store)
       })
       .catch(showFailureSnack)
   }
 
-  const handleDenyBid = (bidId: number) => {
-    fetchResponse(serverDenyBid(store.id, getBuyerId(), bidId))
+  const handleDenyCoOwner = (targetUserId: number) => {
+    fetchResponse(serverDenyCoOwner(getBuyerId(), store.id, targetUserId))
       .then((success) => {
-        showSuccessSnack("Bid Denyed")
+        showSuccessSnack("Co-Owner Appointment Denyed")
         handleChangedStore(store)
       })
       .catch(showFailureSnack)
-  }
-
-  const handleCounterOffer = (offer: number) => {
-    if (chosenIds.length === 0)
-      showFailureSnack("Please choose a bid to make a counter offer to!")
-    else {
-      fetchResponse(
-        serverMakeCounterOffer(store.id, getBuyerId(), chosenIds[0], offer)
-      )
-        .then((success) => {
-          showSuccessSnack("Successfully made counter offer!")
-          handleChangedStore(store)
-        })
-        .catch(showFailureSnack)
-    }
   }
 
   const columns: GridColDef[] = [
     {
-      field: fields.name,
-      headerName: "Product Name",
-      type: "string",
+      field: fields.id,
+      headerName: "User Id",
+      type: "number",
       flex: 2,
       align: "left",
       headerAlign: "left",
     },
+
     {
-      field: fields.bid,
-      headerName: "Bid Price",
-      type: "number",
+      field: fields.approvingIds,
+      headerName: "Approve Co-Owner",
+      //   type: "number",
       flex: 1,
       align: "left",
       headerAlign: "left",
-    },
-    {
-      field: fields.counterOffer,
-      headerName: "Counter Offer?",
-      type: "boolean",
-      flex: 1,
-      align: "left",
-      headerAlign: "left",
-    },
-    {
-      field: fields.id,
-      headerName: "Approve Bid",
-      type: "boolean",
-      flex: 1,
-      align: "left",
-      headerAlign: "left",
-      renderCell: (params: GridRenderCellParams<BidRow>) => {
+      renderCell: (params: GridRenderCellParams<AppointmentRow>) => {
         const approved = params.row.approvingIds.includes(getBuyerId())
+
         return approved ? (
           <CheckCircleOutlineIcon />
-        ) : params.row.counterOffer ? (
-          <p>Awaiting Bidder Approval</p>
         ) : (
           <strong>
             <Button
               sx={{ mr: 1 }}
               variant="contained"
-              onClick={() => handleApproveBid(params.row.id)}
+              onClick={() => handleApproveCoOwner(params.row.id)}
               startIcon={<ThumbUpIcon />}
               color="success"
             ></Button>
             <Button
               variant="contained"
-              onClick={() => handleDenyBid(params.row.id)}
+              onClick={() => handleDenyCoOwner(params.row.id)}
               startIcon={<ThumbDownIcon />}
               color="error"
-            >
-              {" "}
-            </Button>
+            ></Button>
           </strong>
         )
       },
     },
   ]
 
-  const storeBids = () => {
+  const storeAppointments = (rows: AppointmentRow[]) => {
+    console.log(rows)
+    console.log("rows")
     return (
       <Box sx={{ mr: 3 }}>
         <Typography
@@ -218,7 +205,7 @@ export default function StoreBids({
           component="div"
         >
           {store != null
-            ? store.name + "'s Bids"
+            ? store.name + "'s Co-Owner Appointments"
             : "Error- store not exist"}
         </Typography>
         <div style={{ height: "40vh", width: "100%", marginRight: 3 }}>
@@ -243,16 +230,6 @@ export default function StoreBids({
                 // Selection:
                 onSelectionModelChange={handleSelectionChanged}
               />
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                width={"95vw"}
-              >
-                <CounterOfferForm
-                  handleCounterOffer={handleCounterOffer}
-                  isDisabled={isDisabled}
-                />
-              </Stack>
             </div>
           </div>
         </div>
@@ -267,5 +244,5 @@ export default function StoreBids({
       </Box>
     )
   }
-  return <div>{store === null ? LoadingCircle() : storeBids()}</div> // return  store === null ? LoadingComponent() : storePreview()
+  return <div>{store === null ? LoadingCircle() : storeAppointments(rows)}</div> // return  store === null ? LoadingComponent() : storePreview()
 }

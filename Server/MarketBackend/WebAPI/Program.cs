@@ -9,6 +9,7 @@ using MarketBackend.ServiceLayer.ServiceDTO;
 using WebAPI;
 using WebSocketSharp.Server;
 using MarketBackend.SystemSettings;
+using static WebAPI.Controllers.BuyersController;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
@@ -19,6 +20,7 @@ namespace MyApp // Note: actual namespace depends on the project name.
             var appConfig = AppConfigs.GetInstance();
             WebSocketServer notificationServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), appConfig.WebsocketServerPort);
             WebSocketServer logsServer = new WebSocketServer(System.Net.IPAddress.Parse("127.0.0.1"), 4560);
+            logsServer.AddWebSocketService<logsService>("/logs");
             notificationServer.Start();
             logsServer.Start();
             Console.WriteLine($"WS server started on ws://127.0.0.1:{appConfig.WebsocketServerPort}");

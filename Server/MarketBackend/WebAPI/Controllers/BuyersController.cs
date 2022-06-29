@@ -23,10 +23,10 @@ namespace WebAPI.Controllers
         private static IDictionary<string, IList<string>> buyerUnsentMessages = new Dictionary<string, IList<string>>();
         private class NotificationsService : WebSocketBehavior
         {
-
+            
         }
 
-        private class logsService : WebSocketBehavior
+        public class logsService : WebSocketBehavior
         {
 
         }
@@ -38,8 +38,6 @@ namespace WebAPI.Controllers
             this.storeManagementFacade = storeManagementFacade;
             this.notificationServer = notificationServer;
             this.logsServer = logsServer;
-            if (logsServer.WebSocketServices[logsPath] == null)
-                logsServer.AddWebSocketService<logsService>(logsPath);
         }
 
         [HttpPost("GetBuyerCart")]
@@ -257,7 +255,7 @@ namespace WebAPI.Controllers
 
             logsServer.WebSocketServices[logsPath].Sessions.Broadcast("-Guest");
             string role = GetMembersRole(response.Value);
-            logsServer.WebSocketServices[logsPath].Sessions.Broadcast("+" +role );
+            logsServer.WebSocketServices[logsPath].Sessions.Broadcast("+" + role);
 
             return Ok(response);
         }
@@ -285,7 +283,7 @@ namespace WebAPI.Controllers
             }
 
             ICollection<int> stores = owner.Value.Keys;
-            if (stores.Count>0)
+            if (stores.Count > 0)
             {
                 return "Owner";
             }
@@ -299,7 +297,7 @@ namespace WebAPI.Controllers
             }
 
             stores = manager.Value.Keys;
-            if (stores.Count>0)
+            if (stores.Count > 0)
             {
                 return "Manager";
             }

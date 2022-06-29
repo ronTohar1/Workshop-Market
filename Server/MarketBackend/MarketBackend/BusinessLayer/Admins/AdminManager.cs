@@ -225,16 +225,15 @@ namespace MarketBackend.BusinessLayer.Admins
             marketStatisticsLock.AcquireWriterLock(timeoutMilis);
             try
             {
-                DataDailyMarketStatistics currentDailyMarketStatistics = dailyMarketStatisticsDataManager.GetCurrentDailyMarketStatistics();
+                DataDailyMarketStatistics currentDailyMarketStatistics = GetDataDailyMarketStatistics();
 
-                action(currentDailyMarketStatistics);
-
+                dailyMarketStatisticsDataManager.Update(currentDailyMarketStatistics.Id, dataDailyMarketStatistics =>
+                {
+                    action(dataDailyMarketStatistics);
+                });
                 dailyMarketStatisticsDataManager.Save();
 
-                if (marketStatistics.ContainsKey(currentDailyMarketStatistics.Id))
-                    marketStatistics[currentDailyMarketStatistics.Id] = currentDailyMarketStatistics;
-                else
-                    marketStatistics.Add(currentDailyMarketStatistics.Id, currentDailyMarketStatistics);
+                action(currentDailyMarketStatistics);
             }
             catch (Exception exception)
             {
@@ -244,6 +243,38 @@ namespace MarketBackend.BusinessLayer.Admins
             {
                 marketStatisticsLock.ReleaseWriterLock();
             }
+        }
+
+        private DataDailyMarketStatistics GetDataDailyMarketStatistics()
+        {
+            DateTime now = DateTime.Now;
+            DataDailyMarketStatistics? dailyMarketStatistics = marketStatistics.Values.FirstOrDefault(
+                dailyMarketStatistics => dailyMarketStatistics.date.Date == now.Date);
+            if (dailyMarketStatistics != null)
+                return dailyMarketStatistics;
+            dailyMarketStatistics = new DataDailyMarketStatistics
+            {
+                date = now.Date,
+                NumberOfAdminsLogin = 0,
+                NumberOfCoOwnersLogin = 0,
+                NumberOfManagersLogin = 0,
+                NumberOfMembersLogin = 0,
+                NumberOfGuestsLogin = 0
+            };
+            dailyMarketStatisticsDataManager.Add(dailyMarketStatistics);
+            dailyMarketStatisticsDataManager.Save();
+            
+            marketStatistics.Add(dailyMarketStatistics.Id, dailyMarketStatistics);
+
+            return new DataDailyMarketStatistics() // so that the data layer and business layer instances will be different 
+            {
+                date = dailyMarketStatistics.date,
+                NumberOfAdminsLogin = dailyMarketStatistics.NumberOfAdminsLogin,
+                NumberOfCoOwnersLogin = dailyMarketStatistics.NumberOfCoOwnersLogin,
+                NumberOfManagersLogin = dailyMarketStatistics.NumberOfManagersLogin,
+                NumberOfMembersLogin = dailyMarketStatistics.NumberOfMembersLogin,
+                NumberOfGuestsLogin = dailyMarketStatistics.NumberOfGuestsLogin
+            };
         }
 
         private bool HasRoleInMarket(int memberId, Role role)

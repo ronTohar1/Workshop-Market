@@ -26,6 +26,7 @@ public class MembersController : IBuyersController
     {
         this.members = members; 
         this.mutex = new Mutex();
+        this.onLogin = (int memberId) => { };
     }
 
     public static MembersController LoadMembersController()

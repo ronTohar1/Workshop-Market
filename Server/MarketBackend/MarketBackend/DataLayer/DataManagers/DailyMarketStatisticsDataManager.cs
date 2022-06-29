@@ -11,7 +11,7 @@ namespace MarketBackend.DataLayer.DataManagers
     {
         private static DailyMarketStatisticsDataManager instance = null;
 
-        private static Mutex statisticsMutex = new Mutex(); // using mutex for efficiency 
+        // private static Mutex statisticsMutex = new Mutex(); // using mutex for efficiency 
 
         public static DailyMarketStatisticsDataManager GetInstance()
         {
@@ -33,43 +33,45 @@ namespace MarketBackend.DataLayer.DataManagers
 
         }
 
-        public DataDailyMarketStatistics GetCurrentDailyMarketStatistics()
-        {
-            statisticsMutex.WaitOne();
-            try
-            {
-                IList<DataDailyMarketStatistics> dailyMarketStatisticsElements = this.FindAll();
-                DateTime lastDate = dailyMarketStatisticsElements.Max(dailyMarketStatistics => dailyMarketStatistics.date);
+        //public DataDailyMarketStatistics GetCurrentDailyMarketStatistics()
+        //{
+        //    statisticsMutex.WaitOne();
+        //    try
+        //    {
+        //        IList<DataDailyMarketStatistics> dailyMarketStatisticsElements = this.FindAll();
 
-                if (lastDate.Date == DateTime.Now.Date)
-                    return dailyMarketStatisticsElements.FirstOrDefault(dailyMarketStatistics => dailyMarketStatistics.date == lastDate);
+        //        if (dailyMarketStatisticsElements.Count > 0)
+        //        {
+        //            DateTime lastDate = dailyMarketStatisticsElements.Max(dailyMarketStatistics => dailyMarketStatistics.date);
+        //            if (lastDate.Date == DateTime.Now.Date)
+        //                return dailyMarketStatisticsElements.FirstOrDefault(dailyMarketStatistics => dailyMarketStatistics.date == lastDate);
+        //        }
 
-                int newDailyMarketStatisticsId = AddDailyMarektStatistics();
-                return this.Find(newDailyMarketStatisticsId);
-            }
-            finally
-            {
-                statisticsMutex.ReleaseMutex();
-            }
-        }
+        //        return AddDailyMarektStatistics();
+        //    }
+        //    finally
+        //    {
+        //        statisticsMutex.ReleaseMutex();
+        //    }
+        //}
 
-        private int AddDailyMarektStatistics()
-        {
-            DataDailyMarketStatistics toAdd = new DataDailyMarketStatistics()
-            {
-                date = DateTime.Now,
-                NumberOfAdminsLogin = 0,
-                NumberOfCoOwnersLogin = 0,
-                NumberOfManagersLogin = 0,
-                NumberOfMembersLogin = 0,
-                NumberOfGuestsLogin = 0
-            };
+        //private DataDailyMarketStatistics AddDailyMarektStatistics()
+        //{
+        //    DataDailyMarketStatistics toAdd = new DataDailyMarketStatistics()
+        //    {
+        //        date = DateTime.Now,
+        //        NumberOfAdminsLogin = 0,
+        //        NumberOfCoOwnersLogin = 0,
+        //        NumberOfManagersLogin = 0,
+        //        NumberOfMembersLogin = 0,
+        //        NumberOfGuestsLogin = 0
+        //    };
 
-            this.Add(toAdd);
-            this.Save();
+        //    this.Add(toAdd);
+        //    this.Save();
 
-            return toAdd.Id; 
-        }
+        //    return toAdd; 
+        //}
 
         //public void AddAdminLogin()
         //{

@@ -47,7 +47,7 @@ namespace TestMarketBackend.BusinessLayer.Market
             foreach (int existingMemberId in exsitingMembersIds)
             {
                 // should return a mock member for call with a right id
-                memberMock = new Mock<Member>("user123", "12345678", securityMock.Object) { CallBase = true }; // todo: is this okay
+                memberMock = new Mock<Member>("user123", "12345678", securityMock.Object, (int memberId) => { }) { CallBase = true }; // todo: is this okay
                 memberMock.Setup(member=>member.Id).Returns(existingMemberId);
                 member = memberMock.Object;
                 membersControllerMock.Setup(membersController =>

@@ -249,7 +249,7 @@ namespace MarketBackend.BusinessLayer.Admins
         {
             DateTime now = DateTime.Now;
             DataDailyMarketStatistics? dailyMarketStatistics = marketStatistics.Values.FirstOrDefault(
-                dailyMarketStatistics => dailyMarketStatistics.date.Date == now.Date);
+                dailyMarketStatistics => DateOnly.FromDateTime(dailyMarketStatistics.date) == DateOnly.FromDateTime(now.Date));
             if (dailyMarketStatistics != null)
                 return dailyMarketStatistics;
             dailyMarketStatistics = new DataDailyMarketStatistics
@@ -264,10 +264,9 @@ namespace MarketBackend.BusinessLayer.Admins
             dailyMarketStatisticsDataManager.Add(dailyMarketStatistics);
             dailyMarketStatisticsDataManager.Save();
             
-            marketStatistics.Add(dailyMarketStatistics.Id, dailyMarketStatistics);
-
-            return new DataDailyMarketStatistics() // so that the data layer and business layer instances will be different 
+            DataDailyMarketStatistics dailyMarketStatisticsBusiness = new DataDailyMarketStatistics() // so that the data layer and business layer instances will be different 
             {
+                Id = dailyMarketStatistics.Id,
                 date = dailyMarketStatistics.date,
                 NumberOfAdminsLogin = dailyMarketStatistics.NumberOfAdminsLogin,
                 NumberOfCoOwnersLogin = dailyMarketStatistics.NumberOfCoOwnersLogin,
@@ -275,9 +274,11 @@ namespace MarketBackend.BusinessLayer.Admins
                 NumberOfMembersLogin = dailyMarketStatistics.NumberOfMembersLogin,
                 NumberOfGuestsLogin = dailyMarketStatistics.NumberOfGuestsLogin
             };
+            marketStatistics.Add(dailyMarketStatisticsBusiness.Id, dailyMarketStatisticsBusiness);
+            return dailyMarketStatisticsBusiness;
         }
 
-        private bool HasRoleInMarket(int memberId, Role role)
+        public virtual bool HasRoleInMarket(int memberId, Role role)
         {
             ProductsSearchFilter filter = new ProductsSearchFilter();
             filter.FilterStoreOfMemberInRole(memberId, role);

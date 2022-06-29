@@ -705,3 +705,47 @@ export async function serverGetAllMemberBids(
 });
   return jsonResponse.json();
 }
+
+export async function serverApproveCoOwner(
+  userId: number,
+  storeId: number,
+  targetUserId: number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/MakeNewCoOwner";
+  const jsonResponse = await fetch(uri, {
+    method: 'PUT',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "userId": 0\n}',
+    body: JSON.stringify({
+      userId: userId,
+      storeId: storeId,
+      targetUserId: targetUserId
+    })
+});
+  return jsonResponse.json();
+}
+
+export async function serverDenyCoOwner(
+  userId: number,
+  storeId: number,
+  targetUserId: number,
+): Promise<ClientResponse<boolean>> {
+  const uri = serverPort + "/api/Stores/DenyNewCoOwner";
+  const jsonResponse = await fetch(uri, {
+    method: 'PUT',
+    headers: {
+        'accept': 'text/plain',
+        'Content-Type': 'application/json'
+    },
+    // body: '{\n  "userId": 0\n}',
+    body: JSON.stringify({
+      userId: userId,
+      storeId: storeId,
+      targetUserId: targetUserId
+    })
+});
+  return jsonResponse.json();
+}

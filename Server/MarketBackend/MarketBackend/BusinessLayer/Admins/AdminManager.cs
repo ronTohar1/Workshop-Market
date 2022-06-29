@@ -31,7 +31,7 @@ namespace MarketBackend.BusinessLayer.Admins
 
         private DailyMarketStatisticsDataManager dailyMarketStatisticsDataManager;
 
-        public AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController) 
+        public AdminManager(StoreController storeController, BuyersController buyersController, MembersController membersController)
             : this(storeController, buyersController, membersController, new SynchronizedCollection<int>(), new ConcurrentDictionary<int, DataDailyMarketStatistics>())
         {
 
@@ -71,7 +71,7 @@ namespace MarketBackend.BusinessLayer.Admins
                 marketStatistics.Add(dailyMarketStatistics.Id, dailyMarketStatistics);
             }
 
-            return new AdminManager(storeController, buyersController, membersController, adminsIds, marketStatistics); 
+            return new AdminManager(storeController, buyersController, membersController, adminsIds, marketStatistics);
         }
 
         // to use before uplodaing all the system 
@@ -99,16 +99,16 @@ namespace MarketBackend.BusinessLayer.Admins
             if (member == null)
                 return false;
 
-            MemberDataManager memberDataManager = MemberDataManager.GetInstance(); 
+            MemberDataManager memberDataManager = MemberDataManager.GetInstance();
             memberDataManager.Update(id, member => member.IsAdmin = true);
-            memberDataManager.Save(); 
+            memberDataManager.Save();
 
             admins.Add(id);
             return true;
         }
         public bool ContainAdmin(int id)
         => admins.Contains(id);
-        
+
 
         /// <summary>
         /// Removes the given admin from collection and return if deleted
@@ -116,7 +116,7 @@ namespace MarketBackend.BusinessLayer.Admins
         public bool RemoveAdmin(int id)
         {
             if (!ContainAdmin(id))
-                return false; 
+                return false;
 
             MemberDataManager memberDataManager = MemberDataManager.GetInstance();
             memberDataManager.Update(id, member => member.IsAdmin = false);
@@ -133,7 +133,7 @@ namespace MarketBackend.BusinessLayer.Admins
             if (buyer == null)
                 throw new MarketException($"User with id={userId} does not exist");
             else
-               return buyer.GetPurchaseHistory();
+                return buyer.GetPurchaseHistory();
         }
 
         public IList<Purchase> GetStoreHistory(int adminId, int storeId)
@@ -167,7 +167,7 @@ namespace MarketBackend.BusinessLayer.Admins
         {
             VerifyAdmin(requestingId);
             return membersController.GetMember(memberId);
-            
+
         }
 
         public bool MemberExists(int memberId)
@@ -225,16 +225,15 @@ namespace MarketBackend.BusinessLayer.Admins
             marketStatisticsLock.AcquireWriterLock(timeoutMilis);
             try
             {
-                DataDailyMarketStatistics currentDailyMarketStatistics = dailyMarketStatisticsDataManager.GetCurrentDailyMarketStatistics();
+                DataDailyMarketStatistics currentDailyMarketStatistics = GetDataDailyMarketStatistics();
 
-                action(currentDailyMarketStatistics);
-
+                dailyMarketStatisticsDataManager.Update(currentDailyMarketStatistics.Id, dataDailyMarketStatistics =>
+                {
+                    action(dataDailyMarketStatistics);
+                });
                 dailyMarketStatisticsDataManager.Save();
 
-                if (marketStatistics.ContainsKey(currentDailyMarketStatistics.Id))
-                    marketStatistics[currentDailyMarketStatistics.Id] = currentDailyMarketStatistics;
-                else
-                    marketStatistics.Add(currentDailyMarketStatistics.Id, currentDailyMarketStatistics);
+                action(currentDailyMarketStatistics);
             }
             catch (Exception exception)
             {
@@ -246,22 +245,54 @@ namespace MarketBackend.BusinessLayer.Admins
             }
         }
 
+        private DataDailyMarketStatistics GetDataDailyMarketStatistics()
+        {
+            DateTime now = DateTime.Now;
+            DataDailyMarketStatistics? dailyMarketStatistics = marketStatistics.Values.FirstOrDefault(
+                dailyMarketStatistics => dailyMarketStatistics.date.Date == now.Date);
+            if (dailyMarketStatistics != null)
+                return dailyMarketStatistics;
+            dailyMarketStatistics = new DataDailyMarketStatistics
+            {
+                date = now.Date,
+                NumberOfAdminsLogin = 0,
+                NumberOfCoOwnersLogin = 0,
+                NumberOfManagersLogin = 0,
+                NumberOfMembersLogin = 0,
+                NumberOfGuestsLogin = 0
+            };
+            dailyMarketStatisticsDataManager.Add(dailyMarketStatistics);
+            dailyMarketStatisticsDataManager.Save();
+            
+            marketStatistics.Add(dailyMarketStatistics.Id, dailyMarketStatistics);
+
+            return new DataDailyMarketStatistics() // so that the data layer and business layer instances will be different 
+            {
+                date = dailyMarketStatistics.date,
+                NumberOfAdminsLogin = dailyMarketStatistics.NumberOfAdminsLogin,
+                NumberOfCoOwnersLogin = dailyMarketStatistics.NumberOfCoOwnersLogin,
+                NumberOfManagersLogin = dailyMarketStatistics.NumberOfManagersLogin,
+                NumberOfMembersLogin = dailyMarketStatistics.NumberOfMembersLogin,
+                NumberOfGuestsLogin = dailyMarketStatistics.NumberOfGuestsLogin
+            };
+        }
+
         private bool HasRoleInMarket(int memberId, Role role)
         {
             ProductsSearchFilter filter = new ProductsSearchFilter();
             filter.FilterStoreOfMemberInRole(memberId, role);
-            return storeController.SearchOpenStores(filter).Count > 0; 
+            return storeController.SearchOpenStores(filter).Count > 0;
         }
 
         private IList<DataDailyMarketStatistics> GetDataDailyMarketStatisticsBetweenDates(DateOnly from, DateOnly to)
         {
             marketStatisticsLock.AcquireReaderLock(timeoutMilis);
-            try 
+            try
             {
                 return marketStatistics.Values.Where(dailyMarketStatistics =>
-                    from.CompareTo(dailyMarketStatistics.date) <= 0 && dailyMarketStatistics.date.CompareTo(to) <= 0).ToList();
+                    from.CompareTo(DateOnly.FromDateTime(dailyMarketStatistics.date)) <= 0 && DateOnly.FromDateTime(dailyMarketStatistics.date).CompareTo(to) <= 0).ToList();
             }
-            finally 
+            finally
             {
                 marketStatisticsLock.ReleaseReaderLock();
             }

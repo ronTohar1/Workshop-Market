@@ -124,7 +124,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         private Store MockStoreThatReturns(string result)
         {
             Mock<Security> securityMock = new Mock<Security>();
-            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object); // todo: check if okay
+            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object, (int memberId) => { }); // todo: check if okay
             Member founder = founderMock.Object;
 
             Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null);
@@ -351,7 +351,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         private Store MockStoreThatReturns2(string result, int[] productsId)
         {
             Mock<Security> securityMock = new Mock<Security>();
-            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object); // todo: check if okay
+            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object, (int memberId) => { }); // todo: check if okay
             Member founder = founderMock.Object;
 
             Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null) { CallBase = true };
@@ -483,7 +483,7 @@ namespace TestMarketBackend.BusinessLayer.Market
         {
             Mock<Security> securityMock = new Mock<Security>();
             
-            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object) ;// todo: check if okay
+            Mock<Member> founderMock = new Mock<Member>("user123", "12345678", securityMock.Object, (int memberId) => { }) ;// todo: check if okay
             Member founder = founderMock.Object;
 
             Mock<Store> storeMock = new Mock<Store>("store1", founder, (int id) => (Member)null) { CallBase = true };

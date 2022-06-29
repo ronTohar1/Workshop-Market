@@ -6,7 +6,7 @@ namespace MarketBackend.BusinessLayer.Market.StoreManagment
 {
 	public class Hierarchy<T>
 	{
-		private int id; 
+		private int id;
 		public T value { get; set; }
 		public IList<Hierarchy<T>> children { get; }
 		public Hierarchy<T> parent { get; }

@@ -18,6 +18,7 @@ namespace MarketBackend.BusinessLayer.Buyers.Guests
         public GuestsController()
         {
             buyers = new ConcurrentDictionary<int, Buyer>();
+            onEnter = () => { };
         }
 
         public Buyer? GetBuyer(int buyerId)
